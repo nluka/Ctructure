@@ -395,7 +395,7 @@ export function _tokenEncode(startIndex: number, type: TokenType): number {
 }
 
 /**
- * Decodes a token's startIndex and type.
+ * Extracts the start index and type from an encoded token.
  * @param token The encoded token to decode.
  * @returns The start index and the token type as an array of 2 elements.
  */
