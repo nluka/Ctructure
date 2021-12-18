@@ -6,8 +6,8 @@
     needed for clients of this module
 */
 
-import { readFileSync } from "fs";
-import TokenArray from "./TokenArray";
+import { readFileSync } from 'fs';
+import TokenArray from './TokenArray';
 
 export enum TokenType {
   // Special
@@ -137,7 +137,7 @@ export enum TokenType {
 
 // TODO: write tests (once fully implemented)
 /**
- * Tokenizes a file, encoding each token into a 32-bit number (using tokenEncode).
+ * Tokenizes a file, encoding each token into a 32-bit number (using `_tokenEncode`).
  * Each token stores its starting index in the first 24-bits and the type
  * (`TokenType`) in the remaining 8 bits. Use `tokenDecode` to extract the start
  * index and type for any encoded token.
@@ -146,7 +146,7 @@ export enum TokenType {
  */
 export function tokenizeFile(filePathname: string): TokenArray {
   const fileContents = _removeCarriageReturns(
-    readFileSync(filePathname).toString()
+    readFileSync(filePathname).toString(),
   );
   const tokenizer = new _Tokenizer(fileContents);
   // TODO: figure out good formula for initial size of TokenArray
@@ -161,7 +161,7 @@ export function tokenizeFile(filePathname: string): TokenArray {
     tokens.push(extractedToken);
   }
 
-  // console.log("token count =", tokens.getCount());
+  // console.log('token count =', tokens.getCount());
   // for (let i = 0; i < tokens.getCount(); ++i) {
   //   const [startIndex, type] = tokenDecode(tokens.getAtIndex(i));
   //   console.log(`tokens[${i}]: ${startIndex} ${type}`);
@@ -172,7 +172,7 @@ export function tokenizeFile(filePathname: string): TokenArray {
 
 // TODO: write tests
 export function _removeCarriageReturns(fileContents: string) {
-  return fileContents.replace(new RegExp("\r", "g"), "");
+  return fileContents.replace(new RegExp('\r', 'g'), '');
 }
 
 export class _Tokenizer {
@@ -188,20 +188,20 @@ export class _Tokenizer {
 
     const tokenCategory = _determineTokenCategory(
       this.fileContents.charAt(this.cursorPosition),
-      this.cursorPosition
+      this.cursorPosition,
     );
 
     const tokenLastIndex = _determineTokenLastIndex(
       this.fileContents,
       this.cursorPosition,
-      tokenCategory
+      tokenCategory,
     );
 
     const tokenType = _determineTokenType(
       this.fileContents,
       this.cursorPosition,
       tokenLastIndex,
-      tokenCategory
+      tokenCategory,
     );
 
     const encodedToken = _tokenEncode(this.cursorPosition, tokenType);
@@ -209,7 +209,8 @@ export class _Tokenizer {
   }
 
   /**
-   * Moves `this.cursorPosition` to the starting index of the next token (or the end of file if no more tokens exist).
+   * Moves `this.cursorPosition` to the starting index of the next token (or
+   * the end of file if no more tokens exist).
    * @returns True if another token exists, false otherwise.
    */
   private moveToNextToken(): boolean {
@@ -244,11 +245,12 @@ export enum _TokenCategory {
  * Determines the category of a token based on its first character.
  * @param tokenFirstChar A string whose first char is the first char of the token.
  * @param tokenStartIndex The starting index of the token.
- * @returns The category of the token - throws `TokenCategoryDeterminationError` if category cannot be determined.
+ * @returns The category of the token - throws `TokenCategoryDeterminationError`
+ * if category cannot be determined.
  */
 export function _determineTokenCategory(
   tokenFirstChar: string,
-  tokenStartIndex: number
+  tokenStartIndex: number,
 ): _TokenCategory {
   if (tokenFirstChar.match(/^#/)) {
     return _TokenCategory.prepro;
@@ -275,7 +277,7 @@ export function _determineTokenCategory(
 export class TokenCategoryDeterminationError {
   constructor(
     public readonly tokenStartIndex: number,
-    public readonly tokenFirstChar: string
+    public readonly tokenFirstChar: string,
   ) {}
 }
 
@@ -283,90 +285,91 @@ export class TokenCategoryDeterminationError {
 export function _determineTokenLastIndex(
   fileContents: string,
   startIndex: number,
-  category: _TokenCategory
+  category: _TokenCategory,
 ): number {
-  throw new Error("not implemented");
+  throw new Error('not implemented');
 }
 
 const tokenSpecialValueToTypeMap = new Map<string, TokenType>([
-  [".", TokenType.specialDot],
-  [",", TokenType.specialComma],
-  [";", TokenType.specialSemicolon],
-  ["[", TokenType.specialBracketLeft],
-  ["]", TokenType.specialBracketRight],
-  ["(", TokenType.specialParenLeft],
-  [")", TokenType.specialParenRight],
-  ["{", TokenType.specialBraceLeft],
-  ["}", TokenType.specialBraceRight],
+  ['.', TokenType.specialDot],
+  [',', TokenType.specialComma],
+  [';', TokenType.specialSemicolon],
+  ['[', TokenType.specialBracketLeft],
+  [']', TokenType.specialBracketRight],
+  ['(', TokenType.specialParenLeft],
+  [')', TokenType.specialParenRight],
+  ['{', TokenType.specialBraceLeft],
+  ['}', TokenType.specialBraceRight],
 ]);
 
 const tokenPreprocessorValueToTypeMap = new Map<string, TokenType>([
-  ["#include", TokenType.preproDirectiveInclude],
-  ["#define", TokenType.preproDirectiveDefine],
-  ["#undef", TokenType.preproDirectiveUndef],
-  ["#if", TokenType.preproDirectiveIf],
-  ["#ifdef", TokenType.preproDirectiveIfdef],
-  ["#ifndef", TokenType.preproDirectiveIfndef],
-  ["#error", TokenType.preproMacroError],
-  ["__FILE__", TokenType.preproMacroFile],
-  ["__LINE__", TokenType.preproMacroLine],
-  ["__DATE__", TokenType.preproMacroDate],
-  ["__TIME__", TokenType.preproMacroTime],
-  ["__TIMESTAMP__", TokenType.preproMacroTimestamp],
-  ["#pragma", TokenType.preproDirectivePragma],
+  ['#include', TokenType.preproDirectiveInclude],
+  ['#define', TokenType.preproDirectiveDefine],
+  ['#undef', TokenType.preproDirectiveUndef],
+  ['#if', TokenType.preproDirectiveIf],
+  ['#ifdef', TokenType.preproDirectiveIfdef],
+  ['#ifndef', TokenType.preproDirectiveIfndef],
+  ['#error', TokenType.preproMacroError],
+  ['__FILE__', TokenType.preproMacroFile],
+  ['__LINE__', TokenType.preproMacroLine],
+  ['__DATE__', TokenType.preproMacroDate],
+  ['__TIME__', TokenType.preproMacroTime],
+  ['__TIMESTAMP__', TokenType.preproMacroTimestamp],
+  ['#pragma', TokenType.preproDirectivePragma],
 ]);
 
 const tokenKeywordValueToTypeMap = new Map<string, TokenType>([
-  ["_Alignas", TokenType.keywordAuto],
-  ["alignas", TokenType.keywordAuto],
-  ["auto", TokenType.keywordAuto],
-  ["atomic", TokenType.keywordAuto],
-  ["_Bool", TokenType.keywordAuto],
-  ["bool", TokenType.keywordAuto],
-  ["auto", TokenType.keywordAuto],
-  ["break", TokenType.keywordBreak],
-  ["case", TokenType.keywordCase],
-  ["char", TokenType.keywordChar],
-  ["_Complex", TokenType.keywordChar],
-  ["complex", TokenType.keywordChar],
-  ["const", TokenType.keywordConst],
-  ["continue", TokenType.keywordContinue],
-  ["default", TokenType.keywordDefault],
-  ["do", TokenType.keywordDo],
-  ["double", TokenType.keywordDouble],
-  ["else", TokenType.keywordElse],
-  ["enum", TokenType.keywordEnum],
-  ["extern", TokenType.keywordExtern],
-  ["float", TokenType.keywordFloat],
-  ["for", TokenType.keywordFor],
-  ["_Generic", TokenType.keywordFor],
-  ["goto", TokenType.keywordGoto],
-  ["if", TokenType.keywordIf],
-  ["_Imaginary", TokenType.keywordIf],
-  ["imaginary", TokenType.keywordIf],
-  ["int", TokenType.keywordInt],
-  ["long", TokenType.keywordLong],
-  ["_Noreturn", TokenType.keywordLong],
-  ["noreturn", TokenType.keywordLong],
-  ["register", TokenType.keywordRegister],
-  ["return", TokenType.keywordReturn],
-  ["short", TokenType.keywordShort],
-  ["signed", TokenType.keywordSigned],
-  ["sizeof", TokenType.keywordSizeof],
-  ["static", TokenType.keywordStatic],
-  ["_Static_assert", TokenType.keywordStatic],
-  ["static_assert", TokenType.keywordStatic],
-  ["struct", TokenType.keywordStruct],
-  ["_Thread_local", TokenType.keywordSwitch],
-  ["thread_local", TokenType.keywordSwitch],
-  ["switch", TokenType.keywordSwitch],
-  ["typedef", TokenType.keywordTypedef],
-  ["union", TokenType.keywordUnion],
-  ["generic", TokenType.keywordFor],
-  ["unsigned", TokenType.keywordUnsigned],
-  ["void", TokenType.keywordVoid],
-  ["volatile", TokenType.keywordVolatile],
-  ["while", TokenType.keywordWhile],
+  ['_Alignas', TokenType.keywordAlignas],
+  ['alignas', TokenType.keywordAlignof],
+  ['auto', TokenType.keywordAuto],
+  ['_Atomic', TokenType.keywordAtomic],
+  ['atomic', TokenType.keywordAtomic],
+  ['_Bool', TokenType.keywordBool],
+  ['bool', TokenType.keywordBool],
+  ['auto', TokenType.keywordAuto],
+  ['break', TokenType.keywordBreak],
+  ['case', TokenType.keywordCase],
+  ['char', TokenType.keywordChar],
+  ['_Complex', TokenType.keywordChar],
+  ['complex', TokenType.keywordChar],
+  ['const', TokenType.keywordConst],
+  ['continue', TokenType.keywordContinue],
+  ['default', TokenType.keywordDefault],
+  ['do', TokenType.keywordDo],
+  ['double', TokenType.keywordDouble],
+  ['else', TokenType.keywordElse],
+  ['enum', TokenType.keywordEnum],
+  ['extern', TokenType.keywordExtern],
+  ['float', TokenType.keywordFloat],
+  ['for', TokenType.keywordFor],
+  ['_Generic', TokenType.keywordGeneric],
+  ['generic', TokenType.keywordGeneric],
+  ['goto', TokenType.keywordGoto],
+  ['if', TokenType.keywordIf],
+  ['_Imaginary', TokenType.keywordImaginary],
+  ['imaginary', TokenType.keywordImaginary],
+  ['int', TokenType.keywordInt],
+  ['long', TokenType.keywordLong],
+  ['_Noreturn', TokenType.keywordNoreturn],
+  ['noreturn', TokenType.keywordNoreturn],
+  ['register', TokenType.keywordRegister],
+  ['return', TokenType.keywordReturn],
+  ['short', TokenType.keywordShort],
+  ['signed', TokenType.keywordSigned],
+  ['sizeof', TokenType.keywordSizeof],
+  ['static', TokenType.keywordStatic],
+  ['_Static_assert', TokenType.keywordStaticassert],
+  ['static_assert', TokenType.keywordStaticassert],
+  ['struct', TokenType.keywordStruct],
+  ['_Thread_local', TokenType.keywordThreadlocal],
+  ['thread_local', TokenType.keywordThreadlocal],
+  ['switch', TokenType.keywordSwitch],
+  ['typedef', TokenType.keywordTypedef],
+  ['union', TokenType.keywordUnion],
+  ['unsigned', TokenType.keywordUnsigned],
+  ['void', TokenType.keywordVoid],
+  ['volatile', TokenType.keywordVolatile],
+  ['while', TokenType.keywordWhile],
 ]);
 
 // TODO: implement
@@ -374,10 +377,10 @@ export function _determineTokenType(
   fileContents: string,
   startIndex: number,
   lastIndex: number,
-  category: _TokenCategory
+  category: _TokenCategory,
 ): TokenType {
   // const rawToken = fileContents.slice(startIndex, lastIndex + 1);
-  throw new Error("not implemented");
+  throw new Error('not implemented');
 }
 
 /**
@@ -388,10 +391,10 @@ export function _determineTokenType(
  * @returns The encoded token.
  */
 export function _tokenEncode(startIndex: number, type: TokenType): number {
-  let token = 0;
-  token = (token | startIndex) << 8; // encode startIndex into leftmost 24 bits
-  token = token | type; // encode type into rightmost 8 bits
-  return token;
+  let encodedToken = 0;
+  encodedToken = (encodedToken | startIndex) << 8; // encode startIndex into leftmost 24 bits
+  encodedToken = encodedToken | type; // encode type into rightmost 8 bits
+  return encodedToken;
 }
 
 /**

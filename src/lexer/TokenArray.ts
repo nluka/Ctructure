@@ -28,7 +28,7 @@ export default class TokenArray {
 
   public getAtIndex(index: number) {
     if (index < 0 || index >= this.count) {
-      throw new RangeError("out of bounds index");
+      throw new RangeError('out of bounds index');
     }
     return this.values[index];
   }
