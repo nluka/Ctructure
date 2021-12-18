@@ -16,7 +16,7 @@ describe("tokenDecode", () => {
 
   // same cases (but reversed) from `tokenEncode.test.ts`
   assert(0, 0, 0);
-  assert(3586, 14, TokenType.specialSemicolon);
-  assert(5_336_940, 20_847, TokenType.identifier);
-  assert(-174, 16_777_215, TokenType.keywordExtern);
+  assert(3585, 14, TokenType.specialSemicolon);
+  assert(5_336_941, 20_847, TokenType.identifier);
+  assert(-173, 16_777_215, TokenType.keywordExtern);
 });

@@ -13,81 +13,83 @@ describe("_determineTokenCategory", () => {
     });
   }
 
-  describe("Special", () => {
-    assert(",", _TokenCategory.special);
-    assert(".", _TokenCategory.special);
-    assert(";", _TokenCategory.special);
-    assert("[", _TokenCategory.special);
-    assert("]", _TokenCategory.special);
-    assert("(", _TokenCategory.special);
-    assert(")", _TokenCategory.special);
-    assert("{", _TokenCategory.special);
-    assert("}", _TokenCategory.special);
+  describe('Special', () => {
+    assert(',', _TokenCategory.special);
+    // assert(".", _TokenCategory.special);
+    assert(';', _TokenCategory.special);
+    assert('[', _TokenCategory.special);
+    assert(']', _TokenCategory.special);
+    assert('(', _TokenCategory.special);
+    assert(')', _TokenCategory.special);
+    assert('{', _TokenCategory.special);
+    assert('}', _TokenCategory.special);
   });
 
-  describe("Preprocessor", () => {
-    assert("#", _TokenCategory.prepro);
-    assert("##", _TokenCategory.prepro);
-    assert("#include", _TokenCategory.prepro);
-    assert("<stdio.h>", _TokenCategory.preproOrOperator);
-    assert("#define", _TokenCategory.prepro);
-    assert("\\", _TokenCategory.preproOrOperator);
-    assert("#undef", _TokenCategory.prepro);
-    assert("#if", _TokenCategory.prepro);
-    assert("#ifdef", _TokenCategory.prepro);
-    assert("#ifndef", _TokenCategory.prepro);
-    assert("#error", _TokenCategory.prepro);
-    assert("__FILE__", _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-    assert("__LINE__", _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-    assert("__DATE__", _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-    assert("__TIME__", _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+  describe('Preprocessor', () => {
+    assert('#', _TokenCategory.prepro);
+    assert('##', _TokenCategory.prepro);
+    assert('#include', _TokenCategory.prepro);
+    assert('<stdio.h>', _TokenCategory.preproOrOperator);
+    assert('#define', _TokenCategory.prepro);
+    assert('\\', _TokenCategory.preproOrOperator);
+    assert('#undef', _TokenCategory.prepro);
+    assert('#if', _TokenCategory.prepro);
+    assert('#ifdef', _TokenCategory.prepro);
+    assert('#ifndef', _TokenCategory.prepro);
+    assert('#error', _TokenCategory.prepro);
+    assert('__FILE__', _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+    assert('__LINE__', _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+    assert('__DATE__', _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+    assert('__TIME__', _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert(
-      "__TIMESTAMP__",
-      _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel
+      '__TIMESTAMP__',
+      _TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
     );
-    assert("#pragma", _TokenCategory.prepro);
+    assert('#pragma', _TokenCategory.prepro);
   });
 
-  describe("Operators", () => {
-    describe("Unary", () => {
-      assert("++", _TokenCategory.operator);
-      assert("--", _TokenCategory.operator);
-      assert("~", _TokenCategory.operator);
-      assert("!", _TokenCategory.operator);
-      assert("*", _TokenCategory.operator);
+  describe('Operators', () => {
+    describe('Unary', () => {
+      assert('++', _TokenCategory.operator);
+      assert('--', _TokenCategory.operator);
+      assert('~', _TokenCategory.operator);
+      assert('!', _TokenCategory.operator);
+      assert('*', _TokenCategory.operator);
     });
-    describe("Binary", () => {
-      assert("+", _TokenCategory.operator);
-      assert("-", _TokenCategory.operator);
-      assert("/", _TokenCategory.operator);
-      assert("*", _TokenCategory.operator);
-      assert("%", _TokenCategory.operator);
-      assert("==", _TokenCategory.operator);
-      assert("!=", _TokenCategory.operator);
-      assert(">", _TokenCategory.operator);
-      assert(">=", _TokenCategory.operator);
-      assert("<", _TokenCategory.preproOrOperator);
-      assert("<=", _TokenCategory.preproOrOperator);
-      assert("&&", _TokenCategory.operator);
-      assert("||", _TokenCategory.operator);
-      assert("&", _TokenCategory.operator);
-      assert("|", _TokenCategory.operator);
-      assert("^", _TokenCategory.operator);
-      assert("<<", _TokenCategory.preproOrOperator);
-      assert(">>", _TokenCategory.operator);
-      assert("=", _TokenCategory.operator);
-      assert("+=", _TokenCategory.operator);
-      assert("-=", _TokenCategory.operator);
-      assert("*=", _TokenCategory.operator);
-      assert("/=", _TokenCategory.operator);
-      assert("%=", _TokenCategory.operator);
-      assert("<<=", _TokenCategory.preproOrOperator);
-      assert(">>=", _TokenCategory.operator);
-      assert("&=", _TokenCategory.operator);
-      assert("|=", _TokenCategory.operator);
-      assert("^=", _TokenCategory.operator);
-      assert("?", _TokenCategory.operator);
-      assert(":", _TokenCategory.operator);
+    describe('Binary', () => {
+      assert('+', _TokenCategory.operator);
+      assert('-', _TokenCategory.operator);
+      assert('/', _TokenCategory.operator);
+      assert('*', _TokenCategory.operator);
+      assert('%', _TokenCategory.operator);
+      assert('==', _TokenCategory.operator);
+      assert('!=', _TokenCategory.operator);
+      assert('>', _TokenCategory.operator);
+      assert('>=', _TokenCategory.operator);
+      assert('<', _TokenCategory.preproOrOperator);
+      assert('<=', _TokenCategory.preproOrOperator);
+      assert('&&', _TokenCategory.operator);
+      assert('||', _TokenCategory.operator);
+      assert('&', _TokenCategory.operator);
+      assert('|', _TokenCategory.operator);
+      assert('^', _TokenCategory.operator);
+      assert('<<', _TokenCategory.preproOrOperator);
+      assert('>>', _TokenCategory.operator);
+      assert('=', _TokenCategory.operator);
+      assert('+=', _TokenCategory.operator);
+      assert('-=', _TokenCategory.operator);
+      assert('*=', _TokenCategory.operator);
+      assert('/=', _TokenCategory.operator);
+      assert('%=', _TokenCategory.operator);
+      assert('<<=', _TokenCategory.preproOrOperator);
+      assert('>>=', _TokenCategory.operator);
+      assert('&=', _TokenCategory.operator);
+      assert('|=', _TokenCategory.operator);
+      assert('^=', _TokenCategory.operator);
+      assert('.', _TokenCategory.operator);
+      assert('->', _TokenCategory.operator);
+      assert('?', _TokenCategory.operator);
+      assert(':', _TokenCategory.operator);
     });
   });
 

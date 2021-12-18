@@ -12,7 +12,6 @@ import TokenArray from './TokenArray';
 export enum TokenType {
   // Special
   specialComma,
-  specialDot,
   specialSemicolon,
   specialBracketLeft,
   specialBracketRight,
@@ -77,6 +76,8 @@ export enum TokenType {
   operatorBinaryBitwiseAndAssignment,
   operatorBinaryBitwiseOrAssignment,
   operatorBinaryBitwiseXorAssignment,
+  operatorBinaryMemberAccess,
+  operatorBinaryArrow,
   // Miscellanous operators
   operatorMiscTernaryQuestion,
   operatorMiscTernaryColon,
@@ -264,7 +265,7 @@ export function _determineTokenCategory(
   if (tokenFirstChar.match(/^[0-9'"]/)) {
     return _TokenCategory.constant;
   }
-  if (tokenFirstChar.match(/^[+\-~!*/%=>&|^?:]/)) {
+  if (tokenFirstChar.match(/^[+\-~!*/%=>&|^.?:]/)) {
     return _TokenCategory.operator;
   }
   if (tokenSpecialValueToTypeMap.get(tokenFirstChar) !== undefined) {
@@ -291,7 +292,7 @@ export function _determineTokenLastIndex(
 }
 
 const tokenSpecialValueToTypeMap = new Map<string, TokenType>([
-  ['.', TokenType.specialDot],
+  // ['.', TokenType.specialDot],
   [',', TokenType.specialComma],
   [';', TokenType.specialSemicolon],
   ['[', TokenType.specialBracketLeft],
