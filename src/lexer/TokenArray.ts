@@ -1,3 +1,6 @@
+import { tokenDecode } from './tokenDecode';
+import TokenType from './TokenType';
+
 // TODO: write tests
 export default class TokenArray {
   private values: Uint32Array;
@@ -10,38 +13,51 @@ export default class TokenArray {
     this.size = initialSize;
   }
 
-  public push(token: number) {
+  public push(token: number): void {
     if (this.count === this.size) {
       this.resize();
     }
     this.values[this.count++] = token;
   }
 
-  private resize() {
-    const newValues = new Uint32Array(this.size * this.resizeMultiplier);
+  public resize(): void {
+    const newSize = Math.max(this.size * this.resizeMultiplier, this.size + 1);
+    const newValues = new Uint32Array(newSize);
     for (let i = 0; i < this.count; ++i) {
       newValues[i] = this.values[i];
     }
     this.values = newValues;
+    this.size = newSize;
     ++this.resizeCount;
   }
 
-  public getAtIndex(index: number) {
-    if (index < 0 || index >= this.count) {
-      throw new RangeError('out of bounds index');
-    }
+  public getEncoded(index: number): number {
+    this.checkIndexBounds(index);
     return this.values[index];
   }
 
-  public getSize() {
+  public getDecoded(index: number): [number, TokenType] {
+    this.checkIndexBounds(index);
+    return tokenDecode(this.values[index]);
+  }
+
+  public checkIndexBounds(index: number): void {
+    if (index < 0 || index >= this.count) {
+      throw new RangeError(
+        `index ${index} out of bounds (count was ${this.count})`,
+      );
+    }
+  }
+
+  public getSize(): number {
     return this.size;
   }
 
-  public getCount() {
+  public getCount(): number {
     return this.count;
   }
 
-  public getResizeCount() {
+  public getResizeCount(): number {
     return this.resizeCount;
   }
 }
