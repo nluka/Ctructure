@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
-import { tokenizeFile } from './lexer/lexer';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('*** extension "Ctructure" is now active');
@@ -28,8 +27,6 @@ function handleFormatCurrentFile() {
     'first 10 chars of current file:',
     currentFileBuffer.toString().slice(0, 10),
   );
-
-  tokenizeFile(currentFilePathName);
 }
 
 export function deactivate() {}

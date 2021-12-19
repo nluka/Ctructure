@@ -6,7 +6,7 @@ import TokenType from './TokenType';
  * @returns The start index and the token type as an array of 2 elements.
  */
 export function tokenDecode(token: number): [number, TokenType] {
-  const extractedStartIndex = (token & 0xffffff00) >>> 8; // extract leftmost 24 bits
-  const extractedType = token & 0x000000ff; // extract rightmost 8 bits
+  const extractedStartIndex = (token & 0xfffffff80) >>> 7; // extract leftmost 25 bits
+  const extractedType = token & 0x0000007f; // extract rightmost 7 bits
   return [extractedStartIndex, extractedType];
 }

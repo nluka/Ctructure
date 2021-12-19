@@ -10,9 +10,10 @@ import Tokenizer from './Tokenizer';
  * (`TokenType`) in the remaining 8 bits. Use `tokenDecode` to extract the start
  * index and type for any encoded token.
  * @param filePathname The pathname of the file to tokenize.
- * @returns An array of encoded tokens in their order of appearance in the file.
+ * @returns An array, the first element is the contents of the file, the second
+ * element is the array of encoded tokens in their order of appearance within the file.
  */
-export function tokenizeFile(filePathname: string): TokenArray {
+export function tokenizeFile(filePathname: string): [string, TokenArray] {
   const fileContents = removeCarriageReturns(
     readFileSync(filePathname).toString(),
   );
@@ -35,5 +36,5 @@ export function tokenizeFile(filePathname: string): TokenArray {
   //   console.log(`tokens[${i}]: ${startIndex} ${type}`);
   // }
 
-  return tokens;
+  return [fileContents, tokens];
 }
