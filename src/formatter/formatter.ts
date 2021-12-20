@@ -1,7 +1,7 @@
 import TokenArray from '../lexer/TokenArray';
 import TokenType from '../lexer/TokenType';
-import Node, { nodeType } from './node';
 import findEnd from './findEnd';
+import Node, { nodeType } from './node';
 
 function decodeFile(tokenizedFile: TokenArray) {
   const size = tokenizedFile.getSize();
@@ -153,7 +153,7 @@ export default function formatter(decodedFile: any[], depth: number): Node {
           currNode.setData('|');
           break;
         case TokenType.operatorBinaryBitwiseXor:
-          currNode.setData('^|');
+          currNode.setData('^');
           break;
         case TokenType.operatorBinaryBitwiseShiftLeft:
           currNode.setData('<<');
@@ -289,133 +289,6 @@ function toString(currNode: nodeType) {
   }
   return str;
 }
-
-const hashTable = {
-  specialComma: ',',
-  specialDot: '.',
-  specialSemicolon: ';',
-  specialBracketLeft: '[',
-  specialBracketRight: ']',
-  specialParenLeft: '(',
-  specialParenRight: ')',
-  specialBraceLeft: '{',
-  specialBraceRight: '}',
-
-  // Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
-  // preproDirectiveNull,
-  // preproOperatorConcat,
-  // preproDirectiveInclude,
-  // preproStandardHeader,
-  // preproDirectiveDefine,
-  // preproDirectiveContinuation,
-  // preproDirectiveUndef,
-  // preproDirectiveIf,
-  // preproDirectiveIfdef,
-  // preproDirectiveIfndef,
-  // preproMacroError,
-  // preproMacroFile,
-  // preproMacroLine,
-  // preproMacroDate,
-  // preproMacroTime,
-  // preproMacroTimestamp,
-  // preproDirectivePragma,
-
-  // Unary operators
-  operatorUnaryIncrement: '++',
-  operatorUnaryDecrement: '--',
-  // operatorUnaryOnesComplement: '',
-  // operatorUnaryLogicalNegation: '',
-  // operatorUnaryIndirection: '',
-  // operatorUnaryDereference: '',
-
-  // Binary operators
-  operatorBinaryAdd: '+',
-  operatorBinarySubtract: '-',
-  operatorBinaryDivide: '/',
-  operatorBinaryMultiply: '*',
-  operatorBinaryModulus: '%',
-  operatorBinaryEqual: '==',
-  operatorBinaryNotEqual: '!=',
-  operatorBinaryGreater: '>',
-  operatorBinaryGreaterEqual: '>=',
-  operatorBinaryLess: '<',
-  operatorBinaryLessEqual: '<=',
-  operatorBinaryLogicalAnd: '&&',
-  operatorBinaryLogicalOr: '||',
-  operatorBinaryBitwiseAnd: '&',
-  operatorBinaryBitwiseOr: '|',
-  operatorBinaryBitwiseXor: '^|',
-  // operatorBinaryBitwiseShiftLeft,
-  // operatorBinaryBitwiseShiftRight,
-  operatorBinaryAssignment: '=',
-  operatorBinaryAddAssignment: '+=',
-  operatorBinarySubtractAssignment: '-=',
-  operatorBinaryMultiplyAssignment: '*=',
-  operatorBinaryDivideAssignment: '/=',
-  operatorBinaryModulusAssignment: '%=',
-  // operatorBinaryBitwiseShiftLeftAssignment,
-  // operatorBinaryBitwiseShiftRightAssignment,
-  operatorBinaryBitwiseAndAssignment: '&=',
-  operatorBinaryBitwiseOrAssignment: '|=',
-  operatorBinaryBitwiseXorAssignment: '^|=',
-
-  // Miscellanous operators
-  operatorMiscTernaryQuestion: '?',
-  operatorMiscTernaryColon: ':',
-
-  // Constants
-  // constantNumber,
-  // constantCharacter,
-  // constantString,
-
-  // Keywords (https://en.cppreference.com/w/c/keyword)
-  keywordAlignas: '',
-  keywordAlignof: '',
-  keywordAuto: 'auto',
-  keywordAtomic: '',
-  keywordBool: 'bool',
-  keywordBreak: 'break',
-  keywordCase: 'case',
-  keywordChar: 'char',
-  keywordComplex: '',
-  keywordConst: 'const',
-  keywordContinue: 'continue',
-  keywordDefault: 'default',
-  keywordDo: 'do',
-  keywordDouble: '',
-  keywordElse: 'else',
-  keywordEnum: '',
-  keywordExtern: '',
-  keywordFloat: 'float',
-  keywordFor: 'for',
-  keywordGeneric: '',
-  keywordGoto: '',
-  keywordIf: 'if',
-  keywordImaginary: '',
-  keywordInt: 'int',
-  keywordLong: 'long',
-  keywordNoreturn: 'void',
-  keywordRegister: '',
-  keywordReturn: 'return',
-  keywordShort: 'short',
-  keywordSigned: '',
-  keywordSizeof: 'sizef',
-  keywordStatic: 'static',
-  keywordStaticassert: '',
-  keywordStruct: 'struct',
-  keywordSwitch: 'switch',
-  keywordThreadlocal: '',
-  keywordTypedef: '',
-  keywordUnion: '',
-  keywordUnsigned: 'unsigned',
-  keywordVoid: 'void',
-  keywordVolatile: 'volatile',
-  keywordWhile: 'while',
-
-  // Other
-  identifier: 'yooo',
-  label: 'yaaa',
-};
 
 const file: TokenArray = new TokenArray(32);
 file.push(TokenType.keywordIf);
