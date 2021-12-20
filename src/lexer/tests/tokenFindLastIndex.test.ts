@@ -153,7 +153,177 @@ describe('tokenFindLastIndex', () => {
     assert('(a <<= b.height)', 3, TokenCategory.preproOrOperator, 5);
   });
 
-  describe('Constants', () => {
+  describe('operator', () => {
+    //#region Arithmetic
+    assert('++', 0, TokenCategory.operator, 1);
+    assert(' ++ ', 1, TokenCategory.operator, 2);
+    assert('++a', 0, TokenCategory.operator, 1);
+    assert('a++;', 1, TokenCategory.operator, 2);
+    assert('a+++++b', 1, TokenCategory.operator, 2);
+    assert('a+++++b', 3, TokenCategory.operator, 4);
+    assert('a+++++b', 5, TokenCategory.operator, 5);
+
+    assert('--', 0, TokenCategory.operator, 1);
+    assert(' -- ', 1, TokenCategory.operator, 2);
+    assert('--a', 0, TokenCategory.operator, 1);
+    assert('a--;', 1, TokenCategory.operator, 2);
+    assert('a-----b', 1, TokenCategory.operator, 2);
+    assert('a-----b', 3, TokenCategory.operator, 4);
+    assert('a-----b', 5, TokenCategory.operator, 5);
+    assert('a-----b', 5, TokenCategory.operator, 5);
+
+    assert('a+b', 1, TokenCategory.operator, 1);
+    assert('a+\nb', 1, TokenCategory.operator, 1);
+    assert('a +b', 2, TokenCategory.operator, 2);
+    assert('a +', 2, TokenCategory.operator, 2);
+
+    assert('a-b', 1, TokenCategory.operator, 1);
+    assert('a-\nb', 1, TokenCategory.operator, 1);
+    assert('a -b', 2, TokenCategory.operator, 2);
+    assert('a -', 2, TokenCategory.operator, 2);
+    //#endregion Arithmetic
+
+    //#region Logical
+    assert('!', 0, TokenCategory.operator, 0);
+    assert('! ', 0, TokenCategory.operator, 0);
+    assert('!!a', 0, TokenCategory.operator, 0);
+    assert('!!a', 1, TokenCategory.operator, 1);
+
+    assert('&&', 0, TokenCategory.operator, 1);
+    assert('&& ', 0, TokenCategory.operator, 1);
+    assert('a&&b', 1, TokenCategory.operator, 2);
+    assert('a && 1', 2, TokenCategory.operator, 3);
+
+    assert('||', 0, TokenCategory.operator, 1);
+    assert('|| ', 0, TokenCategory.operator, 1);
+    assert('a||b', 1, TokenCategory.operator, 2);
+    assert('a || 1', 2, TokenCategory.operator, 3);
+    //#region Logical
+
+    //#region Comparison
+    assert('==', 0, TokenCategory.operator, 1);
+    assert('== ', 0, TokenCategory.operator, 1);
+    assert('==b', 0, TokenCategory.operator, 1);
+    assert('==1', 0, TokenCategory.operator, 1);
+
+    assert('!=', 0, TokenCategory.operator, 1);
+    assert('!= ', 0, TokenCategory.operator, 1);
+    assert('!=b', 0, TokenCategory.operator, 1);
+    assert('!=1', 0, TokenCategory.operator, 1);
+
+    assert('>', 0, TokenCategory.operator, 0);
+    assert('> ', 0, TokenCategory.operator, 0);
+    assert('>b', 0, TokenCategory.operator, 0);
+    assert('>1', 0, TokenCategory.operator, 0);
+
+    assert('>=', 0, TokenCategory.operator, 1);
+    assert('>= ', 0, TokenCategory.operator, 1);
+    assert('>=b', 0, TokenCategory.operator, 1);
+    assert('>=1', 0, TokenCategory.operator, 1);
+    //#region Comparison
+
+    //#region Bitwise
+    assert('~a', 0, TokenCategory.operator, 0);
+    assert('~ ', 0, TokenCategory.operator, 0);
+    assert('~\n', 0, TokenCategory.operator, 0);
+
+    assert('a&&b', 1, TokenCategory.operator, 2);
+    assert('a&&1', 1, TokenCategory.operator, 2);
+    assert('a && b', 2, TokenCategory.operator, 3);
+    assert('a &&\nb', 2, TokenCategory.operator, 3);
+
+    assert('a||b', 1, TokenCategory.operator, 2);
+    assert('a||1', 1, TokenCategory.operator, 2);
+    assert('a || b', 2, TokenCategory.operator, 3);
+    assert('a ||\nb', 2, TokenCategory.operator, 3);
+    //#endregion Bitwise
+
+    //#region Assignment
+    assert('=', 0, TokenCategory.operator, 0);
+    assert('=b', 0, TokenCategory.operator, 0);
+    assert('=1', 0, TokenCategory.operator, 0);
+    assert('= ', 0, TokenCategory.operator, 0);
+
+    assert('+=', 0, TokenCategory.operator, 1);
+    assert('+=b', 0, TokenCategory.operator, 1);
+    assert('+=1', 0, TokenCategory.operator, 1);
+    assert('+= ', 0, TokenCategory.operator, 1);
+
+    assert('-=', 0, TokenCategory.operator, 1);
+    assert('-=b', 0, TokenCategory.operator, 1);
+    assert('-=1', 0, TokenCategory.operator, 1);
+    assert('-= ', 0, TokenCategory.operator, 1);
+
+    assert('*=', 0, TokenCategory.operator, 1);
+    assert('*=b', 0, TokenCategory.operator, 1);
+    assert('*=1', 0, TokenCategory.operator, 1);
+    assert('*= ', 0, TokenCategory.operator, 1);
+
+    assert('/=', 0, TokenCategory.operator, 1);
+    assert('/=b', 0, TokenCategory.operator, 1);
+    assert('/=1', 0, TokenCategory.operator, 1);
+    assert('/= ', 0, TokenCategory.operator, 1);
+
+    assert('%=', 0, TokenCategory.operator, 1);
+    assert('%=b', 0, TokenCategory.operator, 1);
+    assert('%=1', 0, TokenCategory.operator, 1);
+    assert('%= ', 0, TokenCategory.operator, 1);
+
+    assert('>>=', 0, TokenCategory.operator, 2);
+    assert('>>=b', 0, TokenCategory.operator, 2);
+    assert('>>=1', 0, TokenCategory.operator, 2);
+    assert('>>= ', 0, TokenCategory.operator, 2);
+
+    assert('&=', 0, TokenCategory.operator, 1);
+    assert('&=b', 0, TokenCategory.operator, 1);
+    assert('&=1', 0, TokenCategory.operator, 1);
+    assert('&= ', 0, TokenCategory.operator, 1);
+
+    assert('|=', 0, TokenCategory.operator, 1);
+    assert('|=b', 0, TokenCategory.operator, 1);
+    assert('|=1', 0, TokenCategory.operator, 1);
+    assert('|= ', 0, TokenCategory.operator, 1);
+
+    assert('^=', 0, TokenCategory.operator, 1);
+    assert('^=b', 0, TokenCategory.operator, 1);
+    assert('^=1', 0, TokenCategory.operator, 1);
+    assert('^= ', 0, TokenCategory.operator, 1);
+    //#endregion Assignment
+
+    //#region Other
+    assert('*', 0, TokenCategory.operator, 0);
+    assert('**a', 0, TokenCategory.operator, 0);
+    assert('**a', 1, TokenCategory.operator, 1);
+    assert('int *const', 4, TokenCategory.operator, 4);
+    assert('int * const', 4, TokenCategory.operator, 4);
+
+    assert('&', 0, TokenCategory.operator, 0);
+    assert('& ', 0, TokenCategory.operator, 0);
+    assert('&a);', 0, TokenCategory.operator, 0);
+
+    assert('.', 0, TokenCategory.operator, 0);
+    assert('a.b', 1, TokenCategory.operator, 1);
+    assert('a. b', 1, TokenCategory.operator, 1);
+    assert('a.\nb', 1, TokenCategory.operator, 1);
+
+    assert('->', 0, TokenCategory.operator, 1);
+    assert('a->b', 1, TokenCategory.operator, 2);
+    assert('a-> b', 1, TokenCategory.operator, 2);
+    assert('a->\nb', 1, TokenCategory.operator, 2);
+
+    assert('?', 0, TokenCategory.operator, 0);
+    assert('a?b', 1, TokenCategory.operator, 1);
+    assert('a? b', 1, TokenCategory.operator, 1);
+    assert('a?\nb', 1, TokenCategory.operator, 1);
+
+    assert(':', 0, TokenCategory.operator, 0);
+    assert('a :b', 2, TokenCategory.operator, 2);
+    assert('a : b', 2, TokenCategory.operator, 2);
+    assert('a?b\n:c', 4, TokenCategory.operator, 4);
+    //#endregion Other
+  });
+
+  describe('constant', () => {
     describe('Character', () => {
       assert("'\\''", 0, TokenCategory.constant, 3);
       assert("'a'", 0, TokenCategory.constant, 2);
@@ -217,6 +387,107 @@ describe('tokenFindLastIndex', () => {
         assert(' 123.45f\n', 1, TokenCategory.constant, 7);
         assert('> 123.45F)', 2, TokenCategory.constant, 8);
       });
+    });
+  });
+
+  describe('preproMacroOrKeywordOrIdentifierOrLabel', () => {
+    describe('Macros', () => {
+      assert(
+        ' __FILE__ ',
+        1,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        8,
+      );
+      assert(
+        '(__LINE__)',
+        1,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        8,
+      );
+      assert(
+        '__DATE__ +',
+        0,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        7,
+      );
+      assert(
+        '__TIME__;',
+        0,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        7,
+      );
+      assert(
+        '__TIMESTAMP__',
+        0,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        12,
+      );
+    });
+
+    describe('Identifiers', () => {
+      assert(
+        'money',
+        0,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        4,
+      );
+      assert(
+        '[i++]',
+        1,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        1,
+      );
+      assert(
+        'if (my_int_var > 1) {\n',
+        4,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        13,
+      );
+      assert(
+        'if (myVar>1) {\n',
+        4,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        8,
+      );
+      assert(
+        'if (_myVar.member) {\n',
+        4,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        9,
+      );
+      assert(
+        'struct my_struct{\n',
+        7,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        15,
+      );
+      assert(
+        'myVar;',
+        0,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        4,
+      );
+    });
+
+    describe('Labels', () => {
+      assert(
+        '\nend:\n',
+        1,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        4,
+      );
+      assert(
+        '\nbreak_out:\n',
+        1,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        10,
+      );
+      assert(
+        ';aLabel:\n',
+        1,
+        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+        7,
+      );
     });
   });
 });

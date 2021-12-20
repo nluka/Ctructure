@@ -20,8 +20,8 @@ describe('tokenDecode', () => {
   });
 
   // same cases (but reversed) from `tokenEncode.test.ts`
-  assert(0, 0, TokenType.specialComma);
-  assert(1793, 14, TokenType.specialSemicolon);
-  assert(2_668_525, 20_847, TokenType.label);
-  assert(-45, 33_554_431, TokenType.keywordFloat);
+  assert(0, 0, TokenType.preproDirectiveInclude);
+  assert(1793, 14, TokenType.preproDirectiveDefine);
+  assert(2_668_525, 20_847, TokenType.specialComma);
+  assert(-45, 33_554_431, TokenType.operatorBinaryBitwiseAnd);
 });

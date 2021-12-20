@@ -1,82 +1,27 @@
 enum TokenType {
-  // Special
-  specialComma,
-  specialSemicolon,
-  specialBracketLeft,
-  specialBracketRight,
-  specialParenLeft,
-  specialParenRight,
-  specialBraceLeft,
-  specialBraceRight,
+  //#region Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
+  // Directives
+    preproDirectiveInclude,
+    preproDirectiveDefine,
+    preproDirectiveContinuation,
+    preproDirectiveUndef,
+    preproDirectiveIf,
+    preproDirectiveIfdef,
+    preproDirectiveIfndef,
+    preproDirectiveError,
+    preproDirectivePragma,
+  // Macros
+    preproMacroFile,
+    preproMacroLine,
+    preproMacroDate,
+    preproMacroTime,
+    preproMacroTimestamp,
+  // Other
+    preproStandardHeader, // e.g. <stdio.h>
+    preproOperatorConcat,
+  //#endregion Preprocessor
 
-  // Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
-  // preproDirectiveNull,
-  preproOperatorConcat,
-  preproDirectiveInclude,
-  preproStandardHeader,
-  preproDirectiveDefine,
-  preproDirectiveContinuation,
-  preproDirectiveUndef,
-  preproDirectiveIf,
-  preproDirectiveIfdef,
-  preproDirectiveIfndef,
-  preproMacroError,
-  preproMacroFile,
-  preproMacroLine,
-  preproMacroDate,
-  preproMacroTime,
-  preproMacroTimestamp,
-  preproDirectivePragma,
-
-  // Unary operators
-  operatorUnaryIncrement,
-  operatorUnaryDecrement,
-  operatorUnaryOnesComplement,
-  operatorUnaryLogicalNegation,
-  operatorUnaryIndirection,
-  operatorUnaryDereference,
-  // Binary operators
-  operatorBinaryAdd,
-  operatorBinarySubtract,
-  operatorBinaryDivide,
-  operatorBinaryMultiply,
-  operatorBinaryModulus,
-  operatorBinaryEqual,
-  operatorBinaryNotEqual,
-  operatorBinaryGreater,
-  operatorBinaryGreaterEqual,
-  operatorBinaryLess,
-  operatorBinaryLessEqual,
-  operatorBinaryLogicalAnd,
-  operatorBinaryLogicalOr,
-  operatorBinaryBitwiseAnd,
-  operatorBinaryBitwiseOr,
-  operatorBinaryBitwiseXor,
-  operatorBinaryBitwiseShiftLeft,
-  operatorBinaryBitwiseShiftRight,
-  operatorBinaryAssignment,
-  operatorBinaryAddAssignment,
-  operatorBinarySubtractAssignment,
-  operatorBinaryMultiplyAssignment,
-  operatorBinaryDivideAssignment,
-  operatorBinaryModulusAssignment,
-  operatorBinaryBitwiseShiftLeftAssignment,
-  operatorBinaryBitwiseShiftRightAssignment,
-  operatorBinaryBitwiseAndAssignment,
-  operatorBinaryBitwiseOrAssignment,
-  operatorBinaryBitwiseXorAssignment,
-  operatorBinaryMemberAccess,
-  operatorBinaryArrow,
-  // Miscellanous operators
-  operatorMiscTernaryQuestion,
-  operatorMiscTernaryColon,
-
-  // Constants
-  constantNumber,
-  constantCharacter,
-  constantString,
-
-  // Keywords (https://en.cppreference.com/w/c/keyword)
+  //#region Keywords (https://en.cppreference.com/w/c/keyword)
   keywordAlignas,
   keywordAlignof,
   keywordAuto,
@@ -119,10 +64,104 @@ enum TokenType {
   keywordVoid,
   keywordVolatile,
   keywordWhile,
+  //#endregion // Keywords
 
+  //#region Constants
+  constantNumber,
+  constantCharacter,
+  constantString,
+  //#endregion Constants
+
+  //#region Operators (https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B)
+  // Unary
+    // Arithmetic
+      operatorUnaryArithmeticIncrementPrefix,
+      operatorUnaryArithmeticIncrementPostfix,
+      operatorUnaryArithmeticDecrementPrefix,
+      operatorUnaryArithmeticDecrementPostfix,
+      operatorUnaryOnesComplement,
+    // Logical
+      operatorUnaryLogicalNegation,
+    // Other
+      operatorUnaryIndirection,
+      operatorUnaryDereference,
+      operatorUnaryAddressOf,
+  // Binary
+    // Arithmetic
+      operatorBinaryArithmeticAddition,
+      operatorBinaryArithmeticSubtraction,
+      operatorBinaryArithmeticDivision,
+      operatorBinaryArithmeticMultiplication,
+      operatorBinaryArithmeticModulo,
+    // Comparison
+      operatorBinaryComparisonEqualTo,
+      operatorBinaryComparisonNotEqualTo,
+      operatorBinaryComparisonGreaterThan,
+      operatorBinaryComparisonGreaterThanOrEqualTo,
+      operatorBinaryComparisonLessThan,
+      operatorBinaryComparisonLessThanOrEqualTo,
+    // Logical
+      operatorBinaryLogicalAnd,
+      operatorBinaryLogicalOr,
+    // Bitwise
+      operatorBinaryBitwiseAnd,
+      operatorBinaryBitwiseOr,
+      operatorBinaryBitwiseXor,
+      operatorBinaryBitwiseShiftLeft,
+      operatorBinaryBitwiseShiftRight,
+    // Assignment
+      operatorBinaryAssignmentDirect,
+      operatorBinaryAssignmentAddition,
+      operatorBinaryAssignmentSubtraction,
+      operatorBinaryAssignmentMultiplication,
+      operatorBinaryAssignmentDivision,
+      operatorBinaryAssignmentModulo,
+      operatorBinaryAssignmentBitwiseShiftLeft,
+      operatorBinaryAssignmentBitwiseShiftRight,
+      operatorBinaryAssignmentBitwiseAnd,
+      operatorBinaryAssignmentBitwiseOr,
+      operatorBinaryAssignmentBitwiseXor,
   // Other
+    operatorMemberSelectionDirect, // Dot (.) https://www.geeksforgeeks.org/dot-operator-in-c-c/
+    operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
+    operatorTernaryQuestion,
+    operatorTernaryColon,
+  //#endregion Operators
+
+  //#region Special
+    // Parenthesis ()
+      specialParenthesisLeft,
+      specialParenthesisRight,
+    // Braces {}
+      specialBraceLeft,
+      specialBraceRight,
+    // Brackets []
+      specialBracketLeft,
+      specialBracketRight,
+    // Other
+      specialComma,
+      specialSemicolon,
+  //#endregion Special
+
+  //#region Other
   identifier,
   label,
+  //#endregion Other
+
+  //#region Ambiguous
+  /*
+    These are for cases where 2 or more operators share the exact same symbol.
+    During the inital tokenization, these overlapping operators are assigned
+    one of the following types.
+    They are disambiguated in a later pass.
+  */
+  ambiguousPlus, // (binary addition | unary plus) ?
+  ambiguousMinus, // (binary subtraction | unary minus) ?
+  ambiguousIncrement, // (prefix | postfix) ?
+  ambiguousDecrement, // (prefix | postfix) ?
+  ambiguousAsterisk, // (binary multiplication | indirection | dereference) ?
+  ambiguousAmpersand, // (bitwise and | address of) ?
+  //#endregion Ambiguous
 }
 
 export default TokenType;

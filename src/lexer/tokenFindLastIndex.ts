@@ -55,6 +55,71 @@ export function tokenFindLastIndex(
       return startIndex;
     }
 
+    case TokenCategory.operator: {
+      const firstChar = fileContents.charAt(startIndex);
+      if (firstChar.match(/[.?:~]/)) {
+        return startIndex;
+      }
+
+      switch (firstChar) {
+        case '+': {
+          const secondIndex = startIndex + 1;
+          const secondChar = fileContents.charAt(secondIndex);
+          if (secondChar.match(/[+=]/) !== null) {
+            return secondIndex;
+          }
+          return startIndex;
+        }
+        case '-': {
+          const secondChar = fileContents.charAt(startIndex + 1);
+          if (secondChar.match(/[\-=>]/)) {
+            return startIndex + 1;
+          }
+          return startIndex;
+        }
+        case '/': /* falls through */
+        case '*': /* falls through */
+        case '%': /* falls through */
+        case '=': /* falls through */
+        case '!': /* falls through */
+        case '^': {
+          const secondIndex = startIndex + 1;
+          const secondChar = fileContents.charAt(secondIndex);
+          return secondChar === '=' ? secondIndex : startIndex;
+        }
+        case '>': {
+          const secondIndex = startIndex + 1;
+          const secondChar = fileContents.charAt(secondIndex);
+          if (secondChar === '=') {
+            return secondIndex;
+          }
+          if (secondChar === firstChar) {
+            // We have >> or <<
+            const thirdIndex = startIndex + 2;
+            const thirdChar = fileContents.charAt(thirdIndex);
+            if (thirdChar === '=') {
+              return thirdIndex;
+            }
+            return secondIndex;
+          }
+          return startIndex;
+        }
+        case '&': /* falls through */
+        case '|': {
+          const secondIndex = startIndex + 1;
+          const secondChar = fileContents.charAt(secondIndex);
+          if (secondChar === firstChar || secondChar === '=') {
+            return secondIndex;
+          }
+          return startIndex;
+        }
+      }
+
+      throw new Error(
+        `failed to find last index of operator token starting at position ${startIndex}`,
+      );
+    }
+
     case TokenCategory.constant: {
       const firstChar = fileContents.charAt(startIndex);
       if (['"', "'"].includes(firstChar)) {
@@ -79,16 +144,27 @@ export function tokenFindLastIndex(
         if (char !== '-') {
           break;
         }
-        const prevChar = fileContents[i - 1].toLowerCase();
+        const prevChar = fileContents.charAt(i - 1).toLowerCase();
         if (prevChar !== 'e') {
           break;
         }
       }
       return i - 1;
     }
-  }
 
-  throw new Error(
-    `failed to find last index of token starting at position ${startIndex}`,
-  );
+    case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
+      for (let i = startIndex; i < fileContents.length; ++i) {
+        const char = fileContents.charAt(i);
+        if (char.match(/[a-zA-Z0-9_]/)) {
+          continue;
+        }
+        if (char === ':') {
+          // Label
+          return i;
+        }
+        return i - 1;
+      }
+      return fileContents.length - 1;
+    }
+  }
 }
