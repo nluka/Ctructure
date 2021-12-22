@@ -10,12 +10,6 @@ export default class Node {
     this.child = child;
   }
 
-  getChild() {
-    return this.child;
-  }
-  setChild(child: nodeType) {
-    this.child = child;
-  }
   getNext() {
     return this.next;
   }
@@ -27,5 +21,11 @@ export default class Node {
   }
   setData(data: any) {
     this.data = data;
+  }
+  addDataPost(data: any) {
+    this.data += data;
+  }
+  addDataPre(data: any) {
+    this.data = data + this.data;
   }
 }
