@@ -1,5 +1,6 @@
 import TokenArray from '../lexer/TokenArray';
 import TokenType from '../lexer/TokenType';
+import findEndOfSwitch from './findEndOfSwitch';
 import Node, { nodeType } from './node';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
@@ -9,10 +10,10 @@ export default function formatFile(tokenizedFile: TokenArray) {
   for (let index = 0; index < size; index++) {
     decodedFile.push(tokenizedFile.getDecoded(index));
   }
-  return formatter(decodedFile);
+  return formatter(decodedFile, 0);
 }
 
-function formatter(decodedFile: any[]): Node {
+function formatter(decodedFile: any[], blockLevel: number): Node {
   const spacing = '  ';
   const size = decodedFile.length;
   const root: nodeType = new Node();
@@ -20,7 +21,6 @@ function formatter(decodedFile: any[]): Node {
   let previousType: TokenType | null = null;
   let previousGenericType: Type | null = null;
   let index = 0;
-  let blockLevel = 0;
   let context: TokenType | null = null;
   let genericContext: Type | null = null;
   let parenCount = 0;
@@ -84,11 +84,13 @@ function formatter(decodedFile: any[]): Node {
           }
           break;
         case TokenType.specialBraceRight:
+          if (context === TokenType.keywordSwitch) {
+            currNode.setData(`\n${spacing.repeat(blockLevel)}}`);
+          }
           if (genericContext === Type.varDec) {
             currNode.addDataPre(' ');
             break;
           }
-
           --blockLevel;
           break;
 
@@ -168,7 +170,13 @@ function formatter(decodedFile: any[]): Node {
 
         //Miscellanous operators
         case TokenType.operatorTernaryQuestion:
+          break;
+
         case TokenType.operatorTernaryColon:
+          if (context === TokenType.keywordCase) {
+            ++blockLevel;
+            currNode.addDataPost(`\n${spacing.repeat(blockLevel)}`);
+          }
           break;
 
         //Constants
@@ -188,6 +196,7 @@ function formatter(decodedFile: any[]): Node {
           previousGenericType = Type.keyword;
           currNode.addDataPost(' ');
           break;
+
         case TokenType.keywordInt:
         case TokenType.keywordBool:
         case TokenType.keywordFloat:
@@ -198,6 +207,32 @@ function formatter(decodedFile: any[]): Node {
           }
           currNode.addDataPost(' ');
           break;
+
+        case TokenType.keywordSwitch:
+          context = TokenType.keywordSwitch;
+          currNode.addDataPost(' ');
+          const endSwitch = findEndOfSwitch(decodedFile, index);
+          currNode.setChild(
+            formatter(decodedFile.slice(index + 1, endSwitch), blockLevel),
+          );
+          index = endSwitch - 1;
+          break;
+
+        case TokenType.keywordReturn:
+          if (decodedFile[index + 1][1] !== TokenType.specialSemicolon) {
+            currNode.addDataPost(' ');
+          }
+          break;
+
+        case TokenType.keywordCase:
+          context = TokenType.keywordCase;
+          currNode.addDataPost(' ');
+          break;
+        case TokenType.keywordBreak:
+          break;
+        case TokenType.keywordDefault:
+        case TokenType.keywordContinue:
+          break;
         case TokenType.keywordElse:
         case TokenType.keywordFor:
         case TokenType.keywordWhile:
@@ -206,36 +241,32 @@ function formatter(decodedFile: any[]): Node {
         case TokenType.keywordAlignof:
         case TokenType.keywordAuto:
         case TokenType.keywordAtomic:
-        case TokenType.keywordBreak:
-        case TokenType.keywordCase:
         case TokenType.keywordComplex:
         case TokenType.keywordConst:
-        case TokenType.keywordContinue:
-        case TokenType.keywordDefault:
         case TokenType.keywordEnum:
         case TokenType.keywordExtern:
         case TokenType.keywordGeneric:
         case TokenType.keywordGoto:
-        case TokenType.keywordReturn:
           previousGenericType = Type.keyword;
           currNode.addDataPost(' ');
           break;
 
         //Other
-        case TokenType.label:
+        case TokenType.identifier:
           currNode.setData('thing');
           if (previousGenericType === Type.prepro) {
             currNode.addDataPost('\n');
-          } else if (previousType === TokenType.identifier) {
+          } else if (previousType === TokenType.label) {
             currNode.addDataPre(' ');
           }
           previousGenericType = null;
           break;
-        case TokenType.identifier:
+        case TokenType.label:
           currNode.setData('type');
           break;
       }
 
+      //add new line with proper indentation
       if (
         previousType === TokenType.specialSemicolon ||
         (previousType === TokenType.specialBraceRight &&
@@ -245,6 +276,11 @@ function formatter(decodedFile: any[]): Node {
       ) {
         currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
       }
+
+      if (type === TokenType.keywordBreak) {
+        --blockLevel;
+      }
+
       previousType = type;
       currNode.setNext(new Node());
       currNode = currNode.getNext();
@@ -258,6 +294,9 @@ export function toString(currNode: nodeType) {
   let str: string = '';
   if (currNode?.getData()) {
     str += currNode.getData();
+    if (currNode.getChild()) {
+      str += toString(currNode.getChild());
+    }
     if (currNode.getNext()) {
       str += toString(currNode.getNext());
     }

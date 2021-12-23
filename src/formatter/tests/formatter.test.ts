@@ -3,44 +3,48 @@ import TokenType from '../../lexer/TokenType';
 import formatFile, { toString } from '../formatter';
 
 describe('formatter', () => {
-  function assert(tokenizedFile: TokenArray, expectedFormat: string) {
-    test(`return correct format`, () => {
+  function assert(
+    tokenizedFile: TokenArray,
+    expectedFormat: string,
+    name: string,
+  ) {
+    test(`return correct format for ${name}`, () => {
       expect(toString(formatFile(tokenizedFile))).toBe(expectedFormat);
     });
   }
-
-  test('placeholder', () => {
-    expect(1).toBe(1);
-  });
 
   //single var declaration
   {
     const singleVarDec: TokenArray = new TokenArray(4);
     singleVarDec.push(TokenType.keywordInt);
-    singleVarDec.push(TokenType.label);
+    singleVarDec.push(TokenType.identifier);
     singleVarDec.push(TokenType.operatorBinaryAssignmentDirect);
     singleVarDec.push(TokenType.constantNumber);
     singleVarDec.push(TokenType.specialSemicolon);
-    assert(singleVarDec, 'int thing = 0;');
+    assert(singleVarDec, 'int thing = 0;', 'single var declaration');
   }
 
   //multi var declaration
   {
     const multiVarDec: TokenArray = new TokenArray(13);
     multiVarDec.push(TokenType.keywordInt);
-    multiVarDec.push(TokenType.label);
+    multiVarDec.push(TokenType.identifier);
     multiVarDec.push(TokenType.operatorBinaryAssignmentDirect);
     multiVarDec.push(TokenType.constantNumber);
     multiVarDec.push(TokenType.specialComma);
-    multiVarDec.push(TokenType.label);
+    multiVarDec.push(TokenType.identifier);
     multiVarDec.push(TokenType.operatorBinaryAssignmentDirect);
     multiVarDec.push(TokenType.constantNumber);
     multiVarDec.push(TokenType.specialComma);
-    multiVarDec.push(TokenType.label);
+    multiVarDec.push(TokenType.identifier);
     multiVarDec.push(TokenType.operatorBinaryAssignmentDirect);
     multiVarDec.push(TokenType.constantNumber);
     multiVarDec.push(TokenType.specialSemicolon);
-    assert(multiVarDec, 'int thing = 0,\n  thing = 0,\n  thing = 0;');
+    assert(
+      multiVarDec,
+      'int thing = 0,\n  thing = 0,\n  thing = 0;',
+      'multi var declaration',
+    );
   }
 
   //single line if
@@ -48,14 +52,18 @@ describe('formatter', () => {
     const singleLineIf: TokenArray = new TokenArray(9);
     singleLineIf.push(TokenType.keywordIf);
     singleLineIf.push(TokenType.specialParenthesisLeft);
-    singleLineIf.push(TokenType.label);
+    singleLineIf.push(TokenType.identifier);
     singleLineIf.push(TokenType.operatorBinaryComparisonNotEqualTo);
     singleLineIf.push(TokenType.constantNumber);
     singleLineIf.push(TokenType.specialParenthesisRight);
     singleLineIf.push(TokenType.keywordReturn);
-    singleLineIf.push(TokenType.label);
+    singleLineIf.push(TokenType.identifier);
     singleLineIf.push(TokenType.specialSemicolon);
-    assert(singleLineIf, 'if (thing != 0)\n  return thing;\n');
+    assert(
+      singleLineIf,
+      'if (thing != 0)\n  return thing;\n',
+      'single line if',
+    );
   }
 
   //if
@@ -63,13 +71,13 @@ describe('formatter', () => {
     const ifStatement: TokenArray = new TokenArray(14);
     ifStatement.push(TokenType.keywordIf);
     ifStatement.push(TokenType.specialParenthesisLeft);
-    ifStatement.push(TokenType.label);
+    ifStatement.push(TokenType.identifier);
     ifStatement.push(TokenType.operatorBinaryComparisonNotEqualTo);
     ifStatement.push(TokenType.constantString);
     ifStatement.push(TokenType.specialParenthesisRight);
     ifStatement.push(TokenType.specialBraceLeft);
     ifStatement.push(TokenType.keywordBool);
-    ifStatement.push(TokenType.label);
+    ifStatement.push(TokenType.identifier);
     ifStatement.push(TokenType.specialSemicolon);
     ifStatement.push(TokenType.keywordReturn);
     ifStatement.push(TokenType.constantCharacter);
@@ -78,6 +86,7 @@ describe('formatter', () => {
     assert(
       ifStatement,
       'if (thing != "hello") {\n  bool thing;\n  return \'J\';\n}',
+      'standard if',
     );
   }
 
@@ -86,23 +95,23 @@ describe('formatter', () => {
     const nestedIf: TokenArray = new TokenArray(24);
     nestedIf.push(TokenType.keywordIf);
     nestedIf.push(TokenType.specialParenthesisLeft);
-    nestedIf.push(TokenType.label);
+    nestedIf.push(TokenType.identifier);
     nestedIf.push(TokenType.operatorBinaryComparisonEqualTo);
     nestedIf.push(TokenType.constantNumber);
     nestedIf.push(TokenType.specialParenthesisRight);
     nestedIf.push(TokenType.specialBraceLeft);
     nestedIf.push(TokenType.keywordIf);
     nestedIf.push(TokenType.specialParenthesisLeft);
-    nestedIf.push(TokenType.label);
+    nestedIf.push(TokenType.identifier);
     nestedIf.push(TokenType.operatorBinaryComparisonEqualTo);
     nestedIf.push(TokenType.constantNumber);
     nestedIf.push(TokenType.specialParenthesisRight);
     nestedIf.push(TokenType.specialBraceLeft);
-    nestedIf.push(TokenType.label);
+    nestedIf.push(TokenType.identifier);
     nestedIf.push(TokenType.operatorBinaryAssignmentAddition);
     nestedIf.push(TokenType.constantNumber);
     nestedIf.push(TokenType.specialSemicolon);
-    nestedIf.push(TokenType.label);
+    nestedIf.push(TokenType.identifier);
     nestedIf.push(TokenType.operatorBinaryAssignmentAddition);
     nestedIf.push(TokenType.constantNumber);
     nestedIf.push(TokenType.specialSemicolon);
@@ -111,12 +120,50 @@ describe('formatter', () => {
     assert(
       nestedIf,
       'if (thing == 0) {\n  if (thing == 0) {\n    thing += 0;\n    thing += 0;\n  }\n}',
+      'nested if',
     );
   }
 
   //switch
   {
-    const switchStatement: TokenArray = new TokenArray(10);
+    const switchStatement: TokenArray = new TokenArray(31);
+    switchStatement.push(TokenType.keywordSwitch);
+    switchStatement.push(TokenType.specialParenthesisLeft);
+    switchStatement.push(TokenType.identifier);
+    switchStatement.push(TokenType.specialParenthesisRight);
+    switchStatement.push(TokenType.specialBraceLeft);
+    switchStatement.push(TokenType.keywordCase);
+    switchStatement.push(TokenType.constantNumber);
+    switchStatement.push(TokenType.operatorTernaryColon);
+    switchStatement.push(TokenType.keywordChar);
+    switchStatement.push(TokenType.identifier);
+    switchStatement.push(TokenType.operatorBinaryAssignmentDirect);
+    switchStatement.push(TokenType.constantString);
+    switchStatement.push(TokenType.specialSemicolon);
+    switchStatement.push(TokenType.keywordBreak);
+    switchStatement.push(TokenType.specialSemicolon);
+    switchStatement.push(TokenType.keywordCase);
+    switchStatement.push(TokenType.constantNumber);
+    switchStatement.push(TokenType.operatorTernaryColon);
+    switchStatement.push(TokenType.keywordInt);
+    switchStatement.push(TokenType.identifier);
+    switchStatement.push(TokenType.operatorBinaryAssignmentDirect);
+    switchStatement.push(TokenType.constantNumber);
+    switchStatement.push(TokenType.specialSemicolon);
+    switchStatement.push(TokenType.keywordBreak);
+    switchStatement.push(TokenType.specialSemicolon);
+    switchStatement.push(TokenType.keywordDefault);
+    switchStatement.push(TokenType.operatorTernaryColon);
+    switchStatement.push(TokenType.keywordReturn);
+    switchStatement.push(TokenType.constantCharacter);
+    switchStatement.push(TokenType.specialSemicolon);
+    switchStatement.push(TokenType.specialBraceRight);
+
+    assert(
+      switchStatement,
+      'switch (thing) {\n  case 0:\n    char thing = "hello";\n    break;\n  case 0:\n    int thing = 0;\n    break;\n  default:\n    return \'J\';\n}',
+      'switch',
+    );
   }
 
   //for loop
@@ -138,35 +185,35 @@ describe('formatter', () => {
   {
     const combo: TokenArray = new TokenArray(50);
     combo.push(TokenType.preproDirectiveInclude);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.preproDirectiveInclude);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.keywordBool);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.operatorBinaryAssignmentDirect);
     combo.push(TokenType.constantNumber);
     combo.push(TokenType.specialSemicolon);
     combo.push(TokenType.keywordInt);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.specialParenthesisLeft);
     combo.push(TokenType.keywordInt);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.specialComma);
     combo.push(TokenType.keywordChar);
     combo.push(TokenType.operatorUnaryDereference);
     combo.push(TokenType.operatorUnaryDereference);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.specialParenthesisRight);
     combo.push(TokenType.specialBraceLeft);
     combo.push(TokenType.keywordIf);
     combo.push(TokenType.specialParenthesisLeft);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.operatorBinaryComparisonGreaterThan);
     combo.push(TokenType.constantCharacter);
     combo.push(TokenType.operatorBinaryLogicalAnd);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.specialParenthesisLeft);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.specialBracketLeft);
     combo.push(TokenType.constantNumber);
     combo.push(TokenType.specialBracketRight);
@@ -176,12 +223,12 @@ describe('formatter', () => {
     combo.push(TokenType.operatorBinaryComparisonEqualTo);
     combo.push(TokenType.constantNumber);
     combo.push(TokenType.specialParenthesisRight);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.operatorBinaryAssignmentDirect);
     combo.push(TokenType.constantNumber);
     combo.push(TokenType.specialSemicolon);
     combo.push(TokenType.keywordInt);
-    combo.push(TokenType.label);
+    combo.push(TokenType.identifier);
     combo.push(TokenType.operatorBinaryAssignmentDirect);
     combo.push(TokenType.specialBraceLeft);
     combo.push(TokenType.constantNumber);
@@ -190,6 +237,7 @@ describe('formatter', () => {
     assert(
       combo,
       "#include thing\n#include thing\nbool thing = 0;\nint thing(int thing, char **thing) {\n  if (thing > 'J' && thing(thing[0], 0) == 0)\n    thing = 0;\n\n  int thing = { 0 };",
+      'combo',
     );
   }
 });

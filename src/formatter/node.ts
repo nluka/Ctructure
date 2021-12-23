@@ -10,6 +10,12 @@ export default class Node {
     this.child = child;
   }
 
+  getChild() {
+    return this.child;
+  }
+  setChild(child: nodeType) {
+    this.child = child;
+  }
   getNext() {
     return this.next;
   }
