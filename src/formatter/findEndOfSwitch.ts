@@ -11,7 +11,6 @@ export default function findEndOfSwitch(
     if (type === TokenType.specialBraceRight) {
       --count;
       if (count === 0) {
-        console.log(index);
         return index;
       }
     } else if (type === TokenType.specialBraceLeft) {

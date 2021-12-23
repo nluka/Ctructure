@@ -55,7 +55,10 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
         case TokenType.specialBracketRight:
           break;
         case TokenType.specialParenthesisLeft:
-          if (context === TokenType.keywordIf) {
+          if (
+            context === TokenType.keywordIf ||
+            context === TokenType.keywordFor
+          ) {
             ++parenCount;
           } else if (genericContext === Type.varDec) {
             genericContext = Type.funcDec;
@@ -81,13 +84,18 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
           ++blockLevel;
           if (previousType === TokenType.specialParenthesisRight) {
             currNode.setData(' {\n' + spacing.repeat(blockLevel));
+          } else if (
+            previousType === TokenType.keywordElse ||
+            previousType === TokenType.keywordDo
+          ) {
+            currNode.setData('{\n' + spacing.repeat(blockLevel));
           }
+          context = null;
           break;
         case TokenType.specialBraceRight:
           if (context === TokenType.keywordSwitch) {
             currNode.setData(`\n${spacing.repeat(blockLevel)}}`);
-          }
-          if (genericContext === Type.varDec) {
+          } else if (genericContext === Type.varDec) {
             currNode.addDataPre(' ');
             break;
           }
@@ -196,6 +204,10 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
           previousGenericType = Type.keyword;
           currNode.addDataPost(' ');
           break;
+        case TokenType.keywordElse:
+          currNode.setData(' else ');
+          context = TokenType.keywordIf;
+          break;
 
         case TokenType.keywordInt:
         case TokenType.keywordBool:
@@ -218,23 +230,27 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
           index = endSwitch - 1;
           break;
 
+        case TokenType.keywordCase:
+          context = TokenType.keywordCase;
+          currNode.addDataPost(' ');
+          break;
+
         case TokenType.keywordReturn:
           if (decodedFile[index + 1][1] !== TokenType.specialSemicolon) {
             currNode.addDataPost(' ');
           }
           break;
 
-        case TokenType.keywordCase:
-          context = TokenType.keywordCase;
-          currNode.addDataPost(' ');
-          break;
         case TokenType.keywordBreak:
-          break;
         case TokenType.keywordDefault:
         case TokenType.keywordContinue:
           break;
-        case TokenType.keywordElse:
+
         case TokenType.keywordFor:
+          context = TokenType.keywordFor;
+          currNode.addDataPost(' ');
+          break;
+
         case TokenType.keywordWhile:
         case TokenType.keywordDo:
         case TokenType.keywordAlignas:
@@ -267,10 +283,17 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
       }
 
       //add new line with proper indentation
-      if (
-        previousType === TokenType.specialSemicolon ||
+
+      if (previousType === TokenType.specialSemicolon) {
+        if (context === TokenType.keywordFor) {
+          currNode.addDataPre(' ');
+        } else {
+          currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
+        }
+      } else if (
         (previousType === TokenType.specialBraceRight &&
-          type !== TokenType.specialSemicolon) ||
+          type !== TokenType.specialSemicolon &&
+          type !== TokenType.keywordElse) ||
         (genericContext === Type.multiVarDec &&
           previousType === TokenType.specialComma)
       ) {

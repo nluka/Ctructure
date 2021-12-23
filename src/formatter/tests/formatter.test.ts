@@ -8,7 +8,7 @@ describe('formatter', () => {
     expectedFormat: string,
     name: string,
   ) {
-    test(`return correct format for ${name}`, () => {
+    test(`test type: ${name}`, () => {
       expect(toString(formatFile(tokenizedFile))).toBe(expectedFormat);
     });
   }
@@ -90,6 +90,51 @@ describe('formatter', () => {
     );
   }
 
+  //if, else if, else
+  {
+    const ifelseStatement: TokenArray = new TokenArray(35);
+    ifelseStatement.push(TokenType.keywordIf);
+    ifelseStatement.push(TokenType.specialParenthesisLeft);
+    ifelseStatement.push(TokenType.identifier);
+    ifelseStatement.push(TokenType.operatorBinaryComparisonNotEqualTo);
+    ifelseStatement.push(TokenType.constantString);
+    ifelseStatement.push(TokenType.specialParenthesisRight);
+    ifelseStatement.push(TokenType.specialBraceLeft);
+    ifelseStatement.push(TokenType.keywordBool);
+    ifelseStatement.push(TokenType.identifier);
+    ifelseStatement.push(TokenType.specialSemicolon);
+    ifelseStatement.push(TokenType.keywordReturn);
+    ifelseStatement.push(TokenType.constantCharacter);
+    ifelseStatement.push(TokenType.specialSemicolon);
+    ifelseStatement.push(TokenType.specialBraceRight);
+    ifelseStatement.push(TokenType.keywordElse);
+    ifelseStatement.push(TokenType.keywordIf);
+    ifelseStatement.push(TokenType.specialParenthesisLeft);
+    ifelseStatement.push(TokenType.identifier);
+    ifelseStatement.push(TokenType.operatorBinaryComparisonNotEqualTo);
+    ifelseStatement.push(TokenType.constantNumber);
+    ifelseStatement.push(TokenType.specialParenthesisRight);
+    ifelseStatement.push(TokenType.specialBraceLeft);
+    ifelseStatement.push(TokenType.keywordInt);
+    ifelseStatement.push(TokenType.identifier);
+    ifelseStatement.push(TokenType.specialSemicolon);
+    ifelseStatement.push(TokenType.keywordReturn);
+    ifelseStatement.push(TokenType.constantString);
+    ifelseStatement.push(TokenType.specialSemicolon);
+    ifelseStatement.push(TokenType.specialBraceRight);
+    ifelseStatement.push(TokenType.keywordElse);
+    ifelseStatement.push(TokenType.specialBraceLeft);
+    ifelseStatement.push(TokenType.keywordReturn);
+    ifelseStatement.push(TokenType.constantCharacter);
+    ifelseStatement.push(TokenType.specialSemicolon);
+    ifelseStatement.push(TokenType.specialBraceRight);
+    assert(
+      ifelseStatement,
+      'if (thing != "hello") {\n  bool thing;\n  return \'J\';\n} else if (thing != 0) {\n  int thing;\n  return "hello";\n} else {\n  return \'J\';\n}',
+      'if else',
+    );
+  }
+
   //nested if
   {
     const nestedIf: TokenArray = new TokenArray(24);
@@ -168,17 +213,69 @@ describe('formatter', () => {
 
   //for loop
   {
-    const forLoop: TokenArray = new TokenArray(10);
+    const forLoop: TokenArray = new TokenArray(19);
+    forLoop.push(TokenType.keywordFor);
+    forLoop.push(TokenType.specialParenthesisLeft);
+    forLoop.push(TokenType.keywordInt);
+    forLoop.push(TokenType.identifier);
+    forLoop.push(TokenType.operatorBinaryAssignmentDirect);
+    forLoop.push(TokenType.constantNumber);
+    forLoop.push(TokenType.specialSemicolon);
+    forLoop.push(TokenType.identifier);
+    forLoop.push(TokenType.operatorBinaryComparisonGreaterThan);
+    forLoop.push(TokenType.constantNumber);
+    forLoop.push(TokenType.specialSemicolon);
+    forLoop.push(TokenType.operatorUnaryArithmeticIncrementPrefix);
+    forLoop.push(TokenType.identifier);
+    forLoop.push(TokenType.specialParenthesisRight);
+    forLoop.push(TokenType.specialBraceLeft);
+    forLoop.push(TokenType.operatorUnaryArithmeticDecrementPrefix);
+    forLoop.push(TokenType.identifier);
+    forLoop.push(TokenType.specialSemicolon);
+    forLoop.push(TokenType.specialBraceRight);
+    assert(
+      forLoop,
+      'for (int thing = 0; thing > 0; ++thing) {\n  --thing;\n}',
+      'for loop',
+    );
   }
 
   //while loop
   {
     const whileLoop: TokenArray = new TokenArray(10);
+    whileLoop.push(TokenType.keywordWhile);
+    whileLoop.push(TokenType.specialParenthesisLeft);
+    whileLoop.push(TokenType.identifier);
+    whileLoop.push(TokenType.specialParenthesisRight);
+    whileLoop.push(TokenType.specialBraceLeft);
+    whileLoop.push(TokenType.identifier);
+    whileLoop.push(TokenType.operatorBinaryAssignmentAddition);
+    whileLoop.push(TokenType.constantNumber);
+    whileLoop.push(TokenType.specialSemicolon);
+    whileLoop.push(TokenType.specialBraceRight);
+    assert(whileLoop, 'while (thing) {\n  thing += 0;\n}', 'while loop');
   }
 
   //do while loop
   {
-    const doWhileLoop: TokenArray = new TokenArray(50);
+    const doWhileLoop: TokenArray = new TokenArray(12);
+    doWhileLoop.push(TokenType.keywordDo);
+    doWhileLoop.push(TokenType.specialBraceLeft);
+    doWhileLoop.push(TokenType.identifier);
+    doWhileLoop.push(TokenType.operatorBinaryAssignmentAddition);
+    doWhileLoop.push(TokenType.constantNumber);
+    doWhileLoop.push(TokenType.specialSemicolon);
+    doWhileLoop.push(TokenType.specialBraceRight);
+    doWhileLoop.push(TokenType.keywordWhile);
+    doWhileLoop.push(TokenType.specialParenthesisLeft);
+    doWhileLoop.push(TokenType.identifier);
+    doWhileLoop.push(TokenType.specialParenthesisRight);
+    doWhileLoop.push(TokenType.specialSemicolon);
+    assert(
+      doWhileLoop,
+      'do {\n  thing += 0;\n}\nwhile (thing);',
+      'do while loop',
+    );
   }
 
   //combination
@@ -241,8 +338,6 @@ describe('formatter', () => {
     );
   }
 });
-
-// #include 0\n#include 0\n#include 0\n#include 0\n#include 0\n\n
 
 //   printhr();
 //   if (load_movie_collection_from_data_file(&movieCollection)) {
