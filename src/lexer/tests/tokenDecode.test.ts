@@ -15,10 +15,6 @@ describe('tokenDecode', () => {
     });
   }
 
-  test('placeholder', () => {
-    expect(1).toBe(1);
-  });
-
   // same cases (but reversed) from `tokenEncode.test.ts`
   assert(0, 0, TokenType.preproDirectiveInclude);
   assert(1793, 14, TokenType.preproDirectiveDefine);

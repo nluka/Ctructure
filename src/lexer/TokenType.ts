@@ -3,7 +3,6 @@ enum TokenType {
   // Directives
     preproDirectiveInclude,
     preproDirectiveDefine,
-    preproDirectiveContinuation,
     preproDirectiveUndef,
     preproDirectiveIf,
     preproDirectiveIfdef,
@@ -19,6 +18,7 @@ enum TokenType {
   // Other
     preproStandardHeader, // e.g. <stdio.h>
     preproOperatorConcat,
+    preproLineContinuation,
   //#endregion Preprocessor
 
   //#region Keywords (https://en.cppreference.com/w/c/keyword)
@@ -79,7 +79,7 @@ enum TokenType {
       operatorUnaryArithmeticIncrementPostfix,
       operatorUnaryArithmeticDecrementPrefix,
       operatorUnaryArithmeticDecrementPostfix,
-      operatorUnaryOnesComplement,
+      operatorUnaryBitwiseOnesComplement,
     // Logical
       operatorUnaryLogicalNegation,
     // Other
@@ -146,14 +146,15 @@ enum TokenType {
   //#region Other
   identifier,
   label,
+  commentSingleLine,
+  commentMultiLine,
   //#endregion Other
 
   //#region Ambiguous
   /*
     These are for cases where 2 or more operators share the exact same symbol.
     During the inital tokenization, these overlapping operators are assigned
-    one of the following types.
-    They are disambiguated in a later pass.
+    one of the following types. They are disambiguated in a later pass.
   */
   ambiguousPlus, // (binary addition | unary plus) ?
   ambiguousMinus, // (binary subtraction | unary minus) ?

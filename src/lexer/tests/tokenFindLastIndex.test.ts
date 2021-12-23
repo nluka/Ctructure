@@ -43,30 +43,18 @@ describe('tokenFindLastIndex', () => {
     assert(')', 0, TokenCategory.special, 0);
     assert('{', 0, TokenCategory.special, 0);
     assert('}', 0, TokenCategory.special, 0);
-    assert(' , ', 1, TokenCategory.special, 1);
-    assert(' ; ', 1, TokenCategory.special, 1);
-    assert(' [ ', 1, TokenCategory.special, 1);
-    assert(' ] ', 1, TokenCategory.special, 1);
-    assert(' ( ', 1, TokenCategory.special, 1);
-    assert(' ) ', 1, TokenCategory.special, 1);
-    assert(' { ', 1, TokenCategory.special, 1);
+    assert(' ,,', 1, TokenCategory.special, 1);
+    assert(' ;,', 1, TokenCategory.special, 1);
+    assert(' [0', 1, TokenCategory.special, 1);
+    assert(' ]=', 1, TokenCategory.special, 1);
+    assert(' ()', 1, TokenCategory.special, 1);
+    assert(' ){', 1, TokenCategory.special, 1);
+    assert(' {\n', 1, TokenCategory.special, 1);
     assert(' } ', 1, TokenCategory.special, 1);
-    assert(
-      'const int a = 1, b = 2',
-      15,
-      TokenCategory.special,
-      15,
-      TokenType.constantNumber,
-    );
+    assert('a = 1, ', 5, TokenCategory.special, 5, TokenType.constantNumber);
     assert('a + b; ', 5, TokenCategory.special, 5, TokenType.identifier);
     assert('a[0]', 1, TokenCategory.special, 1, TokenType.identifier);
-    assert(
-      'a[100] = 10',
-      5,
-      TokenCategory.special,
-      5,
-      TokenType.constantNumber,
-    );
+    assert('a[100] =', 5, TokenCategory.special, 5, TokenType.constantNumber);
     assert(' (a + b) ', 1, TokenCategory.special, 1);
     assert('((a+b)-1)', 5, TokenCategory.special, 5, TokenType.identifier);
     assert(' {\n', 1, TokenCategory.special, 1);
@@ -81,6 +69,7 @@ describe('tokenFindLastIndex', () => {
     assertThrowsError('0123# ', 4, TokenCategory.prepro);
     assertThrowsError('0123# define PI 3.14', 4, TokenCategory.prepro);
     assert('##', 0, TokenCategory.prepro, 1);
+    assert(' \\\n', 1, TokenCategory.prepro, 1);
     assert('#define', 0, TokenCategory.prepro, 6);
     assert('0123#define', 4, TokenCategory.prepro, 10);
     assert('0123#define PI', 4, TokenCategory.prepro, 10);
@@ -91,7 +80,7 @@ describe('tokenFindLastIndex', () => {
 
   describe('preproOrOperator', () => {
     assert(
-      '#include <stdio.h>\n',
+      '#include <stdio.h> ',
       9,
       TokenCategory.preproOrOperator,
       17,
@@ -153,6 +142,18 @@ describe('tokenFindLastIndex', () => {
     assert('(a <<= b.height)', 3, TokenCategory.preproOrOperator, 5);
   });
 
+  describe('commentOrOperator', () => {
+    assert('// single line comment\n', 0, TokenCategory.commentOrOperator, 22);
+    assert('// single line comment', 0, TokenCategory.commentOrOperator, 21);
+    assert('/* multi line comment */', 0, TokenCategory.commentOrOperator, 23);
+    assert('/* multi line comment', 0, TokenCategory.commentOrOperator, 20);
+
+    assert('/=', 0, TokenCategory.commentOrOperator, 1);
+    assert('/=b', 0, TokenCategory.commentOrOperator, 1);
+    assert('/=1', 0, TokenCategory.commentOrOperator, 1);
+    assert('/= ', 0, TokenCategory.commentOrOperator, 1);
+  });
+
   describe('operator', () => {
     //#region Arithmetic
     assert('++', 0, TokenCategory.operator, 1);
@@ -169,7 +170,6 @@ describe('tokenFindLastIndex', () => {
     assert('a--;', 1, TokenCategory.operator, 2);
     assert('a-----b', 1, TokenCategory.operator, 2);
     assert('a-----b', 3, TokenCategory.operator, 4);
-    assert('a-----b', 5, TokenCategory.operator, 5);
     assert('a-----b', 5, TokenCategory.operator, 5);
 
     assert('a+b', 1, TokenCategory.operator, 1);
@@ -198,7 +198,7 @@ describe('tokenFindLastIndex', () => {
     assert('|| ', 0, TokenCategory.operator, 1);
     assert('a||b', 1, TokenCategory.operator, 2);
     assert('a || 1', 2, TokenCategory.operator, 3);
-    //#region Logical
+    //#endregion Logical
 
     //#region Comparison
     assert('==', 0, TokenCategory.operator, 1);
@@ -220,22 +220,22 @@ describe('tokenFindLastIndex', () => {
     assert('>= ', 0, TokenCategory.operator, 1);
     assert('>=b', 0, TokenCategory.operator, 1);
     assert('>=1', 0, TokenCategory.operator, 1);
-    //#region Comparison
+    //#endregion Comparison
 
     //#region Bitwise
     assert('~a', 0, TokenCategory.operator, 0);
     assert('~ ', 0, TokenCategory.operator, 0);
     assert('~\n', 0, TokenCategory.operator, 0);
 
-    assert('a&&b', 1, TokenCategory.operator, 2);
-    assert('a&&1', 1, TokenCategory.operator, 2);
-    assert('a && b', 2, TokenCategory.operator, 3);
-    assert('a &&\nb', 2, TokenCategory.operator, 3);
+    assert('a&b', 1, TokenCategory.operator, 1);
+    assert('a&1', 1, TokenCategory.operator, 1);
+    assert('a & b', 2, TokenCategory.operator, 2);
+    assert('a &\nb', 2, TokenCategory.operator, 2);
 
-    assert('a||b', 1, TokenCategory.operator, 2);
-    assert('a||1', 1, TokenCategory.operator, 2);
-    assert('a || b', 2, TokenCategory.operator, 3);
-    assert('a ||\nb', 2, TokenCategory.operator, 3);
+    assert('a|b', 1, TokenCategory.operator, 1);
+    assert('a|1', 1, TokenCategory.operator, 1);
+    assert('a | b', 2, TokenCategory.operator, 2);
+    assert('a |\nb', 2, TokenCategory.operator, 2);
     //#endregion Bitwise
 
     //#region Assignment
@@ -258,11 +258,6 @@ describe('tokenFindLastIndex', () => {
     assert('*=b', 0, TokenCategory.operator, 1);
     assert('*=1', 0, TokenCategory.operator, 1);
     assert('*= ', 0, TokenCategory.operator, 1);
-
-    assert('/=', 0, TokenCategory.operator, 1);
-    assert('/=b', 0, TokenCategory.operator, 1);
-    assert('/=1', 0, TokenCategory.operator, 1);
-    assert('/= ', 0, TokenCategory.operator, 1);
 
     assert('%=', 0, TokenCategory.operator, 1);
     assert('%=b', 0, TokenCategory.operator, 1);

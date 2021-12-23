@@ -107,7 +107,7 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
         case TokenType.preproDirectiveInclude:
         case TokenType.preproStandardHeader:
         case TokenType.preproDirectiveDefine:
-        case TokenType.preproDirectiveContinuation:
+        case TokenType.preproLineContinuation:
         case TokenType.preproDirectiveUndef:
         case TokenType.preproDirectiveIf:
         case TokenType.preproDirectiveIfdef:
@@ -127,7 +127,7 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
         case TokenType.operatorUnaryArithmeticIncrementPostfix:
         case TokenType.operatorUnaryArithmeticDecrementPrefix:
         case TokenType.operatorUnaryArithmeticDecrementPostfix:
-        case TokenType.operatorUnaryOnesComplement:
+        case TokenType.operatorUnaryBitwiseOnesComplement:
         case TokenType.operatorUnaryLogicalNegation:
         case TokenType.operatorUnaryIndirection:
         case TokenType.operatorUnaryDereference:

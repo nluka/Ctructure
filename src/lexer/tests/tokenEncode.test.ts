@@ -12,10 +12,6 @@ describe('tokenEncode', () => {
     });
   }
 
-  test('placeholder', () => {
-    expect(1).toBe(1);
-  });
-
   // startIndex(decimal) tokenType(decimal)
   // startIndex(binary)  tokenType(binary) = encodedToken(decimal)
 

@@ -1,9 +1,9 @@
 import TokenCategory from './TokenCategory';
-import { tokenSpecialValueToTypeMap } from './tokenMaps';
+import tokenValueToTypeMap from './tokenMaps';
 
 /**
  * Determines the category of a token based on its first character.
- * @param tokenFirstChar A string whose first char is the first char of the token.
+ * @param tokenFirstChar A string that begins with the first character of the token.
  * @param tokenStartIndex The starting index of the token.
  * @returns The category of the token - throws `TokenCategoryDeterminationError`
  * if category cannot be determined.
@@ -12,11 +12,14 @@ export default function tokenDetermineCategory(
   tokenFirstChar: string,
   tokenStartIndex: number,
 ): TokenCategory {
-  if (tokenFirstChar.match(/^#/)) {
+  if (tokenFirstChar.match(/^[#\\]/)) {
     return TokenCategory.prepro;
   }
-  if (tokenFirstChar.match(/^[<\\]/)) {
+  if (tokenFirstChar.match(/^[<]/)) {
     return TokenCategory.preproOrOperator;
+  }
+  if (tokenFirstChar.match(/^\//)) {
+    return TokenCategory.commentOrOperator;
   }
   if (tokenFirstChar.match(/^[a-zA-Z_]/)) {
     return TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel;
@@ -27,7 +30,7 @@ export default function tokenDetermineCategory(
   if (tokenFirstChar.match(/^[+\-~!*/%=>&|^.?:]/)) {
     return TokenCategory.operator;
   }
-  if (tokenSpecialValueToTypeMap.get(tokenFirstChar) !== undefined) {
+  if (tokenValueToTypeMap.get(tokenFirstChar) !== undefined) {
     return TokenCategory.special;
   }
 

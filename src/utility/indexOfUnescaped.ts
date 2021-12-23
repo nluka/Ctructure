@@ -5,7 +5,7 @@ export default function indexOfUnescaped(
 ) {
   let searchCount = 0;
   let index = startIndex;
-  while (1) {
+  while (true) {
     index = searchString.indexOf(
       searchChar,
       searchCount === 0 ? index : index + 1,
@@ -19,5 +19,4 @@ export default function indexOfUnescaped(
     }
     ++searchCount;
   }
-  return -1; // to satisfy tsc
 }

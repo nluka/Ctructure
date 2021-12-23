@@ -2,6 +2,7 @@ enum TokenCategory {
   special,
   prepro,
   preproOrOperator,
+  commentOrOperator,
   operator,
   constant,
   preproMacroOrKeywordOrIdentifierOrLabel,

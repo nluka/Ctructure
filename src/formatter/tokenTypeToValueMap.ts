@@ -3,7 +3,7 @@ import TokenType from '../lexer/TokenType';
 const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.preproDirectiveInclude, '#include'],
   [TokenType.preproDirectiveDefine, '#define'],
-  [TokenType.preproDirectiveContinuation, '\\'],
+  [TokenType.preproLineContinuation, '\\'],
   [TokenType.preproDirectiveUndef, '#undef'],
   [TokenType.preproDirectiveIf, '#if'],
   [TokenType.preproDirectiveIfdef, '#ifdef'],
@@ -64,7 +64,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.operatorUnaryArithmeticIncrementPostfix, '++'],
   [TokenType.operatorUnaryArithmeticDecrementPrefix, '--'],
   [TokenType.operatorUnaryArithmeticDecrementPostfix, '--'],
-  [TokenType.operatorUnaryOnesComplement, '~'],
+  [TokenType.operatorUnaryBitwiseOnesComplement, '~'],
   [TokenType.operatorUnaryLogicalNegation, '!'],
   [TokenType.operatorUnaryIndirection, '*'],
   [TokenType.operatorUnaryDereference, '*'],

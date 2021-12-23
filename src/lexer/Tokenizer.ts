@@ -48,7 +48,7 @@ export default class Tokenizer {
   private moveToNextToken(): boolean {
     const currentChar = this.fileContents.charAt(this.cursorPosition);
 
-    while (1) {
+    while (true) {
       if (this.cursorPosition >= this.fileContents.length) {
         // Reached end of file
         return false;
@@ -59,7 +59,5 @@ export default class Tokenizer {
       }
       ++this.cursorPosition;
     }
-
-    return false; // to satisfy tsc
   }
 }

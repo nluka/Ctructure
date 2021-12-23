@@ -31,7 +31,7 @@ describe('tokenDetermineCategory', () => {
     assert('#include', TokenCategory.prepro);
     assert('<stdio.h>', TokenCategory.preproOrOperator);
     assert('#define', TokenCategory.prepro);
-    assert('\\', TokenCategory.preproOrOperator);
+    assert('\\', TokenCategory.prepro);
     assert('#undef', TokenCategory.prepro);
     assert('#if', TokenCategory.prepro);
     assert('#ifdef', TokenCategory.prepro);
@@ -59,7 +59,7 @@ describe('tokenDetermineCategory', () => {
     describe('Binary', () => {
       assert('+', TokenCategory.operator);
       assert('-', TokenCategory.operator);
-      assert('/', TokenCategory.operator);
+      assert('/', TokenCategory.commentOrOperator);
       assert('*', TokenCategory.operator);
       assert('%', TokenCategory.operator);
       assert('==', TokenCategory.operator);
@@ -79,7 +79,7 @@ describe('tokenDetermineCategory', () => {
       assert('+=', TokenCategory.operator);
       assert('-=', TokenCategory.operator);
       assert('*=', TokenCategory.operator);
-      assert('/=', TokenCategory.operator);
+      assert('/=', TokenCategory.commentOrOperator);
       assert('%=', TokenCategory.operator);
       assert('<<=', TokenCategory.preproOrOperator);
       assert('>>=', TokenCategory.operator);
@@ -144,11 +144,13 @@ describe('tokenDetermineCategory', () => {
     });
     describe('float', () => {
       assert('123.45', TokenCategory.constant);
+      assert('123.45f', TokenCategory.constant);
+      assert('123.45F', TokenCategory.constant);
     });
   });
 
   describe('Keywords', () => {
-    describe('common', () => {
+    describe('Common', () => {
       assert('auto', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('break', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('case', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
@@ -184,7 +186,7 @@ describe('tokenDetermineCategory', () => {
       assert('volatile', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('while', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     });
-    describe('reserved & convenience macros', () => {
+    describe('Reserved & convenience macros', () => {
       assert('_Alignas', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('alignas', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('_Alignof', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
@@ -238,5 +240,19 @@ describe('tokenDetermineCategory', () => {
       'some_struct_t',
       TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
     );
+  });
+
+  describe('Labels', () => {
+    assert('get_out:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+    assert('exit:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+    assert(
+      'handle_error:',
+      TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
+    );
+  });
+
+  describe('Comments', () => {
+    assert('// Single line comment', TokenCategory.commentOrOperator);
+    assert('/* Multiple line comment */', TokenCategory.commentOrOperator);
   });
 });
