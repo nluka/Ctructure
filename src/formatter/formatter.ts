@@ -6,11 +6,15 @@ import Node, { nodeType } from './node';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
 export default function formatFile(tokenizedFile: TokenArray) {
-  tokenizedFile.slice(0, tokenizedFile.getCount());
-  return formatter(tokenizedFile.slice(0, tokenizedFile.getCount()), 0);
+  return formatter(tokenizedFile.getValues(), 0, tokenizedFile.getCount(), 0);
 }
 
-function formatter(tokenizedFile: Uint32Array, blockLevel: number): Node {
+function formatter(
+  tokenizedFile: Uint32Array,
+  startIndex: number,
+  endIndex: number,
+  blockLevel: number,
+): Node {
   const spacing = '  ';
   const root: nodeType = new Node();
   let currNode: nodeType = root;
@@ -19,7 +23,7 @@ function formatter(tokenizedFile: Uint32Array, blockLevel: number): Node {
   let context: TokenType | null = null;
   let genericContext: Type | null = null;
   let parenCount = 0;
-  for (let index = 0; index < tokenizedFile.length; ++index) {
+  for (let index = startIndex; index < endIndex; ++index) {
     if (currNode) {
       const decodedToken: [number, TokenType] = tokenDecode(
         tokenizedFile[index],
@@ -223,7 +227,7 @@ function formatter(tokenizedFile: Uint32Array, blockLevel: number): Node {
           currNode.addDataPost(' ');
           const endSwitch = findEndOfSwitch(tokenizedFile, index);
           currNode.setChild(
-            formatter(tokenizedFile.slice(index + 1, endSwitch), blockLevel),
+            formatter(tokenizedFile, index + 1, endSwitch, blockLevel),
           );
           index = endSwitch - 1;
           break;
