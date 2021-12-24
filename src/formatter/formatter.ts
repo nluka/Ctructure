@@ -1,33 +1,30 @@
 import TokenArray from '../lexer/TokenArray';
+import { tokenDecode } from '../lexer/tokenDecode';
 import TokenType from '../lexer/TokenType';
 import findEndOfSwitch from './findEndOfSwitch';
 import Node, { nodeType } from './node';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
 export default function formatFile(tokenizedFile: TokenArray) {
-  const size = tokenizedFile.getSize();
-  const decodedFile = [];
-  for (let index = 0; index < size; index++) {
-    decodedFile.push(tokenizedFile.getDecoded(index));
-  }
-  return formatter(decodedFile, 0);
+  tokenizedFile.slice(0, tokenizedFile.getCount());
+  return formatter(tokenizedFile.slice(0, tokenizedFile.getCount()), 0);
 }
 
-function formatter(decodedFile: any[], blockLevel: number): Node {
+function formatter(tokenizedFile: Uint32Array, blockLevel: number): Node {
   const spacing = '  ';
-  const size = decodedFile.length;
   const root: nodeType = new Node();
   let currNode: nodeType = root;
   let previousType: TokenType | null = null;
   let previousGenericType: Type | null = null;
-  let index = 0;
   let context: TokenType | null = null;
   let genericContext: Type | null = null;
   let parenCount = 0;
-  while (decodedFile[index] !== undefined) {
+  for (let index = 0; index < tokenizedFile.length; ++index) {
     if (currNode) {
-      const position: number = decodedFile[index][0];
-      const type: TokenType = decodedFile[index][1];
+      const decodedToken: [number, TokenType] = tokenDecode(
+        tokenizedFile[index],
+      );
+      const type: TokenType = decodedToken[1];
       let currNodeData = tokenTypeToValueMap.get(type);
       if (currNodeData === undefined) {
         currNodeData = '';
@@ -69,7 +66,8 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
             --parenCount;
             if (
               parenCount === 0 &&
-              decodedFile[index + 1][1] !== TokenType.specialBraceLeft
+              tokenDecode(tokenizedFile[index + 1])[1] !==
+                TokenType.specialBraceLeft
             ) {
               currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
               genericContext = Type.singleLineIf;
@@ -223,9 +221,9 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
         case TokenType.keywordSwitch:
           context = TokenType.keywordSwitch;
           currNode.addDataPost(' ');
-          const endSwitch = findEndOfSwitch(decodedFile, index);
+          const endSwitch = findEndOfSwitch(tokenizedFile, index);
           currNode.setChild(
-            formatter(decodedFile.slice(index + 1, endSwitch), blockLevel),
+            formatter(tokenizedFile.slice(index + 1, endSwitch), blockLevel),
           );
           index = endSwitch - 1;
           break;
@@ -236,7 +234,10 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
           break;
 
         case TokenType.keywordReturn:
-          if (decodedFile[index + 1][1] !== TokenType.specialSemicolon) {
+          if (
+            tokenDecode(tokenizedFile[index + 1])[1] !==
+            TokenType.specialSemicolon
+          ) {
             currNode.addDataPost(' ');
           }
           break;
@@ -284,20 +285,19 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
 
       //add new line with proper indentation
 
-      if (previousType === TokenType.specialSemicolon) {
-        if (context === TokenType.keywordFor) {
-          currNode.addDataPre(' ');
-        } else {
-          currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
-        }
-      } else if (
+      if (
+        previousType === TokenType.specialSemicolon ||
         (previousType === TokenType.specialBraceRight &&
           type !== TokenType.specialSemicolon &&
           type !== TokenType.keywordElse) ||
         (genericContext === Type.multiVarDec &&
           previousType === TokenType.specialComma)
       ) {
-        currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
+        if (context === TokenType.keywordFor) {
+          currNode.addDataPre(' ');
+        } else {
+          currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
+        }
       }
 
       if (type === TokenType.keywordBreak) {
@@ -307,7 +307,6 @@ function formatter(decodedFile: any[], blockLevel: number): Node {
       previousType = type;
       currNode.setNext(new Node());
       currNode = currNode.getNext();
-      ++index;
     }
   }
   return root;

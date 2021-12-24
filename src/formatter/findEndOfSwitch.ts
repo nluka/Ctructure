@@ -1,13 +1,14 @@
+import TokenArray from '../lexer/TokenArray';
+import { tokenDecode } from '../lexer/tokenDecode';
 import TokenType from '../lexer/TokenType';
 
 export default function findEndOfSwitch(
-  decodedFile: any[],
+  tokenizedFile: Uint32Array,
   index: number,
 ): number {
   let count = 0;
-  const fileLength = decodedFile.length;
   while (count >= 0) {
-    const type = decodedFile[index][1];
+    const type = tokenDecode(tokenizedFile[index])[1];
     if (type === TokenType.specialBraceRight) {
       --count;
       if (count === 0) {

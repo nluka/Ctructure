@@ -13,6 +13,10 @@ export default class TokenArray {
     this.size = initialSize;
   }
 
+  public slice(startIndex: number, endIndex: number): Uint32Array {
+    return this.values.slice(startIndex, endIndex);
+  }
+
   public push(token: number): void {
     if (this.count === this.size) {
       this.resize();
