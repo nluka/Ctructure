@@ -5,29 +5,28 @@ import findEndOfSwitch from './findEndOfSwitch';
 import Node, { nodeType } from './node';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
-export default function formatFile(tokenizedFile: TokenArray) {
-  return formatter(tokenizedFile.getValues(), 0, tokenizedFile.getCount(), 0);
+export default function formatFile(tokenArray: TokenArray) {
+  return formatter(tokenArray.getValues(), 0, tokenArray.getCount(), 0);
 }
 
 function formatter(
-  tokenizedFile: Uint32Array,
+  tokens: Uint32Array,
   startIndex: number,
   endIndex: number,
   blockLevel: number,
 ): Node {
   const spacing = '  ';
   const root: nodeType = new Node();
-  let currNode: nodeType = root;
-  let previousType: TokenType | null = null;
-  let previousGenericType: Type | null = null;
-  let context: TokenType | null = null;
-  let genericContext: Type | null = null;
-  let parenCount = 0;
-  for (let index = startIndex; index < endIndex; ++index) {
+  let currNode: nodeType = root,
+    previousType: TokenType | null = null,
+    previousGenericType: Type | null = null,
+    context: TokenType | null = null,
+    genericContext: Type | null = null,
+    parenCount = 0;
+
+  for (let i = startIndex; i < endIndex; ++i) {
     if (currNode) {
-      const decodedToken: [number, TokenType] = tokenDecode(
-        tokenizedFile[index],
-      );
+      const decodedToken: [number, TokenType] = tokenDecode(tokens[i]);
       const type: TokenType = decodedToken[1];
       let currNodeData = tokenTypeToValueMap.get(type);
       if (currNodeData === undefined) {
@@ -46,15 +45,18 @@ function formatter(
           }
           currNode.addDataPost(' ');
           break;
+
         case TokenType.specialSemicolon:
           if (genericContext === Type.singleLineIf) {
             currNode.addDataPost('\n');
           }
           genericContext = null;
           break;
+
         case TokenType.specialBracketLeft:
         case TokenType.specialBracketRight:
           break;
+
         case TokenType.specialParenthesisLeft:
           if (
             context === TokenType.keywordIf ||
@@ -65,19 +67,20 @@ function formatter(
             genericContext = Type.funcDec;
           }
           break;
+
         case TokenType.specialParenthesisRight:
           if (context === TokenType.keywordIf) {
             --parenCount;
             if (
               parenCount === 0 &&
-              tokenDecode(tokenizedFile[index + 1])[1] !==
-                TokenType.specialBraceLeft
+              tokenDecode(tokens[i + 1])[1] !== TokenType.specialBraceLeft
             ) {
               currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
               genericContext = Type.singleLineIf;
             }
           }
           break;
+
         case TokenType.specialBraceLeft:
           if (genericContext === Type.varDec) {
             currNode.addDataPost(' ');
@@ -94,6 +97,7 @@ function formatter(
           }
           context = null;
           break;
+
         case TokenType.specialBraceRight:
           if (context === TokenType.keywordSwitch) {
             currNode.setData(`\n${spacing.repeat(blockLevel)}}`);
@@ -135,7 +139,8 @@ function formatter(
         case TokenType.operatorUnaryDereference:
           previousGenericType = Type.operatorUnary;
           break;
-        //Binary operators
+
+        // Binary operators
         case TokenType.operatorBinaryArithmeticMultiplication:
         case TokenType.operatorBinaryArithmeticAddition:
         case TokenType.operatorBinaryArithmeticSubtraction:
@@ -178,7 +183,7 @@ function formatter(
         case TokenType.operatorMemberSelectionIndirect:
           break;
 
-        //Miscellanous operators
+        // Miscellanous operators
         case TokenType.operatorTernaryQuestion:
           break;
 
@@ -189,7 +194,7 @@ function formatter(
           }
           break;
 
-        //Constants
+        // Constants
         case TokenType.constantNumber:
           currNode.setData('0');
           break;
@@ -200,7 +205,7 @@ function formatter(
           currNode.setData('"hello"');
           break;
 
-        //Keywords (https://en.cppreference.com/w/c/keyword)
+        // Keywords (https://en.cppreference.com/w/c/keyword)
         case TokenType.keywordIf:
           context = TokenType.keywordIf;
           previousGenericType = Type.keyword;
@@ -225,11 +230,9 @@ function formatter(
         case TokenType.keywordSwitch:
           context = TokenType.keywordSwitch;
           currNode.addDataPost(' ');
-          const endSwitch = findEndOfSwitch(tokenizedFile, index);
-          currNode.setChild(
-            formatter(tokenizedFile, index + 1, endSwitch, blockLevel),
-          );
-          index = endSwitch - 1;
+          const endSwitch = findEndOfSwitch(tokens, i);
+          currNode.setChild(formatter(tokens, i + 1, endSwitch, blockLevel));
+          i = endSwitch - 1;
           break;
 
         case TokenType.keywordCase:
@@ -238,10 +241,7 @@ function formatter(
           break;
 
         case TokenType.keywordReturn:
-          if (
-            tokenDecode(tokenizedFile[index + 1])[1] !==
-            TokenType.specialSemicolon
-          ) {
+          if (tokenDecode(tokens[i + 1])[1] !== TokenType.specialSemicolon) {
             currNode.addDataPost(' ');
           }
           break;
@@ -272,7 +272,7 @@ function formatter(
           currNode.addDataPost(' ');
           break;
 
-        //Other
+        // Other
         case TokenType.identifier:
           currNode.setData('thing');
           if (previousGenericType === Type.prepro) {
@@ -282,13 +282,13 @@ function formatter(
           }
           previousGenericType = null;
           break;
+
         case TokenType.label:
-          currNode.setData('type');
+          currNode.setData('label:');
           break;
       }
 
-      //add new line with proper indentation
-
+      // Add new line with proper indentation
       if (
         previousType === TokenType.specialSemicolon ||
         (previousType === TokenType.specialBraceRight &&
@@ -318,6 +318,7 @@ function formatter(
 
 export function toString(currNode: nodeType) {
   let str: string = '';
+
   if (currNode?.getData()) {
     str += currNode.getData();
     if (currNode.getChild()) {
@@ -327,6 +328,7 @@ export function toString(currNode: nodeType) {
       str += toString(currNode.getNext());
     }
   }
+
   return str;
 }
 
