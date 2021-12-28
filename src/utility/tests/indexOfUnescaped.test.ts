@@ -1,4 +1,4 @@
-import indexOfUnescaped from './indexOfUnescaped';
+import indexOfUnescaped from '../indexOfUnescaped';
 
 describe('indexOfUnescaped', () => {
   function assert(

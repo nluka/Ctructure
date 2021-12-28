@@ -5,6 +5,7 @@ export default function indexOfUnescaped(
 ) {
   let searchCount = 0;
   let index = startIndex;
+
   while (true) {
     index = searchString.indexOf(
       searchChar,

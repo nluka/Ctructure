@@ -2,6 +2,14 @@ import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory from './TokenCategory';
 import TokenType from './TokenType';
 
+const multiLineCommentRegex = /\*/,
+  singleCharOperatorRegex = /[.?:~]/,
+  plusPlusOrPlusEqualRegex = /[+=]/,
+  minusMinusOrMinusEqualOrArrowRegex = /[\-=>]/,
+  singleOrDoubleQuoteRegex = /["']/,
+  AlphanumericRegex = /[0-9a-zA-Z]/,
+  AlphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
+
 export function tokenFindLastIndex(
   fileContents: string,
   startIndex: number,
@@ -77,7 +85,7 @@ export function tokenFindLastIndex(
           ? fileContents.length - 1
           : firstNewlineCharIndex;
       }
-      if (secondChar.match(/\*/)) {
+      if (secondChar.match(multiLineCommentRegex)) {
         // We have a multi line comment
         const closingSequenceStartIndex = fileContents.indexOf(
           '*/',
@@ -92,7 +100,7 @@ export function tokenFindLastIndex(
 
     case TokenCategory.operator: {
       const firstChar = fileContents.charAt(startIndex);
-      if (firstChar.match(/[.?:~]/)) {
+      if (firstChar.match(singleCharOperatorRegex)) {
         // We have a single char operator
         return startIndex;
       }
@@ -101,7 +109,7 @@ export function tokenFindLastIndex(
         case '+': {
           const secondCharIndex = startIndex + 1;
           const secondChar = fileContents.charAt(secondCharIndex);
-          if (secondChar.match(/[+=]/) !== null) {
+          if (secondChar.match(plusPlusOrPlusEqualRegex)) {
             // We have ++ or +=
             return secondCharIndex;
           }
@@ -109,7 +117,7 @@ export function tokenFindLastIndex(
         }
         case '-': {
           const secondChar = fileContents.charAt(startIndex + 1);
-          if (secondChar.match(/[\-=>]/)) {
+          if (secondChar.match(minusMinusOrMinusEqualOrArrowRegex)) {
             // We have -- or -= or ->
             return startIndex + 1;
           }
@@ -163,7 +171,7 @@ export function tokenFindLastIndex(
 
     case TokenCategory.constant: {
       const firstChar = fileContents.charAt(startIndex);
-      if (firstChar.match(/["']/)) {
+      if (firstChar.match(singleOrDoubleQuoteRegex)) {
         // We have a string or char constant
         const closingCharIndex = indexOfUnescaped(
           fileContents,
@@ -178,7 +186,7 @@ export function tokenFindLastIndex(
       let i: number;
       for (i = startIndex + 1; i < fileContents.length; ++i) {
         const char = fileContents.charAt(i);
-        const isAlphanumericChar = char.match(/[0-9a-zA-Z]/);
+        const isAlphanumericChar = char.match(AlphanumericRegex);
         if (isAlphanumericChar || char === '.') {
           continue;
         }
@@ -196,7 +204,7 @@ export function tokenFindLastIndex(
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
       for (let i = startIndex; i < fileContents.length; ++i) {
         const char = fileContents.charAt(i);
-        if (char.match(/[a-zA-Z0-9_]/)) {
+        if (char.match(AlphanumericOrUnderscoreRegex)) {
           continue;
         }
         if (char === ':') {

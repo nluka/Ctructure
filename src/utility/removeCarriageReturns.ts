@@ -1,4 +1,5 @@
-// TODO: write tests
-export default function removeCarriageReturns(fileContents: string) {
-  return fileContents.replace(new RegExp('\r', 'g'), '');
+const regex = /\r/g;
+
+export default function removeCarriageReturns(input: string) {
+  return input.replace(regex, '');
 }

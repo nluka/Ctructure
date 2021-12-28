@@ -1,6 +1,13 @@
 import TokenCategory from './TokenCategory';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
+const preproRegex = /^[#\\]/,
+  preproOrOperatorRegex = /^[<]/,
+  commentOrOperatorRegex = /^\//,
+  preproMacroOrKeywordOrIdentifierOrLabelRegex = /^[a-zA-Z_]/,
+  constantRegex = /^[0-9'"]/,
+  operatorRegex = /^[+\-~!*/%=>&|^.?:]/;
+
 /**
  * Determines the category of a token based on its first character.
  * @param tokenFirstChar A string that begins with the first character of the token.
@@ -12,22 +19,22 @@ export default function tokenDetermineCategory(
   tokenFirstChar: string,
   tokenStartIndex: number,
 ): TokenCategory {
-  if (tokenFirstChar.match(/^[#\\]/)) {
+  if (tokenFirstChar.match(preproRegex)) {
     return TokenCategory.prepro;
   }
-  if (tokenFirstChar.match(/^[<]/)) {
+  if (tokenFirstChar.match(preproOrOperatorRegex)) {
     return TokenCategory.preproOrOperator;
   }
-  if (tokenFirstChar.match(/^\//)) {
+  if (tokenFirstChar.match(commentOrOperatorRegex)) {
     return TokenCategory.commentOrOperator;
   }
-  if (tokenFirstChar.match(/^[a-zA-Z_]/)) {
+  if (tokenFirstChar.match(preproMacroOrKeywordOrIdentifierOrLabelRegex)) {
     return TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel;
   }
-  if (tokenFirstChar.match(/^[0-9'"]/)) {
+  if (tokenFirstChar.match(constantRegex)) {
     return TokenCategory.constant;
   }
-  if (tokenFirstChar.match(/^[+\-~!*/%=>&|^.?:]/)) {
+  if (tokenFirstChar.match(operatorRegex)) {
     return TokenCategory.operator;
   }
   if (tokenValueToTypeMap.get(tokenFirstChar) !== undefined) {
