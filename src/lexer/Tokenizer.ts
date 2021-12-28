@@ -11,7 +11,7 @@ export default class Tokenizer {
   constructor(private fileContents: string) {}
 
   public extractNextTokenEncoded(): number | null {
-    const isThereAnotherToken = this.moveToNextToken();
+    const isThereAnotherToken = this.moveCursorToBeginningOfNextToken();
     if (!isThereAnotherToken) {
       return null;
     }
@@ -34,9 +34,12 @@ export default class Tokenizer {
       tokenLastIndex,
       tokenCategory,
     );
-    this.prevTokenType = tokenType;
 
     const encodedToken = tokenEncode(this.cursorPosition, tokenType);
+
+    this.prevTokenType = tokenType;
+    this.cursorPosition = tokenLastIndex + 1;
+
     return encodedToken;
   }
 
@@ -45,18 +48,19 @@ export default class Tokenizer {
    * the end of file if no more tokens exist).
    * @returns True if another token exists, false otherwise.
    */
-  private moveToNextToken(): boolean {
-    const currentChar = this.fileContents.charAt(this.cursorPosition);
-
+  private moveCursorToBeginningOfNextToken(): boolean {
     while (true) {
+      const currentChar = this.fileContents.charAt(this.cursorPosition);
+
       if (this.cursorPosition >= this.fileContents.length) {
         // Reached end of file
         return false;
       }
-      if (!currentChar.match(/[ \\n\\t]/)) {
+      if (!currentChar.match(/[ \n\t]/)) {
         // Reached next token
         return true;
       }
+
       ++this.cursorPosition;
     }
   }

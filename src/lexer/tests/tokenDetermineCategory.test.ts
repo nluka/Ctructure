@@ -33,18 +33,18 @@ describe('tokenDetermineCategory', () => {
     assert('#define', TokenCategory.prepro);
     assert('\\', TokenCategory.prepro);
     assert('#undef', TokenCategory.prepro);
-    assert('#if', TokenCategory.prepro);
     assert('#ifdef', TokenCategory.prepro);
     assert('#ifndef', TokenCategory.prepro);
+    assert('#if', TokenCategory.prepro);
+    assert('#else', TokenCategory.prepro);
+    assert('#elif', TokenCategory.prepro);
+    assert('#endif', TokenCategory.prepro);
     assert('#error', TokenCategory.prepro);
     assert('__FILE__', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert('__LINE__', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert('__DATE__', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert('__TIME__', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-    assert(
-      '__TIMESTAMP__',
-      TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-    );
+    assert('__TIMESTAMP__', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert('#pragma', TokenCategory.prepro);
   });
 
@@ -199,35 +199,14 @@ describe('tokenDetermineCategory', () => {
       assert('complex', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('_Generic', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('generic', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-      assert(
-        '_Imaginary',
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-      );
-      assert(
-        'imaginary',
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-      );
-      assert(
-        '_Noreturn',
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-      );
+      assert('_Imaginary', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+      assert('imaginary', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+      assert('_Noreturn', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('noreturn', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-      assert(
-        '_Static_assert',
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-      );
-      assert(
-        'static_assert',
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-      );
-      assert(
-        '_Thread_local',
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-      );
-      assert(
-        'thread_local',
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-      );
+      assert('_Static_assert', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+      assert('static_assert', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+      assert('_Thread_local', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
+      assert('thread_local', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     });
   });
 
@@ -236,19 +215,13 @@ describe('tokenDetermineCategory', () => {
     assert('bool_var', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert('func_name', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert('_func_name', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-    assert(
-      'some_struct_t',
-      TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-    );
+    assert('some_struct_t', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
   });
 
   describe('Labels', () => {
     assert('get_out:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     assert('exit:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
-    assert(
-      'handle_error:',
-      TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-    );
+    assert('handle_error:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
   });
 
   describe('Comments', () => {

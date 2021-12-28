@@ -25,7 +25,10 @@ export default class TokenArray {
   }
 
   public resize(): void {
-    const newSize = Math.max(this.size * this.resizeMultiplier, this.size + 1);
+    const newSize = Math.max(
+      Math.ceil(this.size * this.resizeMultiplier),
+      this.size + 1,
+    );
     const newValues = new Uint32Array(newSize);
     for (let i = 0; i < this.count; ++i) {
       newValues[i] = this.values[i];

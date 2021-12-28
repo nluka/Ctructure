@@ -1,6 +1,6 @@
 import TokenCategory from './TokenCategory';
-import tokenValueToTypeMap from './tokenMaps';
 import TokenType from './TokenType';
+import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 export default function tokenDetermineType(
   fileContents: string,
@@ -14,7 +14,7 @@ export default function tokenDetermineType(
     case TokenCategory.special: {
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error('unknown special token');
+        throw new Error(`unknown special token: ${rawToken}`);
       }
       return type;
     }
@@ -22,7 +22,7 @@ export default function tokenDetermineType(
     case TokenCategory.prepro: {
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error('unknown preprocessor token');
+        throw new Error(`unknown preprocessor token: ${rawToken}`);
       }
       return type;
     }
@@ -33,7 +33,7 @@ export default function tokenDetermineType(
       }
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error('unknown operator token');
+        throw new Error(`unknown operator token: ${rawToken}`);
       }
       return type;
     }
@@ -54,7 +54,7 @@ export default function tokenDetermineType(
     case TokenCategory.operator: {
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error('unknown operator token');
+        throw new Error(`unknown operator token: ${rawToken}`);
       }
       return type;
     }

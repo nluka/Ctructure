@@ -1,12 +1,15 @@
 enum TokenType {
-  //#region Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
+  //#region Preprocessor (https://www.tutorialspoint.com/cprogramming/c_preprocessors.htm)
   // Directives
     preproDirectiveInclude,
     preproDirectiveDefine,
     preproDirectiveUndef,
-    preproDirectiveIf,
     preproDirectiveIfdef,
     preproDirectiveIfndef,
+    preproDirectiveIf,
+    preproDirectiveElse,
+    preproDirectiveElif,
+    preproDirectiveEndif,
     preproDirectiveError,
     preproDirectivePragma,
   // Macros

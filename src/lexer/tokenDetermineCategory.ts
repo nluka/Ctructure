@@ -1,5 +1,5 @@
 import TokenCategory from './TokenCategory';
-import tokenValueToTypeMap from './tokenMaps';
+import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 /**
  * Determines the category of a token based on its first character.

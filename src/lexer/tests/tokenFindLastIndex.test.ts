@@ -79,34 +79,10 @@ describe('tokenFindLastIndex', () => {
   });
 
   describe('preproOrOperator', () => {
-    assert(
-      '#include <stdio.h> ',
-      9,
-      TokenCategory.preproOrOperator,
-      17,
-      TokenType.preproDirectiveInclude,
-    );
-    assert(
-      '#include <stdio.h>>',
-      9,
-      TokenCategory.preproOrOperator,
-      17,
-      TokenType.preproDirectiveInclude,
-    );
-    assert(
-      '#include <stdio',
-      9,
-      TokenCategory.preproOrOperator,
-      14,
-      TokenType.preproDirectiveInclude,
-    );
-    assert(
-      '#include <stdio\n.h>',
-      9,
-      TokenCategory.preproOrOperator,
-      18,
-      TokenType.preproDirectiveInclude,
-    );
+    assert('#include <stdio.h> ', 9, TokenCategory.preproOrOperator, 17, TokenType.preproDirectiveInclude);
+    assert('#include <stdio.h>>', 9, TokenCategory.preproOrOperator, 17, TokenType.preproDirectiveInclude);
+    assert('#include <stdio', 9, TokenCategory.preproOrOperator, 14, TokenType.preproDirectiveInclude);
+    assert('#include <stdio\n.h>', 9, TokenCategory.preproOrOperator, 18, TokenType.preproDirectiveInclude);
 
     assert('<', 0, TokenCategory.preproOrOperator, 0);
     assert('<=', 0, TokenCategory.preproOrOperator, 1);
@@ -387,102 +363,27 @@ describe('tokenFindLastIndex', () => {
 
   describe('preproMacroOrKeywordOrIdentifierOrLabel', () => {
     describe('Macros', () => {
-      assert(
-        ' __FILE__ ',
-        1,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        8,
-      );
-      assert(
-        '(__LINE__)',
-        1,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        8,
-      );
-      assert(
-        '__DATE__ +',
-        0,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        7,
-      );
-      assert(
-        '__TIME__;',
-        0,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        7,
-      );
-      assert(
-        '__TIMESTAMP__',
-        0,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        12,
-      );
+      assert(' __FILE__ ', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 8);
+      assert('(__LINE__)', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 8);
+      assert('__DATE__ +', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 7);
+      assert('__TIME__;', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 7);
+      assert('__TIMESTAMP__', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 12);
     });
 
     describe('Identifiers', () => {
-      assert(
-        'money',
-        0,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        4,
-      );
-      assert(
-        '[i++]',
-        1,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        1,
-      );
-      assert(
-        'if (my_int_var > 1) {\n',
-        4,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        13,
-      );
-      assert(
-        'if (myVar>1) {\n',
-        4,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        8,
-      );
-      assert(
-        'if (_myVar.member) {\n',
-        4,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        9,
-      );
-      assert(
-        'struct my_struct{\n',
-        7,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        15,
-      );
-      assert(
-        'myVar;',
-        0,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        4,
-      );
+      assert('money', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
+      assert('[i++]', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 1);
+      assert('if (my_int_var > 1) {\n', 4, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 13);
+      assert('if (myVar>1) {\n', 4, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 8);
+      assert('if (_myVar.member) {\n', 4, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 9);
+      assert('struct my_struct{\n', 7, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 15);
+      assert('myVar;', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
     });
 
     describe('Labels', () => {
-      assert(
-        '\nend:\n',
-        1,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        4,
-      );
-      assert(
-        '\nbreak_out:\n',
-        1,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        10,
-      );
-      assert(
-        ';aLabel:\n',
-        1,
-        TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
-        7,
-      );
+      assert('\nend:\n', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
+      assert('\nbreak_out:\n', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 10);
+      assert(';aLabel:\n', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 7);
     });
   });
 });
