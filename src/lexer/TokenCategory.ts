@@ -1,4 +1,5 @@
 enum TokenCategory {
+  newline,
   special,
   prepro,
   preproOrOperator,

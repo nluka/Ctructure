@@ -8,10 +8,15 @@ export default function tokenDetermineType(
   lastIndex: number,
   category: TokenCategory,
 ): TokenType {
-  const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+  // const rawToken = fileContents.slice(startIndex, lastIndex + 1);
 
   switch (category) {
+    case TokenCategory.newline: {
+      return TokenType.newline;
+    }
+
     case TokenCategory.special: {
+      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
         throw new Error(`unknown special token: ${rawToken}`);
@@ -20,6 +25,7 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.prepro: {
+      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
         throw new Error(`unknown preprocessor token: ${rawToken}`);
@@ -28,6 +34,7 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.preproOrOperator: {
+      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
       if (fileContents.charAt(startIndex) === '<') {
         return TokenType.preproStandardHeader;
       }
@@ -39,6 +46,7 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.commentOrOperator: {
+      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type !== undefined) {
         return type;
@@ -46,12 +54,13 @@ export default function tokenDetermineType(
       // We have a comment
       const commentStart = rawToken.slice(0, 2);
       if (commentStart === '//') {
-        return TokenType.commentSingleLine;
+        return TokenType.commentSingleline;
       }
-      return TokenType.commentMultiLine;
+      return TokenType.commentMultiline;
     }
 
     case TokenCategory.operator: {
+      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
         throw new Error(`unknown operator token: ${rawToken}`);
@@ -71,6 +80,7 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
+      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
       if (rawToken.charAt(rawToken.length - 1) === ':') {
         return TokenType.label;
       }

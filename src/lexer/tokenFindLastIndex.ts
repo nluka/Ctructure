@@ -17,6 +17,7 @@ export function tokenFindLastIndex(
   prevTokenType: TokenType | null,
 ): number {
   switch (category) {
+    case TokenCategory.newline:
     case TokenCategory.special:
       return startIndex;
 
@@ -83,7 +84,7 @@ export function tokenFindLastIndex(
         );
         return firstNewlineCharIndex === -1
           ? fileContents.length - 1
-          : firstNewlineCharIndex;
+          : firstNewlineCharIndex - 1;
       }
       if (secondChar.match(multiLineCommentRegex)) {
         // We have a multi line comment

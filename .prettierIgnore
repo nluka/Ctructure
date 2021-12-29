@@ -1,2 +1,4 @@
 *Map.ts
 *.test.ts
+TokenType.ts
+TokenCategory.ts

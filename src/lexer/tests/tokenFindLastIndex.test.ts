@@ -34,6 +34,11 @@ describe('tokenFindLastIndex', () => {
     });
   }
 
+  describe('newline', () => {
+    assert('\n', 0, TokenCategory.newline, 0);
+    assert(' \n ', 1, TokenCategory.newline, 1);
+  });
+
   describe('special', () => {
     assert(',', 0, TokenCategory.special, 0);
     assert(';', 0, TokenCategory.special, 0);
@@ -119,7 +124,7 @@ describe('tokenFindLastIndex', () => {
   });
 
   describe('commentOrOperator', () => {
-    assert('// single line comment\n', 0, TokenCategory.commentOrOperator, 22);
+    assert('// single line comment\n', 0, TokenCategory.commentOrOperator, 21);
     assert('// single line comment', 0, TokenCategory.commentOrOperator, 21);
     assert('/* multi line comment */', 0, TokenCategory.commentOrOperator, 23);
     assert('/* multi line comment', 0, TokenCategory.commentOrOperator, 20);

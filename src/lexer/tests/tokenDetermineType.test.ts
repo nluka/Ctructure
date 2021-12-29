@@ -321,4 +321,31 @@ describe('tokenDetermineType', () => {
     assert('a?b\n:c', 4, 4, TokenCategory.operator, TokenType.operatorTernaryColon);
     //#endregion Other
   });
+
+  describe('Other', () => {
+    describe('Identifiers', () => {
+      assert('myVar123', 0, 7, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
+      assert(' bool_var', 1, 8, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
+      assert(' func_name ', 1, 8, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
+      assert('_func_name', 0, 9, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
+      assert('__funcname', 0, 9, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
+      assert('SomeStruct', 0, 9, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
+    });
+
+    describe('Labels', () => {
+      assert('finally:', 0, 7, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.label);
+      assert(' exit2:', 1, 6, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.label);
+      assert(' _handle_error: ', 1, 14, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.label);
+    });
+
+    describe('Comments', () => {
+      assert('// comment', 0, 9, TokenCategory.commentOrOperator, TokenType.commentSingleline);
+      assert('/* comment */', 0, 12, TokenCategory.commentOrOperator, TokenType.commentMultiline);
+    });
+
+    describe('Newline', () => {
+      assert('\n', 0, 0, TokenCategory.newline, TokenType.newline);
+      assert(' \n ', 1, 1, TokenCategory.newline, TokenType.newline);
+    });
+  });
 });

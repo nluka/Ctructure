@@ -56,7 +56,7 @@ export default class Tokenizer {
         // Reached end of file
         return false;
       }
-      if (!currentChar.match(spaceOrNewlineOrTabRegex)) {
+      if (!currentChar.match(whitespaceRegex)) {
         // Reached next token
         return true;
       }
@@ -66,4 +66,4 @@ export default class Tokenizer {
   }
 }
 
-const spaceOrNewlineOrTabRegex = /[ \n\t]/;
+const whitespaceRegex = /[ \t]/;

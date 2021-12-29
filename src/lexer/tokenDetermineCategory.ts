@@ -10,38 +10,41 @@ const preproRegex = /^[#\\]/,
 
 /**
  * Determines the category of a token based on its first character.
- * @param tokenFirstChar A string that begins with the first character of the token.
+ * @param tokenStart A string that begins with the first character of the token.
  * @param tokenStartIndex The starting index of the token.
  * @returns The category of the token - throws `TokenCategoryDeterminationError`
  * if category cannot be determined.
  */
 export default function tokenDetermineCategory(
-  tokenFirstChar: string,
+  tokenStart: string,
   tokenStartIndex: number,
 ): TokenCategory {
-  if (tokenFirstChar.match(preproRegex)) {
+  if (tokenStart.charAt(0) === '\n') {
+    return TokenCategory.newline;
+  }
+  if (tokenStart.match(preproRegex)) {
     return TokenCategory.prepro;
   }
-  if (tokenFirstChar.match(preproOrOperatorRegex)) {
+  if (tokenStart.match(preproOrOperatorRegex)) {
     return TokenCategory.preproOrOperator;
   }
-  if (tokenFirstChar.match(commentOrOperatorRegex)) {
+  if (tokenStart.match(commentOrOperatorRegex)) {
     return TokenCategory.commentOrOperator;
   }
-  if (tokenFirstChar.match(preproMacroOrKeywordOrIdentifierOrLabelRegex)) {
+  if (tokenStart.match(preproMacroOrKeywordOrIdentifierOrLabelRegex)) {
     return TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel;
   }
-  if (tokenFirstChar.match(constantRegex)) {
+  if (tokenStart.match(constantRegex)) {
     return TokenCategory.constant;
   }
-  if (tokenFirstChar.match(operatorRegex)) {
+  if (tokenStart.match(operatorRegex)) {
     return TokenCategory.operator;
   }
-  if (tokenValueToTypeMap.get(tokenFirstChar) !== undefined) {
+  if (tokenValueToTypeMap.get(tokenStart) !== undefined) {
     return TokenCategory.special;
   }
 
-  throw new TokenCategoryDeterminationError(tokenStartIndex, tokenFirstChar);
+  throw new TokenCategoryDeterminationError(tokenStartIndex, tokenStart);
 }
 
 export class TokenCategoryDeterminationError {

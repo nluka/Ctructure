@@ -123,8 +123,9 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
 
   [TokenType.identifier, 'identifier'],
   [TokenType.label, 'label'],
-  [TokenType.commentSingleLine, 'commentSingleLine'],
-  [TokenType.commentMultiLine, 'commentMultiLine'],
+  [TokenType.commentSingleline, 'commentSingleLine'],
+  [TokenType.commentMultiline, 'commentMultiLine'],
+  [TokenType.newline, 'newline'],
 
   [TokenType.ambiguousPlus, 'ambiguousPlus'],
   [TokenType.ambiguousMinus, 'ambiguousMinus'],

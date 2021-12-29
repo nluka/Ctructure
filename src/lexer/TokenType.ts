@@ -149,8 +149,9 @@ enum TokenType {
   //#region Other
   identifier,
   label,
-  commentSingleLine,
-  commentMultiLine,
+  commentSingleline,
+  commentMultiline,
+  newline,
   //#endregion Other
 
   //#region Ambiguous
