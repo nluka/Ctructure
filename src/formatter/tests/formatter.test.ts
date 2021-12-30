@@ -1,15 +1,19 @@
+import path = require('path');
 import TokenArray from '../../lexer/TokenArray';
+import { tokenizeFile } from '../../lexer/tokenizeFile';
 import TokenType from '../../lexer/TokenType';
 import formatFile, { toString } from '../formatter';
 
 describe('formatter', () => {
   function assert(
-    tokenizedFile: TokenArray,
+    tokenizedFile: [string, TokenArray],
     expectedFormat: string,
     name: string,
   ) {
     test(`test type: ${name}`, () => {
-      expect(toString(formatFile(tokenizedFile))).toBe(expectedFormat);
+      const stringed = toString(formatFile(tokenizedFile));
+      //console.log(stringed);
+      expect(stringed).toBe(expectedFormat);
     });
   }
 
@@ -21,7 +25,7 @@ describe('formatter', () => {
     singleVarDec.push(TokenType.operatorBinaryAssignmentDirect);
     singleVarDec.push(TokenType.constantNumber);
     singleVarDec.push(TokenType.specialSemicolon);
-    assert(singleVarDec, 'int thing = 0;', 'single var declaration');
+    assert(['num', singleVarDec], 'int num = num;', 'single var declaration');
   }
 
   //multi var declaration
@@ -41,8 +45,8 @@ describe('formatter', () => {
     multiVarDec.push(TokenType.constantNumber);
     multiVarDec.push(TokenType.specialSemicolon);
     assert(
-      multiVarDec,
-      'int thing = 0,\n  thing = 0,\n  thing = 0;',
+      ['thing', multiVarDec],
+      'int thing = thing,\n  thing = thing,\n  thing = thing;',
       'multi var declaration',
     );
   }
@@ -60,8 +64,8 @@ describe('formatter', () => {
     singleLineIf.push(TokenType.identifier);
     singleLineIf.push(TokenType.specialSemicolon);
     assert(
-      singleLineIf,
-      'if (thing != 0)\n  return thing;\n',
+    ['thing', singleLineIf],
+      'if (thing != thing)\n  return thing;',
       'single line if',
     );
   }
@@ -76,16 +80,13 @@ describe('formatter', () => {
     ifStatement.push(TokenType.constantString);
     ifStatement.push(TokenType.specialParenthesisRight);
     ifStatement.push(TokenType.specialBraceLeft);
-    ifStatement.push(TokenType.keywordBool);
-    ifStatement.push(TokenType.identifier);
-    ifStatement.push(TokenType.specialSemicolon);
     ifStatement.push(TokenType.keywordReturn);
     ifStatement.push(TokenType.constantCharacter);
     ifStatement.push(TokenType.specialSemicolon);
     ifStatement.push(TokenType.specialBraceRight);
     assert(
-      ifStatement,
-      'if (thing != "hello") {\n  bool thing;\n  return \'J\';\n}',
+      ['thing', ifStatement],
+      'if (thing != thing) {\n  return thing;\n}',
       'standard if',
     );
   }
@@ -129,8 +130,8 @@ describe('formatter', () => {
     ifelseStatement.push(TokenType.specialSemicolon);
     ifelseStatement.push(TokenType.specialBraceRight);
     assert(
-      ifelseStatement,
-      'if (thing != "hello") {\n  bool thing;\n  return \'J\';\n} else if (thing != 0) {\n  int thing;\n  return "hello";\n} else {\n  return \'J\';\n}',
+      ['thing', ifelseStatement],
+      'if (thing != thing) {\n  bool thing;\n  return thing;\n} else if (thing != thing) {\n  int thing;\n  return thing;\n} else {\n  return thing;\n}',
       'if else',
     );
   }
@@ -163,8 +164,8 @@ describe('formatter', () => {
     nestedIf.push(TokenType.specialBraceRight);
     nestedIf.push(TokenType.specialBraceRight);
     assert(
-      nestedIf,
-      'if (thing == 0) {\n  if (thing == 0) {\n    thing += 0;\n    thing += 0;\n  }\n}',
+      ['thing', nestedIf],
+      'if (thing == thing) {\n  if (thing == thing) {\n    thing += thing;\n    thing += thing;\n  }\n}',
       'nested if',
     );
   }
@@ -205,8 +206,8 @@ describe('formatter', () => {
     switchStatement.push(TokenType.specialBraceRight);
 
     assert(
-      switchStatement,
-      'switch (thing) {\n  case 0:\n    char thing = "hello";\n    break;\n  case 0:\n    int thing = 0;\n    break;\n  default:\n    return \'J\';\n}',
+      ['thing', switchStatement],
+      'switch (thing) {\n  case thing:\n    char thing = thing;\n    break;\n  case thing:\n    int thing = thing;\n    break;\n  default:\n    return thing;\n}',
       'switch',
     );
   }
@@ -234,8 +235,8 @@ describe('formatter', () => {
     forLoop.push(TokenType.specialSemicolon);
     forLoop.push(TokenType.specialBraceRight);
     assert(
-      forLoop,
-      'for (int thing = 0; thing > 0; ++thing) {\n  --thing;\n}',
+      ['thing', forLoop],
+      'for (int thing = thing; thing > thing; ++thing) {\n  --thing;\n}',
       'for loop',
     );
   }
@@ -253,7 +254,7 @@ describe('formatter', () => {
     whileLoop.push(TokenType.constantNumber);
     whileLoop.push(TokenType.specialSemicolon);
     whileLoop.push(TokenType.specialBraceRight);
-    assert(whileLoop, 'while (thing) {\n  thing += 0;\n}', 'while loop');
+    assert(['thing', whileLoop], 'while (thing) {\n  thing += thing;\n}', 'while loop');
   }
 
   //do while loop
@@ -272,111 +273,78 @@ describe('formatter', () => {
     doWhileLoop.push(TokenType.specialParenthesisRight);
     doWhileLoop.push(TokenType.specialSemicolon);
     assert(
-      doWhileLoop,
-      'do {\n  thing += 0;\n}\nwhile (thing);',
+      ['thing', doWhileLoop],
+      'do {\n  thing += thing;\n} while (thing);',
       'do while loop',
     );
   }
 
-  //combination
+  ////combination
+  // {
+  //   const combo: TokenArray = new TokenArray(50);
+  //   combo.push(TokenType.preproDirectiveInclude);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.preproDirectiveInclude);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.keywordBool);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.operatorBinaryAssignmentDirect);
+  //   combo.push(TokenType.constantNumber);
+  //   combo.push(TokenType.specialSemicolon);
+  //   combo.push(TokenType.keywordInt);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.specialParenthesisLeft);
+  //   combo.push(TokenType.keywordInt);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.specialComma);
+  //   combo.push(TokenType.keywordChar);
+  //   combo.push(TokenType.operatorUnaryDereference);
+  //   combo.push(TokenType.operatorUnaryDereference);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.specialParenthesisRight);
+  //   combo.push(TokenType.specialBraceLeft);
+  //   combo.push(TokenType.keywordIf);
+  //   combo.push(TokenType.specialParenthesisLeft);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.operatorBinaryComparisonGreaterThan);
+  //   combo.push(TokenType.constantCharacter);
+  //   combo.push(TokenType.operatorBinaryLogicalAnd);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.specialParenthesisLeft);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.specialBracketLeft);
+  //   combo.push(TokenType.constantNumber);
+  //   combo.push(TokenType.specialBracketRight);
+  //   combo.push(TokenType.specialComma);
+  //   combo.push(TokenType.constantNumber);
+  //   combo.push(TokenType.specialParenthesisRight);
+  //   combo.push(TokenType.operatorBinaryComparisonEqualTo);
+  //   combo.push(TokenType.constantNumber);
+  //   combo.push(TokenType.specialParenthesisRight);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.operatorBinaryAssignmentDirect);
+  //   combo.push(TokenType.constantNumber);
+  //   combo.push(TokenType.specialSemicolon);
+  //   combo.push(TokenType.keywordInt);
+  //   combo.push(TokenType.identifier);
+  //   combo.push(TokenType.operatorBinaryAssignmentDirect);
+  //   combo.push(TokenType.specialBraceLeft);
+  //   combo.push(TokenType.constantNumber);
+  //   combo.push(TokenType.specialBraceRight);
+  //   combo.push(TokenType.specialSemicolon);
+  //   combo.push(TokenType.specialBraceRight);
+  //   assert(
+  //     ['thing', combo],
+  //     "#include thing\n#include thing\nbool thing = thing;\nint thing(int thing, char **thing) {\n  if (thing > thing && thing(thing[thing], thing) == thing)\n    thing = thing;\n\n  int thing = { thing };\n}",
+  //     'combo',
+  //   );
+  // }
+
+  //read file, tokenize, format
   {
-    const combo: TokenArray = new TokenArray(50);
-    combo.push(TokenType.preproDirectiveInclude);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.preproDirectiveInclude);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.keywordBool);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.operatorBinaryAssignmentDirect);
-    combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialSemicolon);
-    combo.push(TokenType.keywordInt);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.specialParenthesisLeft);
-    combo.push(TokenType.keywordInt);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.specialComma);
-    combo.push(TokenType.keywordChar);
-    combo.push(TokenType.operatorUnaryDereference);
-    combo.push(TokenType.operatorUnaryDereference);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.specialParenthesisRight);
-    combo.push(TokenType.specialBraceLeft);
-    combo.push(TokenType.keywordIf);
-    combo.push(TokenType.specialParenthesisLeft);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.operatorBinaryComparisonGreaterThan);
-    combo.push(TokenType.constantCharacter);
-    combo.push(TokenType.operatorBinaryLogicalAnd);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.specialParenthesisLeft);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.specialBracketLeft);
-    combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialBracketRight);
-    combo.push(TokenType.specialComma);
-    combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialParenthesisRight);
-    combo.push(TokenType.operatorBinaryComparisonEqualTo);
-    combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialParenthesisRight);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.operatorBinaryAssignmentDirect);
-    combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialSemicolon);
-    combo.push(TokenType.keywordInt);
-    combo.push(TokenType.identifier);
-    combo.push(TokenType.operatorBinaryAssignmentDirect);
-    combo.push(TokenType.specialBraceLeft);
-    combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialBraceRight);
-    combo.push(TokenType.specialSemicolon);
-    assert(
-      combo,
-      "#include thing\n#include thing\nbool thing = 0;\nint thing(int thing, char **thing) {\n  if (thing > 'J' && thing(thing[0], 0) == 0)\n    thing = 0;\n\n  int thing = { 0 };",
-      'combo',
-    );
+   // const filePath = '/Users/justinallard/Documents/GitHub/Ctructure/src/sample_code/str.c';
+    const filePath = path.join(__dirname, '../../sample_code/str.c');
+    const tokenizedfile = tokenizeFile(filePath);
+    assert(tokenizedfile, "#include <string.h>\n#include <stdio.h>\n#include \"str.h\"\n\n/*\n  constructs a string and returns it, allocating enough memory to hold\n  `initialCount` chars (`initialCount` does not include nul-terminator)\n*/\nstring_t string_create(const size_t initialCount) {\n  string_t string;\n  \n  if (initialCount == 0) {\n    string.data = NULL;\n    string.availableCount = 0;\n  } else {\n    string.data = calloc(initialCount+1, sizef(char ));\n    string.availableCount = string.data == NULL ? 0 : initialCount;\n  }\n  string.count = 0;\n  \n  return string;\n}\n\n/*\n  resizes `data` by `expansionAmount`, returns boolean indicating whether\n  expansion was successful\n*/\nbool string_expand(string_t *const string, const size_t expansionAmount) {\n  const size_t newAvailableCount = string->availableCount+expansionAmount;\n  \n  string->data = realloc(string->data, newAvailableCount+1);\n  if (string->data == NULL) {\n    return false;\n  }\n  \n  // zero-init new chars\n  memset(string->data+string->availableCount, 0, expansionAmount);\n  string->availableCount = newAvailableCount;\n  return true;\n}\n\n/*\n  attempts to append `charCount` characters from `chars` to `string`,\n  returns boolean indicating whether append was successful\n*/\nbool string_append_chars(\n  string_t *const string,\n  const char *const chars,\n  const size_t charCount\n) {\n  const longlongint overflowCount = (string->count+charCount)-string->availableCount;\n  if (overflowCount > 0 && !string_expand(string, overflowCount)) {\n    return false;\n  }\n  \n  const bool wasAppendSuccessful = snprintf(\n    string->data+string->count,\n    charCount+1,\n    \"%s\",\n    chars\n  ) > 0;\n  \n  if (wasAppendSuccessful) {\n    string->count += charCount;\n  }\n  return wasAppendSuccessful;\n}\n\n/*\n  destroys `string`, freeing `string->data`\n*/\nvoid string_destroy(string_t *const string) {\n  free(string->data);\n  string->data = NULL;\n  string->count = 0;\n  string->availableCount = 0;\n}\n", 'readfile');
   }
 });
-
-//   printhr();
-//   if (load_movie_collection_from_data_file(&movieCollection)) {
-//     printfc(TC_GREEN, "Movies loaded from data file successfully.\n");
-//   } else {
-//     printfc(TC_YELLOW, "Failed to load movies from data file.\n");
-//   }
-
-//   while (1) {
-//     ui_main_menu();
-
-//     char choice;
-//     scanf("%c", &choice);
-//     fflush(stdin);
-
-//     switch (tolower(choice)) {
-//       case 'a':
-//         if (movieCollection.count >= 100) {
-//           printfc(TC_RED, "ERROR: max capacity reached\n");
-//         } else {
-//           handle_add_movie(&movieCollection);
-//         }
-//         break;
-//       case 'c':
-//         handle_change_movie(&movieCollection);
-//         break;
-//       case 'd':
-//         handle_delete_movie(&movieCollection);
-//         break;
-//       case 'l':
-//         handle_list_movies(&movieCollection);
-//         break;
-//       case 'q':
-//         return save_movie_collection_to_data_file(&movieCollection) ? 0 : 1;
-//       default:
-//         printfc(TC_RED, "ERROR: invalid choice\n");
-//         break;
-//     }
-//   }
-
-//   return -1;
-// }

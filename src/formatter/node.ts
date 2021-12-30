@@ -29,9 +29,9 @@ export default class Node {
     this.data = data;
   }
   addDataPost(data: any) {
-    this.data += data;
+    this.data = this.data ? this.data + data : data;
   }
   addDataPre(data: any) {
-    this.data = data + this.data;
+    this.data = this.data ? data + this.data : data;
   }
 }

@@ -1,15 +1,24 @@
 import TokenArray from '../lexer/TokenArray';
 import { tokenDecode } from '../lexer/tokenDecode';
+import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
+import { tokenFindLastIndex } from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
 import findEndOfSwitch from './findEndOfSwitch';
 import Node, { nodeType } from './node';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
-export default function formatFile(tokenArray: TokenArray) {
-  return formatter(tokenArray.getValues(), 0, tokenArray.getCount(), 0);
+export default function formatFile(tokenizedFile: [string, TokenArray]) {
+  return formatter(
+    tokenizedFile[0],
+    tokenizedFile[1].getValues(),
+    0,
+    tokenizedFile[1].getCount(),
+    0,
+  );
 }
 
 function formatter(
+  fileContents: string,
   tokens: Uint32Array,
   startIndex: number,
   endIndex: number,
@@ -19,38 +28,60 @@ function formatter(
   const root: nodeType = new Node();
   let currNode: nodeType = root,
     previousType: TokenType | null = null,
-    previousGenericType: Type | null = null,
-    context: TokenType | null = null,
-    genericContext: Type | null = null,
-    parenCount = 0;
+    context: TokenType | Type | null = null,
+    parenCount = 0,
+    nextType: TokenType,
+    newLine = false,
+    startLineIndex: number = 0,
+    split: boolean = false;
 
   for (let i = startIndex; i < endIndex; ++i) {
     if (currNode) {
       const decodedToken: [number, TokenType] = tokenDecode(tokens[i]);
       const type: TokenType = decodedToken[1];
-      let currNodeData = tokenTypeToValueMap.get(type);
-      if (currNodeData === undefined) {
-        currNodeData = '';
-      }
-      currNode.setData(tokenTypeToValueMap.get(type));
+      const position: number = decodedToken[0];
+      const currNodeData = tokenTypeToValueMap.get(type);
 
+      if (currNodeData) {
+        currNode.addDataPost(currNodeData);
+      }
+      if (newLine) {
+        currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
+        newLine = false;
+        startLineIndex = position;
+      }
       switch (type) {
-        case TokenType.specialComma:
-          if (genericContext === Type.varDec) {
-            genericContext = Type.multiVarDec;
-            ++blockLevel;
-            break;
-          } else if (genericContext === Type.multiVarDec) {
-            break;
+        case TokenType.newline:
+          if (previousType === TokenType.newline) {
+            newLine = true;
           }
-          currNode.addDataPost(' ');
+          previousType = TokenType.newline;
+          continue;
+          break;
+
+        case TokenType.specialComma:
+          if (context === Type.varDec) {
+            currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
+          } else if (!split) {
+            currNode.addDataPost(' ');
+          } else {
+            newLine = true;
+          }
           break;
 
         case TokenType.specialSemicolon:
-          if (genericContext === Type.singleLineIf) {
-            currNode.addDataPost('\n');
+          if (context === TokenType.keywordFor) {
+            currNode.addDataPost(' ');
+            break;
           }
-          genericContext = null;
+          nextType = nextTokenTypeNotNewLine(tokens, i);
+          if (
+            nextType === TokenType.specialBraceRight ||
+            context === Type.singleLineIf
+          ) {
+            --blockLevel;
+          }
+          newLine = true;
           break;
 
         case TokenType.specialBracketLeft:
@@ -58,60 +89,68 @@ function formatter(
           break;
 
         case TokenType.specialParenthesisLeft:
+          ++parenCount;
+          if (context === Type.varDec) {
+            context = Type.funcDec;
+          }
+
           if (
-            context === TokenType.keywordIf ||
-            context === TokenType.keywordFor
+            parenCount === 1 &&
+            shouldSplitIntoMultLines(tokens, i, startLineIndex)
           ) {
-            ++parenCount;
-          } else if (genericContext === Type.varDec) {
-            genericContext = Type.funcDec;
+            currNode.addDataPost(`\n${spacing.repeat(++blockLevel)}`);
+            split = true;
           }
           break;
 
         case TokenType.specialParenthesisRight:
-          if (context === TokenType.keywordIf) {
-            --parenCount;
-            if (
-              parenCount === 0 &&
-              tokenDecode(tokens[i + 1])[1] !== TokenType.specialBraceLeft
-            ) {
-              currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
-              genericContext = Type.singleLineIf;
+          nextType = nextTokenTypeNotNewLine(tokens, i);
+          --parenCount;
+          if (parenCount === 0) {
+            if (context === TokenType.keywordFor) {
+              context = null;
+            } else if (context === TokenType.keywordIf) {
+              if (nextType !== TokenType.specialBraceLeft) {
+                ++blockLevel;
+                newLine = true;
+                context = Type.singleLineIf;
+              } else {
+                context = null;
+              }
             }
+            if (split) {
+              currNode.addDataPre(`\n${spacing.repeat(--blockLevel)}`);
+              split = false;
+            }
+          }
+
+          if (nextType === TokenType.specialBraceLeft) {
+            currNode.addDataPost(' ');
+          } else {
+            context = null;
           }
           break;
 
         case TokenType.specialBraceLeft:
-          if (genericContext === Type.varDec) {
-            currNode.addDataPost(' ');
-            break;
-          }
           ++blockLevel;
-          if (previousType === TokenType.specialParenthesisRight) {
-            currNode.setData(' {\n' + spacing.repeat(blockLevel));
-          } else if (
-            previousType === TokenType.keywordElse ||
-            previousType === TokenType.keywordDo
-          ) {
-            currNode.setData('{\n' + spacing.repeat(blockLevel));
-          }
-          context = null;
+          newLine = true;
           break;
 
         case TokenType.specialBraceRight:
-          if (context === TokenType.keywordSwitch) {
-            currNode.setData(`\n${spacing.repeat(blockLevel)}}`);
-          } else if (genericContext === Type.varDec) {
-            currNode.addDataPre(' ');
-            break;
+          nextType = nextTokenTypeNotNewLine(tokens, i);
+          if (nextType === TokenType.specialBraceRight) {
+            --blockLevel;
+            newLine = true;
+          } else if (nextType === TokenType.keywordWhile) {
+            currNode.addDataPost(' ');
+          } else {
+            newLine = true;
           }
-          --blockLevel;
           break;
 
         // Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
         case TokenType.preproOperatorConcat:
         case TokenType.preproDirectiveInclude:
-        case TokenType.preproStandardHeader:
         case TokenType.preproDirectiveDefine:
         case TokenType.preproLineContinuation:
         case TokenType.preproDirectiveUndef:
@@ -124,7 +163,7 @@ function formatter(
         case TokenType.preproMacroTime:
         case TokenType.preproMacroTimestamp:
         case TokenType.preproDirectivePragma:
-          previousGenericType = Type.prepro;
+          context = Type.prepro;
           currNode.addDataPost(' ');
           break;
 
@@ -137,7 +176,6 @@ function formatter(
         case TokenType.operatorUnaryLogicalNegation:
         case TokenType.operatorUnaryIndirection:
         case TokenType.operatorUnaryDereference:
-          previousGenericType = Type.operatorUnary;
           break;
 
         // Binary operators
@@ -159,6 +197,8 @@ function formatter(
         case TokenType.operatorBinaryBitwiseXor:
         case TokenType.operatorBinaryBitwiseShiftLeft:
         case TokenType.operatorBinaryBitwiseShiftRight:
+          currNode.setData(` ${currNodeData} `);
+          break;
         case TokenType.operatorBinaryAssignmentDirect:
         case TokenType.operatorBinaryAssignmentAddition:
         case TokenType.operatorBinaryAssignmentSubtraction:
@@ -170,13 +210,7 @@ function formatter(
         case TokenType.operatorBinaryAssignmentBitwiseAnd:
         case TokenType.operatorBinaryAssignmentBitwiseOr:
         case TokenType.operatorBinaryAssignmentBitwiseXor:
-          if (genericContext === Type.varDec) {
-            currNode.setData(` ${tokenTypeToValueMap.get(type)} `);
-            break;
-          } else if (previousGenericType !== Type.keyword) {
-            currNode.setData(` ${tokenTypeToValueMap.get(type)} `);
-          }
-          previousGenericType = Type.operatorBinary;
+          currNode.setData(` ${currNodeData} `);
           break;
 
         case TokenType.operatorMemberSelectionDirect:
@@ -185,35 +219,26 @@ function formatter(
 
         // Miscellanous operators
         case TokenType.operatorTernaryQuestion:
+          currNode.setData(' ? ');
           break;
 
         case TokenType.operatorTernaryColon:
           if (context === TokenType.keywordCase) {
             ++blockLevel;
-            currNode.addDataPost(`\n${spacing.repeat(blockLevel)}`);
+            newLine = true;
+          } else {
+            currNode.setData(' : ');
           }
-          break;
-
-        // Constants
-        case TokenType.constantNumber:
-          currNode.setData('0');
-          break;
-        case TokenType.constantCharacter:
-          currNode.setData("'J'");
-          break;
-        case TokenType.constantString:
-          currNode.setData('"hello"');
           break;
 
         // Keywords (https://en.cppreference.com/w/c/keyword)
         case TokenType.keywordIf:
           context = TokenType.keywordIf;
-          previousGenericType = Type.keyword;
           currNode.addDataPost(' ');
           break;
         case TokenType.keywordElse:
           currNode.setData(' else ');
-          context = TokenType.keywordIf;
+          context = TokenType.keywordElse;
           break;
 
         case TokenType.keywordInt:
@@ -221,9 +246,13 @@ function formatter(
         case TokenType.keywordFloat:
         case TokenType.keywordDouble:
         case TokenType.keywordChar:
-          if (genericContext !== Type.funcDec) {
-            genericContext = Type.varDec;
+          if (context !== TokenType.keywordFor && context !== Type.funcDec) {
+            context = Type.varDec;
           }
+          currNode.addDataPost(' ');
+          break;
+
+        case TokenType.keywordVoid:
           currNode.addDataPost(' ');
           break;
 
@@ -231,8 +260,11 @@ function formatter(
           context = TokenType.keywordSwitch;
           currNode.addDataPost(' ');
           const endSwitch = findEndOfSwitch(tokens, i);
-          currNode.setChild(formatter(tokens, i + 1, endSwitch, blockLevel));
+          currNode.setChild(
+            formatter(fileContents, tokens, i + 1, endSwitch, blockLevel),
+          );
           i = endSwitch - 1;
+          newLine = true;
           break;
 
         case TokenType.keywordCase:
@@ -241,14 +273,20 @@ function formatter(
           break;
 
         case TokenType.keywordReturn:
-          if (tokenDecode(tokens[i + 1])[1] !== TokenType.specialSemicolon) {
+          if (
+            nextTokenTypeNotNewLine(tokens, i) !== TokenType.specialSemicolon
+          ) {
             currNode.addDataPost(' ');
           }
           break;
 
         case TokenType.keywordBreak:
-        case TokenType.keywordDefault:
         case TokenType.keywordContinue:
+          --blockLevel;
+          break;
+
+        case TokenType.keywordDefault:
+          context = TokenType.keywordCase;
           break;
 
         case TokenType.keywordFor:
@@ -268,44 +306,79 @@ function formatter(
         case TokenType.keywordExtern:
         case TokenType.keywordGeneric:
         case TokenType.keywordGoto:
-          previousGenericType = Type.keyword;
           currNode.addDataPost(' ');
           break;
 
         // Other
-        case TokenType.identifier:
-          currNode.setData('thing');
-          if (previousGenericType === Type.prepro) {
-            currNode.addDataPost('\n');
-          } else if (previousType === TokenType.label) {
-            currNode.addDataPre(' ');
-          }
-          previousGenericType = null;
-          break;
-
         case TokenType.label:
-          currNode.setData('label:');
+        case TokenType.constantString:
+          setNodesDataFromFileContent(
+            currNode,
+            fileContents,
+            position,
+            previousType,
+          );
+          if (context === Type.prepro) {
+            newLine = true;
+            context = null;
+          }
+
           break;
-      }
+        case TokenType.commentSingleline:
+          setNodesDataFromFileContent(
+            currNode,
+            fileContents,
+            position,
+            previousType,
+          );
+          if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
+            newLine = true;
+          }
+          break;
+        case TokenType.constantNumber:
+        case TokenType.constantCharacter:
+          setNodesDataFromFileContent(
+            currNode,
+            fileContents,
+            position,
+            previousType,
+          );
+          break;
 
-      // Add new line with proper indentation
-      if (
-        previousType === TokenType.specialSemicolon ||
-        (previousType === TokenType.specialBraceRight &&
-          type !== TokenType.specialSemicolon &&
-          type !== TokenType.keywordElse) ||
-        (genericContext === Type.multiVarDec &&
-          previousType === TokenType.specialComma)
-      ) {
-        if (context === TokenType.keywordFor) {
-          currNode.addDataPre(' ');
-        } else {
-          currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
-        }
-      }
-
-      if (type === TokenType.keywordBreak) {
-        --blockLevel;
+        case TokenType.commentMultiline:
+          setNodesDataFromFileContent(
+            currNode,
+            fileContents,
+            position,
+            previousType,
+          );
+          newLine = true;
+          break;
+        case TokenType.identifier:
+          setNodesDataFromFileContent(
+            currNode,
+            fileContents,
+            position,
+            previousType,
+          );
+          const nextTokenType = nextTokenTypeNotNewLine(tokens, i);
+          if (
+            nextTokenType === TokenType.identifier ||
+            nextTokenType === TokenType.ambiguousAsterisk
+          ) {
+            currNode.addDataPost(' ');
+          }
+          break;
+        case TokenType.preproStandardHeader:
+          setNodesDataFromFileContent(
+            currNode,
+            fileContents,
+            position,
+            previousType,
+          );
+          newLine = true;
+          context = null;
+          break;
       }
 
       previousType = type;
@@ -328,18 +401,66 @@ export function toString(currNode: nodeType) {
       str += toString(currNode.getNext());
     }
   }
-
   return str;
+}
+
+function nextTokenTypeNotNewLine(
+  tokens: Uint32Array,
+  index: number,
+): TokenType {
+  for (let i = index + 1; i < tokens.length; ++i) {
+    const type = tokenDecode(tokens[i])[1];
+    if (type !== TokenType.newline) {
+      return type;
+    }
+  }
+  return TokenType.specialSemicolon;
+}
+function shouldSplitIntoMultLines(
+  tokens: Uint32Array,
+  index: number,
+  startLineIndex: number,
+): boolean {
+  let parenCount = 1;
+  for (let i = index + 1; i < tokens.length; ++i) {
+    const decodedToken = tokenDecode(tokens[i]);
+    if (decodedToken[1] === TokenType.specialParenthesisRight) {
+      if (--parenCount === 0) {
+        if (decodedToken[0] - startLineIndex > 80) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else if (decodedToken[1] === TokenType.specialParenthesisLeft) {
+      ++parenCount;
+    }
+  }
+  return false;
+}
+
+function setNodesDataFromFileContent(
+  currNode: Node,
+  fileContents: string,
+  position: number,
+  previousType: TokenType | null,
+) {
+  currNode.addDataPost(
+    fileContents.slice(
+      position,
+      tokenFindLastIndex(
+        fileContents,
+        position,
+        tokenDetermineCategory(fileContents.charAt(position), position),
+        previousType,
+      ) + 1,
+    ),
+  );
 }
 
 enum Type {
   prepro,
-  operatorBinary,
-  operatorUnary,
-  special,
-  keyword,
-  varDec,
-  multiVarDec,
-  funcDec,
   singleLineIf,
+  varDec,
+  funcDec,
 }

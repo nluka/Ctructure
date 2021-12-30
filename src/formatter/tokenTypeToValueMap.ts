@@ -102,6 +102,8 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.operatorBinaryAssignmentBitwiseXor, '^='],
   [TokenType.operatorTernaryQuestion, '?'],
   [TokenType.operatorTernaryColon, ':'],
+  [TokenType.operatorMemberSelectionDirect, '.'],
+  [TokenType.operatorMemberSelectionIndirect, '->'],
 
   [TokenType.specialParenthesisLeft, '('],
   [TokenType.specialParenthesisRight, ')'],
@@ -111,6 +113,12 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.specialBracketRight, ']'],
   [TokenType.specialComma, ','],
   [TokenType.specialSemicolon, ';'],
+
+  [TokenType.ambiguousAsterisk, '*'],
+  [TokenType.ambiguousPlus, '+'],
+  [TokenType.ambiguousMinus, '-'],
+  [TokenType.ambiguousDecrement, '--'],
+  [TokenType.ambiguousIncrement, '++'],
 ]);
 
 export default tokenTypeToValueMap;
