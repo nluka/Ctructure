@@ -18,6 +18,6 @@ describe('tokenDecode', () => {
   // same cases (but reversed) from `tokenEncode.test.ts`
   assert(0, 0, TokenType.preproDirectiveInclude);
   assert(1793, 14, TokenType.preproDirectiveDefine);
-  assert(2_668_525, 20_847, TokenType.specialBraceRight);
-  assert(-45, 33_554_431, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+  assert(2_668_525, 20_847, TokenType.specialParenthesisLeft);
+  assert(-1, 33_554_431, TokenType.ambiguousAmpersand);
 });

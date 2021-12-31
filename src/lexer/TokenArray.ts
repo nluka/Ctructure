@@ -13,10 +13,6 @@ export default class TokenArray {
     this.size = initialSize;
   }
 
-  public getValues(): Uint32Array {
-    return this.values;
-  }
-
   public push(token: number): void {
     if (this.count === this.size) {
       this.resize();
@@ -38,14 +34,19 @@ export default class TokenArray {
     ++this.resizeCount;
   }
 
-  public getEncoded(index: number): number {
+  public getTokenEncoded(index: number): number {
     this.checkIndexBounds(index);
     return this.values[index];
   }
 
-  public getDecoded(index: number): [number, TokenType] {
+  public getTokenDecoded(index: number): [number, TokenType] {
     this.checkIndexBounds(index);
     return tokenDecode(this.values[index]);
+  }
+
+  public setToken(index: number, value: number) {
+    this.checkIndexBounds(index);
+    this.values[index] = value;
   }
 
   public checkIndexBounds(index: number): void {
@@ -56,15 +57,19 @@ export default class TokenArray {
     }
   }
 
-  public getSize(): number {
-    return this.size;
-  }
-
   public getCount(): number {
     return this.count;
   }
 
+  public getSize(): number {
+    return this.size;
+  }
+
   public getResizeCount(): number {
     return this.resizeCount;
+  }
+
+  public getValues(): Uint32Array {
+    return this.values;
   }
 }

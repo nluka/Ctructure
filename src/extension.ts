@@ -34,7 +34,7 @@ function handleFormatCurrentFile() {
   console.log('TOKENS:');
   console.log('number - startIndex - type');
   for (let i = 0; i < tokens.getCount(); ++i) {
-    const [startIndex, tokenType] = tokens.getDecoded(i);
+    const [startIndex, tokenType] = tokens.getTokenDecoded(i);
     console.log(
       `${i + 1}`.padStart(6),
       '-',
