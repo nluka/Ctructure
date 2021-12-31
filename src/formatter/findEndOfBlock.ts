@@ -1,8 +1,7 @@
-import TokenArray from '../lexer/TokenArray';
 import { tokenDecode } from '../lexer/tokenDecode';
 import TokenType from '../lexer/TokenType';
 
-export default function findEndOfSwitch(
+export default function findEndOfBlock(
   tokenizedFile: Uint32Array,
   index: number,
 ): number {

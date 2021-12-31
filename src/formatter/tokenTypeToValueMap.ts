@@ -119,6 +119,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.ambiguousMinus, '-'],
   [TokenType.ambiguousDecrement, '--'],
   [TokenType.ambiguousIncrement, '++'],
+  [TokenType.ambiguousAmpersand, '&']
 ]);
 
 export default tokenTypeToValueMap;
