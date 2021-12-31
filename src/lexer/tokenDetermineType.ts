@@ -8,6 +8,8 @@ export default function tokenDetermineType(
   lastIndex: number,
   category: TokenCategory,
 ): TokenType {
+  // const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+
   switch (category) {
     case TokenCategory.newline: {
       return TokenType.newline;

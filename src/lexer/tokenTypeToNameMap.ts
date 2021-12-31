@@ -75,8 +75,6 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.operatorUnaryArithmeticDecrementPostfix, 'operatorUnaryArithmeticDecrementPostfix'],
   [TokenType.operatorUnaryBitwiseOnesComplement, 'operatorUnaryBitwiseOnesComplement'],
   [TokenType.operatorUnaryLogicalNegation, 'operatorUnaryLogicalNegation'],
-  [TokenType.operatorUnaryPlus, 'operatorUnaryPlus'],
-  [TokenType.operatorUnaryMinus, 'operatorUnaryMinus'],
   [TokenType.operatorUnaryIndirection, 'operatorUnaryIndirection'],
   [TokenType.operatorUnaryDereference, 'operatorUnaryDereference'],
   [TokenType.operatorUnaryAddressOf, 'operatorUnaryAddressOf'],

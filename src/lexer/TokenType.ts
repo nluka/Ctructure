@@ -25,52 +25,48 @@ enum TokenType {
   //#endregion Preprocessor
 
   //#region Keywords (https://en.cppreference.com/w/c/keyword)
-  // Types
-    keywordBool,
-    keywordChar,
-    keywordDouble,
-    keywordFloat,
-    keywordInt,
-    keywordLong,
-    keywordShort,
-    keywordSigned,
-    keywordStatic,
-    keywordUnsigned,
-    keywordVoid,
-  // Type qualifiers
-    keywordAtomic,
-    keywordConst,
-    keywordRestrict,
-    keywordVolatile,
-  // Other
-    keywordAlignas,
-    keywordAlignof,
-    keywordAuto,
-    keywordBreak,
-    keywordCase,
-    keywordComplex,
-    keywordContinue,
-    keywordDefault,
-    keywordDo,
-    keywordElse,
-    keywordEnum,
-    keywordExtern,
-    keywordFor,
-    keywordGeneric,
-    keywordGoto,
-    keywordIf,
-    keywordImaginary,
-    keywordNoreturn,
-    keywordRegister,
-    keywordReturn,
-    keywordSizeof,
-    keywordStaticassert,
-    keywordStruct,
-    keywordSwitch,
-    keywordThreadlocal,
-    keywordTypedef,
-    keywordUnion,
-    keywordWhile,
+  keywordAlignas,
+  keywordAlignof,
+  keywordAuto,
+  keywordAtomic,
+  keywordBool,
+  keywordBreak,
+  keywordCase,
+  keywordChar,
+  keywordComplex,
+  keywordConst,
+  keywordContinue,
+  keywordDefault,
+  keywordDo,
+  keywordDouble,
+  keywordElse,
+  keywordEnum,
+  keywordExtern,
+  keywordFloat,
+  keywordFor,
+  keywordGeneric,
+  keywordGoto,
+  keywordIf,
+  keywordImaginary,
+  keywordInt,
+  keywordLong,
+  keywordNoreturn,
+  keywordRegister,
+  keywordReturn,
+  keywordShort,
+  keywordSigned,
+  keywordSizeof,
+  keywordStatic,
+  keywordStaticassert,
+  keywordStruct,
+  keywordSwitch,
+  keywordThreadlocal,
+  keywordTypedef,
+  keywordUnion,
+  keywordUnsigned,
+  keywordVoid,
+  keywordVolatile,
+  keywordWhile,
   //#endregion // Keywords
 
   //#region Constants
@@ -90,8 +86,6 @@ enum TokenType {
     // Logical
       operatorUnaryLogicalNegation,
     // Other
-      operatorUnaryPlus,
-      operatorUnaryMinus,
       operatorUnaryIndirection,
       operatorUnaryDereference,
       operatorUnaryAddressOf,
@@ -176,27 +170,3 @@ enum TokenType {
 }
 
 export default TokenType;
-
-export function isTokenKeywordType(type: TokenType) {
-  return type >= TokenType.keywordBool && type <= TokenType.keywordVoid;
-}
-
-export function isTokenKeywordTypeQualifier(type: TokenType) {
-  return type >= TokenType.keywordAtomic && type <= TokenType.keywordVolatile;
-}
-
-export function isTokenKeywordTypeOrTypeQualifier(type: TokenType) {
-  return type >= TokenType.keywordBool && type <= TokenType.keywordVolatile;
-}
-
-export function isTokenSpecial(type: TokenType) {
-  return type >= TokenType.specialParenthesisLeft && type <= TokenType.specialSemicolon;
-}
-
-export function isTokenConstant(type: TokenType) {
-  return type >= TokenType.constantNumber && type <= TokenType.constantString;
-}
-
-export function isTokenAmbiguous(type: TokenType) {
-  return type >= TokenType.ambiguousPlus && type <= TokenType.ambiguousAmpersand;
-}

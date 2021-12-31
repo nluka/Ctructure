@@ -2,13 +2,11 @@ import tokenDetermineCategory from './tokenDetermineCategory';
 import tokenDetermineType from './tokenDetermineType';
 import tokenEncode from './tokenEncode';
 import { tokenFindLastIndex } from './tokenFindLastIndex';
-import TokenType, { isTokenAmbiguous } from './TokenType';
+import TokenType from './TokenType';
 
 export default class Tokenizer {
   private cursorPosition = 0;
   private prevTokenType: TokenType | null = null;
-  private tokensExtractedCount = 0;
-  public ambiguousTokenIndices: number[] = [];
 
   constructor(private fileContents: string) {}
 
@@ -41,17 +39,13 @@ export default class Tokenizer {
 
     this.prevTokenType = tokenType;
     this.cursorPosition = tokenLastIndex + 1;
-    if (isTokenAmbiguous(tokenType)) {
-      this.ambiguousTokenIndices.push(this.tokensExtractedCount);
-    }
-    ++this.tokensExtractedCount;
 
     return encodedToken;
   }
 
   /**
    * Moves `this.cursorPosition` to the starting index of the next token (or
-   * the last character of the file if no more tokens exist).
+   * the end of file if no more tokens exist).
    * @returns True if another token exists, false otherwise.
    */
   private moveCursorToBeginningOfNextToken(): boolean {
