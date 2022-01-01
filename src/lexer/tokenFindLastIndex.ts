@@ -7,8 +7,8 @@ const multiLineCommentRegex = /\*/,
   plusPlusOrPlusEqualRegex = /[+=]/,
   minusMinusOrMinusEqualOrArrowRegex = /[\-=>]/,
   singleOrDoubleQuoteRegex = /["']/,
-  AlphanumericRegex = /[0-9a-zA-Z]/,
-  AlphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
+  alphanumericRegex = /[0-9a-zA-Z]/,
+  alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
 
 export function tokenFindLastIndex(
   fileContents: string,
@@ -187,7 +187,7 @@ export function tokenFindLastIndex(
       let i: number;
       for (i = startIndex + 1; i < fileContents.length; ++i) {
         const char = fileContents.charAt(i);
-        const isAlphanumericChar = char.match(AlphanumericRegex);
+        const isAlphanumericChar = char.match(alphanumericRegex);
         if (isAlphanumericChar || char === '.') {
           continue;
         }
@@ -205,7 +205,7 @@ export function tokenFindLastIndex(
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
       for (let i = startIndex; i < fileContents.length; ++i) {
         const char = fileContents.charAt(i);
-        if (char.match(AlphanumericOrUnderscoreRegex)) {
+        if (char.match(alphanumericOrUnderscoreRegex)) {
           continue;
         }
         if (char === ':') {
