@@ -25,54 +25,58 @@ enum TokenType {
   //#endregion Preprocessor
 
   //#region Keywords (https://en.cppreference.com/w/c/keyword)
-  keywordAlignas,
-  keywordAlignof,
-  keywordAuto,
-  keywordAtomic,
-  keywordBool,
-  keywordBreak,
-  keywordCase,
-  keywordChar,
-  keywordComplex,
-  keywordConst,
-  keywordContinue,
-  keywordDefault,
-  keywordDo,
-  keywordDouble,
-  keywordElse,
-  keywordEnum,
-  keywordExtern,
-  keywordFloat,
-  keywordFor,
-  keywordGeneric,
-  keywordGoto,
-  keywordIf,
-  keywordImaginary,
-  keywordInt,
-  keywordLong,
-  keywordNoreturn,
-  keywordRegister,
-  keywordReturn,
-  keywordShort,
-  keywordSigned,
-  keywordSizeof,
-  keywordStatic,
-  keywordStaticassert,
-  keywordStruct,
-  keywordSwitch,
-  keywordThreadlocal,
-  keywordTypedef,
-  keywordUnion,
-  keywordUnsigned,
-  keywordVoid,
-  keywordVolatile,
-  keywordWhile,
+    // Types
+      keywordBool,
+      keywordChar,
+      keywordDouble,
+      keywordFloat,
+      keywordInt,
+      keywordLong,
+      keywordShort,
+      keywordSigned,
+      keywordStatic,
+      keywordUnsigned,
+      keywordVoid,
+      // Qualifiers
+        keywordAtomic,
+        keywordConst,
+        keywordRestrict,
+        keywordVolatile,
+    // Other
+      keywordAlignas,
+      keywordAlignof,
+      keywordAuto,
+      keywordBreak,
+      keywordCase,
+      keywordComplex,
+      keywordContinue,
+      keywordDefault,
+      keywordDo,
+      keywordElse,
+      keywordEnum,
+      keywordExtern,
+      keywordFor,
+      keywordGeneric,
+      keywordGoto,
+      keywordIf,
+      keywordImaginary,
+      keywordNoreturn,
+      keywordRegister,
+      keywordReturn,
+      keywordSizeof,
+      keywordStaticassert,
+      keywordStruct,
+      keywordSwitch,
+      keywordThreadlocal,
+      keywordTypedef,
+      keywordUnion,
+      keywordWhile,
   //#endregion // Keywords
 
   //#region Constants
-  constantNumber,
-  constantCharacter,
-  constantString,
+    constantNumber,
+    constantCharacter,
+    constantString,
   //#endregion Constants
 
   //#region Operators (https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B)
@@ -86,6 +90,8 @@ enum TokenType {
     // Logical
       operatorUnaryLogicalNegation,
     // Other
+      operatorUnaryPlus,
+      operatorUnaryMinus,
       operatorUnaryIndirection,
       operatorUnaryDereference,
       operatorUnaryAddressOf,
@@ -147,11 +153,11 @@ enum TokenType {
   //#endregion Special
 
   //#region Other
-  identifier,
-  label,
-  commentSingleline,
-  commentMultiline,
-  newline,
+    identifier,
+    label,
+    commentSingleline,
+    commentMultiline,
+    newline,
   //#endregion Other
 
   //#region Ambiguous
@@ -167,6 +173,26 @@ enum TokenType {
   ambiguousAsterisk, // (binary multiplication | indirection | dereference) ?
   ambiguousAmpersand, // (bitwise and | address of) ?
   //#endregion Ambiguous
+}
+
+export function isTokenAmbiguous(type: TokenType) {
+  return type >= TokenType.ambiguousPlus && type <= TokenType.ambiguousAmpersand;
+}
+
+export function isTokenConstant(type: TokenType) {
+  return type >= TokenType.constantNumber && type <= TokenType.constantString;
+}
+
+export function isTokenTypeKeyword(type: TokenType) {
+  return type >= TokenType.keywordBool && type <= TokenType.keywordVoid;
+}
+
+export function isTokenTypeQualifierKeyword(type: TokenType) {
+  return type >= TokenType.keywordAtomic && type <= TokenType.keywordVolatile;
+}
+
+export function isTokenTypeOrTypeQualifierKeyword(type: TokenType) {
+  return type >= TokenType.keywordBool && type <= TokenType.keywordVolatile;
 }
 
 export default TokenType;

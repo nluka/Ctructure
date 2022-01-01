@@ -2,6 +2,7 @@ import TokenType from './TokenType';
 
 // For easier testing and debugging
 const tokenTypeToNameMap = new Map<TokenType, string>([
+  // Preprocessor
   [TokenType.preproDirectiveInclude, 'preproDirectiveInclude'],
   [TokenType.preproDirectiveDefine, 'preproDirectiveDefine'],
   [TokenType.preproDirectiveUndef, 'preproDirectiveUndef'],
@@ -22,6 +23,7 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.preproOperatorConcat, 'preproOperatorConcat'],
   [TokenType.preproLineContinuation, 'preproLineContinuation'],
 
+  // Keywords
   [TokenType.keywordAlignas, 'keywordAlignas'],
   [TokenType.keywordAlignof, 'keywordAlignof'],
   [TokenType.keywordAuto, 'keywordAuto'],
@@ -49,6 +51,7 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.keywordLong, 'keywordLong'],
   [TokenType.keywordNoreturn, 'keywordNoreturn'],
   [TokenType.keywordRegister, 'keywordRegister'],
+  [TokenType.keywordRestrict, 'keywordRestrict'],
   [TokenType.keywordReturn, 'keywordReturn'],
   [TokenType.keywordShort, 'keywordShort'],
   [TokenType.keywordSigned, 'keywordSigned'],
@@ -65,16 +68,20 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.keywordVolatile, 'keywordVolatile'],
   [TokenType.keywordWhile, 'keywordWhile'],
 
+  // Constants
   [TokenType.constantNumber, 'constantNumber'],
   [TokenType.constantCharacter, 'constantCharacter'],
   [TokenType.constantString, 'constantString'],
 
+  // Operators
   [TokenType.operatorUnaryArithmeticIncrementPrefix, 'operatorUnaryArithmeticIncrementPrefix'],
   [TokenType.operatorUnaryArithmeticIncrementPostfix, 'operatorUnaryArithmeticIncrementPostfix'],
   [TokenType.operatorUnaryArithmeticDecrementPrefix, 'operatorUnaryArithmeticDecrementPrefix'],
   [TokenType.operatorUnaryArithmeticDecrementPostfix, 'operatorUnaryArithmeticDecrementPostfix'],
   [TokenType.operatorUnaryBitwiseOnesComplement, 'operatorUnaryBitwiseOnesComplement'],
   [TokenType.operatorUnaryLogicalNegation, 'operatorUnaryLogicalNegation'],
+  [TokenType.operatorUnaryPlus, 'operatorUnaryPlus'],
+  [TokenType.operatorUnaryMinus, 'operatorUnaryMinus'],
   [TokenType.operatorUnaryIndirection, 'operatorUnaryIndirection'],
   [TokenType.operatorUnaryDereference, 'operatorUnaryDereference'],
   [TokenType.operatorUnaryAddressOf, 'operatorUnaryAddressOf'],
@@ -112,6 +119,7 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.operatorTernaryQuestion, 'operatorTernaryQuestion'],
   [TokenType.operatorTernaryColon, 'operatorTernaryColon'],
 
+  // Special
   [TokenType.specialParenthesisLeft, 'specialParenthesisLeft'],
   [TokenType.specialParenthesisRight, 'specialParenthesisRight'],
   [TokenType.specialBraceLeft, 'specialBraceLeft'],
@@ -121,12 +129,14 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.specialComma, 'specialComma'],
   [TokenType.specialSemicolon, 'specialSemicolon'],
 
+  // Other
   [TokenType.identifier, 'identifier'],
   [TokenType.label, 'label'],
   [TokenType.commentSingleline, 'commentSingleLine'],
   [TokenType.commentMultiline, 'commentMultiLine'],
   [TokenType.newline, 'newline'],
 
+  // Ambiguous
   [TokenType.ambiguousPlus, 'ambiguousPlus'],
   [TokenType.ambiguousMinus, 'ambiguousMinus'],
   [TokenType.ambiguousIncrement, 'ambiguousIncrement'],

@@ -38,12 +38,12 @@ export default class TokenArray {
     ++this.resizeCount;
   }
 
-  public getEncoded(index: number): number {
+  public getTokenEncoded(index: number): number {
     this.checkIndexBounds(index);
     return this.values[index];
   }
 
-  public getDecoded(index: number): [number, TokenType] {
+  public getTokenDecoded(index: number): [number, TokenType] {
     this.checkIndexBounds(index);
     return tokenDecode(this.values[index]);
   }

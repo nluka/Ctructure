@@ -2,11 +2,13 @@ import tokenDetermineCategory from './tokenDetermineCategory';
 import tokenDetermineType from './tokenDetermineType';
 import tokenEncode from './tokenEncode';
 import { tokenFindLastIndex } from './tokenFindLastIndex';
-import TokenType from './TokenType';
+import TokenType, { isTokenAmbiguous } from './TokenType';
 
 export default class Tokenizer {
   private cursorPosition = 0;
   private prevTokenType: TokenType | null = null;
+  private ambiguousTokenIndices: number[] = [];
+  private tokensExtractedCount = 0;
 
   constructor(private fileContents: string) {}
 
@@ -34,11 +36,15 @@ export default class Tokenizer {
       tokenLastIndex,
       tokenCategory,
     );
+    if (isTokenAmbiguous(tokenType)) {
+      this.ambiguousTokenIndices.push(this.tokensExtractedCount);
+    }
 
     const encodedToken = tokenEncode(this.cursorPosition, tokenType);
 
     this.prevTokenType = tokenType;
     this.cursorPosition = tokenLastIndex + 1;
+    ++this.tokensExtractedCount;
 
     return encodedToken;
   }
