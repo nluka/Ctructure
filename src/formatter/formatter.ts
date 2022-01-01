@@ -24,6 +24,8 @@ export default function formatFile(tokenizedFile: [string, TokenArray]) {
     tokenizedFile[1].getCount(),
     0,
     null,
+    false,
+    0,
   );
 }
 
@@ -34,6 +36,8 @@ function formatter(
   endIndex: number,
   blockLevel: number,
   startingContext: TokenType | Type | null,
+  startingSplit: boolean,
+  startingParenCount: number,
 ): Node {
   let tokens: Uint32Array = tokenArray.getValues();
   const spacing = '  ';
@@ -41,11 +45,11 @@ function formatter(
   let currNode: nodeType = root,
     previousType: TokenType | null = null,
     context: TokenType | Type | null = startingContext,
-    parenCount = 0,
+    parenCount = startingParenCount,
     nextType: TokenType | Type,
     newLine = false,
     startLineIndex: number = tokenDecode(tokens[startIndex])[0],
-    split: boolean = false;
+    split: boolean = startingSplit;
 
   for (let i = startIndex; i < endIndex; ++i) {
     if (currNode) {
@@ -66,26 +70,25 @@ function formatter(
         case TokenType.newline:
           if (endIndex !== tokenArray.getCount() && i === endIndex - 1) {
             currNode.setData('');
-          } else if (
-            previousType === TokenType.newline ||
-            context === Type.prepro
-          ) {
+          } else if (context === Type.prepro) {
             context = null;
             newLine = true;
-          }
-          if (context !== Type.singleLineIf) {
-            context = null;
+          } else if (
+            previousType === TokenType.newline &&
+            tokenDecode(tokens[i + 1])[1] !== TokenType.newline
+          ) {
+            currNode.addDataPre(`\n${spacing.repeat(blockLevel)}`);
           }
           previousType = TokenType.newline;
           continue;
 
         case TokenType.specialComma:
-          if (!split && parenCount === 0 && context === Type.varDec) {
-            currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
-          } else if (!split) {
-            currNode.addDataPost(' ');
-          } else {
+          if (split || context === TokenType.keywordEnum) {
             newLine = true;
+          } else if (parenCount === 0 && context === Type.varDec) {
+            currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
+          } else {
+            currNode.addDataPost(' ');
           }
           break;
 
@@ -103,7 +106,8 @@ function formatter(
             --blockLevel;
             newLine = true;
           } else if (context === Type.singleLineIf) {
-            currNode.addDataPost(`\n${spacing.repeat(--blockLevel)}`);
+            --blockLevel;
+            newLine = true;
           } else if (nextType !== TokenType.commentSingleline) {
             newLine = true;
           } else if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
@@ -119,15 +123,46 @@ function formatter(
           break;
 
         case TokenType.specialParenthesisLeft:
+          ++parenCount;
           if (
-            ++parenCount === 1 &&
-            shouldSplitIntoMultLines(tokens, i, startLineIndex)
+            shouldSplitIntoMultLines(tokens, fileContents, i, startLineIndex)
           ) {
-            currNode.addDataPost(`\n${spacing.repeat(++blockLevel)}`);
-            split = true;
-          }
-          if (context === Type.typeOrIdentifier) {
-            context = null;
+            currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
+            const endParen = findEndOfParen(tokens, i);
+            currNode.setChild(
+              formatter(
+                fileContents,
+                tokenArray,
+                i + 1,
+                endParen,
+                blockLevel + 1,
+                null,
+                true,
+                parenCount + 1,
+              ),
+            );
+            i = endParen - 1;
+            newLine = true;
+            break;
+          } else if (
+            context !== Type.typeOrIdentifier &&
+            context !== TokenType.keywordFor
+          ) {
+            const endParen = findEndOfParen(tokens, i);
+            currNode.setChild(
+              formatter(
+                fileContents,
+                tokenArray,
+                i + 1,
+                endParen,
+                blockLevel,
+                null,
+                false,
+                parenCount + 1,
+              ),
+            );
+            i = endParen - 1;
+            break;
           }
           break;
 
@@ -157,23 +192,68 @@ function formatter(
 
         case TokenType.specialBraceLeft:
           if (context === Type.varDec) {
-            currNode.addDataPost(' ');
+            if (
+              shouldSplitArrayIntoMultLines(tokens, currNode, i, startLineIndex)
+            ) {
+              const endSwitch = findEndOfBlock(tokens, i);
+              currNode.setChild(
+                formatter(
+                  fileContents,
+                  tokenArray,
+                  i + 1,
+                  endSwitch,
+                  blockLevel + 1,
+                  Type.varDec,
+                  true,
+                  1,
+                ),
+              );
+              i = endSwitch - 1;
+              currNode.addDataPost(`\n${spacing.repeat(blockLevel + 1)}`);
+              newLine = true;
+            } else {
+              const endSwitch = findEndOfBlock(tokens, i);
+              currNode.setChild(
+                formatter(
+                  fileContents,
+                  tokenArray,
+                  i + 1,
+                  endSwitch + 1,
+                  blockLevel,
+                  Type.varDec,
+                  false,
+                  1,
+                ),
+              );
+              currNode.addDataPost(' ');
+              i = endSwitch;
+            }
+            break;
+          } else if (context === TokenType.keywordEnum) {
+            ++blockLevel;
+            newLine = true;
             break;
           }
+          context = null;
           ++blockLevel;
           newLine = true;
           break;
 
         case TokenType.specialBraceRight:
           nextType = nextTokenTypeNotNewLine(tokens, i);
-          if (nextType === TokenType.specialBraceRight) {
+          if (context === Type.varDec) {
+            if (parenCount !== 0) {
+              currNode.addDataPre(' ');
+            }
+          } else if (nextType === TokenType.specialBraceRight) {
             --blockLevel;
             newLine = true;
-          } else if (context === Type.varDec) {
-            currNode.addDataPre(' ');
           } else if (context === TokenType.keywordDo) {
             currNode.addDataPost(' ');
             context = null;
+          } else if (context === TokenType.keywordEnum) {
+            currNode.addDataPost(' ');
+            currNode.addDataPre(`\n${spacing.repeat(--blockLevel)}`);
           } else {
             context = null;
             newLine = true;
@@ -208,7 +288,7 @@ function formatter(
         case TokenType.operatorUnaryBitwiseOnesComplement:
         case TokenType.operatorUnaryLogicalNegation:
         case TokenType.operatorUnaryIndirection:
-        case TokenType.operatorUnaryDereference:
+        case TokenType.operatorUnaryAddressOf:
           break;
 
         // Binary operators
@@ -223,8 +303,6 @@ function formatter(
         case TokenType.operatorBinaryComparisonGreaterThanOrEqualTo:
         case TokenType.operatorBinaryComparisonLessThan:
         case TokenType.operatorBinaryComparisonLessThanOrEqualTo:
-        case TokenType.operatorBinaryLogicalAnd:
-        case TokenType.operatorBinaryLogicalOr:
         case TokenType.operatorBinaryBitwiseAnd:
         case TokenType.operatorBinaryBitwiseOr:
         case TokenType.operatorBinaryBitwiseXor:
@@ -233,6 +311,19 @@ function formatter(
         case TokenType.ambiguousPlus:
           if (context === Type.typeOrIdentifier) {
             context = null;
+          }
+          currNode.setData(` ${currNodeData} `);
+          break;
+
+        case TokenType.operatorBinaryLogicalAnd:
+        case TokenType.operatorBinaryLogicalOr:
+          if (context === Type.typeOrIdentifier) {
+            context = null;
+          }
+          if (split) {
+            newLine = true;
+            currNode.addDataPre(' ');
+            break;
           }
           currNode.setData(` ${currNodeData} `);
           break;
@@ -321,6 +412,8 @@ function formatter(
               endSwitch,
               blockLevel,
               TokenType.keywordSwitch,
+              false,
+              parenCount,
             ),
           );
           i = endSwitch - 1;
@@ -365,6 +458,8 @@ function formatter(
               endDoWhile,
               blockLevel,
               TokenType.keywordDo,
+              false,
+              parenCount,
             ),
           );
           i = endDoWhile - 1;
@@ -382,13 +477,33 @@ function formatter(
         case TokenType.keywordAtomic:
         case TokenType.keywordComplex:
         case TokenType.keywordConst:
-        case TokenType.keywordEnum:
         case TokenType.keywordExtern:
         case TokenType.keywordGeneric:
         case TokenType.keywordGoto:
         case TokenType.keywordTypedef:
           currNode.addDataPost(' ');
           break;
+
+        case TokenType.keywordEnum:
+          currNode.addDataPost(' ');
+          const endEnum = findEndOfBlock(tokens, i);
+          currNode.setChild(
+            formatter(
+              fileContents,
+              tokenArray,
+              i + 1,
+              endEnum + 1,
+              blockLevel,
+              TokenType.keywordEnum,
+              false,
+              parenCount,
+            ),
+          );
+          i = endEnum;
+          previousType = type;
+          currNode.setNext(new Node());
+          currNode = currNode.getNext();
+          continue;
 
         case TokenType.keywordStruct:
           context = TokenType.keywordStruct;
@@ -402,6 +517,8 @@ function formatter(
               endStruct + 1,
               blockLevel,
               TokenType.keywordStruct,
+              false,
+              parenCount,
             ),
           );
           i = endStruct;
@@ -428,7 +545,6 @@ function formatter(
             newLine = true;
             context = null;
           }
-
           break;
 
         case TokenType.commentSingleline:
@@ -544,28 +660,6 @@ export function toString(currNode: nodeType) {
   return str;
 }
 
-// function nextTokenTypeNotNewLine(
-//   tokens: Uint32Array,
-//   index: number,
-// ): TokenType | Type {
-//   for (let i = index + 1; i < tokens.length; ++i) {
-//     const type = tokenDecode(tokens[i])[1];
-//     if (
-//       type !== TokenType.newline &&
-//       type !== TokenType.commentMultiline &&
-//       type !== TokenType.commentSingleline
-//     ) {
-//       if (type > 90 && type < 102) {
-//         return Type.assignment;
-//       } else if (type < 19) {
-//         return Type.prepro;
-//       }
-//       return type;
-//     }
-//   }
-//   return TokenType.operatorBinaryAssignmentSubtraction;
-// }
-
 function nextTokenTypeNotNewLine(
   tokens: Uint32Array,
   index: number,
@@ -586,20 +680,56 @@ function nextTokenTypeNotNewLine(
 
 function shouldSplitIntoMultLines(
   tokens: Uint32Array,
+  fileContents: string,
+  index: number,
+  startLineIndex: number,
+): boolean {
+  let lineLength;
+  let parenCount = 1;
+  for (let i = index + 1; i < tokens.length; ++i) {
+    const decodedToken = tokenDecode(tokens[i]);
+    if (decodedToken[1] === TokenType.specialParenthesisRight) {
+      lineLength = removeSpaces(
+        fileContents.slice(startLineIndex, decodedToken[0]),
+      ).length;
+      --parenCount;
+      if (lineLength > 80) {
+        return true;
+      } else if (parenCount === 0) {
+        return false;
+      }
+    } else if (decodedToken[1] === TokenType.specialParenthesisLeft) {
+      ++parenCount;
+    }
+  }
+  return false;
+}
+
+function removeSpaces(str: string) {
+  let inside = 0;
+  return str.replace(/ +|"/g, (m) =>
+    m === '"' ? ((inside ^= 1), '"') : inside ? m : '',
+  );
+}
+
+function shouldSplitArrayIntoMultLines(
+  tokens: Uint32Array,
+  currNode: Node,
   index: number,
   startLineIndex: number,
 ): boolean {
   let parenCount = 1;
   for (let i = index + 1; i < tokens.length; ++i) {
     const decodedToken = tokenDecode(tokens[i]);
-    if (decodedToken[1] === TokenType.specialParenthesisRight) {
+    currNode;
+    if (decodedToken[1] === TokenType.specialBraceRight) {
       --parenCount;
       if (decodedToken[0] - startLineIndex > 80) {
         return true;
       } else if (parenCount === 0) {
         return false;
       }
-    } else if (decodedToken[1] === TokenType.specialParenthesisLeft) {
+    } else if (decodedToken[1] === TokenType.specialBraceLeft) {
       ++parenCount;
     }
   }
@@ -623,6 +753,23 @@ function setNodesDataFromFileContent(
       ) + 1,
     ),
   );
+}
+
+function findEndOfParen(tokens: Uint32Array, index: number): number {
+  let count = 0;
+  while (count >= 0) {
+    const type = tokenDecode(tokens[index])[1];
+    if (type === TokenType.specialParenthesisRight) {
+      --count;
+      if (count === 0) {
+        return index;
+      }
+    } else if (type === TokenType.specialParenthesisLeft) {
+      ++count;
+    }
+    ++index;
+  }
+  return index;
 }
 
 enum Type {

@@ -70,7 +70,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.operatorUnaryBitwiseOnesComplement, '~'],
   [TokenType.operatorUnaryLogicalNegation, '!'],
   [TokenType.operatorUnaryIndirection, '*'],
-  [TokenType.operatorUnaryDereference, '*'],
+  [TokenType.operatorUnaryAddressOf, '*'],
   [TokenType.operatorBinaryArithmeticAddition, '+'],
   [TokenType.operatorBinaryArithmeticSubtraction, '-'],
   [TokenType.operatorBinaryArithmeticDivision, '/'],
