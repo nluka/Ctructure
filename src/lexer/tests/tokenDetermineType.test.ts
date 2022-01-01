@@ -224,6 +224,16 @@ describe('tokenDetermineType', () => {
     assert('>= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
     assert('>=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
     assert('>=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
+
+    assert('<', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+    assert('< ', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+    assert('<b', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+    assert('<1', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+
+    assert('<=', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+    assert('<= ', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+    assert('<=b', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+    assert('<=1', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
     //#endregion Comparison
 
     //#region Bitwise
