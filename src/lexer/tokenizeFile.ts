@@ -1,8 +1,6 @@
 import { readFileSync } from 'fs';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
 import TokenArray from './TokenArray';
-import tokenDisambiguate from './tokenDisambiguate';
-import tokenEncode from './tokenEncode';
 import Tokenizer from './Tokenizer';
 
 // TODO: write tests
@@ -30,14 +28,8 @@ export function tokenizeFile(filePathname: string): [string, TokenArray] {
     tokens.push(extractedToken);
   }
 
-  for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
-    const disambiguatedTokenType = tokenDisambiguate(ambigTokenIndex, tokens);
-    const ambigTokenStartIndex = tokens.getTokenDecoded(ambigTokenIndex)[0];
-    tokens.setTokenEncoded(
-      ambigTokenIndex,
-      tokenEncode(ambigTokenStartIndex, disambiguatedTokenType),
-    );
-  }
+  // TODO: go through `tokens` and disambiguate any ambiguous tokens
+
 
   return [fileContents, tokens];
 }

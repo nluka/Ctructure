@@ -48,11 +48,6 @@ export default class TokenArray {
     return tokenDecode(this.values[index]);
   }
 
-  public setTokenEncoded(index: number, encodedToken: number) {
-    this.checkIndexBounds(index);
-    this.values[index] = encodedToken;
-  }
-
   public checkIndexBounds(index: number): void {
     if (index < 0 || index >= this.count) {
       throw new RangeError(
