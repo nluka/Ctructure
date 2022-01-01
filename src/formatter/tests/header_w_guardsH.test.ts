@@ -8,7 +8,7 @@ describe('formatter', () => {
     tokenizedFile: [string, TokenArray],
     expectedFormat: string,
   ) {
-    test.skip(`format file: str.c`, () => {
+    test(`format file: str.c`, () => {
       const stringed = toString(formatFile(tokenizedFile));
       //console.log(stringed);
       expect(stringed).toBe(expectedFormat);
@@ -24,7 +24,7 @@ describe('formatter', () => {
 #include <stdbool.h>\n\
 \n\
 bool func1(void);\n\
-_Bool func2();\n\
+bool func2();\n\
 \n\
 #endif // HEADER_WITH_GUARDS_H\n\
 ");
