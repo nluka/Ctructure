@@ -83,7 +83,6 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.operatorUnaryPlus, 'operatorUnaryPlus'],
   [TokenType.operatorUnaryMinus, 'operatorUnaryMinus'],
   [TokenType.operatorUnaryIndirection, 'operatorUnaryIndirection'],
-  [TokenType.operatorUnaryDereference, 'operatorUnaryDereference'],
   [TokenType.operatorUnaryAddressOf, 'operatorUnaryAddressOf'],
   [TokenType.operatorBinaryArithmeticAddition, 'operatorBinaryArithmeticAddition'],
   [TokenType.operatorBinaryArithmeticSubtraction, 'operatorBinaryArithmeticSubtraction'],

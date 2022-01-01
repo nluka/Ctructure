@@ -136,167 +136,167 @@ describe('tokenFindLastIndex', () => {
   });
 
   describe('operator', () => {
-    //#region Arithmetic
-    assert('++', 0, TokenCategory.operator, 1);
-    assert(' ++ ', 1, TokenCategory.operator, 2);
-    assert('++a', 0, TokenCategory.operator, 1);
-    assert('a++;', 1, TokenCategory.operator, 2);
-    assert('a+++++b', 1, TokenCategory.operator, 2);
-    assert('a+++++b', 3, TokenCategory.operator, 4);
-    assert('a+++++b', 5, TokenCategory.operator, 5);
+    describe('Arithmetic', () => {
+      assert('++', 0, TokenCategory.operator, 1);
+      assert(' ++ ', 1, TokenCategory.operator, 2);
+      assert('++a', 0, TokenCategory.operator, 1);
+      assert('a++;', 1, TokenCategory.operator, 2);
+      assert('a+++++b', 1, TokenCategory.operator, 2);
+      assert('a+++++b', 3, TokenCategory.operator, 4);
+      assert('a+++++b', 5, TokenCategory.operator, 5);
 
-    assert('--', 0, TokenCategory.operator, 1);
-    assert(' -- ', 1, TokenCategory.operator, 2);
-    assert('--a', 0, TokenCategory.operator, 1);
-    assert('a--;', 1, TokenCategory.operator, 2);
-    assert('a-----b', 1, TokenCategory.operator, 2);
-    assert('a-----b', 3, TokenCategory.operator, 4);
-    assert('a-----b', 5, TokenCategory.operator, 5);
+      assert('--', 0, TokenCategory.operator, 1);
+      assert(' -- ', 1, TokenCategory.operator, 2);
+      assert('--a', 0, TokenCategory.operator, 1);
+      assert('a--;', 1, TokenCategory.operator, 2);
+      assert('a-----b', 1, TokenCategory.operator, 2);
+      assert('a-----b', 3, TokenCategory.operator, 4);
+      assert('a-----b', 5, TokenCategory.operator, 5);
 
-    assert('a+b', 1, TokenCategory.operator, 1);
-    assert('a+\nb', 1, TokenCategory.operator, 1);
-    assert('a +b', 2, TokenCategory.operator, 2);
-    assert('a +', 2, TokenCategory.operator, 2);
+      assert('a+b', 1, TokenCategory.operator, 1);
+      assert('a+\nb', 1, TokenCategory.operator, 1);
+      assert('a +b', 2, TokenCategory.operator, 2);
+      assert('a +', 2, TokenCategory.operator, 2);
 
-    assert('a-b', 1, TokenCategory.operator, 1);
-    assert('a-\nb', 1, TokenCategory.operator, 1);
-    assert('a -b', 2, TokenCategory.operator, 2);
-    assert('a -', 2, TokenCategory.operator, 2);
-    //#endregion Arithmetic
+      assert('a-b', 1, TokenCategory.operator, 1);
+      assert('a-\nb', 1, TokenCategory.operator, 1);
+      assert('a -b', 2, TokenCategory.operator, 2);
+      assert('a -', 2, TokenCategory.operator, 2);
+    });
 
-    //#region Logical
-    assert('!', 0, TokenCategory.operator, 0);
-    assert('! ', 0, TokenCategory.operator, 0);
-    assert('!!a', 0, TokenCategory.operator, 0);
-    assert('!!a', 1, TokenCategory.operator, 1);
+    describe('Logical', () => {
+      assert('!', 0, TokenCategory.operator, 0);
+      assert('! ', 0, TokenCategory.operator, 0);
+      assert('!!a', 0, TokenCategory.operator, 0);
+      assert('!!a', 1, TokenCategory.operator, 1);
 
-    assert('&&', 0, TokenCategory.operator, 1);
-    assert('&& ', 0, TokenCategory.operator, 1);
-    assert('a&&b', 1, TokenCategory.operator, 2);
-    assert('a && 1', 2, TokenCategory.operator, 3);
+      assert('&&', 0, TokenCategory.operator, 1);
+      assert('&& ', 0, TokenCategory.operator, 1);
+      assert('a&&b', 1, TokenCategory.operator, 2);
+      assert('a && 1', 2, TokenCategory.operator, 3);
 
-    assert('||', 0, TokenCategory.operator, 1);
-    assert('|| ', 0, TokenCategory.operator, 1);
-    assert('a||b', 1, TokenCategory.operator, 2);
-    assert('a || 1', 2, TokenCategory.operator, 3);
-    //#endregion Logical
+      assert('||', 0, TokenCategory.operator, 1);
+      assert('|| ', 0, TokenCategory.operator, 1);
+      assert('a||b', 1, TokenCategory.operator, 2);
+      assert('a || 1', 2, TokenCategory.operator, 3);
+    });
 
-    //#region Comparison
-    assert('==', 0, TokenCategory.operator, 1);
-    assert('== ', 0, TokenCategory.operator, 1);
-    assert('==b', 0, TokenCategory.operator, 1);
-    assert('==1', 0, TokenCategory.operator, 1);
+    describe('Comparison', () => {
+      assert('==', 0, TokenCategory.operator, 1);
+      assert('== ', 0, TokenCategory.operator, 1);
+      assert('==b', 0, TokenCategory.operator, 1);
+      assert('==1', 0, TokenCategory.operator, 1);
 
-    assert('!=', 0, TokenCategory.operator, 1);
-    assert('!= ', 0, TokenCategory.operator, 1);
-    assert('!=b', 0, TokenCategory.operator, 1);
-    assert('!=1', 0, TokenCategory.operator, 1);
+      assert('!=', 0, TokenCategory.operator, 1);
+      assert('!= ', 0, TokenCategory.operator, 1);
+      assert('!=b', 0, TokenCategory.operator, 1);
+      assert('!=1', 0, TokenCategory.operator, 1);
 
-    assert('>', 0, TokenCategory.operator, 0);
-    assert('> ', 0, TokenCategory.operator, 0);
-    assert('>b', 0, TokenCategory.operator, 0);
-    assert('>1', 0, TokenCategory.operator, 0);
+      assert('>', 0, TokenCategory.operator, 0);
+      assert('> ', 0, TokenCategory.operator, 0);
+      assert('>b', 0, TokenCategory.operator, 0);
+      assert('>1', 0, TokenCategory.operator, 0);
 
-    assert('>=', 0, TokenCategory.operator, 1);
-    assert('>= ', 0, TokenCategory.operator, 1);
-    assert('>=b', 0, TokenCategory.operator, 1);
-    assert('>=1', 0, TokenCategory.operator, 1);
-    //#endregion Comparison
+      assert('>=', 0, TokenCategory.operator, 1);
+      assert('>= ', 0, TokenCategory.operator, 1);
+      assert('>=b', 0, TokenCategory.operator, 1);
+      assert('>=1', 0, TokenCategory.operator, 1);
+    });
 
-    //#region Bitwise
-    assert('~a', 0, TokenCategory.operator, 0);
-    assert('~ ', 0, TokenCategory.operator, 0);
-    assert('~\n', 0, TokenCategory.operator, 0);
+    describe('', () => {
+      assert('~a', 0, TokenCategory.operator, 0);
+      assert('~ ', 0, TokenCategory.operator, 0);
+      assert('~\n', 0, TokenCategory.operator, 0);
 
-    assert('a&b', 1, TokenCategory.operator, 1);
-    assert('a&1', 1, TokenCategory.operator, 1);
-    assert('a & b', 2, TokenCategory.operator, 2);
-    assert('a &\nb', 2, TokenCategory.operator, 2);
+      assert('a&b', 1, TokenCategory.operator, 1);
+      assert('a&1', 1, TokenCategory.operator, 1);
+      assert('a & b', 2, TokenCategory.operator, 2);
+      assert('a &\nb', 2, TokenCategory.operator, 2);
 
-    assert('a|b', 1, TokenCategory.operator, 1);
-    assert('a|1', 1, TokenCategory.operator, 1);
-    assert('a | b', 2, TokenCategory.operator, 2);
-    assert('a |\nb', 2, TokenCategory.operator, 2);
-    //#endregion Bitwise
+      assert('a|b', 1, TokenCategory.operator, 1);
+      assert('a|1', 1, TokenCategory.operator, 1);
+      assert('a | b', 2, TokenCategory.operator, 2);
+      assert('a |\nb', 2, TokenCategory.operator, 2);
+    });
 
-    //#region Assignment
-    assert('=', 0, TokenCategory.operator, 0);
-    assert('=b', 0, TokenCategory.operator, 0);
-    assert('=1', 0, TokenCategory.operator, 0);
-    assert('= ', 0, TokenCategory.operator, 0);
+    describe('Assignment', () => {
+      assert('=', 0, TokenCategory.operator, 0);
+      assert('=b', 0, TokenCategory.operator, 0);
+      assert('=1', 0, TokenCategory.operator, 0);
+      assert('= ', 0, TokenCategory.operator, 0);
 
-    assert('+=', 0, TokenCategory.operator, 1);
-    assert('+=b', 0, TokenCategory.operator, 1);
-    assert('+=1', 0, TokenCategory.operator, 1);
-    assert('+= ', 0, TokenCategory.operator, 1);
+      assert('+=', 0, TokenCategory.operator, 1);
+      assert('+=b', 0, TokenCategory.operator, 1);
+      assert('+=1', 0, TokenCategory.operator, 1);
+      assert('+= ', 0, TokenCategory.operator, 1);
 
-    assert('-=', 0, TokenCategory.operator, 1);
-    assert('-=b', 0, TokenCategory.operator, 1);
-    assert('-=1', 0, TokenCategory.operator, 1);
-    assert('-= ', 0, TokenCategory.operator, 1);
+      assert('-=', 0, TokenCategory.operator, 1);
+      assert('-=b', 0, TokenCategory.operator, 1);
+      assert('-=1', 0, TokenCategory.operator, 1);
+      assert('-= ', 0, TokenCategory.operator, 1);
 
-    assert('*=', 0, TokenCategory.operator, 1);
-    assert('*=b', 0, TokenCategory.operator, 1);
-    assert('*=1', 0, TokenCategory.operator, 1);
-    assert('*= ', 0, TokenCategory.operator, 1);
+      assert('*=', 0, TokenCategory.operator, 1);
+      assert('*=b', 0, TokenCategory.operator, 1);
+      assert('*=1', 0, TokenCategory.operator, 1);
+      assert('*= ', 0, TokenCategory.operator, 1);
 
-    assert('%=', 0, TokenCategory.operator, 1);
-    assert('%=b', 0, TokenCategory.operator, 1);
-    assert('%=1', 0, TokenCategory.operator, 1);
-    assert('%= ', 0, TokenCategory.operator, 1);
+      assert('%=', 0, TokenCategory.operator, 1);
+      assert('%=b', 0, TokenCategory.operator, 1);
+      assert('%=1', 0, TokenCategory.operator, 1);
+      assert('%= ', 0, TokenCategory.operator, 1);
 
-    assert('>>=', 0, TokenCategory.operator, 2);
-    assert('>>=b', 0, TokenCategory.operator, 2);
-    assert('>>=1', 0, TokenCategory.operator, 2);
-    assert('>>= ', 0, TokenCategory.operator, 2);
+      assert('>>=', 0, TokenCategory.operator, 2);
+      assert('>>=b', 0, TokenCategory.operator, 2);
+      assert('>>=1', 0, TokenCategory.operator, 2);
+      assert('>>= ', 0, TokenCategory.operator, 2);
 
-    assert('&=', 0, TokenCategory.operator, 1);
-    assert('&=b', 0, TokenCategory.operator, 1);
-    assert('&=1', 0, TokenCategory.operator, 1);
-    assert('&= ', 0, TokenCategory.operator, 1);
+      assert('&=', 0, TokenCategory.operator, 1);
+      assert('&=b', 0, TokenCategory.operator, 1);
+      assert('&=1', 0, TokenCategory.operator, 1);
+      assert('&= ', 0, TokenCategory.operator, 1);
 
-    assert('|=', 0, TokenCategory.operator, 1);
-    assert('|=b', 0, TokenCategory.operator, 1);
-    assert('|=1', 0, TokenCategory.operator, 1);
-    assert('|= ', 0, TokenCategory.operator, 1);
+      assert('|=', 0, TokenCategory.operator, 1);
+      assert('|=b', 0, TokenCategory.operator, 1);
+      assert('|=1', 0, TokenCategory.operator, 1);
+      assert('|= ', 0, TokenCategory.operator, 1);
 
-    assert('^=', 0, TokenCategory.operator, 1);
-    assert('^=b', 0, TokenCategory.operator, 1);
-    assert('^=1', 0, TokenCategory.operator, 1);
-    assert('^= ', 0, TokenCategory.operator, 1);
-    //#endregion Assignment
+      assert('^=', 0, TokenCategory.operator, 1);
+      assert('^=b', 0, TokenCategory.operator, 1);
+      assert('^=1', 0, TokenCategory.operator, 1);
+      assert('^= ', 0, TokenCategory.operator, 1);
+    });
 
-    //#region Other
-    assert('*', 0, TokenCategory.operator, 0);
-    assert('**a', 0, TokenCategory.operator, 0);
-    assert('**a', 1, TokenCategory.operator, 1);
-    assert('int *const', 4, TokenCategory.operator, 4);
-    assert('int * const', 4, TokenCategory.operator, 4);
+    describe('Other', () => {
+      assert('*', 0, TokenCategory.operator, 0);
+      assert('**a', 0, TokenCategory.operator, 0);
+      assert('**a', 1, TokenCategory.operator, 1);
+      assert('int *const', 4, TokenCategory.operator, 4);
+      assert('int * const', 4, TokenCategory.operator, 4);
 
-    assert('&', 0, TokenCategory.operator, 0);
-    assert('& ', 0, TokenCategory.operator, 0);
-    assert('&a);', 0, TokenCategory.operator, 0);
+      assert('&', 0, TokenCategory.operator, 0);
+      assert('& ', 0, TokenCategory.operator, 0);
+      assert('&a);', 0, TokenCategory.operator, 0);
 
-    assert('.', 0, TokenCategory.operator, 0);
-    assert('a.b', 1, TokenCategory.operator, 1);
-    assert('a. b', 1, TokenCategory.operator, 1);
-    assert('a.\nb', 1, TokenCategory.operator, 1);
+      assert('.', 0, TokenCategory.operator, 0);
+      assert('a.b', 1, TokenCategory.operator, 1);
+      assert('a. b', 1, TokenCategory.operator, 1);
+      assert('a.\nb', 1, TokenCategory.operator, 1);
 
-    assert('->', 0, TokenCategory.operator, 1);
-    assert('a->b', 1, TokenCategory.operator, 2);
-    assert('a-> b', 1, TokenCategory.operator, 2);
-    assert('a->\nb', 1, TokenCategory.operator, 2);
+      assert('->', 0, TokenCategory.operator, 1);
+      assert('a->b', 1, TokenCategory.operator, 2);
+      assert('a-> b', 1, TokenCategory.operator, 2);
+      assert('a->\nb', 1, TokenCategory.operator, 2);
 
-    assert('?', 0, TokenCategory.operator, 0);
-    assert('a?b', 1, TokenCategory.operator, 1);
-    assert('a? b', 1, TokenCategory.operator, 1);
-    assert('a?\nb', 1, TokenCategory.operator, 1);
+      assert('?', 0, TokenCategory.operator, 0);
+      assert('a?b', 1, TokenCategory.operator, 1);
+      assert('a? b', 1, TokenCategory.operator, 1);
+      assert('a?\nb', 1, TokenCategory.operator, 1);
 
-    assert(':', 0, TokenCategory.operator, 0);
-    assert('a :b', 2, TokenCategory.operator, 2);
-    assert('a : b', 2, TokenCategory.operator, 2);
-    assert('a?b\n:c', 4, TokenCategory.operator, 4);
-    //#endregion Other
+      assert(':', 0, TokenCategory.operator, 0);
+      assert('a :b', 2, TokenCategory.operator, 2);
+      assert('a : b', 2, TokenCategory.operator, 2);
+      assert('a?b\n:c', 4, TokenCategory.operator, 4);
+    });
   });
 
   describe('constant', () => {

@@ -1,3 +1,5 @@
+import findFirstTokenTypeMatchAhead from './findFirstTokenTypeMatchAhead';
+import findFirstTokenTypeMatchBehind from './findFirstTokenTypeMatchBehind';
 import TokenArray from './TokenArray';
 import TokenType, { isTokenConstant } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
@@ -6,9 +8,28 @@ export default function tokenDisambiguate(
   currTokenIndex: number,
   tokens: TokenArray,
 ): TokenType {
-  const prevTokenType = tokens.getTokenDecoded(currTokenIndex - 1)[1];
   const currTokenType = tokens.getTokenDecoded(currTokenIndex)[1];
-  const nextTokenType = tokens.getTokenDecoded(currTokenIndex + 1)[1];
+
+  const firstNonNewlineTokenLeading = findFirstTokenTypeMatchBehind(
+    tokens,
+    currTokenIndex - 1,
+    [TokenType.newline],
+    false,
+  );
+  const firstNonNewlineTokenTrailing = findFirstTokenTypeMatchAhead(
+    tokens,
+    currTokenIndex + 1,
+    [TokenType.newline],
+    false,
+  );
+  if (
+    firstNonNewlineTokenLeading === null ||
+    firstNonNewlineTokenTrailing === null
+  ) {
+    throw createError(currTokenType, currTokenIndex, tokens);
+  }
+  const prevTokenType = firstNonNewlineTokenLeading[1];
+  const nextTokenType = firstNonNewlineTokenTrailing[1];
 
   switch (currTokenType) {
     case TokenType.ambiguousPlus: {
@@ -36,11 +57,11 @@ export default function tokenDisambiguate(
     }
 
     case TokenType.ambiguousIncrement: {
-      if (prevTokenType === TokenType.identifier) {
-        return TokenType.operatorUnaryArithmeticIncrementPostfix;
-      }
       if (nextTokenType === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPrefix;
+      }
+      if (prevTokenType === TokenType.identifier) {
+        return TokenType.operatorUnaryArithmeticIncrementPostfix;
       }
       throw createError(currTokenType, currTokenIndex, tokens);
     }
@@ -56,68 +77,35 @@ export default function tokenDisambiguate(
     }
 
     case TokenType.ambiguousAsterisk: {
-      // Indirection:
-      // int *p;
-      //     ^
-      // CustomType *p;
-      //            ^
-      // int *p, a;
-      //     ^
-      // int a, *p = &a;
-      //        ^
-      // char **argv
-      //      ^
-      // char **argv
-      //       ^
-      // [typeKeyword|identifier|comma|indirection] (asterisk) [identifier|asterisk]
+      /* INDIRECTION CASES: */
+      // [typeKeyword|
+      // typeQualifierKeyword|
+      // identifier|
+      // anySpecial|
+      // anyBinaryOperator|
+      // indirection|
+      // anyTernaryOperator]   -> these are all the things that can come directly before
+      //   (asterisk)          -> this is the asterisk we are disambiguating
+      // [identifier|          -> these are all the things that can come directly after
+      // typeQualifierKeyword|
+      // anySpecial|
+      // anyBinaryOperator|
+      // indirection|
+      // anyTernaryOperator|
+      // anyMemberAccessOperator|
+      // constantString]
 
-      // Dereference:
-      // a = *p;
-      //     ^
-      // a = *p,
-      //     ^
-      // a = **pp;
-      //     ^
-      // a = **pp;
-      //      ^
-      // (*p
-      //  ^
-      // {*p
-      //  ^
-      // [*p
-      //  ^
-      // (**p
-      //  ^
-      // (**p
-      //   ^
-      // (a, *p)
-      //     ^
-      // {a, **pp}
-      //     ^
-      // {a, **pp}
-      //      ^
-      // {a, ***pp}
-      //      ^
-      // a [+-/*] *p
-      //          ^
-      // [assignmentDirect|
-      // dereference|
-      // parenLeft|
-      // braceLeft|
-      // bracketLeft|
-      // comma|
-      // plus|
-      // minus|
-      // divide|
-      // multiply] (asterisk) [identifier|asterisk]
+      /* MULTIPLICATION CASES: */
+      // [identifier|constantNumber] -> these are all the things that can come directly before
+      // (asterisk)                  -> this is the asterisk we are disambiguating
+      // [identifier|constantNumber] -> these are all the things that can come directly after
 
-      // Multiplication:
-      // (x * y)
-      // (1 * y)
-      // (x * 1)
-      // (1 * 1)
-      //    ^
-      // [identifier|constantNumber] (asterisk) [identifier|constantNumber]
+      if (
+        prevTokenType === TokenType.constantNumber ||
+        nextTokenType === TokenType.constantNumber
+      ) {
+        return TokenType.operatorBinaryArithmeticMultiplication;
+      }
 
       return TokenType.ambiguousAsterisk;
     }

@@ -159,177 +159,176 @@ describe('tokenDetermineType', () => {
   });
 
   describe('Operators', () => {
-    //#region Arithmetic
-    assert('++', 0, 1, TokenCategory.operator, TokenType.ambiguousIncrement);
-    assert(' ++ ', 1, 2, TokenCategory.operator, TokenType.ambiguousIncrement);
-    assert('++a', 0, 1, TokenCategory.operator, TokenType.ambiguousIncrement);
-    assert('a++;', 1, 2, TokenCategory.operator, TokenType.ambiguousIncrement);
-    assert('a+++++b', 1, 2, TokenCategory.operator, TokenType.ambiguousIncrement);
-    assert('a+++++b', 3, 4, TokenCategory.operator, TokenType.ambiguousIncrement);
-    assert('a+++++b', 5, 5, TokenCategory.operator, TokenType.ambiguousPlus);
+    describe('Arithemtic', () => {
+      assert('++', 0, 1, TokenCategory.operator, TokenType.ambiguousIncrement);
+      assert(' ++ ', 1, 2, TokenCategory.operator, TokenType.ambiguousIncrement);
+      assert('++a', 0, 1, TokenCategory.operator, TokenType.ambiguousIncrement);
+      assert('a++;', 1, 2, TokenCategory.operator, TokenType.ambiguousIncrement);
+      assert('a+++++b', 1, 2, TokenCategory.operator, TokenType.ambiguousIncrement);
+      assert('a+++++b', 3, 4, TokenCategory.operator, TokenType.ambiguousIncrement);
+      assert('a+++++b', 5, 5, TokenCategory.operator, TokenType.ambiguousPlus);
 
-    assert('--', 0, 1, TokenCategory.operator, TokenType.ambiguousDecrement);
-    assert(' -- ', 1, 2, TokenCategory.operator, TokenType.ambiguousDecrement);
-    assert('--a', 0, 1, TokenCategory.operator, TokenType.ambiguousDecrement);
-    assert('a--;', 1, 2, TokenCategory.operator, TokenType.ambiguousDecrement);
-    assert('a-----b', 1, 2, TokenCategory.operator, TokenType.ambiguousDecrement);
-    assert('a-----b', 3, 4, TokenCategory.operator, TokenType.ambiguousDecrement);
-    assert('a-----b', 5, 5, TokenCategory.operator, TokenType.ambiguousMinus);
+      assert('--', 0, 1, TokenCategory.operator, TokenType.ambiguousDecrement);
+      assert(' -- ', 1, 2, TokenCategory.operator, TokenType.ambiguousDecrement);
+      assert('--a', 0, 1, TokenCategory.operator, TokenType.ambiguousDecrement);
+      assert('a--;', 1, 2, TokenCategory.operator, TokenType.ambiguousDecrement);
+      assert('a-----b', 1, 2, TokenCategory.operator, TokenType.ambiguousDecrement);
+      assert('a-----b', 3, 4, TokenCategory.operator, TokenType.ambiguousDecrement);
+      assert('a-----b', 5, 5, TokenCategory.operator, TokenType.ambiguousMinus);
 
-    assert('a+b', 1, 1, TokenCategory.operator, TokenType.ambiguousPlus);
-    assert('a+\nb', 1, 1, TokenCategory.operator, TokenType.ambiguousPlus);
-    assert('a +b', 2, 2, TokenCategory.operator, TokenType.ambiguousPlus);
-    assert('a +', 2, 2, TokenCategory.operator, TokenType.ambiguousPlus);
+      assert('a+b', 1, 1, TokenCategory.operator, TokenType.ambiguousPlus);
+      assert('a+\nb', 1, 1, TokenCategory.operator, TokenType.ambiguousPlus);
+      assert('a +b', 2, 2, TokenCategory.operator, TokenType.ambiguousPlus);
+      assert('a +', 2, 2, TokenCategory.operator, TokenType.ambiguousPlus);
 
-    assert('a-b', 1, 1, TokenCategory.operator, TokenType.ambiguousMinus);
-    assert('a-\nb', 1, 1, TokenCategory.operator, TokenType.ambiguousMinus);
-    assert('a -b', 2, 2, TokenCategory.operator, TokenType.ambiguousMinus);
-    assert('a -', 2, 2, TokenCategory.operator, TokenType.ambiguousMinus);
-    //#endregion Arithmetic
+      assert('a-b', 1, 1, TokenCategory.operator, TokenType.ambiguousMinus);
+      assert('a-\nb', 1, 1, TokenCategory.operator, TokenType.ambiguousMinus);
+      assert('a -b', 2, 2, TokenCategory.operator, TokenType.ambiguousMinus);
+      assert('a -', 2, 2, TokenCategory.operator, TokenType.ambiguousMinus);
+    });
 
-    //#region Logical
-    assert('!', 0, 0, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
-    assert('! ', 0, 0, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
-    assert('!!a', 0, 0, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
-    assert('!!a', 1, 1, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
+    describe('Logical', () => {
+      assert('!', 0, 0, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
+      assert('! ', 0, 0, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
+      assert('!!a', 0, 0, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
+      assert('!!a', 1, 1, TokenCategory.operator, TokenType.operatorUnaryLogicalNegation);
 
-    assert('&&', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
-    assert('&& ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
-    assert('a&&b', 1, 2, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
-    assert('a && 1', 2, 3, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
+      assert('&&', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
+      assert('&& ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
+      assert('a&&b', 1, 2, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
+      assert('a && 1', 2, 3, TokenCategory.operator, TokenType.operatorBinaryLogicalAnd);
 
-    assert('||', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
-    assert('|| ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
-    assert('a||b', 1, 2, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
-    assert('a || 1', 2, 3, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
-    //#endregion Logical
+      assert('||', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
+      assert('|| ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
+      assert('a||b', 1, 2, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
+      assert('a || 1', 2, 3, TokenCategory.operator, TokenType.operatorBinaryLogicalOr);
+    });
+    describe('Comparison', () => {
+      assert('==', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
+      assert('== ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
+      assert('==b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
+      assert('==1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
 
-    //#region Comparison
-    assert('==', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
-    assert('== ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
-    assert('==b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
-    assert('==1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonEqualTo);
+      assert('!=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
+      assert('!= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
+      assert('!=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
+      assert('!=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
 
-    assert('!=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
-    assert('!= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
-    assert('!=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
-    assert('!=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonNotEqualTo);
+      assert('>', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
+      assert('> ', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
+      assert('>b', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
+      assert('>1', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
 
-    assert('>', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
-    assert('> ', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
-    assert('>b', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
-    assert('>1', 0, 0, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThan);
+      assert('>=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
+      assert('>= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
+      assert('>=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
+      assert('>=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
 
-    assert('>=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
-    assert('>= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
-    assert('>=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
-    assert('>=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo);
+      assert('<', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+      assert('< ', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+      assert('<b', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+      assert('<1', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
 
-    assert('<', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
-    assert('< ', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
-    assert('<b', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
-    assert('<1', 0, 0, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThan);
+      assert('<=', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+      assert('<= ', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+      assert('<=b', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+      assert('<=1', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
+    });
 
-    assert('<=', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
-    assert('<= ', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
-    assert('<=b', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
-    assert('<=1', 0, 1, TokenCategory.preproOrOperator, TokenType.operatorBinaryComparisonLessThanOrEqualTo);
-    //#endregion Comparison
+    describe('Bitwise', () => {
+      assert('~a', 0, 0, TokenCategory.operator, TokenType.operatorUnaryBitwiseOnesComplement);
+      assert('~ ', 0, 0, TokenCategory.operator, TokenType.operatorUnaryBitwiseOnesComplement);
+      assert('~\n', 0, 0, TokenCategory.operator, TokenType.operatorUnaryBitwiseOnesComplement);
 
-    //#region Bitwise
-    assert('~a', 0, 0, TokenCategory.operator, TokenType.operatorUnaryBitwiseOnesComplement);
-    assert('~ ', 0, 0, TokenCategory.operator, TokenType.operatorUnaryBitwiseOnesComplement);
-    assert('~\n', 0, 0, TokenCategory.operator, TokenType.operatorUnaryBitwiseOnesComplement);
+      assert('a&b', 1, 1, TokenCategory.operator, TokenType.ambiguousAmpersand);
+      assert('a&1', 1, 1, TokenCategory.operator, TokenType.ambiguousAmpersand);
+      assert('a & b', 2, 2, TokenCategory.operator, TokenType.ambiguousAmpersand);
+      assert('a &\nb', 2, 2, TokenCategory.operator, TokenType.ambiguousAmpersand);
 
-    assert('a&b', 1, 1, TokenCategory.operator, TokenType.ambiguousAmpersand);
-    assert('a&1', 1, 1, TokenCategory.operator, TokenType.ambiguousAmpersand);
-    assert('a & b', 2, 2, TokenCategory.operator, TokenType.ambiguousAmpersand);
-    assert('a &\nb', 2, 2, TokenCategory.operator, TokenType.ambiguousAmpersand);
+      assert('a|b', 1, 1, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
+      assert('a|1', 1, 1, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
+      assert('a | b', 2, 2, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
+      assert('a |\nb', 2, 2, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
+    });
 
-    assert('a|b', 1, 1, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
-    assert('a|1', 1, 1, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
-    assert('a | b', 2, 2, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
-    assert('a |\nb', 2, 2, TokenCategory.operator, TokenType.operatorBinaryBitwiseOr);
-    //#endregion Bitwise
+    describe('Assignment', () => {
+      assert('=', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
+      assert('=b', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
+      assert('=1', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
+      assert('= ', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
 
-    //#region Assignment
-    assert('=', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
-    assert('=b', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
-    assert('=1', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
-    assert('= ', 0, 0, TokenCategory.operator, TokenType.operatorBinaryAssignmentDirect);
+      assert('+=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
+      assert('+=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
+      assert('+=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
+      assert('+= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
 
-    assert('+=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
-    assert('+=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
-    assert('+=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
-    assert('+= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentAddition);
+      assert('-=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
+      assert('-=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
+      assert('-=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
+      assert('-= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
 
-    assert('-=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
-    assert('-=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
-    assert('-=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
-    assert('-= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentSubtraction);
+      assert('*=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
+      assert('*=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
+      assert('*=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
+      assert('*= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
 
-    assert('*=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
-    assert('*=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
-    assert('*=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
-    assert('*= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentMultiplication);
+      assert('%=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
+      assert('%=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
+      assert('%=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
+      assert('%= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
 
-    assert('%=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
-    assert('%=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
-    assert('%=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
-    assert('%= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentModulo);
+      assert('>>=', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
+      assert('>>=b', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
+      assert('>>=1', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
+      assert('>>= ', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
 
-    assert('>>=', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
-    assert('>>=b', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
-    assert('>>=1', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
-    assert('>>= ', 0, 2, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseShiftRight);
+      assert('&=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
+      assert('&=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
+      assert('&=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
+      assert('&= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
 
-    assert('&=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
-    assert('&=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
-    assert('&=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
-    assert('&= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseAnd);
+      assert('|=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
+      assert('|=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
+      assert('|=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
+      assert('|= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
 
-    assert('|=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
-    assert('|=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
-    assert('|=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
-    assert('|= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseOr);
+      assert('^=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
+      assert('^=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
+      assert('^=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
+      assert('^= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
+    });
 
-    assert('^=', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
-    assert('^=b', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
-    assert('^=1', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
-    assert('^= ', 0, 1, TokenCategory.operator, TokenType.operatorBinaryAssignmentBitwiseXor);
-    //#endregion Assignment
+    describe('Other', () => {
+      assert('*', 0, 0, TokenCategory.operator, TokenType.ambiguousAsterisk);
+      assert('**a', 0, 0, TokenCategory.operator, TokenType.ambiguousAsterisk);
+      assert('**a', 1, 1, TokenCategory.operator, TokenType.ambiguousAsterisk);
+      assert('int *const', 4, 4, TokenCategory.operator, TokenType.ambiguousAsterisk);
+      assert('int * const', 4, 4, TokenCategory.operator, TokenType.ambiguousAsterisk);
 
-    //#region Other
-    assert('*', 0, 0, TokenCategory.operator, TokenType.ambiguousAsterisk);
-    assert('**a', 0, 0, TokenCategory.operator, TokenType.ambiguousAsterisk);
-    assert('**a', 1, 1, TokenCategory.operator, TokenType.ambiguousAsterisk);
-    assert('int *const', 4, 4, TokenCategory.operator, TokenType.ambiguousAsterisk);
-    assert('int * const', 4, 4, TokenCategory.operator, TokenType.ambiguousAsterisk);
+      assert('&', 0, 0, TokenCategory.operator, TokenType.ambiguousAmpersand);
+      assert('& ', 0, 0, TokenCategory.operator, TokenType.ambiguousAmpersand);
+      assert('&a);', 0, 0, TokenCategory.operator, TokenType.ambiguousAmpersand);
 
-    assert('&', 0, 0, TokenCategory.operator, TokenType.ambiguousAmpersand);
-    assert('& ', 0, 0, TokenCategory.operator, TokenType.ambiguousAmpersand);
-    assert('&a);', 0, 0, TokenCategory.operator, TokenType.ambiguousAmpersand);
+      assert('.', 0, 0, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
+      assert('a.b', 1, 1, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
+      assert('a. b', 1, 1, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
+      assert('a.\nb', 1, 1, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
 
-    assert('.', 0, 0, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
-    assert('a.b', 1, 1, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
-    assert('a. b', 1, 1, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
-    assert('a.\nb', 1, 1, TokenCategory.operator, TokenType.operatorMemberSelectionDirect);
+      assert('->', 0, 1, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
+      assert('a->b', 1, 2, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
+      assert('a-> b', 1, 2, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
+      assert('a->\nb', 1, 2, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
 
-    assert('->', 0, 1, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
-    assert('a->b', 1, 2, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
-    assert('a-> b', 1, 2, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
-    assert('a->\nb', 1, 2, TokenCategory.operator, TokenType.operatorMemberSelectionIndirect);
+      assert('?', 0, 0, TokenCategory.operator, TokenType.operatorTernaryQuestion);
+      assert('a?b', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
+      assert('a? b', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
+      assert('a?\nb', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
 
-    assert('?', 0, 0, TokenCategory.operator, TokenType.operatorTernaryQuestion);
-    assert('a?b', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
-    assert('a? b', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
-    assert('a?\nb', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
-
-    assert(':', 0, 0, TokenCategory.operator, TokenType.operatorTernaryColon);
-    assert('a :b', 2, 2, TokenCategory.operator, TokenType.operatorTernaryColon);
-    assert('a : b', 2, 2, TokenCategory.operator, TokenType.operatorTernaryColon);
-    assert('a?b\n:c', 4, 4, TokenCategory.operator, TokenType.operatorTernaryColon);
-    //#endregion Other
+      assert(':', 0, 0, TokenCategory.operator, TokenType.operatorTernaryColon);
+      assert('a :b', 2, 2, TokenCategory.operator, TokenType.operatorTernaryColon);
+      assert('a : b', 2, 2, TokenCategory.operator, TokenType.operatorTernaryColon);
+      assert('a?b\n:c', 4, 4, TokenCategory.operator, TokenType.operatorTernaryColon);
+    });
   });
 
   describe('Other', () => {

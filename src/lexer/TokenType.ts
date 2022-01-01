@@ -93,7 +93,6 @@ enum TokenType {
       operatorUnaryPlus,
       operatorUnaryMinus,
       operatorUnaryIndirection,
-      operatorUnaryDereference,
       operatorUnaryAddressOf,
   // Binary
     // Arithmetic
