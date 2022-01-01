@@ -1,35 +1,51 @@
 import findFirstTokenTypeMatchAhead from './findFirstTokenTypeMatchAhead';
 import findFirstTokenTypeMatchBehind from './findFirstTokenTypeMatchBehind';
 import TokenArray from './TokenArray';
-import TokenType, { isTokenConstant } from './TokenType';
+import TokenType, {
+  isTokenBinaryOperator,
+  isTokenConstant,
+  isTokenMemberSelectionOperator,
+  isTokenSpecial,
+  isTokenTernaryOperatorComponent,
+  isTokenTypeOrTypeQualifierKeyword,
+  isTokenTypeQualifierKeyword,
+} from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
+
+const tokenTypesNewlineOrComment: TokenType[] = [
+  TokenType.newline,
+  TokenType.commentSingleline,
+  TokenType.commentMultiline,
+];
 
 export default function tokenDisambiguate(
   currTokenIndex: number,
   tokens: TokenArray,
 ): TokenType {
+  const createErr = () => createError(currTokenType, currTokenIndex, tokens);
+
   const currTokenType = tokens.getTokenDecoded(currTokenIndex)[1];
 
-  const firstNonNewlineTokenLeading = findFirstTokenTypeMatchBehind(
+  const firstNonNewlineOrCommentTokenBehindCurr = findFirstTokenTypeMatchBehind(
     tokens,
     currTokenIndex - 1,
-    [TokenType.newline],
+    tokenTypesNewlineOrComment,
     false,
   );
-  const firstNonNewlineTokenTrailing = findFirstTokenTypeMatchAhead(
+  const firstNonNewlineOrCommentTokenAfterCurr = findFirstTokenTypeMatchAhead(
     tokens,
     currTokenIndex + 1,
-    [TokenType.newline],
+    tokenTypesNewlineOrComment,
     false,
   );
   if (
-    firstNonNewlineTokenLeading === null ||
-    firstNonNewlineTokenTrailing === null
+    firstNonNewlineOrCommentTokenBehindCurr === null ||
+    firstNonNewlineOrCommentTokenAfterCurr === null
   ) {
-    throw createError(currTokenType, currTokenIndex, tokens);
+    throw createErr();
   }
-  const prevTokenType = firstNonNewlineTokenLeading[1];
-  const nextTokenType = firstNonNewlineTokenTrailing[1];
+  const prevTokenType = firstNonNewlineOrCommentTokenBehindCurr[1];
+  const nextTokenType = firstNonNewlineOrCommentTokenAfterCurr[1];
 
   switch (currTokenType) {
     case TokenType.ambiguousPlus: {
@@ -63,7 +79,7 @@ export default function tokenDisambiguate(
       if (prevTokenType === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPostfix;
       }
-      throw createError(currTokenType, currTokenIndex, tokens);
+      throw createErr();
     }
 
     case TokenType.ambiguousDecrement: {
@@ -73,7 +89,7 @@ export default function tokenDisambiguate(
       if (nextTokenType === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticDecrementPrefix;
       }
-      throw createError(currTokenType, currTokenIndex, tokens);
+      throw createErr();
     }
 
     case TokenType.ambiguousAsterisk: {
@@ -88,11 +104,7 @@ export default function tokenDisambiguate(
       //   (asterisk)          -> this is the asterisk we are disambiguating
       // [identifier|          -> these are all the things that can come directly after
       // typeQualifierKeyword|
-      // anySpecial|
-      // anyBinaryOperator|
       // indirection|
-      // anyTernaryOperator|
-      // anyMemberAccessOperator|
       // constantString]
 
       /* MULTIPLICATION CASES: */
@@ -107,7 +119,64 @@ export default function tokenDisambiguate(
         return TokenType.operatorBinaryArithmeticMultiplication;
       }
 
-      return TokenType.ambiguousAsterisk;
+      if (
+        // Prev
+        isTokenTypeOrTypeQualifierKeyword(prevTokenType) ||
+        isTokenSpecial(prevTokenType) ||
+        isTokenBinaryOperator(prevTokenType) ||
+        isTokenTernaryOperatorComponent(prevTokenType) ||
+        prevTokenType === TokenType.operatorUnaryIndirection ||
+        // Next
+        isTokenTypeQualifierKeyword(nextTokenType) ||
+        nextTokenType === TokenType.operatorUnaryIndirection ||
+        nextTokenType === TokenType.constantString
+      ) {
+        return TokenType.operatorUnaryIndirection;
+      }
+
+      if (
+        prevTokenType === TokenType.identifier &&
+        nextTokenType === TokenType.identifier
+      ) {
+        const firstNonNewlineOrCommentTokenBehindPrev =
+          findFirstTokenTypeMatchBehind(
+            tokens,
+            currTokenIndex - 2,
+            tokenTypesNewlineOrComment,
+            false,
+          );
+        if (firstNonNewlineOrCommentTokenBehindPrev === null) {
+          throw createErr();
+        }
+
+        const leadingPrevTokenType = firstNonNewlineOrCommentTokenBehindPrev[1];
+        if (
+          isTokenMemberSelectionOperator(leadingPrevTokenType) ||
+          [
+            TokenType.specialParenthesisRight,
+            TokenType.specialBraceRight,
+            TokenType.specialBracketRight,
+          ].includes(leadingPrevTokenType)
+        ) {
+          throw createError(currTokenType, currTokenIndex, tokens);
+        }
+
+        if (
+          isTokenBinaryOperator(leadingPrevTokenType) ||
+          isTokenTernaryOperatorComponent(leadingPrevTokenType) ||
+          [
+            TokenType.specialComma,
+            TokenType.specialParenthesisLeft,
+            TokenType.specialBraceLeft,
+            TokenType.specialBracketLeft,
+          ].includes(leadingPrevTokenType)
+        ) {
+          return TokenType.operatorBinaryArithmeticMultiplication;
+        }
+        return TokenType.operatorUnaryIndirection;
+      }
+
+      throw createErr();
     }
 
     case TokenType.ambiguousAmpersand: {
@@ -127,12 +196,11 @@ export default function tokenDisambiguate(
         return TokenType.operatorUnaryAddressOf;
       }
 
-      throw createError(currTokenType, currTokenIndex, tokens);
+      throw createErr();
     }
 
-    default: {
-      throw createError(currTokenType, currTokenIndex, tokens);
-    }
+    default:
+      throw createErr();
   }
 }
 

@@ -1,6 +1,7 @@
 import TokenType from '../lexer/TokenType';
 
 const tokenTypeToValueMap = new Map<TokenType, string>([
+  // Preprocessor
   [TokenType.preproDirectiveInclude, '#include'],
   [TokenType.preproDirectiveDefine, '#define'],
   [TokenType.preproLineContinuation, '\\'],
@@ -20,6 +21,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.preproMacroTimestamp, '__TIMESTAMP__'],
   [TokenType.preproOperatorConcat, '##'],
 
+  // Keywords
   [TokenType.keywordAlignas, 'alignas'],
   [TokenType.keywordAlignof, 'alignof'],
   [TokenType.keywordAuto, 'auto'],
@@ -47,6 +49,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.keywordLong, 'long'],
   [TokenType.keywordNoreturn, 'noreturn'],
   [TokenType.keywordRegister, 'register'],
+  [TokenType.keywordRestrict, 'restrict'],
   [TokenType.keywordReturn, 'return'],
   [TokenType.keywordShort, 'short'],
   [TokenType.keywordSigned, 'signed'],
@@ -63,14 +66,17 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.keywordVolatile, 'volatile'],
   [TokenType.keywordWhile, 'while'],
 
+  // Operators
   [TokenType.operatorUnaryArithmeticIncrementPrefix, '++'],
   [TokenType.operatorUnaryArithmeticIncrementPostfix, '++'],
   [TokenType.operatorUnaryArithmeticDecrementPrefix, '--'],
   [TokenType.operatorUnaryArithmeticDecrementPostfix, '--'],
   [TokenType.operatorUnaryBitwiseOnesComplement, '~'],
   [TokenType.operatorUnaryLogicalNegation, '!'],
+  [TokenType.operatorUnaryPlus, '+'],
+  [TokenType.operatorUnaryMinus, '-'],
   [TokenType.operatorUnaryIndirection, '*'],
-  [TokenType.operatorUnaryAddressOf, '*'],
+  [TokenType.operatorUnaryAddressOf, '&'],
   [TokenType.operatorBinaryArithmeticAddition, '+'],
   [TokenType.operatorBinaryArithmeticSubtraction, '-'],
   [TokenType.operatorBinaryArithmeticDivision, '/'],
@@ -105,6 +111,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.operatorMemberSelectionDirect, '.'],
   [TokenType.operatorMemberSelectionIndirect, '->'],
 
+  // Special
   [TokenType.specialParenthesisLeft, '('],
   [TokenType.specialParenthesisRight, ')'],
   [TokenType.specialBraceLeft, '{'],
@@ -114,11 +121,12 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.specialComma, ','],
   [TokenType.specialSemicolon, ';'],
 
-  [TokenType.ambiguousAsterisk, '*'],
+  // Ambiguous
   [TokenType.ambiguousPlus, '+'],
   [TokenType.ambiguousMinus, '-'],
-  [TokenType.ambiguousDecrement, '--'],
   [TokenType.ambiguousIncrement, '++'],
+  [TokenType.ambiguousDecrement, '--'],
+  [TokenType.ambiguousAsterisk, '*'],
   [TokenType.ambiguousAmpersand, '&']
 ]);
 

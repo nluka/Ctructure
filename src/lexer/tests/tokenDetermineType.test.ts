@@ -1,6 +1,7 @@
 import TokenCategory from '../TokenCategory';
 import tokenDetermineType from '../tokenDetermineType';
 import TokenType from '../TokenType';
+import tokenTypeToNameMap from '../tokenTypeToNameMap';
 
 describe('tokenDetermineType', () => {
   function assert(
@@ -10,7 +11,7 @@ describe('tokenDetermineType', () => {
     category: TokenCategory,
     expectedType: TokenType,
   ) {
-    test(`return ${expectedType} when fileContents=${JSON.stringify(
+    test(`return ${tokenTypeToNameMap.get(expectedType)} when fileContents=${JSON.stringify(
       fileContents,
     )}, startIndex=${startIndex}, lastIndex=${lastIndex}, category=${category}`, () => {
       expect(

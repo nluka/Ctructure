@@ -11,10 +11,8 @@ export default function findFirstTokenTypeMatchBehind(
 
   for (let i = firstSearchIndex; i >= 0; --i) {
     const [tokenStartIndex, tokenType] = tokens.getTokenDecoded(i);
-    for (const searchType of searchTokenTypes) {
-      if ((tokenType === searchType) === equality) {
-        return [tokenStartIndex, tokenType];
-      }
+    if (searchTokenTypes.includes(tokenType) === equality) {
+      return [tokenStartIndex, tokenType];
     }
   }
   return null;

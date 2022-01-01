@@ -179,19 +179,43 @@ export function isTokenAmbiguous(type: TokenType) {
 }
 
 export function isTokenConstant(type: TokenType) {
-  return type >= TokenType.constantNumber && type <= TokenType.constantString;
+  return type >= TokenType.constantNumber &&
+    type <= TokenType.constantString;
 }
 
 export function isTokenTypeKeyword(type: TokenType) {
-  return type >= TokenType.keywordBool && type <= TokenType.keywordVoid;
+  return type >= TokenType.keywordBool &&
+    type <= TokenType.keywordVoid;
 }
 
 export function isTokenTypeQualifierKeyword(type: TokenType) {
-  return type >= TokenType.keywordAtomic && type <= TokenType.keywordVolatile;
+  return type >= TokenType.keywordAtomic &&
+    type <= TokenType.keywordVolatile;
 }
 
 export function isTokenTypeOrTypeQualifierKeyword(type: TokenType) {
-  return type >= TokenType.keywordBool && type <= TokenType.keywordVolatile;
+  return type >= TokenType.keywordBool &&
+    type <= TokenType.keywordVolatile;
+}
+
+export function isTokenSpecial(type: TokenType) {
+  return type >= TokenType.specialParenthesisLeft &&
+    type <= TokenType.specialSemicolon;
+}
+
+export function isTokenBinaryOperator(type: TokenType) {
+  return type >= TokenType.operatorBinaryArithmeticAddition &&
+    type <= TokenType.operatorBinaryAssignmentBitwiseXor;
+}
+
+export function isTokenTernaryOperatorComponent(type: TokenType) {
+  return type >= TokenType.operatorTernaryQuestion &&
+    type <= TokenType.operatorTernaryColon;
+}
+
+export function isTokenMemberSelectionOperator(type: TokenType) {
+  return type >= TokenType.operatorMemberSelectionDirect &&
+    type <= TokenType.operatorMemberSelectionIndirect;
 }
 
 export default TokenType;
