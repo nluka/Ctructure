@@ -1,4 +1,4 @@
-enum FormatType {
+enum FormatCategory {
   prepro,
   singleLineIf,
   typeOrIdentifier,
@@ -9,4 +9,4 @@ enum FormatType {
   operator,
 }
 
-export default FormatType;
+export default FormatCategory;

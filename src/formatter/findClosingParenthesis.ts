@@ -1,7 +1,7 @@
 import { tokenDecode } from '../lexer/tokenDecode';
 import TokenType from '../lexer/TokenType';
 
-export default function findEndOfParen(
+export default function findClosingParen(
   tokens: Uint32Array,
   index: number,
 ): number {

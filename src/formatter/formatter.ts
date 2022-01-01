@@ -4,11 +4,11 @@ import { tokenDecode } from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import { tokenFindLastIndex } from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
-import checkArrayOverflow from './checkForArrayOverflow';
+import checkForArrayOverflow from './checkForArrayOverflow';
 import checkForLineOverflow from './checkForLineOverflow';
-import findEndOfParen from './findClosingParenthesis';
+import findClosingParen from './findClosingParenthesis';
 import findEndOfBlock from './findEndOfBlock';
-import FormatType from './FormatCategory';
+import FormatCategory from './FormatCategory';
 import nextTypeNotNL from './getNextTokenTypeNotNewLine';
 import Node, { nodeType } from './Node';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
@@ -45,7 +45,7 @@ function formatter(
   startIndex: number,
   endIndex: number,
   blockLevel: number,
-  startingContext: TokenType | FormatType | null,
+  startingContext: TokenType | FormatCategory | null,
   startingSplit: boolean,
   startingParenCount: number,
 ): Node {
@@ -54,9 +54,9 @@ function formatter(
   const root: nodeType = new Node();
   let currNode: nodeType = root,
     previousType: TokenType | null = null,
-    context: TokenType | FormatType | null = startingContext,
+    context: TokenType | FormatCategory | null = startingContext,
     parenCount = startingParenCount,
-    nextType: TokenType | FormatType | null,
+    nextType: TokenType | FormatCategory | null,
     newLine = false,
     startLineIndex: number = tokenDecode(tokens[startIndex])[0],
     split: boolean = startingSplit;
@@ -93,7 +93,7 @@ function formatter(
         case TokenType.specialComma:
           if (split || context === TokenType.keywordEnum) {
             newLine = true;
-          } else if (parenCount === 0 && context === FormatType.varDec) {
+          } else if (parenCount === 0 && context === FormatCategory.varDec) {
             currNode.addDataPost(`\n${indentation.repeat(blockLevel + 1)}`);
           } else {
             currNode.addDataPost(' ');
@@ -112,7 +112,7 @@ function formatter(
               nextType === TokenType.specialBraceRight ||
               nextType === TokenType.keywordCase ||
               nextType === TokenType.keywordDefault ||
-              context === FormatType.singleLineIf
+              context === FormatCategory.singleLineIf
             ) {
               --blockLevel;
               newLine = true;
@@ -135,7 +135,7 @@ function formatter(
           ++parenCount;
           if (checkForLineOverflow(tokens, fileContents, i, startLineIndex)) {
             currNode.addDataPost(`\n${indentation.repeat(blockLevel + 1)}`);
-            const endParen = findEndOfParen(tokens, i);
+            const endParen = findClosingParen(tokens, i);
             currNode.setChild(
               formatter(
                 fileContents,
@@ -151,10 +151,10 @@ function formatter(
             i = endParen - 1;
             newLine = true;
           } else if (
-            context !== FormatType.typeOrIdentifier &&
+            context !== FormatCategory.typeOrIdentifier &&
             context !== TokenType.keywordFor
           ) {
-            const endParen = findEndOfParen(tokens, i);
+            const endParen = findClosingParen(tokens, i);
             currNode.setChild(
               formatter(
                 fileContents,
@@ -180,7 +180,7 @@ function formatter(
               if (nextType !== TokenType.specialBraceLeft) {
                 ++blockLevel;
                 newLine = true;
-                context = FormatType.singleLineIf;
+                context = FormatCategory.singleLineIf;
               } else {
                 context = null;
               }
@@ -196,8 +196,8 @@ function formatter(
           break;
 
         case TokenType.specialBraceLeft:
-          if (context === FormatType.varDec) {
-            if (checkArrayOverflow(tokens, i, startLineIndex)) {
+          if (context === FormatCategory.varDec) {
+            if (checkForArrayOverflow(tokens, i, startLineIndex)) {
               const endSwitch = findEndOfBlock(tokens, i);
               currNode.setChild(
                 formatter(
@@ -206,7 +206,7 @@ function formatter(
                   i + 1,
                   endSwitch,
                   blockLevel + 1,
-                  FormatType.varDec,
+                  FormatCategory.varDec,
                   true,
                   1,
                 ),
@@ -223,7 +223,7 @@ function formatter(
                   i + 1,
                   endSwitch + 1,
                   blockLevel,
-                  FormatType.varDec,
+                  FormatCategory.varDec,
                   false,
                   1,
                 ),
@@ -240,7 +240,7 @@ function formatter(
           break;
 
         case TokenType.specialBraceRight:
-          if (context === FormatType.varDec) {
+          if (context === FormatCategory.varDec) {
             if (parenCount !== 0) {
               currNode.addDataPre(' ');
             }
@@ -279,7 +279,7 @@ function formatter(
         case TokenType.preproMacroTime:
         case TokenType.preproMacroTimestamp:
         case TokenType.preproDirectivePragma:
-          context = FormatType.prepro;
+          context = FormatCategory.prepro;
           currNode.addDataPost(' ');
           break;
 
@@ -311,7 +311,7 @@ function formatter(
         case TokenType.operatorBinaryBitwiseXor:
         case TokenType.operatorBinaryBitwiseShiftLeft:
         case TokenType.operatorBinaryBitwiseShiftRight:
-          if (context === FormatType.typeOrIdentifier) {
+          if (context === FormatCategory.typeOrIdentifier) {
             context = null;
           }
           currNode.setData(` ${currNodeData} `);
@@ -319,7 +319,7 @@ function formatter(
 
         case TokenType.ambiguousPlus:
         case TokenType.ambiguousMinus:
-          if (context === FormatType.typeOrIdentifier) {
+          if (context === FormatCategory.typeOrIdentifier) {
             context = null;
           } else if (
             previousType &&
@@ -335,7 +335,7 @@ function formatter(
 
         case TokenType.operatorBinaryLogicalAnd:
         case TokenType.operatorBinaryLogicalOr:
-          if (context === FormatType.typeOrIdentifier) {
+          if (context === FormatCategory.typeOrIdentifier) {
             context = null;
           }
           if (split) {
@@ -367,7 +367,7 @@ function formatter(
 
         case TokenType.operatorMemberSelectionDirect:
         case TokenType.operatorMemberSelectionIndirect:
-          if (context === FormatType.typeOrIdentifier) {
+          if (context === FormatCategory.typeOrIdentifier) {
             context = null;
           }
           break;
@@ -408,7 +408,7 @@ function formatter(
         case TokenType.keywordVoid:
         case TokenType.keywordLong:
           if (context === null) {
-            context = FormatType.typeOrIdentifier;
+            context = FormatCategory.typeOrIdentifier;
           }
           nextType = nextTypeNotNL(tokens, i, endIndex);
           if (
@@ -571,7 +571,7 @@ function formatter(
             position,
             previousType,
           );
-          if (context === FormatType.prepro) {
+          if (context === FormatCategory.prepro) {
             newLine = true;
             context = null;
           }
@@ -592,7 +592,7 @@ function formatter(
             nextType === TokenType.specialBraceRight ||
             nextType === TokenType.keywordCase ||
             nextType === TokenType.keywordDefault ||
-            context === FormatType.singleLineIf
+            context === FormatCategory.singleLineIf
           ) {
             --blockLevel;
           }
@@ -624,27 +624,27 @@ function formatter(
           ) {
             currNode.addDataPost(' ');
           }
-          if (context === FormatType.prepro) {
-            if (nextTokenType !== FormatType.prepro) {
+          if (context === FormatCategory.prepro) {
+            if (nextTokenType !== FormatCategory.prepro) {
               currNode.addDataPost(' ');
             } else {
               newLine = true;
             }
           } else if (context === null) {
             if (nextTokenType === TokenType.specialParenthesisLeft) {
-              context = FormatType.funcCall;
+              context = FormatCategory.funcCall;
             } else {
-              context = FormatType.typeOrIdentifier;
+              context = FormatCategory.typeOrIdentifier;
             }
-          } else if (context === FormatType.typeOrIdentifier) {
+          } else if (context === FormatCategory.typeOrIdentifier) {
             if (
-              nextTokenType === FormatType.assignment ||
+              nextTokenType === FormatCategory.assignment ||
               nextTokenType === TokenType.specialComma ||
               nextTokenType === TokenType.specialBracketLeft
             ) {
-              context = FormatType.varDec;
+              context = FormatCategory.varDec;
             } else if (nextTokenType === TokenType.specialParenthesisLeft) {
-              context = FormatType.funcDec;
+              context = FormatCategory.funcDec;
             }
           }
           break;

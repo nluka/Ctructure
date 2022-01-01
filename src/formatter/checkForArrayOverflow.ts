@@ -1,7 +1,7 @@
 import { tokenDecode } from '../lexer/tokenDecode';
 import TokenType from '../lexer/TokenType';
 
-export default function checkArrayOverflow(
+export default function checkForArrayOverflow(
   tokens: Uint32Array,
   index: number,
   startLineIndex: number,
