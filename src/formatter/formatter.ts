@@ -109,7 +109,7 @@ function formatter(
               break;
             }
             if (
-              nextType === TokenType.specialBraceRight ||
+              nextType === TokenType.specialBraceClosing ||
               nextType === TokenType.keywordCase ||
               nextType === TokenType.keywordDefault ||
               context === FormatCategory.singleLineIf
@@ -127,11 +127,11 @@ function formatter(
           }
           break;
 
-        case TokenType.specialBracketLeft:
-        case TokenType.specialBracketRight:
+        case TokenType.specialBracketOpening:
+        case TokenType.specialBracketClosing:
           break;
 
-        case TokenType.specialParenthesisLeft:
+        case TokenType.specialParenthesisOpening:
           ++parenCount;
           const overflow: [boolean, number] = checkForLineOverflow(
             tokens,
@@ -175,13 +175,13 @@ function formatter(
           }
           break;
 
-        case TokenType.specialParenthesisRight:
+        case TokenType.specialParenthesisClosing:
           if (--parenCount === 0) {
             nextType = nextTypeNotNL(tokens, i, endIndex);
             if (context === TokenType.keywordFor) {
               context = null;
             } else if (context === TokenType.keywordIf) {
-              if (nextType !== TokenType.specialBraceLeft) {
+              if (nextType !== TokenType.specialBraceOpening) {
                 ++blockLevel;
                 newLine = true;
                 context = FormatCategory.singleLineIf;
@@ -193,13 +193,13 @@ function formatter(
               currNode.addDataPre(`\n${indentation.repeat(--blockLevel)}`);
               split = false;
             }
-            if (nextType === TokenType.specialBraceLeft) {
+            if (nextType === TokenType.specialBraceOpening) {
               currNode.addDataPost(' ');
             }
           }
           break;
 
-        case TokenType.specialBraceLeft:
+        case TokenType.specialBraceOpening:
           if (context === FormatCategory.varDec) {
             const overflow = checkForArrayOverflow(tokens, i, startLineIndex);
             if (overflow[0]) {
@@ -242,7 +242,7 @@ function formatter(
           newLine = true;
           break;
 
-        case TokenType.specialBraceRight:
+        case TokenType.specialBraceClosing:
           if (context === FormatCategory.varDec) {
             if (parenCount !== 0) {
               currNode.addDataPre(' ');
@@ -257,7 +257,7 @@ function formatter(
             //   currNode.addDataPost(' ');
             //   currNode.addDataPre(`\n${indentation.repeat(--blockLevel)}`);
           } else if (
-            nextTypeNotNL(tokens, i, endIndex) !== TokenType.specialBraceRight
+            nextTypeNotNL(tokens, i, endIndex) !== TokenType.specialBraceClosing
           ) {
             newLine = true;
           } else {
@@ -329,8 +329,8 @@ function formatter(
             previousType &&
             (previousType < 78 || previousType > 85) &&
             previousType !== TokenType.identifier &&
-            previousType !== TokenType.specialParenthesisRight &&
-            previousType !== TokenType.specialBraceRight
+            previousType !== TokenType.specialParenthesisClosing &&
+            previousType !== TokenType.specialBraceClosing
           ) {
             break;
           }
@@ -416,7 +416,7 @@ function formatter(
           }
           nextType = nextTypeNotNL(tokens, i, endIndex);
           if (
-            nextType !== TokenType.specialParenthesisRight &&
+            nextType !== TokenType.specialParenthesisClosing &&
             nextType !== null
           ) {
             currNode.addDataPost(' ');
@@ -593,7 +593,7 @@ function formatter(
           }
           nextType = nextTypeNotNL(tokens, i, endIndex);
           if (
-            nextType === TokenType.specialBraceRight ||
+            nextType === TokenType.specialBraceClosing ||
             nextType === TokenType.keywordCase ||
             nextType === TokenType.keywordDefault ||
             context === FormatCategory.singleLineIf
@@ -636,7 +636,7 @@ function formatter(
               newLine = true;
             }
           } else if (context === null) {
-            if (nextTokenType === TokenType.specialParenthesisLeft) {
+            if (nextTokenType === TokenType.specialParenthesisOpening) {
               context = FormatCategory.funcCall;
             } else {
               context = FormatCategory.typeOrIdentifier;
@@ -645,10 +645,10 @@ function formatter(
             if (
               nextTokenType === FormatCategory.assignment ||
               nextTokenType === TokenType.specialComma ||
-              nextTokenType === TokenType.specialBracketLeft
+              nextTokenType === TokenType.specialBracketOpening
             ) {
               context = FormatCategory.varDec;
-            } else if (nextTokenType === TokenType.specialParenthesisLeft) {
+            } else if (nextTokenType === TokenType.specialParenthesisOpening) {
               context = FormatCategory.funcDec;
             }
           }

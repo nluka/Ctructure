@@ -8,12 +8,12 @@ export default function findEndOfBlock(
   let count = 0;
   while (count >= 0) {
     const type = tokenDecode(tokens[index])[1];
-    if (type === TokenType.specialBraceRight) {
+    if (type === TokenType.specialBraceClosing) {
       --count;
       if (count === 0) {
         return index;
       }
-    } else if (type === TokenType.specialBraceLeft) {
+    } else if (type === TokenType.specialBraceOpening) {
       ++count;
     }
     ++index;

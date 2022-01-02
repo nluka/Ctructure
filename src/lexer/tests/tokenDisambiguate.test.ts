@@ -40,7 +40,7 @@ describe('tokenDisambiguate', () => {
     );
     assert(
       [
-        TokenType.specialParenthesisLeft,
+        TokenType.specialParenthesisOpening,
         TokenType.ambiguousPlus,
         TokenType.identifier
       ],
@@ -91,7 +91,7 @@ describe('tokenDisambiguate', () => {
     );
     assert(
       [
-        TokenType.specialParenthesisRight,
+        TokenType.specialParenthesisClosing,
         TokenType.ambiguousPlus,
         TokenType.identifier
       ],
@@ -99,17 +99,17 @@ describe('tokenDisambiguate', () => {
     );
     assert(
       [
-        TokenType.specialParenthesisRight,
+        TokenType.specialParenthesisClosing,
         TokenType.ambiguousPlus,
-        TokenType.specialParenthesisLeft
+        TokenType.specialParenthesisOpening
       ],
       1, TokenType.operatorBinaryArithmeticAddition, ") + ("
     );
     assert(
       [
-        TokenType.specialBracketRight,
+        TokenType.specialBracketClosing,
         TokenType.ambiguousPlus,
-        TokenType.specialParenthesisLeft
+        TokenType.specialParenthesisOpening
       ],
       1, TokenType.operatorBinaryArithmeticAddition, "] + ("
     );
@@ -117,7 +117,7 @@ describe('tokenDisambiguate', () => {
       [
         TokenType.operatorBinaryAssignmentDirect,
         TokenType.ambiguousPlus,
-        TokenType.specialParenthesisLeft
+        TokenType.specialParenthesisOpening
       ],
       1, TokenType.operatorUnaryPlus, "= +("
     );
@@ -137,7 +137,7 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
-          TokenType.specialParenthesisLeft,
+          TokenType.specialParenthesisOpening,
           TokenType.ambiguousMinus,
           TokenType.identifier
         ],
@@ -189,7 +189,7 @@ describe('tokenDisambiguate', () => {
       );
       assert(
       [
-        TokenType.specialParenthesisRight,
+        TokenType.specialParenthesisClosing,
         TokenType.ambiguousMinus,
         TokenType.identifier
       ],
@@ -197,17 +197,17 @@ describe('tokenDisambiguate', () => {
     );
     assert(
       [
-        TokenType.specialParenthesisRight,
+        TokenType.specialParenthesisClosing,
         TokenType.ambiguousMinus,
-        TokenType.specialParenthesisLeft
+        TokenType.specialParenthesisOpening
       ],
       1, TokenType.operatorBinaryArithmeticSubtraction, ") - ("
     );
     assert(
       [
-        TokenType.specialBracketRight,
+        TokenType.specialBracketClosing,
         TokenType.ambiguousMinus,
-        TokenType.specialParenthesisLeft
+        TokenType.specialParenthesisOpening
       ],
       1, TokenType.operatorBinaryArithmeticSubtraction, "] - ("
     );
@@ -215,7 +215,7 @@ describe('tokenDisambiguate', () => {
       [
         TokenType.operatorBinaryAssignmentDirect,
         TokenType.ambiguousMinus,
-        TokenType.specialParenthesisLeft
+        TokenType.specialParenthesisOpening
       ],
       1, TokenType.operatorUnaryMinus, "= +("
     );
@@ -423,7 +423,7 @@ describe('tokenDisambiguate', () => {
         [
           TokenType.identifier,
           TokenType.ambiguousAsterisk,
-          TokenType.specialParenthesisRight
+          TokenType.specialParenthesisClosing
         ],
         1, TokenType.operatorUnaryIndirection, 'CustomType*)'
       );
@@ -664,7 +664,7 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
-          TokenType.specialParenthesisLeft,
+          TokenType.specialParenthesisOpening,
           TokenType.ambiguousAmpersand,
           TokenType.constantString
         ],

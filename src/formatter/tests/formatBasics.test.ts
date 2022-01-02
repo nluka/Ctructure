@@ -57,11 +57,11 @@ describe('formatter', () => {
   {
     const singleLineIf: TokenArray = new TokenArray(9);
     singleLineIf.push(TokenType.keywordIf);
-    singleLineIf.push(TokenType.specialParenthesisLeft);
+    singleLineIf.push(TokenType.specialParenthesisOpening);
     singleLineIf.push(TokenType.identifier);
     singleLineIf.push(TokenType.operatorBinaryComparisonLessThan);
     singleLineIf.push(TokenType.constantNumber);
-    singleLineIf.push(TokenType.specialParenthesisRight);
+    singleLineIf.push(TokenType.specialParenthesisClosing);
     singleLineIf.push(TokenType.keywordReturn);
     singleLineIf.push(TokenType.identifier);
     singleLineIf.push(TokenType.specialSemicolon);
@@ -77,16 +77,16 @@ describe('formatter', () => {
   {
     const ifStatement: TokenArray = new TokenArray(14);
     ifStatement.push(TokenType.keywordIf);
-    ifStatement.push(TokenType.specialParenthesisLeft);
+    ifStatement.push(TokenType.specialParenthesisOpening);
     ifStatement.push(TokenType.identifier);
     ifStatement.push(TokenType.operatorBinaryComparisonNotEqualTo);
     ifStatement.push(TokenType.constantString);
-    ifStatement.push(TokenType.specialParenthesisRight);
-    ifStatement.push(TokenType.specialBraceLeft);
+    ifStatement.push(TokenType.specialParenthesisClosing);
+    ifStatement.push(TokenType.specialBraceOpening);
     ifStatement.push(TokenType.keywordReturn);
     ifStatement.push(TokenType.constantCharacter);
     ifStatement.push(TokenType.specialSemicolon);
-    ifStatement.push(TokenType.specialBraceRight);
+    ifStatement.push(TokenType.specialBraceClosing);
     assert(
       ['thing', ifStatement],
       'if (thing != thing) {\n\
@@ -100,40 +100,40 @@ describe('formatter', () => {
   {
     const ifelseStatement: TokenArray = new TokenArray(35);
     ifelseStatement.push(TokenType.keywordIf);
-    ifelseStatement.push(TokenType.specialParenthesisLeft);
+    ifelseStatement.push(TokenType.specialParenthesisOpening);
     ifelseStatement.push(TokenType.identifier);
     ifelseStatement.push(TokenType.operatorBinaryComparisonNotEqualTo);
     ifelseStatement.push(TokenType.constantString);
-    ifelseStatement.push(TokenType.specialParenthesisRight);
-    ifelseStatement.push(TokenType.specialBraceLeft);
+    ifelseStatement.push(TokenType.specialParenthesisClosing);
+    ifelseStatement.push(TokenType.specialBraceOpening);
     ifelseStatement.push(TokenType.keywordBool);
     ifelseStatement.push(TokenType.identifier);
     ifelseStatement.push(TokenType.specialSemicolon);
     ifelseStatement.push(TokenType.keywordReturn);
     ifelseStatement.push(TokenType.constantCharacter);
     ifelseStatement.push(TokenType.specialSemicolon);
-    ifelseStatement.push(TokenType.specialBraceRight);
+    ifelseStatement.push(TokenType.specialBraceClosing);
     ifelseStatement.push(TokenType.keywordElse);
     ifelseStatement.push(TokenType.keywordIf);
-    ifelseStatement.push(TokenType.specialParenthesisLeft);
+    ifelseStatement.push(TokenType.specialParenthesisOpening);
     ifelseStatement.push(TokenType.identifier);
     ifelseStatement.push(TokenType.operatorBinaryComparisonNotEqualTo);
     ifelseStatement.push(TokenType.constantNumber);
-    ifelseStatement.push(TokenType.specialParenthesisRight);
-    ifelseStatement.push(TokenType.specialBraceLeft);
+    ifelseStatement.push(TokenType.specialParenthesisClosing);
+    ifelseStatement.push(TokenType.specialBraceOpening);
     ifelseStatement.push(TokenType.keywordInt);
     ifelseStatement.push(TokenType.identifier);
     ifelseStatement.push(TokenType.specialSemicolon);
     ifelseStatement.push(TokenType.keywordReturn);
     ifelseStatement.push(TokenType.constantString);
     ifelseStatement.push(TokenType.specialSemicolon);
-    ifelseStatement.push(TokenType.specialBraceRight);
+    ifelseStatement.push(TokenType.specialBraceClosing);
     ifelseStatement.push(TokenType.keywordElse);
-    ifelseStatement.push(TokenType.specialBraceLeft);
+    ifelseStatement.push(TokenType.specialBraceOpening);
     ifelseStatement.push(TokenType.keywordReturn);
     ifelseStatement.push(TokenType.constantCharacter);
     ifelseStatement.push(TokenType.specialSemicolon);
-    ifelseStatement.push(TokenType.specialBraceRight);
+    ifelseStatement.push(TokenType.specialBraceClosing);
     assert(
       ['thing', ifelseStatement],
       'if (thing != thing) {\n\
@@ -153,19 +153,19 @@ describe('formatter', () => {
   {
     const nestedIf: TokenArray = new TokenArray(24);
     nestedIf.push(TokenType.keywordIf);
-    nestedIf.push(TokenType.specialParenthesisLeft);
+    nestedIf.push(TokenType.specialParenthesisOpening);
     nestedIf.push(TokenType.identifier);
     nestedIf.push(TokenType.operatorBinaryComparisonEqualTo);
     nestedIf.push(TokenType.constantNumber);
-    nestedIf.push(TokenType.specialParenthesisRight);
-    nestedIf.push(TokenType.specialBraceLeft);
+    nestedIf.push(TokenType.specialParenthesisClosing);
+    nestedIf.push(TokenType.specialBraceOpening);
     nestedIf.push(TokenType.keywordIf);
-    nestedIf.push(TokenType.specialParenthesisLeft);
+    nestedIf.push(TokenType.specialParenthesisOpening);
     nestedIf.push(TokenType.identifier);
     nestedIf.push(TokenType.operatorBinaryComparisonEqualTo);
     nestedIf.push(TokenType.constantNumber);
-    nestedIf.push(TokenType.specialParenthesisRight);
-    nestedIf.push(TokenType.specialBraceLeft);
+    nestedIf.push(TokenType.specialParenthesisClosing);
+    nestedIf.push(TokenType.specialBraceOpening);
     nestedIf.push(TokenType.identifier);
     nestedIf.push(TokenType.operatorBinaryAssignmentAddition);
     nestedIf.push(TokenType.constantNumber);
@@ -174,8 +174,8 @@ describe('formatter', () => {
     nestedIf.push(TokenType.operatorBinaryAssignmentAddition);
     nestedIf.push(TokenType.constantNumber);
     nestedIf.push(TokenType.specialSemicolon);
-    nestedIf.push(TokenType.specialBraceRight);
-    nestedIf.push(TokenType.specialBraceRight);
+    nestedIf.push(TokenType.specialBraceClosing);
+    nestedIf.push(TokenType.specialBraceClosing);
     assert(
       ['thing', nestedIf],
       'if (thing == thing) {\n\
@@ -192,10 +192,10 @@ describe('formatter', () => {
   {
     const switchStatement: TokenArray = new TokenArray(31);
     switchStatement.push(TokenType.keywordSwitch);
-    switchStatement.push(TokenType.specialParenthesisLeft);
+    switchStatement.push(TokenType.specialParenthesisOpening);
     switchStatement.push(TokenType.identifier);
-    switchStatement.push(TokenType.specialParenthesisRight);
-    switchStatement.push(TokenType.specialBraceLeft);
+    switchStatement.push(TokenType.specialParenthesisClosing);
+    switchStatement.push(TokenType.specialBraceOpening);
     switchStatement.push(TokenType.keywordCase);
     switchStatement.push(TokenType.constantNumber);
     switchStatement.push(TokenType.operatorTernaryColon);
@@ -222,7 +222,7 @@ describe('formatter', () => {
     switchStatement.push(TokenType.constantCharacter);
     switchStatement.push(TokenType.specialSemicolon);
     switchStatement.push(TokenType.newline);
-    switchStatement.push(TokenType.specialBraceRight);
+    switchStatement.push(TokenType.specialBraceClosing);
 
     assert(
       ['thing', switchStatement],
@@ -244,7 +244,7 @@ describe('formatter', () => {
   {
     const forLoop: TokenArray = new TokenArray(19);
     forLoop.push(TokenType.keywordFor);
-    forLoop.push(TokenType.specialParenthesisLeft);
+    forLoop.push(TokenType.specialParenthesisOpening);
     forLoop.push(TokenType.keywordInt);
     forLoop.push(TokenType.identifier);
     forLoop.push(TokenType.operatorBinaryAssignmentDirect);
@@ -256,12 +256,12 @@ describe('formatter', () => {
     forLoop.push(TokenType.specialSemicolon);
     forLoop.push(TokenType.operatorUnaryArithmeticIncrementPrefix);
     forLoop.push(TokenType.identifier);
-    forLoop.push(TokenType.specialParenthesisRight);
-    forLoop.push(TokenType.specialBraceLeft);
+    forLoop.push(TokenType.specialParenthesisClosing);
+    forLoop.push(TokenType.specialBraceOpening);
     forLoop.push(TokenType.operatorUnaryArithmeticDecrementPrefix);
     forLoop.push(TokenType.identifier);
     forLoop.push(TokenType.specialSemicolon);
-    forLoop.push(TokenType.specialBraceRight);
+    forLoop.push(TokenType.specialBraceClosing);
     assert(
       ['thing', forLoop],
       'for (int thing = thing; thing > thing; ++thing) {\n\
@@ -275,15 +275,15 @@ describe('formatter', () => {
   {
     const whileLoop: TokenArray = new TokenArray(10);
     whileLoop.push(TokenType.keywordWhile);
-    whileLoop.push(TokenType.specialParenthesisLeft);
+    whileLoop.push(TokenType.specialParenthesisOpening);
     whileLoop.push(TokenType.identifier);
-    whileLoop.push(TokenType.specialParenthesisRight);
-    whileLoop.push(TokenType.specialBraceLeft);
+    whileLoop.push(TokenType.specialParenthesisClosing);
+    whileLoop.push(TokenType.specialBraceOpening);
     whileLoop.push(TokenType.identifier);
     whileLoop.push(TokenType.operatorBinaryAssignmentAddition);
     whileLoop.push(TokenType.constantNumber);
     whileLoop.push(TokenType.specialSemicolon);
-    whileLoop.push(TokenType.specialBraceRight);
+    whileLoop.push(TokenType.specialBraceClosing);
     whileLoop.push(TokenType.newline);
     assert(['thing', whileLoop], 'while (thing) {\n\
   thing += thing;\n\
@@ -295,16 +295,16 @@ describe('formatter', () => {
   {
     const doWhileLoop: TokenArray = new TokenArray(12);
     doWhileLoop.push(TokenType.keywordDo);
-    doWhileLoop.push(TokenType.specialBraceLeft);
+    doWhileLoop.push(TokenType.specialBraceOpening);
     doWhileLoop.push(TokenType.identifier);
     doWhileLoop.push(TokenType.operatorBinaryAssignmentAddition);
     doWhileLoop.push(TokenType.constantNumber);
     doWhileLoop.push(TokenType.specialSemicolon);
-    doWhileLoop.push(TokenType.specialBraceRight);
+    doWhileLoop.push(TokenType.specialBraceClosing);
     doWhileLoop.push(TokenType.keywordWhile);
-    doWhileLoop.push(TokenType.specialParenthesisLeft);
+    doWhileLoop.push(TokenType.specialParenthesisOpening);
     doWhileLoop.push(TokenType.identifier);
-    doWhileLoop.push(TokenType.specialParenthesisRight);
+    doWhileLoop.push(TokenType.specialParenthesisClosing);
     doWhileLoop.push(TokenType.specialSemicolon);
     assert(
       ['thing', doWhileLoop],
@@ -329,7 +329,7 @@ describe('formatter', () => {
     combo.push(TokenType.specialSemicolon);
     combo.push(TokenType.keywordInt);
     combo.push(TokenType.identifier);
-    combo.push(TokenType.specialParenthesisLeft);
+    combo.push(TokenType.specialParenthesisOpening);
     combo.push(TokenType.keywordInt);
     combo.push(TokenType.identifier);
     combo.push(TokenType.specialComma);
@@ -337,26 +337,26 @@ describe('formatter', () => {
     combo.push(TokenType.operatorUnaryIndirection);
     combo.push(TokenType.operatorUnaryIndirection);
     combo.push(TokenType.identifier);
-    combo.push(TokenType.specialParenthesisRight);
-    combo.push(TokenType.specialBraceLeft);
+    combo.push(TokenType.specialParenthesisClosing);
+    combo.push(TokenType.specialBraceOpening);
     combo.push(TokenType.keywordIf);
-    combo.push(TokenType.specialParenthesisLeft);
+    combo.push(TokenType.specialParenthesisOpening);
     combo.push(TokenType.identifier);
     combo.push(TokenType.operatorBinaryComparisonGreaterThan);
     combo.push(TokenType.constantCharacter);
     combo.push(TokenType.operatorBinaryLogicalAnd);
     combo.push(TokenType.identifier);
-    combo.push(TokenType.specialParenthesisLeft);
+    combo.push(TokenType.specialParenthesisOpening);
     combo.push(TokenType.identifier);
-    combo.push(TokenType.specialBracketLeft);
+    combo.push(TokenType.specialBracketOpening);
     combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialBracketRight);
+    combo.push(TokenType.specialBracketClosing);
     combo.push(TokenType.specialComma);
     combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialParenthesisRight);
+    combo.push(TokenType.specialParenthesisClosing);
     combo.push(TokenType.operatorBinaryComparisonEqualTo);
     combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialParenthesisRight);
+    combo.push(TokenType.specialParenthesisClosing);
     combo.push(TokenType.identifier);
     combo.push(TokenType.operatorBinaryAssignmentDirect);
     combo.push(TokenType.constantNumber);
@@ -366,11 +366,11 @@ describe('formatter', () => {
     combo.push(TokenType.keywordInt);
     combo.push(TokenType.identifier);
     combo.push(TokenType.operatorBinaryAssignmentDirect);
-    combo.push(TokenType.specialBraceLeft);
+    combo.push(TokenType.specialBraceOpening);
     combo.push(TokenType.constantNumber);
-    combo.push(TokenType.specialBraceRight);
+    combo.push(TokenType.specialBraceClosing);
     combo.push(TokenType.specialSemicolon);
-    combo.push(TokenType.specialBraceRight);
+    combo.push(TokenType.specialBraceClosing);
     assert(
       ['thing', combo],
 "#include thing\n\

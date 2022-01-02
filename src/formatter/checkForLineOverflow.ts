@@ -11,7 +11,7 @@ export default function checkForLineOverflow(
   let parenCount = 0;
   for (let i = index; i < tokens.length; ++i) {
     const decodedToken = tokenDecode(tokens[i]);
-    if (decodedToken[1] === TokenType.specialParenthesisRight) {
+    if (decodedToken[1] === TokenType.specialParenthesisClosing) {
       lineLength = removeSpaces(
         fileContents.slice(startLineIndex, decodedToken[0]),
       ).length;
@@ -21,7 +21,7 @@ export default function checkForLineOverflow(
       } else if (parenCount === 0) {
         return [false, i];
       }
-    } else if (decodedToken[1] === TokenType.specialParenthesisLeft) {
+    } else if (decodedToken[1] === TokenType.specialParenthesisOpening) {
       ++parenCount;
     }
   }

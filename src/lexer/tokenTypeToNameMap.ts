@@ -119,12 +119,12 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.operatorTernaryColon, 'operatorTernaryColon'],
 
   // Special
-  [TokenType.specialParenthesisLeft, 'specialParenthesisLeft'],
-  [TokenType.specialParenthesisRight, 'specialParenthesisRight'],
-  [TokenType.specialBraceLeft, 'specialBraceLeft'],
-  [TokenType.specialBraceRight, 'specialBraceRight'],
-  [TokenType.specialBracketLeft, 'specialBracketLeft'],
-  [TokenType.specialBracketRight, 'specialBracketRight'],
+  [TokenType.specialParenthesisOpening, 'specialParenthesisOpening'],
+  [TokenType.specialParenthesisClosing, 'specialParenthesisClosing'],
+  [TokenType.specialBraceOpening, 'specialBraceOpening'],
+  [TokenType.specialBraceClosing, 'specialBraceClosing'],
+  [TokenType.specialBracketOpening, 'specialBracketOpening'],
+  [TokenType.specialBracketClosing, 'specialBracketClosing'],
   [TokenType.specialComma, 'specialComma'],
   [TokenType.specialSemicolon, 'specialSemicolon'],
 

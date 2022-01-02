@@ -138,14 +138,14 @@ enum TokenType {
 
   //#region Special
     // Parenthesis ()
-      specialParenthesisLeft,
-      specialParenthesisRight,
+      specialParenthesisOpening,
+      specialParenthesisClosing,
     // Braces {}
-      specialBraceLeft,
-      specialBraceRight,
+      specialBraceOpening,
+      specialBraceClosing,
     // Brackets []
-      specialBracketLeft,
-      specialBracketRight,
+      specialBracketOpening,
+      specialBracketClosing,
     // Other
       specialComma,
       specialSemicolon,
@@ -199,7 +199,7 @@ export function isTokenTypeOrTypeQualifierKeyword(type: TokenType) {
 }
 
 export function isTokenSpecial(type: TokenType) {
-  return type >= TokenType.specialParenthesisLeft &&
+  return type >= TokenType.specialParenthesisOpening &&
     type <= TokenType.specialSemicolon;
 }
 

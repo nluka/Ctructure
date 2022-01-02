@@ -116,12 +116,12 @@ const tokenValueToTypeMap = new Map<string, TokenType>([
   [':', TokenType.operatorTernaryColon],
 
   // Special
-  ['(', TokenType.specialParenthesisLeft],
-  [')', TokenType.specialParenthesisRight],
-  ['{', TokenType.specialBraceLeft],
-  ['}', TokenType.specialBraceRight],
-  ['[', TokenType.specialBracketLeft],
-  [']', TokenType.specialBracketRight],
+  ['(', TokenType.specialParenthesisOpening],
+  [')', TokenType.specialParenthesisClosing],
+  ['{', TokenType.specialBraceOpening],
+  ['}', TokenType.specialBraceClosing],
+  ['[', TokenType.specialBracketOpening],
+  [']', TokenType.specialBracketClosing],
   [',', TokenType.specialComma],
   [';', TokenType.specialSemicolon],
 ]);

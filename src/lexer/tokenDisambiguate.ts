@@ -7,7 +7,7 @@ import TokenType, {
   isTokenSpecial,
   isTokenTernaryOperatorComponent,
   isTokenTypeOrTypeQualifierKeyword,
-  isTokenTypeQualifierKeyword
+  isTokenTypeQualifierKeyword,
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -52,8 +52,8 @@ export default function tokenDisambiguate(
         return TokenType.operatorUnaryPlus;
       }
       if (
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisRight ||
-        firstTokenTypeBehindCurr === TokenType.specialBracketRight ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketClosing ||
         ((firstTokenTypeBehindCurr === TokenType.identifier ||
           isTokenConstant(firstTokenTypeBehindCurr)) &&
           (firstTokenTypeAfterCurr === TokenType.identifier ||
@@ -69,8 +69,8 @@ export default function tokenDisambiguate(
         return TokenType.operatorUnaryMinus;
       }
       if (
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisRight ||
-        firstTokenTypeBehindCurr === TokenType.specialBracketRight ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketClosing ||
         ((firstTokenTypeBehindCurr === TokenType.identifier ||
           isTokenConstant(firstTokenTypeBehindCurr)) &&
           (firstTokenTypeAfterCurr === TokenType.identifier ||
@@ -139,7 +139,7 @@ export default function tokenDisambiguate(
         isTokenTypeQualifierKeyword(firstTokenTypeAfterCurr) ||
         firstTokenTypeAfterCurr === TokenType.operatorUnaryIndirection ||
         firstTokenTypeAfterCurr === TokenType.constantString ||
-        firstTokenTypeAfterCurr === TokenType.specialParenthesisRight
+        firstTokenTypeAfterCurr === TokenType.specialParenthesisClosing
       ) {
         return TokenType.operatorUnaryIndirection;
       }
