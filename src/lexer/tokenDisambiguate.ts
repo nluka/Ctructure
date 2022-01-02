@@ -4,7 +4,6 @@ import TokenArray from './TokenArray';
 import TokenType, {
   isTokenBinaryOperator,
   isTokenConstant,
-  isTokenMemberSelectionOperator,
   isTokenSpecial,
   isTokenTernaryOperatorComponent,
   isTokenTypeOrTypeQualifierKeyword,
@@ -44,16 +43,16 @@ export default function tokenDisambiguate(
   ) {
     throw createErr();
   }
-  const prevTokenType = firstNonNewlineOrCommentTokenBehindCurr[1];
-  const nextTokenType = firstNonNewlineOrCommentTokenAfterCurr[1];
+  const firstTokenTypeBehindCurr = firstNonNewlineOrCommentTokenBehindCurr[1];
+  const firstTokenTypeAfterCurr = firstNonNewlineOrCommentTokenAfterCurr[1];
 
   switch (currTokenType) {
     case TokenType.ambiguousPlus: {
       if (
-        (prevTokenType === TokenType.identifier ||
-          isTokenConstant(prevTokenType)) &&
-        (nextTokenType === TokenType.identifier ||
-          isTokenConstant(nextTokenType))
+        (firstTokenTypeBehindCurr === TokenType.identifier ||
+          isTokenConstant(firstTokenTypeBehindCurr)) &&
+        (firstTokenTypeAfterCurr === TokenType.identifier ||
+          isTokenConstant(firstTokenTypeAfterCurr))
       ) {
         return TokenType.operatorBinaryArithmeticAddition;
       }
@@ -62,10 +61,10 @@ export default function tokenDisambiguate(
 
     case TokenType.ambiguousMinus: {
       if (
-        (prevTokenType === TokenType.identifier ||
-          isTokenConstant(prevTokenType)) &&
-        (nextTokenType === TokenType.identifier ||
-          isTokenConstant(nextTokenType))
+        (firstTokenTypeBehindCurr === TokenType.identifier ||
+          isTokenConstant(firstTokenTypeBehindCurr)) &&
+        (firstTokenTypeAfterCurr === TokenType.identifier ||
+          isTokenConstant(firstTokenTypeAfterCurr))
       ) {
         return TokenType.operatorBinaryArithmeticSubtraction;
       }
@@ -73,20 +72,20 @@ export default function tokenDisambiguate(
     }
 
     case TokenType.ambiguousIncrement: {
-      if (nextTokenType === TokenType.identifier) {
+      if (firstTokenTypeAfterCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPrefix;
       }
-      if (prevTokenType === TokenType.identifier) {
+      if (firstTokenTypeBehindCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPostfix;
       }
       throw createErr();
     }
 
     case TokenType.ambiguousDecrement: {
-      if (prevTokenType === TokenType.identifier) {
+      if (firstTokenTypeBehindCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticDecrementPostfix;
       }
-      if (nextTokenType === TokenType.identifier) {
+      if (firstTokenTypeAfterCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticDecrementPrefix;
       }
       throw createErr();
@@ -113,67 +112,86 @@ export default function tokenDisambiguate(
       // [identifier|constantNumber] -> these are all the things that can come directly after
 
       if (
-        prevTokenType === TokenType.constantNumber ||
-        nextTokenType === TokenType.constantNumber
+        firstTokenTypeBehindCurr === TokenType.constantNumber ||
+        firstTokenTypeAfterCurr === TokenType.constantNumber
       ) {
         return TokenType.operatorBinaryArithmeticMultiplication;
       }
 
       if (
         // Prev
-        isTokenTypeOrTypeQualifierKeyword(prevTokenType) ||
-        isTokenSpecial(prevTokenType) ||
-        isTokenBinaryOperator(prevTokenType) ||
-        isTokenTernaryOperatorComponent(prevTokenType) ||
-        prevTokenType === TokenType.operatorUnaryIndirection ||
+        isTokenTypeOrTypeQualifierKeyword(firstTokenTypeBehindCurr) ||
+        isTokenSpecial(firstTokenTypeBehindCurr) ||
+        isTokenBinaryOperator(firstTokenTypeBehindCurr) ||
+        isTokenTernaryOperatorComponent(firstTokenTypeBehindCurr) ||
+        firstTokenTypeBehindCurr === TokenType.operatorUnaryIndirection ||
         // Next
-        isTokenTypeQualifierKeyword(nextTokenType) ||
-        nextTokenType === TokenType.operatorUnaryIndirection ||
-        nextTokenType === TokenType.constantString
+        isTokenTypeQualifierKeyword(firstTokenTypeAfterCurr) ||
+        firstTokenTypeAfterCurr === TokenType.operatorUnaryIndirection ||
+        firstTokenTypeAfterCurr === TokenType.constantString
       ) {
         return TokenType.operatorUnaryIndirection;
       }
 
       if (
-        prevTokenType === TokenType.identifier &&
-        nextTokenType === TokenType.identifier
+        firstTokenTypeBehindCurr === TokenType.identifier &&
+        firstTokenTypeAfterCurr === TokenType.identifier
       ) {
-        const firstNonNewlineOrCommentTokenBehindPrev =
-          findFirstTokenTypeMatchBehind(
-            tokens,
-            currTokenIndex - 2,
-            tokenTypesNewlineOrComment,
-            false,
-          );
-        if (firstNonNewlineOrCommentTokenBehindPrev === null) {
-          throw createErr();
-        }
+        return TokenType.ambiguousAsterisk;
+        // const secondNonNewlineOrCommentTokenAfterCurr =
+        //   findFirstTokenTypeMatchAhead(
+        //     tokens,
+        //     currTokenIndex + 2,
+        //     tokenTypesNewlineOrComment,
+        //     false,
+        //   );
+        // if (secondNonNewlineOrCommentTokenAfterCurr === null) {
+        //   throw createErr();
+        // }
+        // const secondTokenTypeAfterCurr =
+        //   secondNonNewlineOrCommentTokenAfterCurr[1];
+        // if (secondTokenTypeAfterCurr === TokenType.specialParenthesisLeft) {
+        //   return TokenType.operatorUnaryIndirection;
+        // }
 
-        const leadingPrevTokenType = firstNonNewlineOrCommentTokenBehindPrev[1];
-        if (
-          isTokenMemberSelectionOperator(leadingPrevTokenType) ||
-          [
-            TokenType.specialParenthesisRight,
-            TokenType.specialBraceRight,
-            TokenType.specialBracketRight,
-          ].includes(leadingPrevTokenType)
-        ) {
-          throw createError(currTokenType, currTokenIndex, tokens);
-        }
+        // const secondNonNewlineOrCommentTokenBehindCurr =
+        //   findFirstTokenTypeMatchBehind(
+        //     tokens,
+        //     currTokenIndex - 2,
+        //     tokenTypesNewlineOrComment,
+        //     false,
+        //   );
+        // if (secondNonNewlineOrCommentTokenBehindCurr === null) {
+        //   throw createErr();
+        // }
+        // const secondTokenTypeBehindCurr =
+        //   secondNonNewlineOrCommentTokenBehindCurr[1];
 
-        if (
-          isTokenBinaryOperator(leadingPrevTokenType) ||
-          isTokenTernaryOperatorComponent(leadingPrevTokenType) ||
-          [
-            TokenType.specialComma,
-            TokenType.specialParenthesisLeft,
-            TokenType.specialBraceLeft,
-            TokenType.specialBracketLeft,
-          ].includes(leadingPrevTokenType)
-        ) {
-          return TokenType.operatorBinaryArithmeticMultiplication;
-        }
-        return TokenType.operatorUnaryIndirection;
+        // if (
+        //   isTokenMemberSelectionOperator(secondTokenTypeBehindCurr) ||
+        //   [
+        //     TokenType.specialParenthesisRight,
+        //     TokenType.specialBraceRight,
+        //     TokenType.specialBracketRight,
+        //   ].includes(secondTokenTypeBehindCurr)
+        // ) {
+        //   throw createError(currTokenType, currTokenIndex, tokens);
+        // }
+
+        // if (
+        //   isTokenBinaryOperator(secondTokenTypeBehindCurr) ||
+        //   isTokenMemberSelectionOperator(secondTokenTypeBehindCurr) ||
+        //   isTokenTernaryOperatorComponent(secondTokenTypeBehindCurr) ||
+        //   [
+        //     TokenType.specialComma,
+        //     TokenType.specialParenthesisLeft,
+        //     TokenType.specialBraceLeft,
+        //     TokenType.specialBracketLeft,
+        //   ].includes(secondTokenTypeBehindCurr)
+        // ) {
+        //   return TokenType.operatorBinaryArithmeticMultiplication;
+        // }
+        // return TokenType.operatorUnaryIndirection;
       }
 
       throw createErr();
@@ -181,17 +199,17 @@ export default function tokenDisambiguate(
 
     case TokenType.ambiguousAmpersand: {
       if (
-        (prevTokenType === TokenType.identifier ||
-          isTokenConstant(prevTokenType)) &&
-        (nextTokenType === TokenType.identifier ||
-          isTokenConstant(nextTokenType))
+        (firstTokenTypeBehindCurr === TokenType.identifier ||
+          isTokenConstant(firstTokenTypeBehindCurr)) &&
+        (firstTokenTypeAfterCurr === TokenType.identifier ||
+          isTokenConstant(firstTokenTypeAfterCurr))
       ) {
         return TokenType.operatorBinaryBitwiseAnd;
       }
 
       if (
-        nextTokenType === TokenType.identifier ||
-        nextTokenType === TokenType.constantString
+        firstTokenTypeAfterCurr === TokenType.identifier ||
+        firstTokenTypeAfterCurr === TokenType.constantString
       ) {
         return TokenType.operatorUnaryAddressOf;
       }

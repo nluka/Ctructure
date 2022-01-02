@@ -112,7 +112,6 @@ describe('tokenDisambiguate', () => {
         1, TokenType.operatorUnaryMinus, '(-a'
       );
     });
-
     describe('Binary', () => {
       assert(
         [
@@ -188,7 +187,6 @@ describe('tokenDisambiguate', () => {
         1, TokenType.operatorUnaryArithmeticIncrementPrefix, '= ++a'
       );
     });
-
     describe('Postfix', () => {
       assert(
         [
@@ -287,6 +285,76 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorUnaryIndirection, 'volatile *const'
       );
+      // assert(
+      //   [
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //     TokenType.specialParenthesisLeft,
+      //   ],
+      //   1, TokenType.operatorUnaryIndirection, 'CustomType *func('
+      // );
+      // assert(
+      //   [
+      //     TokenType.keywordBool,
+      //     TokenType.identifier,
+      //     TokenType.specialParenthesisLeft,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   4, TokenType.operatorUnaryIndirection, 'bool func(CustomType *p'
+      // );
+      // assert(
+      //   [
+      //     TokenType.keywordBool,
+      //     TokenType.identifier,
+      //     TokenType.specialParenthesisLeft,
+      //     TokenType.identifier,
+      //     TokenType.operatorUnaryIndirection,
+      //     TokenType.identifier,
+      //     TokenType.specialComma,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   8, TokenType.operatorUnaryIndirection,
+      //   'bool func(CustomType *p1, CustomType *p2'
+      //   //                                    ^
+      // );
+      // assert(
+      //   [
+      //     TokenType.identifier,
+      //     TokenType.identifier,
+      //     TokenType.specialParenthesisLeft,
+      //     TokenType.identifier,
+      //     TokenType.operatorUnaryIndirection,
+      //     TokenType.identifier,
+      //     TokenType.specialComma,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   8, TokenType.operatorUnaryIndirection,
+      //   'CustomType func(CustomType *p1, CustomType *p2'
+      //   //                                          ^
+      // );
+      // assert(
+      //   [
+      //     TokenType.identifier,
+      //     TokenType.identifier,
+      //     TokenType.specialParenthesisLeft,
+      //     TokenType.identifier,
+      //     TokenType.identifier,
+      //     TokenType.specialComma,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   7, TokenType.operatorUnaryIndirection,
+      //   'CustomType func(CustomType p1, CustomType *p2'
+      //   //                                         ^
+      // );
       assert(
         [
           TokenType.specialSemicolon,
@@ -334,7 +402,6 @@ describe('tokenDisambiguate', () => {
         3, TokenType.operatorUnaryIndirection, ':\n\n**'
       );
     });
-
     describe('Multiplication', () => {
       assert(
         [
@@ -360,101 +427,111 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorBinaryArithmeticMultiplication, '1 * 1'
       );
-      assert(
-        [
-          TokenType.operatorBinaryArithmeticAddition,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        2, TokenType.operatorBinaryArithmeticMultiplication, '+ a * a'
-      );
-      assert(
-        [
-          TokenType.operatorBinaryAssignmentSubtraction,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        2, TokenType.operatorBinaryArithmeticMultiplication, '-= a * a'
-      );
-      assert(
-        [
-          TokenType.operatorBinaryComparisonEqualTo,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        2, TokenType.operatorBinaryArithmeticMultiplication, '== a * a'
-      );
-      assert(
-        [
-          TokenType.operatorBinaryLogicalAnd,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        2, TokenType.operatorBinaryArithmeticMultiplication, '&& a * a'
-      );
-      assert(
-        [
-          TokenType.operatorTernaryQuestion,
-          TokenType.newline,
-          TokenType.commentSingleline,
-          TokenType.newline,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        5, TokenType.operatorBinaryArithmeticMultiplication, '? \n//product\n a * a'
-      );
-      assert(
-        [
-          TokenType.operatorTernaryColon,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        2, TokenType.operatorBinaryArithmeticMultiplication, ': a * a'
-      );
-      assert(
-        [
-          TokenType.specialComma,
-          TokenType.newline,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        3, TokenType.operatorBinaryArithmeticMultiplication, ',\na * a'
-      );
-      assert(
-        [
-          TokenType.specialParenthesisLeft,
-          TokenType.commentMultiline,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        3, TokenType.operatorBinaryArithmeticMultiplication, '( /*product*/ a * a'
-      );
-      assert(
-        [
-          TokenType.specialBraceLeft,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        2, TokenType.operatorBinaryArithmeticMultiplication, '{a * a'
-      );
-      assert(
-        [
-          TokenType.specialBracketLeft,
-          TokenType.identifier,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-        ],
-        2, TokenType.operatorBinaryArithmeticMultiplication, '[a * a'
-      );
+      // assert(
+      //   [
+      //     TokenType.identifier,
+      //     TokenType.operatorMemberSelectionIndirect,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   3, TokenType.operatorBinaryArithmeticMultiplication, 'a->b * c'
+      // );
+      // assert(
+      //   [
+      //     TokenType.operatorBinaryArithmeticAddition,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   2, TokenType.operatorBinaryArithmeticMultiplication, '+ a * a'
+      // );
+      // assert(
+      //   [
+      //     TokenType.operatorBinaryAssignmentSubtraction,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   2, TokenType.operatorBinaryArithmeticMultiplication, '-= a * a'
+      // );
+      // assert(
+      //   [
+      //     TokenType.operatorBinaryComparisonEqualTo,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   2, TokenType.operatorBinaryArithmeticMultiplication, '== a * a'
+      // );
+      // assert(
+      //   [
+      //     TokenType.operatorBinaryLogicalAnd,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   2, TokenType.operatorBinaryArithmeticMultiplication, '&& a * a'
+      // );
+      // assert(
+      //   [
+      //     TokenType.operatorTernaryQuestion,
+      //     TokenType.newline,
+      //     TokenType.commentSingleline,
+      //     TokenType.newline,
+      //     TokenType.identifier,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier,
+      //   ],
+      //   5, TokenType.operatorBinaryArithmeticMultiplication, '? \n//product\n a * a'
+      // );
+    //   assert(
+    //     [
+    //       TokenType.operatorTernaryColon,
+    //       TokenType.identifier,
+    //       TokenType.ambiguousAsterisk,
+    //       TokenType.identifier,
+    //     ],
+    //     2, TokenType.operatorBinaryArithmeticMultiplication, ': a * a'
+    //   );
+    //   assert(
+    //     [
+    //       TokenType.specialComma,
+    //       TokenType.newline,
+    //       TokenType.identifier,
+    //       TokenType.ambiguousAsterisk,
+    //       TokenType.identifier,
+    //     ],
+    //     3, TokenType.operatorBinaryArithmeticMultiplication, ',\na * a'
+    //   );
+    //   assert(
+    //     [
+    //       TokenType.specialParenthesisLeft,
+    //       TokenType.commentMultiline,
+    //       TokenType.identifier,
+    //       TokenType.ambiguousAsterisk,
+    //       TokenType.identifier,
+    //     ],
+    //     3, TokenType.operatorBinaryArithmeticMultiplication, '( /*product*/ a * a'
+    //   );
+    //   assert(
+    //     [
+    //       TokenType.specialBraceLeft,
+    //       TokenType.identifier,
+    //       TokenType.ambiguousAsterisk,
+    //       TokenType.identifier,
+    //     ],
+    //     2, TokenType.operatorBinaryArithmeticMultiplication, '{a * a'
+    //   );
+    //   assert(
+    //     [
+    //       TokenType.specialBracketLeft,
+    //       TokenType.identifier,
+    //       TokenType.ambiguousAsterisk,
+    //       TokenType.identifier,
+    //     ],
+    //     2, TokenType.operatorBinaryArithmeticMultiplication, '[a * a'
+    //   );
     });
   });
 
@@ -504,7 +581,6 @@ describe('tokenDisambiguate', () => {
         2, TokenType.operatorBinaryBitwiseAnd, "'a'\n&\n\n'b'"
       );
     });
-
     describe('Address Of', () => {
       assert(
         [

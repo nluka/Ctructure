@@ -70,6 +70,10 @@ export default class Tokenizer {
       ++this.cursorPosition;
     }
   }
+
+  public getAmbiguousTokenIndices() {
+    return this.ambiguousTokenIndices;
+  }
 }
 
 const whitespaceRegex = /[ \t]/;
