@@ -6,10 +6,10 @@ export default function checkForLineOverflow(
   fileContents: string,
   index: number,
   startLineIndex: number,
-): boolean {
+): [boolean, number] {
   let lineLength;
-  let parenCount = 1;
-  for (let i = index + 1; i < tokens.length; ++i) {
+  let parenCount = 0;
+  for (let i = index; i < tokens.length; ++i) {
     const decodedToken = tokenDecode(tokens[i]);
     if (decodedToken[1] === TokenType.specialParenthesisRight) {
       lineLength = removeSpaces(
@@ -17,15 +17,15 @@ export default function checkForLineOverflow(
       ).length;
       --parenCount;
       if (lineLength > 80) {
-        return true;
+        return [true, i];
       } else if (parenCount === 0) {
-        return false;
+        return [false, i];
       }
     } else if (decodedToken[1] === TokenType.specialParenthesisLeft) {
       ++parenCount;
     }
   }
-  return false;
+  return [false, 0];
 }
 
 function removeSpaces(str: string) {

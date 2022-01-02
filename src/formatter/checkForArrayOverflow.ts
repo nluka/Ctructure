@@ -5,20 +5,20 @@ export default function checkForArrayOverflow(
   tokens: Uint32Array,
   index: number,
   startLineIndex: number,
-): boolean {
-  let parenCount = 1;
-  for (let i = index + 1; i < tokens.length; ++i) {
+): [boolean, number] {
+  let parenCount = 0;
+  for (let i = index; i < tokens.length; ++i) {
     const decodedToken = tokenDecode(tokens[i]);
     if (decodedToken[1] === TokenType.specialBraceRight) {
       --parenCount;
       if (decodedToken[0] - startLineIndex > 80) {
-        return true;
+        return [true, i];
       } else if (parenCount === 0) {
-        return false;
+        return [false, i];
       }
     } else if (decodedToken[1] === TokenType.specialBraceLeft) {
       ++parenCount;
     }
   }
-  return false;
+  return [false, 0];
 }

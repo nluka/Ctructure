@@ -3,9 +3,9 @@ import { tokenDecode } from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import { tokenFindLastIndex } from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
+import tokenTypeToNameMap from '../lexer/tokenTypeToNameMap';
 import checkForArrayOverflow from './checkForArrayOverflow';
 import checkForLineOverflow from './checkForLineOverflow';
-import findClosingParen from './findClosingParenthesis';
 import findEndOfBlock from './findEndOfBlock';
 import FormatCategory from './FormatCategory';
 import nextTypeNotNL from './getNextTokenTypeNotNewLine';
@@ -133,41 +133,45 @@ function formatter(
 
         case TokenType.specialParenthesisLeft:
           ++parenCount;
-          if (checkForLineOverflow(tokens, fileContents, i, startLineIndex)) {
+          const overflow: [boolean, number] = checkForLineOverflow(
+            tokens,
+            fileContents,
+            i,
+            startLineIndex,
+          );
+          if (overflow[0]) {
             currNode.addDataPost(`\n${indentation.repeat(blockLevel + 1)}`);
-            const endParen = findClosingParen(tokens, i);
             currNode.setChild(
               formatter(
                 fileContents,
                 tokenArray,
                 i + 1,
-                endParen,
+                overflow[1],
                 blockLevel + 1,
                 null,
                 true,
                 parenCount + 1,
               ),
             );
-            i = endParen - 1;
+            i = overflow[1] - 1;
             newLine = true;
           } else if (
             context !== FormatCategory.typeOrIdentifier &&
             context !== TokenType.keywordFor
           ) {
-            const endParen = findClosingParen(tokens, i);
             currNode.setChild(
               formatter(
                 fileContents,
                 tokenArray,
                 i + 1,
-                endParen,
+                overflow[1],
                 blockLevel,
                 null,
                 false,
                 parenCount + 1,
               ),
             );
-            i = endParen - 1;
+            i = overflow[1] - 1;
           }
           break;
 
@@ -197,31 +201,30 @@ function formatter(
 
         case TokenType.specialBraceLeft:
           if (context === FormatCategory.varDec) {
-            if (checkForArrayOverflow(tokens, i, startLineIndex)) {
-              const endSwitch = findEndOfBlock(tokens, i);
+            const overflow = checkForArrayOverflow(tokens, i, startLineIndex);
+            if (overflow[0]) {
               currNode.setChild(
                 formatter(
                   fileContents,
                   tokenArray,
                   i + 1,
-                  endSwitch,
+                  overflow[1],
                   blockLevel + 1,
                   FormatCategory.varDec,
                   true,
                   1,
                 ),
               );
-              i = endSwitch - 1;
+              i = overflow[1] - 1;
               currNode.addDataPost(`\n${indentation.repeat(blockLevel + 1)}`);
               newLine = true;
             } else {
-              const endSwitch = findEndOfBlock(tokens, i);
               currNode.setChild(
                 formatter(
                   fileContents,
                   tokenArray,
                   i + 1,
-                  endSwitch + 1,
+                  overflow[1] + 1,
                   blockLevel,
                   FormatCategory.varDec,
                   false,
@@ -229,7 +232,7 @@ function formatter(
                 ),
               );
               currNode.addDataPost(' ');
-              i = endSwitch;
+              i = overflow[1];
             }
             break;
           } else if (context !== TokenType.keywordEnum) {
@@ -292,6 +295,7 @@ function formatter(
         case TokenType.operatorUnaryLogicalNegation:
         case TokenType.operatorUnaryIndirection:
         case TokenType.operatorUnaryAddressOf:
+        case TokenType.operatorUnaryMinus:
           break;
 
         // Binary operators
@@ -620,6 +624,7 @@ function formatter(
 
           if (
             nextTokenType === TokenType.identifier ||
+            nextTokenType === TokenType.operatorUnaryIndirection ||
             nextTokenType === TokenType.ambiguousAsterisk
           ) {
             currNode.addDataPost(' ');
@@ -650,6 +655,7 @@ function formatter(
           break;
       }
 
+      //console.log(tokenTypeToNameMap.get(type), currNode.getData());
       previousType = type;
       currNode.setNext(new Node());
       currNode = currNode.getNext();
