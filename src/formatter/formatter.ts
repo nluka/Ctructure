@@ -35,7 +35,8 @@ export default function formatFile(tokenizedFile: [string, TokenArray]) {
  * @var nextType holds the next token's type, skipping new line tokens
  * @var newLine if set to true, a new line will be added to the beginning of the next token
  * @var startLineIndex used in determining if there is line overflow
- * @var split if true (due to line overflow), the line will split where it's appropriate. only used within parenthesis and arrays
+ * @var split if true (due to line overflow), the line will split where it's appropriate.\
+ *  only used within parentheses, arrays and multi variable declarations
  * @returns root node.
  */
 
