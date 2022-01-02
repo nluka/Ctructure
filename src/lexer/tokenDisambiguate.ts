@@ -138,7 +138,8 @@ export default function tokenDisambiguate(
         // Next
         isTokenTypeQualifierKeyword(firstTokenTypeAfterCurr) ||
         firstTokenTypeAfterCurr === TokenType.operatorUnaryIndirection ||
-        firstTokenTypeAfterCurr === TokenType.constantString
+        firstTokenTypeAfterCurr === TokenType.constantString ||
+        firstTokenTypeAfterCurr === TokenType.specialParenthesisRight
       ) {
         return TokenType.operatorUnaryIndirection;
       }
@@ -239,7 +240,7 @@ function createError(
 ) {
   return new Error(
     `${tokenTypeToNameMap.get(tokenType)} at index ${
-      tokens.getTokenDecoded(tokenIndex)[1]
+      tokens.getTokenDecoded(tokenIndex)[0]
     }`,
   );
 }

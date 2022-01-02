@@ -30,6 +30,25 @@ export function tokenizeFile(filePathname: string): [string, TokenArray] {
     tokens.push(extractedToken);
   }
 
+  // console.clear();
+  // console.log('FILE CONTENTS:');
+  // console.log('--------------------');
+  // console.log(fileContents);
+  // console.log('--------------------\n');
+
+  // console.log('TOKENS:');
+  // console.log('number - startIndex - type');
+  // for (let i = 0; i < tokens.getCount(); ++i) {
+  //   const [startIndex, tokenType] = tokens.getTokenDecoded(i);
+  //   console.log(
+  //     `${i + 1}`.padStart(6),
+  //     '-',
+  //     `${startIndex}`.padStart(10),
+  //     '-',
+  //     tokenTypeToNameMap.get(tokenType),
+  //   );
+  // }
+
   for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
     const disambiguatedTokenType = tokenDisambiguate(ambigTokenIndex, tokens);
     const ambigTokenStartIndex = tokens.getTokenDecoded(ambigTokenIndex)[0];

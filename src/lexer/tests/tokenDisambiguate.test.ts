@@ -421,6 +421,14 @@ describe('tokenDisambiguate', () => {
       // );
       assert(
         [
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.specialParenthesisRight
+        ],
+        1, TokenType.operatorUnaryIndirection, 'CustomType*)'
+      );
+      assert(
+        [
           TokenType.specialSemicolon,
           TokenType.newline,
           TokenType.ambiguousAsterisk,
