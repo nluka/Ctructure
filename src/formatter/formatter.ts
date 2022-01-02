@@ -1,4 +1,3 @@
-import G = require('glob');
 import TokenArray from '../lexer/TokenArray';
 import { tokenDecode } from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
