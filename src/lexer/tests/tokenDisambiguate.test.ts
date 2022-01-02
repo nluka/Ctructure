@@ -89,6 +89,38 @@ describe('tokenDisambiguate', () => {
       ],
       3, TokenType.operatorBinaryArithmeticAddition, "'a'\n\n+\n'b'"
     );
+    assert(
+      [
+        TokenType.specialParenthesisRight,
+        TokenType.ambiguousPlus,
+        TokenType.identifier
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, ") + a"
+    );
+    assert(
+      [
+        TokenType.specialParenthesisRight,
+        TokenType.ambiguousPlus,
+        TokenType.specialParenthesisLeft
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, ") + ("
+    );
+    assert(
+      [
+        TokenType.specialBracketRight,
+        TokenType.ambiguousPlus,
+        TokenType.specialParenthesisLeft
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, "] + ("
+    );
+    assert(
+      [
+        TokenType.operatorBinaryAssignmentDirect,
+        TokenType.ambiguousPlus,
+        TokenType.specialParenthesisLeft
+      ],
+      1, TokenType.operatorUnaryPlus, "= +("
+    );
   });
 
   describe('ambiguousMinus', () => {
@@ -155,6 +187,38 @@ describe('tokenDisambiguate', () => {
         ],
         2, TokenType.operatorBinaryArithmeticSubtraction, "'a'\n-\n'b'"
       );
+      assert(
+      [
+        TokenType.specialParenthesisRight,
+        TokenType.ambiguousMinus,
+        TokenType.identifier
+      ],
+      1, TokenType.operatorBinaryArithmeticSubtraction, ") - a"
+    );
+    assert(
+      [
+        TokenType.specialParenthesisRight,
+        TokenType.ambiguousMinus,
+        TokenType.specialParenthesisLeft
+      ],
+      1, TokenType.operatorBinaryArithmeticSubtraction, ") - ("
+    );
+    assert(
+      [
+        TokenType.specialBracketRight,
+        TokenType.ambiguousMinus,
+        TokenType.specialParenthesisLeft
+      ],
+      1, TokenType.operatorBinaryArithmeticSubtraction, "] - ("
+    );
+    assert(
+      [
+        TokenType.operatorBinaryAssignmentDirect,
+        TokenType.ambiguousMinus,
+        TokenType.specialParenthesisLeft
+      ],
+      1, TokenType.operatorUnaryMinus, "= +("
+    );
     });
   });
 

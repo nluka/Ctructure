@@ -7,7 +7,7 @@ import TokenType, {
   isTokenSpecial,
   isTokenTernaryOperatorComponent,
   isTokenTypeOrTypeQualifierKeyword,
-  isTokenTypeQualifierKeyword,
+  isTokenTypeQualifierKeyword
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -48,11 +48,16 @@ export default function tokenDisambiguate(
 
   switch (currTokenType) {
     case TokenType.ambiguousPlus: {
+      if (isTokenBinaryOperator(firstTokenTypeBehindCurr)) {
+        return TokenType.operatorUnaryPlus;
+      }
       if (
-        (firstTokenTypeBehindCurr === TokenType.identifier ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisRight ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketRight ||
+        ((firstTokenTypeBehindCurr === TokenType.identifier ||
           isTokenConstant(firstTokenTypeBehindCurr)) &&
-        (firstTokenTypeAfterCurr === TokenType.identifier ||
-          isTokenConstant(firstTokenTypeAfterCurr))
+          (firstTokenTypeAfterCurr === TokenType.identifier ||
+            isTokenConstant(firstTokenTypeAfterCurr)))
       ) {
         return TokenType.operatorBinaryArithmeticAddition;
       }
@@ -60,11 +65,16 @@ export default function tokenDisambiguate(
     }
 
     case TokenType.ambiguousMinus: {
+      if (isTokenBinaryOperator(firstTokenTypeBehindCurr)) {
+        return TokenType.operatorUnaryMinus;
+      }
       if (
-        (firstTokenTypeBehindCurr === TokenType.identifier ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisRight ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketRight ||
+        ((firstTokenTypeBehindCurr === TokenType.identifier ||
           isTokenConstant(firstTokenTypeBehindCurr)) &&
-        (firstTokenTypeAfterCurr === TokenType.identifier ||
-          isTokenConstant(firstTokenTypeAfterCurr))
+          (firstTokenTypeAfterCurr === TokenType.identifier ||
+            isTokenConstant(firstTokenTypeAfterCurr)))
       ) {
         return TokenType.operatorBinaryArithmeticSubtraction;
       }
