@@ -1,65 +1,49 @@
-import path = require("path");
-import TokenArray from "../../lexer/TokenArray";
-import { tokenizeFile } from "../../lexer/tokenizeFile";
-import formatFile, { toString } from "../formatter";
+import path = require('path');
+import { tokenizeFile } from '../../lexer/tokenizeFile';
+import assert from './assert';
 
-describe('formatter', () => {
-  function assert(
-    tokenizedFile: [string, TokenArray],
-    expectedFormat: string,
-  ) {
-    test(`format file: str.c`, () => {
-      const stringed = toString(formatFile(tokenizedFile));
-      //console.log(stringed);
-      expect(stringed).toBe(expectedFormat);
-    });
-  }
+const filePath = path.join(__dirname, '../../sample_code/handle_add_movie.c');
+const tokenizedfile = tokenizeFile(filePath);
 
-  {
-    const filePath = path.join(__dirname, '../../sample_code/handle_add_movie.c');
-    const tokenizedfile = tokenizeFile(filePath);
-    assert(tokenizedfile, '#include "handlers.h"\n\
-#include "ui/ui.h"\n\
-\n\
-void handle_add_movie(movie_collection_t *const collection) {\n\
-  MovieIdType_t idType;\n\
-  if (!ui_get_movie_id_type(&idType))\n\
-    goto abort_addition;\n\
-  \n\
-  char idInput[MAX_MOVIE_ID_LENGTH + 1];\n\
-  if (!ui_get_unique_movie_id(idType, collection, idInput))\n\
-    goto abort_addition;\n\
-  \n\
-  char nameInput[MAX_MOVIE_NAME_LENGTH + 1];\n\
-  if (!ui_get_movie_name(nameInput))\n\
-    goto abort_addition;\n\
-  \n\
-  int quantityInput;\n\
-  if (!ui_get_movie_quantity(&quantityInput))\n\
-    goto abort_addition;\n\
-  \n\
-  double priceInput;\n\
-  if (!ui_get_movie_price(&priceInput))\n\
-    goto abort_addition;\n\
-  \n\
-  const bool wasMovieAdded = movie_collection_add(\n\
-    collection,\n\
-    idType,\n\
-    idInput,\n\
-    nameInput,\n\
-    quantityInput,\n\
-    priceInput\n\
-  );\n\
-  printfc(TC_GREEN, "Movie added successfully.\\n\
-");\n\
-  return;\n\
-  \n\
-  abort_addition:printfc(TC_YELLOW, "Movie addition aborted!\\n\
-");\n\
-  return;\n\
-}\n\
-');
-  }
+const expectedFormat = `#include "handlers.h"
+#include "ui/ui.h"
 
+void handle_add_movie(movie_collection_t *const collection) {
+  MovieIdType_t idType;
+  if (!ui_get_movie_id_type(&idType))
+    goto abort_addition;
+  
+  char idInput[MAX_MOVIE_ID_LENGTH + 1];
+  if (!ui_get_unique_movie_id(idType, collection, idInput))
+    goto abort_addition;
+  
+  char nameInput[MAX_MOVIE_NAME_LENGTH + 1];
+  if (!ui_get_movie_name(nameInput))
+    goto abort_addition;
+  
+  int quantityInput;
+  if (!ui_get_movie_quantity(&quantityInput))
+    goto abort_addition;
+  
+  double priceInput;
+  if (!ui_get_movie_price(&priceInput))
+    goto abort_addition;
+  
+  const bool wasMovieAdded = movie_collection_add(
+    collection,
+    idType,
+    idInput,
+    nameInput,
+    quantityInput,
+    priceInput
+  );
+  printfc(TC_GREEN, "Movie added successfully.\\n");
+  return;
+  
+  abort_addition:
+  printfc(TC_YELLOW, "Movie addition aborted!\\n");
+  return;
 }
-);
+`;
+
+assert(tokenizedfile, expectedFormat, 'handle_add_movie.c');

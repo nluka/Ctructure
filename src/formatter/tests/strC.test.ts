@@ -1,102 +1,87 @@
-import path = require("path");
-import TokenArray from "../../lexer/TokenArray";
-import { tokenizeFile } from "../../lexer/tokenizeFile";
-import formatFile, { toString } from "../formatter";
+import path = require('path');
+import { tokenizeFile } from '../../lexer/tokenizeFile';
+import assert from './assert';
 
-describe('formatter', () => {
-  function assert(
-    tokenizedFile: [string, TokenArray],
-    expectedFormat: string,
-  ) {
-    test(`format file: str.c`, () => {
-      const stringed = toString(formatFile(tokenizedFile));
-      //console.log(stringed);
-      expect(stringed).toBe(expectedFormat);
-    });
+const filePath = path.join(__dirname, '../../sample_code/str.c');
+const tokenizedfile = tokenizeFile(filePath);
+
+const expectedFormat = `#include <string.h>
+#include <stdio.h>
+#include \"str.h\"
+
+/*
+  constructs a string and returns it, allocating enough memory to hold
+  \`initialCount\` chars (\`initialCount\` does not include nul-terminator)
+*/
+string_t string_create(const size_t initialCount) {
+  string_t string;
+  
+  if (initialCount == 0) {
+    string.data = NULL;
+    string.availableCount = 0;
+  } else {
+    string.data = calloc(initialCount + 1, sizef(char));
+    string.availableCount = string.data == NULL ? 0 : initialCount;
   }
-
-  const filePath = path.join(__dirname, '../../sample_code/str.c');
-  const tokenizedfile = tokenizeFile(filePath);
-  assert(tokenizedfile, 
-"#include <string.h>\n\
-#include <stdio.h>\n\
-#include \"str.h\"\n\
-\n\
-/*\n\
-  constructs a string and returns it, allocating enough memory to hold\n\
-  `initialCount` chars (`initialCount` does not include nul-terminator)\n\
-*/\n\
-string_t string_create(const size_t initialCount) {\n\
-  string_t string;\n\
-  \n\
-  if (initialCount == 0) {\n\
-    string.data = NULL;\n\
-    string.availableCount = 0;\n\
-  } else {\n\
-    string.data = calloc(initialCount + 1, sizef(char));\n\
-    string.availableCount = string.data == NULL ? 0 : initialCount;\n\
-  }\n\
-  string.count = 0;\n\
-  \n\
-  return string;\n\
-}\n\
-\n\
-/*\n\
-  resizes `data` by `expansionAmount`, returns boolean indicating whether\n\
-  expansion was successful\n\
-*/\n\
-bool string_expand(string_t *const string, const size_t expansionAmount) {\n\
-  const size_t newAvailableCount = string->availableCount + expansionAmount;\n\
-  \n\
-  string->data = realloc(string->data, newAvailableCount + 1);\n\
-  if (string->data == NULL) {\n\
-    return false;\n\
-  }\n\
-  \n\
-  // zero-init new chars\n\
-  memset(string->data + string->availableCount, 0, expansionAmount);\n\
-  string->availableCount = newAvailableCount;\n\
-  return true;\n\
-}\n\
-\n\
-/*\n\
-  attempts to append `charCount` characters from `chars` to `string`,\n\
-  returns boolean indicating whether append was successful\n\
-*/\n\
-bool string_append_chars(\n\
-  string_t *const string,\n\
-  const char *const chars,\n\
-  const size_t charCount\n\
-) {\n\
-  const long long int overflowCount = (string->count + charCount) - string->availableCount;\n\
-  if (overflowCount > 0 && !string_expand(string, overflowCount)) {\n\
-    return false;\n\
-  }\n\
-  \n\
-  const bool wasAppendSuccessful = snprintf(\n\
-    string->data + string->count,\n\
-    charCount + 1,\n\
-    \"%s\",\n\
-    chars\n\
-  ) > 0;\n\
-  \n\
-  if (wasAppendSuccessful) {\n\
-    string->count += charCount;\n\
-  }\n\
-  return wasAppendSuccessful;\n\
-}\n\
-\n\
-/*\n\
-  destroys `string`, freeing `string->data`\n\
-*/\n\
-void string_destroy(string_t *const string) {\n\
-  free(string->data);\n\
-  string->data = NULL;\n\
-  string->count = 0;\n\
-  string->availableCount = 0;\n\
-}\n\
-");
-
+  string.count = 0;
+  
+  return string;
 }
-);
 
+/*
+  resizes \`data\` by \`expansionAmount\`, returns boolean indicating whether
+  expansion was successful
+*/
+bool string_expand(string_t *const string, const size_t expansionAmount) {
+  const size_t newAvailableCount = string->availableCount + expansionAmount;
+  
+  string->data = realloc(string->data, newAvailableCount + 1);
+  if (string->data == NULL) {
+    return false;
+  }
+  
+  // zero-init new chars
+  memset(string->data + string->availableCount, 0, expansionAmount);
+  string->availableCount = newAvailableCount;
+  return true;
+}
+
+/*
+  attempts to append \`charCount\` characters from \`chars\` to \`string\`,
+  returns boolean indicating whether append was successful
+*/
+bool string_append_chars(
+  string_t *const string,
+  const char *const chars,
+  const size_t charCount
+) {
+  const long long int overflowCount = (string->count + charCount) - string->availableCount;
+  if (overflowCount > 0 && !string_expand(string, overflowCount)) {
+    return false;
+  }
+  
+  const bool wasAppendSuccessful = snprintf(
+    string->data + string->count,
+    charCount + 1,
+    \"%s\",
+    chars
+  ) > 0;
+  
+  if (wasAppendSuccessful) {
+    string->count += charCount;
+  }
+  return wasAppendSuccessful;
+}
+
+/*
+  destroys \`string\`, freeing \`string->data\`
+*/
+void string_destroy(string_t *const string) {
+  free(string->data);
+  string->data = NULL;
+  string->count = 0;
+  string->availableCount = 0;
+}
+`;
+
+assert(tokenizedfile, expectedFormat, 'str.c');
