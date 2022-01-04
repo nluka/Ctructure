@@ -5,13 +5,15 @@ import assert from './assert';
 const filePath = path.join(__dirname, '../../sample_code/str.h');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = `#ifndef STR_H
+const expectedFormat = 
+
+`#ifndef STR_H
 #define STR_H
 
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct string{
+typedef struct string {
   char *data;
   
   // the number of chars (excluding nul-terminator) stored in \`data\`

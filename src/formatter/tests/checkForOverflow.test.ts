@@ -2,7 +2,7 @@ import path = require('path');
 import { tokenizeFile } from '../../lexer/tokenizeFile';
 import checkForLineOverflow from '../checkForLineOverflow';
 import FormatCategory from '../FormatCategory';
-import formatFile, { toString, Types } from '../formatter';
+import { Types } from '../formatter';
 
 function assert(
   fileContents: string,
@@ -21,7 +21,6 @@ function assert(
 
 const filePath = path.join(__dirname, '../../sample_code/testFileForOverflow.c');
 const tokenizedfile = tokenizeFile(filePath);
-console.log(toString(formatFile(tokenizedfile)));
 
 assert(tokenizedfile[0], FormatCategory.array, tokenizedfile[1].getValues(), 3, 0, 'over 80 array', true);
 assert(tokenizedfile[0], FormatCategory.array, tokenizedfile[1].getValues(), 7, 26, 'under 80 array', false);

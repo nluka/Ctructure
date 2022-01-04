@@ -5,7 +5,9 @@ import assert from './assert';
 const filePath = path.join(__dirname, '../../sample_code/header_with_guards.h');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = `#ifndef HEADER_WITH_GUARDS_H
+const expectedFormat = 
+
+`#ifndef HEADER_WITH_GUARDS_H
 #define HEADER_WITH_GUARDS_H
 
 #include <stdbool.h>

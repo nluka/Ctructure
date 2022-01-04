@@ -5,7 +5,9 @@ import assert from './assert';
 const filePath = path.join(__dirname, '../../sample_code/handle_add_movie.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = `#include "handlers.h"
+const expectedFormat = 
+
+`#include "handlers.h"
 #include "ui/ui.h"
 
 void handle_add_movie(movie_collection_t *const collection) {

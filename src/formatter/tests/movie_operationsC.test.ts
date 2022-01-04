@@ -5,7 +5,9 @@ import assert from './assert';
 const filePath = path.join(__dirname, '../../sample_code/movie_operations.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = `#include <stdio.h>
+const expectedFormat = 
+
+`#include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>

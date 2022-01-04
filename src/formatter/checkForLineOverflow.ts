@@ -17,13 +17,11 @@ export default function checkForLineOverflow(
     context === FormatCategory.multiVarDec
   ) {
     return false;
-  } else {
-    return checkForOverflowWithClosingParen(
-      tokens,
-      fileContents,
-      index,
-      startLineIndex,
-    );
+  } else if (context === TokenType.specialBracketOpening) {
+    return checkForBracketOverflow(tokens, fileContents, index, startLineIndex);
+  }
+  {
+    return checkForParenOverflow(tokens, fileContents, index, startLineIndex);
   }
 }
 
@@ -58,7 +56,7 @@ function checkForArrayOverflow(
   return false;
 }
 
-function checkForOverflowWithClosingParen(
+function checkForParenOverflow(
   tokens: Uint32Array,
   fileContents: string,
   tokenIndex: number,
@@ -74,6 +72,38 @@ function checkForOverflowWithClosingParen(
     } else if (decodedToken[1] === TokenType.specialParenthesisClosing) {
       --parenCount;
       if (parenCount === 0) {
+        lineLength =
+          removeSpaces(fileContents.slice(startLineIndex, decodedToken[0]))
+            .length + whiteSpace;
+        if (lineLength > 80) {
+          return true;
+        }
+        return false;
+      }
+    } else if (decodedToken[1] === TokenType.specialComma) {
+      ++whiteSpace;
+    } else if (decodedToken[1] >= 80 && decodedToken[1] <= 87) {
+      whiteSpace += 2;
+    }
+  }
+  return false;
+}
+function checkForBracketOverflow(
+  tokens: Uint32Array,
+  fileContents: string,
+  tokenIndex: number,
+  startLineIndex: number,
+): boolean {
+  let lineLength;
+  let bracketCount = 0;
+  let whiteSpace = 0;
+  for (let i = tokenIndex; bracketCount >= 0 && i < tokens.length; ++i) {
+    const decodedToken = tokenDecode(tokens[i]);
+    if (decodedToken[1] === TokenType.specialBracketOpening) {
+      ++bracketCount;
+    } else if (decodedToken[1] === TokenType.specialBracketClosing) {
+      --bracketCount;
+      if (bracketCount === 0) {
         lineLength =
           removeSpaces(fileContents.slice(startLineIndex, decodedToken[0]))
             .length + whiteSpace;

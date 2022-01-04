@@ -4,9 +4,10 @@ import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/movie.c');
 const tokenizedfile = tokenizeFile(filePath);
-assert(
-  tokenizedfile,
-  `#include "movie.h"
+
+const expectedFormat = 
+
+`#include "movie.h"
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
@@ -90,6 +91,6 @@ void movie_collection_delete(
   }
   --collection->count;
 }
-`,
-  'movie.c'
-);
+`;
+
+assert(tokenizedfile, expectedFormat, 'movie.c');
