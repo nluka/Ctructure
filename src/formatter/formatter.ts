@@ -170,15 +170,16 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
             );
             startLineIndex = position;
           }
+
           previousContext = contextStack.pop();
-          if (previousContext) {
-            context =
-              previousContext[0] === TokenType.keywordFor && parenCount === 0
-                ? null
-                : previousContext[0];
-            split = previousContext[1];
-            blockLevel = previousContext[2];
+          if (previousContext[0] === TokenType.keywordFor && parenCount === 0) {
+            context = null;
+          } else {
+            context = previousContext[0];
           }
+          split = previousContext[1];
+          blockLevel = previousContext[2];
+
           nextType = nextTypeNotNL(tokens, i);
           if (
             context === TokenType.keywordIf &&
@@ -239,16 +240,17 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           currNode.setData(`\n${indentation.repeat(blockLevel)}}`);
           if (
             context === TokenType.keywordEnum ||
-            context === TokenType.keywordStruct
+            context === TokenType.keywordStruct ||
+            context === TokenType.keywordDo
           ) {
             nextType = nextTypeNotNL(tokens, i);
             if (nextType !== TokenType.specialSemicolon) {
               currNode.setData(currNode.getData() + ' ');
             }
-            context = null;
           } else {
             newLine = true;
           }
+          context = null;
           break;
 
         // Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
