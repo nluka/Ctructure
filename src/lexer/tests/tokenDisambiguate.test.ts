@@ -40,11 +40,28 @@ describe('tokenDisambiguate', () => {
     );
     assert(
       [
+        TokenType.operatorBinaryBitwiseShiftLeft,
+        TokenType.newline,
+        TokenType.ambiguousPlus,
+        TokenType.identifier
+      ],
+      2, TokenType.operatorUnaryPlus, '<<\n+a'
+    );
+    assert(
+      [
         TokenType.specialParenthesisOpening,
         TokenType.ambiguousPlus,
         TokenType.identifier
       ],
       1, TokenType.operatorUnaryPlus, '(+a'
+    );
+    assert(
+      [
+        TokenType.specialBracketOpening,
+        TokenType.ambiguousPlus,
+        TokenType.identifier
+      ],
+      1, TokenType.operatorUnaryPlus, '[+a'
     );
     assert(
       [
@@ -153,11 +170,27 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
+          TokenType.operatorBinaryArithmeticModulo,
+          TokenType.ambiguousMinus,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryMinus, '% -a'
+      );
+      assert(
+        [
           TokenType.specialParenthesisOpening,
           TokenType.ambiguousMinus,
           TokenType.identifier
         ],
         1, TokenType.operatorUnaryMinus, '(-a'
+      );
+      assert(
+        [
+          TokenType.specialBracketOpening,
+          TokenType.ambiguousMinus,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryMinus, '[-a'
       );
     });
     describe('Binary', () => {
