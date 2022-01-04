@@ -1,37 +1,21 @@
-export type nodeType = Node | undefined;
-
-export default class Node {
-  private data: any;
-  private next: nodeType;
-  private child: nodeType;
-  constructor(data?: any, next?: nodeType, child?: nodeType) {
-    this.data = data;
-    this.next = next;
-    this.child = child;
+export default class Node<T> {
+  private data: T | null;
+  private next: Node<T> | null;
+  constructor(data?: T, next?: Node<T> | null) {
+    this.data = data ? data : null;
+    this.next = next ? next : null;
   }
 
-  getChild() {
-    return this.child;
-  }
-  setChild(child: nodeType) {
-    this.child = child;
-  }
   getNext() {
     return this.next;
   }
-  setNext(next: nodeType) {
+  setNext(next: Node<T> | null) {
     this.next = next;
   }
   getData() {
     return this.data;
   }
-  setData(data: any) {
+  setData(data: T) {
     this.data = data;
-  }
-  addDataPost(data: any) {
-    this.data = this.data ? this.data + data : data;
-  }
-  addDataPre(data: any) {
-    this.data = this.data ? data + this.data : data;
   }
 }

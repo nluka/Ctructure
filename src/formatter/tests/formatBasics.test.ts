@@ -33,7 +33,7 @@ import assert from './assert';
   multiVarDec.push(TokenType.specialSemicolon);
   assert(
     ['thing', multiVarDec],
-    'thing thing = thing,\n\
+  'thing thing = thing,\n\
   thing = thing,\n\
   thing = thing;',
     'multi var declaration'
