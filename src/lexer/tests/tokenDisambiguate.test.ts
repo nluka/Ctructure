@@ -65,6 +65,14 @@ describe('tokenDisambiguate', () => {
     );
     assert(
       [
+        TokenType.keywordReturn,
+        TokenType.ambiguousPlus,
+        TokenType.constantNumber
+      ],
+      1, TokenType.operatorUnaryPlus, 'return +1'
+    );
+    assert(
+      [
         TokenType.identifier,
         TokenType.ambiguousPlus,
         TokenType.identifier
@@ -191,6 +199,14 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier
         ],
         1, TokenType.operatorUnaryMinus, '[-a'
+      );
+      assert(
+        [
+          TokenType.keywordReturn,
+          TokenType.ambiguousMinus,
+          TokenType.constantNumber
+        ],
+        1, TokenType.operatorUnaryMinus, 'return -1'
       );
     });
     describe('Binary', () => {

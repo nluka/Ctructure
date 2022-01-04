@@ -51,7 +51,8 @@ export default function tokenDisambiguate(
       if (
         isTokenBinaryOperator(firstTokenTypeBehindCurr) ||
         firstTokenTypeBehindCurr === TokenType.specialBracketOpening ||
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisOpening
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisOpening ||
+        firstTokenTypeBehindCurr === TokenType.keywordReturn
       ) {
         return TokenType.operatorUnaryPlus;
       }
@@ -62,7 +63,8 @@ export default function tokenDisambiguate(
       if (
         isTokenBinaryOperator(firstTokenTypeBehindCurr) ||
         firstTokenTypeBehindCurr === TokenType.specialBracketOpening ||
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisOpening
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisOpening ||
+        firstTokenTypeBehindCurr === TokenType.keywordReturn
       ) {
         return TokenType.operatorUnaryMinus;
       }
@@ -73,9 +75,11 @@ export default function tokenDisambiguate(
       if (firstTokenTypeAfterCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPrefix;
       }
+
       if (firstTokenTypeBehindCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPostfix;
       }
+
       throw createErr();
     }
 
@@ -83,9 +87,11 @@ export default function tokenDisambiguate(
       if (firstTokenTypeBehindCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticDecrementPostfix;
       }
+
       if (firstTokenTypeAfterCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticDecrementPrefix;
       }
+
       throw createErr();
     }
 
