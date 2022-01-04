@@ -48,37 +48,25 @@ export default function tokenDisambiguate(
 
   switch (currTokenType) {
     case TokenType.ambiguousPlus: {
-      if (isTokenBinaryOperator(firstTokenTypeBehindCurr)) {
+      if (
+        isTokenBinaryOperator(firstTokenTypeBehindCurr) ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketOpening ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisOpening
+      ) {
         return TokenType.operatorUnaryPlus;
       }
-      if (
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing ||
-        firstTokenTypeBehindCurr === TokenType.specialBracketClosing ||
-        ((firstTokenTypeBehindCurr === TokenType.identifier ||
-          isTokenConstant(firstTokenTypeBehindCurr)) &&
-          (firstTokenTypeAfterCurr === TokenType.identifier ||
-            isTokenConstant(firstTokenTypeAfterCurr)))
-      ) {
-        return TokenType.operatorBinaryArithmeticAddition;
-      }
-      return TokenType.operatorUnaryPlus;
+      return TokenType.operatorBinaryArithmeticAddition;
     }
 
     case TokenType.ambiguousMinus: {
-      if (isTokenBinaryOperator(firstTokenTypeBehindCurr)) {
+      if (
+        isTokenBinaryOperator(firstTokenTypeBehindCurr) ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketOpening ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisOpening
+      ) {
         return TokenType.operatorUnaryMinus;
       }
-      if (
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing ||
-        firstTokenTypeBehindCurr === TokenType.specialBracketClosing ||
-        ((firstTokenTypeBehindCurr === TokenType.identifier ||
-          isTokenConstant(firstTokenTypeBehindCurr)) &&
-          (firstTokenTypeAfterCurr === TokenType.identifier ||
-            isTokenConstant(firstTokenTypeAfterCurr)))
-      ) {
-        return TokenType.operatorBinaryArithmeticSubtraction;
-      }
-      return TokenType.operatorUnaryMinus;
+      return TokenType.operatorBinaryArithmeticSubtraction;
     }
 
     case TokenType.ambiguousIncrement: {

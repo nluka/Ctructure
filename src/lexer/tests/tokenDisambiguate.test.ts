@@ -58,6 +58,46 @@ describe('tokenDisambiguate', () => {
       [
         TokenType.identifier,
         TokenType.ambiguousPlus,
+        TokenType.specialParenthesisOpening
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, 'a + ('
+    );
+    assert(
+      [
+        TokenType.specialParenthesisClosing,
+        TokenType.ambiguousPlus,
+        TokenType.identifier
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, ') + b'
+    );
+    assert(
+      [
+        TokenType.specialParenthesisClosing,
+        TokenType.ambiguousPlus,
+        TokenType.specialParenthesisOpening
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, ') + ('
+    );
+    assert(
+      [
+        TokenType.specialBracketClosing,
+        TokenType.ambiguousPlus,
+        TokenType.identifier
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, '] + b'
+    );
+    assert(
+      [
+        TokenType.specialBracketClosing,
+        TokenType.ambiguousPlus,
+        TokenType.specialParenthesisOpening
+      ],
+      1, TokenType.operatorBinaryArithmeticAddition, '] + ('
+    );
+    assert(
+      [
+        TokenType.identifier,
+        TokenType.ambiguousPlus,
         TokenType.constantNumber
       ],
       1, TokenType.operatorBinaryArithmeticAddition, 'a + 1'
@@ -88,30 +128,6 @@ describe('tokenDisambiguate', () => {
         TokenType.constantCharacter
       ],
       3, TokenType.operatorBinaryArithmeticAddition, "'a'\n\n+\n'b'"
-    );
-    assert(
-      [
-        TokenType.specialParenthesisClosing,
-        TokenType.ambiguousPlus,
-        TokenType.identifier
-      ],
-      1, TokenType.operatorBinaryArithmeticAddition, ") + a"
-    );
-    assert(
-      [
-        TokenType.specialParenthesisClosing,
-        TokenType.ambiguousPlus,
-        TokenType.specialParenthesisOpening
-      ],
-      1, TokenType.operatorBinaryArithmeticAddition, ") + ("
-    );
-    assert(
-      [
-        TokenType.specialBracketClosing,
-        TokenType.ambiguousPlus,
-        TokenType.specialParenthesisOpening
-      ],
-      1, TokenType.operatorBinaryArithmeticAddition, "] + ("
     );
     assert(
       [
@@ -152,6 +168,46 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier
         ],
         1, TokenType.operatorBinaryArithmeticSubtraction, 'a - b'
+      );
+      assert(
+        [
+          TokenType.identifier,
+          TokenType.ambiguousMinus,
+          TokenType.specialParenthesisOpening
+        ],
+        1, TokenType.operatorBinaryArithmeticSubtraction, 'a - ('
+      );
+      assert(
+        [
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousMinus,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorBinaryArithmeticSubtraction, ') - b'
+      );
+      assert(
+        [
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousMinus,
+          TokenType.specialParenthesisOpening
+        ],
+        1, TokenType.operatorBinaryArithmeticSubtraction, ') - ('
+      );
+      assert(
+        [
+          TokenType.specialBracketClosing,
+          TokenType.ambiguousMinus,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorBinaryArithmeticSubtraction, '] - b'
+      );
+      assert(
+        [
+          TokenType.specialBracketClosing,
+          TokenType.ambiguousMinus,
+          TokenType.specialParenthesisOpening
+        ],
+        1, TokenType.operatorBinaryArithmeticSubtraction, '] - ('
       );
       assert(
         [
