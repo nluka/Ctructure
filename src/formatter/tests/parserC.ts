@@ -1,13 +1,11 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/parser.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#define _CRT_SECURE_NO_WARNINGS
+const expectedFormat = `#define _CRT_SECURE_NO_WARNINGS
 
 #include <string.h>
 #include <ctype.h>
@@ -335,4 +333,10 @@ bool is_there_another_simulation(FILE *const file) {
 }
 `;
 
-assert(tokenizedfile, expectedFormat, 'parser.c');
+const testInfoParserC: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'parser.c',
+];
+
+export default testInfoParserC;

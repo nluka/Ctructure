@@ -1,13 +1,11 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/ant.h');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#ifndef ANT_SIMULATOR_LITE_CORE_ANT_H
+const expectedFormat = `#ifndef ANT_SIMULATOR_LITE_CORE_ANT_H
 #define ANT_SIMULATOR_LITE_CORE_ANT_H
 
 #include <inttypes.h>
@@ -50,4 +48,10 @@ int ant_get_next_row(const ant_t *ant);
 
 `;
 
-assert(tokenizedfile, expectedFormat, 'ant.h');
+const testInfoAntH: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'ant.h',
+];
+
+export default testInfoAntH;

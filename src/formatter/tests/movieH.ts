@@ -1,13 +1,11 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/movie.h');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#ifndef CORE_MOVIE_H
+const expectedFormat = `#ifndef CORE_MOVIE_H
 #define CORE_MOVIE_H
 
 #include <stdbool.h>
@@ -64,4 +62,10 @@ void movie_collection_delete(movie_collection_t *collection, movie_t *movie);
 #endif // CORE_MOVIE_H
 `;
 
-assert(tokenizedfile, expectedFormat, 'movie.h');
+const testInfoMovieH: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'movie.h',
+];
+
+export default testInfoMovieH;

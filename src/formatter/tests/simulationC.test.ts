@@ -1,13 +1,11 @@
 import path = require('path');
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
+import assert from './assert.test';
 
 const filePath = path.join(__dirname, '../../sample_code/simulation.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#define _CRT_SECURE_NO_WARNINGS
+const expectedFormat = `#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <time.h>
@@ -197,4 +195,4 @@ void simulation_destroy(simulation_t *const sim) {
 }
 `;
 
-assert(tokenizedfile, expectedFormat, 'simulation.c');
+assert([tokenizedfile, expectedFormat, 'simulation.c']);

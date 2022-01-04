@@ -1,13 +1,11 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/str.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#include <string.h>
+const expectedFormat = `#include <string.h>
 #include <stdio.h>
 #include \"str.h\"
 
@@ -86,4 +84,10 @@ void string_destroy(string_t *const string) {
 }
 `;
 
-assert(tokenizedfile, expectedFormat, 'str.c');
+const testInfoStrC: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'str.c',
+];
+
+export default testInfoStrC;

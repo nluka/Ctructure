@@ -1,13 +1,14 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
-const filePath = path.join(__dirname, '../../sample_code/handle_change_movie.c');
+const filePath = path.join(
+  __dirname,
+  '../../sample_code/handle_change_movie.c',
+);
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#include <stdlib.h>
+const expectedFormat = `#include <stdlib.h>
 #include <string.h>
 #include "handlers.h"
 #include "ui/ui.h"
@@ -44,4 +45,10 @@ void handle_change_movie(movie_collection_t *const collection) {
 }
 `;
 
-assert(tokenizedfile, expectedFormat, 'handle_change_movie.c');
+const testInfoHandleChangeC: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'handle_change_movie.c',
+];
+
+export default testInfoHandleChangeC;

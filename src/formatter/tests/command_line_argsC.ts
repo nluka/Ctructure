@@ -1,13 +1,11 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/command_line_args.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#define _CRT_SECURE_NO_WARNINGS
+const expectedFormat = `#define _CRT_SECURE_NO_WARNINGS
 
 #include <string.h>
 #include <stdio.h>
@@ -200,4 +198,10 @@ bool set_command_var(
 }
 `;
 
-assert(tokenizedfile, expectedFormat, 'command_line_args.c');
+const testInfoCommandC: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'command_line_args.c',
+];
+
+export default testInfoCommandC;

@@ -1,13 +1,11 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/handle_add_movie.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#include "handlers.h"
+const expectedFormat = `#include "handlers.h"
 #include "ui/ui.h"
 
 void handle_add_movie(movie_collection_t *const collection) {
@@ -48,4 +46,10 @@ void handle_add_movie(movie_collection_t *const collection) {
 }
 `;
 
-assert(tokenizedfile, expectedFormat, 'handle_add_movie.c');
+const testInfoHandleAddC: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'handle_add_movie.c',
+];
+
+export default testInfoHandleAddC;

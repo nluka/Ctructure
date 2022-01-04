@@ -1,13 +1,10 @@
-import path = require("path");
-import { tokenizeFile } from "../../lexer/tokenizeFile";
-import assert from "./assert";
-
+import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
+import { tokenizeFile } from '../../lexer/tokenizeFile';
 
 const filePath = path.join(__dirname, '../../sample_code/ant.c');
 const tokenizedfile = tokenizeFile(filePath);
-const expectedFormat =
-
-`#include "ant.h"
+const expectedFormat = `#include "ant.h"
 #include "log_event.h"
 #include "../util/terminate.h"
 
@@ -103,4 +100,10 @@ int ant_get_next_row(const ant_t *const ant) {
   return (int)(ant->row);
 }`;
 
-assert(tokenizedfile, expectedFormat, 'act.c');
+const testInfoAntC: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'act.c',
+];
+
+export default testInfoAntC;

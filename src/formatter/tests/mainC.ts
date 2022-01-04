@@ -1,13 +1,11 @@
 import path = require('path');
+import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/main.c');
 const tokenizedfile = tokenizeFile(filePath);
 
-const expectedFormat = 
-
-`#include <stdio.h>
+const expectedFormat = `#include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <string.h>
@@ -65,4 +63,10 @@ int main(int argc, char **argv) {
 }
 `;
 
-assert(tokenizedfile, expectedFormat, 'main.c');
+const testInfoMainC: [[string, TokenArray], string, string] = [
+  tokenizedfile,
+  expectedFormat,
+  'main.c',
+];
+
+export default testInfoMainC;
