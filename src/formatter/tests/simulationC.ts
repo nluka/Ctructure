@@ -1,7 +1,7 @@
 import path = require('path');
 import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert.test';
+import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/simulation.c');
 const tokenizedfile = tokenizeFile(filePath);
@@ -201,3 +201,5 @@ const testInfoSimulationC: [[string, TokenArray], string, string] = [
   expectedFormat,
   'simulation.c',
 ];
+
+export default testInfoSimulationC;

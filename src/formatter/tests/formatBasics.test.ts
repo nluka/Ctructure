@@ -2,7 +2,7 @@ import path = require('path');
 import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
 import TokenType from '../../lexer/TokenType';
-import assert from './assert.test';
+import assert from './assert';
 
 //single var declaration
 {
