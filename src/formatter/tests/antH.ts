@@ -45,7 +45,6 @@ int ant_get_next_col(const ant_t *ant);
 int ant_get_next_row(const ant_t *ant);
 
 #endif // ANT_SIMULATOR_LITE_CORE_ANT_H
-
 `;
 
 const testInfoAntH: [[string, TokenArray], string, string] = [

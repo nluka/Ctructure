@@ -1,5 +1,5 @@
 import TokenArray from '../../lexer/TokenArray';
-import formatFile, { toString } from '../formatter';
+import formatFile from '../formatter';
 import testInfoAntC from './antC';
 import testInfoAntH from './antH';
 import testInfoCommandC from './command_line_argsC';
@@ -12,12 +12,13 @@ import testInfoMovieC from './movieC';
 import testInfoMovieH from './movieH';
 import testInfoMovieOPC from './movie_operationsC';
 import testInfoParserC from './parserC';
+//import testInfoSimulationC from './simulationC';
 import testInfoStrC from './strC';
 import testInfoStrH from './strH';
 
 export default function assert(thing: [[string, TokenArray], string, string]) {
   test(`test type: ${thing[2]}`, () => {
-    const stringed = toString(formatFile(thing[0]));
+    const stringed = formatFile(thing[0]);
     //console.log(stringed);
     expect(stringed).toBe(thing[1]);
   });
@@ -35,5 +36,6 @@ assert(testInfoMovieC);
 assert(testInfoMovieH);
 assert(testInfoMovieOPC);
 assert(testInfoParserC);
+//assert(testInfoSimulationC);
 assert(testInfoStrC);
 assert(testInfoStrH);

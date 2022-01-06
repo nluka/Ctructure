@@ -1,4 +1,3 @@
-import { parentPort } from 'worker_threads';
 import TokenArray from '../lexer/TokenArray';
 import { tokenDecode } from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
@@ -13,39 +12,52 @@ import NodeString from './NodeString';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
-export default function formatFile(lexer: [string, TokenArray]) {
-  return formatter(lexer[0], lexer[1]);
+export default function formatFile(lexer: [string, TokenArray]): string {
+  return formatter(lexer[0], lexer[1], 2);
 }
 
 /**
  * @param fileContents contents of the file in string form.
  * @param tokenArray tokenized file
- * @var blockLevel level of indentation
- * @var context used to determine how a token should behave
- * @var nextType holds the next token's type, skipping new line tokens
- * @var newLine if set to true, a new line will be added to the beginning of the next token
- * @var startLineIndex used in determining if there is line overflow
- * @var split if true (due to line overflow), the line will split where it's appropriate.\
+ * @param spaceAmount set by user. number of spaces between block levels
+ * @var indentation based on spaceAmount, string literal of block level indentation
+ * @var overflow if true (due to line overflow), the line will split where it's appropriate.\
  *  only used within parentheses, arrays and multi variable declarations
+ * @var newLine when set to true, a new line will be added to the next token
+ * @var blockLevel level of indentation
+ * @var parenCount depth of parentheses
+ * @var currNode the current node
+ * @var nextType holds the next token's type, skipping new line tokens
+ * @var previousType the previous token type
+ * @var context used to determine how a token should behave
+ * @var contextStack stores the previous context when opening parentheses, braces, or brackets are present
+ * @var previousContext holds the popped context, used when closing parentheses, braces, or brackets are present
+ * @var startLineIndex used in determining if there is line overflow
+
  * @returns root node.
  */
 export type Types = TokenType | FormatCategory | null;
 
-function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
-  const indentation = '  ';
+function formatter(
+  fileContents: string,
+  tokenArray: TokenArray,
+  spaceAmount: number,
+): string {
+  const indentation = ' '.repeat(spaceAmount);
   const root: NodeString = new NodeString();
-  let split: boolean = false,
+  const tokens: Uint32Array = tokenArray.getValues();
+  let overflow: boolean = false,
     newLine: boolean = false,
     blockLevel: number = 0,
     parenCount = 0,
     currNode: NodeString | null = root,
-    previousType: Types = null,
     nextType: Types,
+    previousType: Types = null,
     context: Types = null,
     contextStack: Stack = new Stack(),
-    tokens: Uint32Array = tokenArray.getValues(),
+    previousContext: [Types, boolean, number] | null = null,
     startLineIndex: number = tokenDecode(tokens[0])[0],
-    previousContext: [Types, boolean, number] | null = null;
+    formattedFileStr: string = '';
 
   for (let i = 0; i < tokenArray.getCount(); ++i) {
     if (currNode) {
@@ -76,7 +88,7 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           continue;
 
         case TokenType.specialComma:
-          if (context === FormatCategory.multiVarDec || split) {
+          if (context === FormatCategory.multiVarDec || overflow) {
             newLine = true;
           } else if (
             context === FormatCategory.varDec ||
@@ -104,24 +116,24 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           } else if (context === TokenType.keywordFor) {
             currNode.setData('; ');
           } else {
-            split = false;
+            overflow = false;
             newLine = true;
           }
           break;
 
         case TokenType.specialBracketOpening:
-          contextStack.push([context, split, blockLevel]);
+          contextStack.push([context, overflow, blockLevel]);
           if (context === FormatCategory.doubleTypeorIdentifier) {
             context = FormatCategory.varDec;
           }
-          split = checkForLineOverflow(
+          overflow = checkForLineOverflow(
             fileContents,
             TokenType.specialBracketOpening,
             tokens,
             i,
             startLineIndex,
           );
-          if (split) {
+          if (overflow) {
             currNode.setData(
               currNode.getData() + `\n${indentation.repeat(++blockLevel)}`,
             );
@@ -130,18 +142,18 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
         case TokenType.specialBracketClosing:
           previousContext = contextStack.pop();
           blockLevel = previousContext[2];
-          if (split) {
+          if (overflow) {
             currNode.setData(
               `\n${indentation.repeat(blockLevel)}` + currNode.getData(),
             );
           }
           context = previousContext[0];
-          split = previousContext[1];
+          overflow = previousContext[1];
           break;
 
         case TokenType.specialParenthesisOpening:
           ++parenCount;
-          contextStack.push([context, split, blockLevel]);
+          contextStack.push([context, overflow, blockLevel]);
           if (context === FormatCategory.doubleTypeorIdentifier) {
             context = FormatCategory.funcDec;
           } else if (previousType === TokenType.identifier) {
@@ -149,14 +161,14 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           } else if (context !== TokenType.keywordFor) {
             context = null;
           }
-          split = checkForLineOverflow(
+          overflow = checkForLineOverflow(
             fileContents,
             context,
             tokens,
             i,
             startLineIndex,
           );
-          if (split) {
+          if (overflow) {
             newLine = true;
             ++blockLevel;
           }
@@ -164,7 +176,7 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
 
         case TokenType.specialParenthesisClosing:
           --parenCount;
-          if (split) {
+          if (overflow) {
             currNode.setData(
               `\n${indentation.repeat(--blockLevel)}` + currNode.getData(),
             );
@@ -177,7 +189,7 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           } else {
             context = previousContext[0];
           }
-          split = previousContext[1];
+          overflow = previousContext[1];
           blockLevel = previousContext[2];
 
           nextType = nextTypeNotNL(tokens, i);
@@ -195,21 +207,21 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           if (context === TokenType.keywordIf) {
             context = null;
           }
-          contextStack.push([context, split, blockLevel]);
+          contextStack.push([context, overflow, blockLevel]);
           if (
             context === FormatCategory.varDec ||
             context === FormatCategory.multiVarDec ||
             context === FormatCategory.array
           ) {
             context = FormatCategory.array;
-            split = checkForLineOverflow(
+            overflow = checkForLineOverflow(
               fileContents,
               context,
               tokens,
               i,
               position,
             );
-            if (split) {
+            if (overflow) {
               newLine = true;
               ++blockLevel;
             } else {
@@ -226,17 +238,17 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           previousContext = contextStack.pop();
           blockLevel = previousContext[2];
           if (context === FormatCategory.array) {
-            if (!split) {
+            if (!overflow) {
               currNode.setData(` }`);
             } else {
               currNode.setData(`\n${indentation.repeat(blockLevel)}}`);
             }
             context = previousContext[0];
-            split = previousContext[1];
+            overflow = previousContext[1];
             break;
           }
           context = previousContext[0];
-          split = previousContext[1];
+          overflow = previousContext[1];
           currNode.setData(`\n${indentation.repeat(blockLevel)}}`);
           if (
             context === TokenType.keywordEnum ||
@@ -332,7 +344,7 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           if (context === FormatCategory.typeOrIdentifier) {
             context = null;
           }
-          if (split) {
+          if (overflow) {
             newLine = true;
             currNode.setData(' ' + currNode.getData());
             break;
@@ -491,7 +503,7 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
 
         case TokenType.keywordEnum:
           context = TokenType.keywordEnum;
-          split = true;
+          overflow = true;
           currNode.setData(currNode.getData() + ' ');
           break;
 
@@ -614,24 +626,19 @@ function formatter(fileContents: string, tokenArray: TokenArray): NodeString {
           }
           break;
       }
+      formattedFileStr += currNode.getData();
       previousType = type;
-      currNode.setNext(new NodeString());
-      currNode = currNode.getNext();
+      currNode.setData('');
     }
   }
-  return root;
-}
 
-export function toString(currNode: NodeString | null) {
-  let str: string = '';
-
-  if (currNode !== null) {
-    str += currNode.getData();
-    if (currNode.getNext()) {
-      str += toString(currNode.getNext());
-    }
+  if (
+    tokenDecode(tokens[tokenArray.getCount() - 1])[1] === TokenType.newline &&
+    formattedFileStr !== ''
+  ) {
+    formattedFileStr += '\n';
   }
-  return str;
+  return formattedFileStr;
 }
 
 function setNodesDataFromFileContent(
