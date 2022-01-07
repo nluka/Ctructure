@@ -251,7 +251,6 @@ function formatter(
       case TokenType.preproOperatorConcat:
       case TokenType.preproDirectiveInclude:
       case TokenType.preproDirectiveDefine:
-      case TokenType.preproLineContinuation:
       case TokenType.preproDirectiveUndef:
       case TokenType.preproDirectiveIf:
       case TokenType.preproDirectiveIfdef:
@@ -264,6 +263,10 @@ function formatter(
       case TokenType.preproDirectivePragma:
         context = FormatCategory.prepro;
         currString += ' ';
+        break;
+
+      case TokenType.preproLineContinuation:
+        newLine = true;
         break;
 
       case TokenType.preproDirectiveEndif:
