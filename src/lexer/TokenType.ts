@@ -209,8 +209,8 @@ export function isTokenBinaryOperator(type: TokenType) {
 }
 
 export function isTokenTernaryOperatorComponent(type: TokenType) {
-  return type >= TokenType.operatorTernaryQuestion &&
-    type <= TokenType.ambiguousColon;
+  return type === TokenType.operatorTernaryQuestion ||
+    type === TokenType.ambiguousColon;
 }
 
 export function isTokenMemberSelectionOperator(type: TokenType) {
