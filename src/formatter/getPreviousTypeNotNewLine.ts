@@ -9,11 +9,17 @@ export default function getPrevTokenTypeNotNewLine(
   for (let i = index - 1; i < tokens.length; --i) {
     const type = tokenDecode(tokens[i])[1];
     if (type !== TokenType.newline) {
-      if (type > 90 && type < 102) {
+      if (
+        type >= TokenType.operatorBinaryAssignmentDirect &&
+        type <= TokenType.operatorBinaryAssignmentBitwiseXor
+      ) {
         return FormatCategory.assignment;
-      } else if (type < 19) {
+      } else if (type <= TokenType.preproLineContinuation) {
         return FormatCategory.prepro;
-      } else if (type < 30 || type === 116) {
+      } else if (
+        type <= TokenType.keywordVoid ||
+        type === TokenType.identifier
+      ) {
         return FormatCategory.typeOrIdentifier;
       }
       return type;

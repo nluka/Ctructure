@@ -10,11 +10,11 @@ export default function getNextTokenTypeNotNewLine(
     const type = tokenDecode(tokens[i])[1];
     if (type !== TokenType.newline) {
       if (
-        type > TokenType.operatorBinaryAssignmentDirect &&
-        type < TokenType.operatorBinaryAssignmentBitwiseXor
+        type >= TokenType.operatorBinaryAssignmentDirect &&
+        type <= TokenType.operatorBinaryAssignmentBitwiseXor
       ) {
         return FormatCategory.assignment;
-      } else if (type < TokenType.preproLineContinuation) {
+      } else if (type <= TokenType.preproLineContinuation) {
         return FormatCategory.prepro;
       }
       return type;
