@@ -206,7 +206,7 @@ function formatter(
             FormatCategory.array,
             tokens,
             i,
-            position,
+            startLineIndex,
           );
           if (!overflow) {
             currString += ' ';
@@ -426,6 +426,7 @@ function formatter(
         currString += ' ';
         break;
 
+      case TokenType.keywordShort:
       case TokenType.keywordInt:
       case TokenType.keywordBool:
       case TokenType.keywordFloat:

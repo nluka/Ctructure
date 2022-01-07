@@ -36,8 +36,10 @@ function checkForArrayOverflow(
   for (let i = tokenIndex; braceCount >= 0 && i < tokens.length; ++i) {
     const decodedToken = tokenDecode(tokens[i]);
     if (decodedToken[1] === TokenType.specialBraceOpening) {
+      whiteSpace += 2;
       ++braceCount;
     } else if (decodedToken[1] === TokenType.specialBraceClosing) {
+      whiteSpace += 2;
       --braceCount;
       if (braceCount === 0) {
         lineLength =
