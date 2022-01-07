@@ -5,8 +5,8 @@ import { tokenFindLastIndex } from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
 import checkForLineOverflow from './checkForLineOverflow';
 import FormatCategory from './FormatCategory';
-import nextTypeNotNewline from './getNextTokenTypeNotNewLine';
-import getPrevTokenTypeNotNewLine from './getPreviousTypeNotNewLine';
+import nextTypeNotNewline from './getNextTokenTypeNotNewline';
+import getPrevTokenTypeNotNewline from './getPreviousTypeNotNewline';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
@@ -298,7 +298,7 @@ function formatter(
         ) {
           currString = ` ${currNodeData} `;
         } else if (
-          getPrevTokenTypeNotNewLine(tokens, i) ===
+          getPrevTokenTypeNotNewline(tokens, i) ===
           FormatCategory.typeOrIdentifier
         ) {
           currString = ' *';

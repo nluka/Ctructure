@@ -6,7 +6,7 @@ import TokenType, {
 } from '../lexer/TokenType';
 import FormatCategory from './FormatCategory';
 
-export default function getPrevTokenTypeNotNewLine(
+export default function getPrevTokenTypeNotNewline(
   tokens: Uint32Array,
   index: number,
 ): TokenType | FormatCategory | null {
