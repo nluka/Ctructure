@@ -20,7 +20,7 @@ string_t string_create(const size_t initialCount) {
     string.data = NULL;
     string.availableCount = 0;
   } else {
-    string.data = calloc(initialCount + 1, sizef(char));
+    string.data = calloc(initialCount + 1, sizeof(char));
     string.availableCount = string.data == NULL ? 0 : initialCount;
   }
   string.count = 0;

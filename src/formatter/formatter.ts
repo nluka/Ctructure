@@ -62,15 +62,12 @@ function formatter(
     i < tokenArray.getCount();
     ++i, nextType = nextTypeNotNL(tokens, i)
   ) {
-    const decodedToken: [number, TokenType] = tokenDecode(tokens[i]);
-    const type: TokenType = decodedToken[1];
-    const position: number = decodedToken[0];
+    const [position, type] = tokenDecode(tokens[i]);
     const currNodeData = tokenTypeToValueMap.get(type);
 
     if (currNodeData) {
       currString += currNodeData;
     }
-
     if (newLine && type !== TokenType.commentSingleline) {
       currString = '\n' + indentation.repeat(blockLevel) + currString;
       if (type === TokenType.newline) {
@@ -122,7 +119,6 @@ function formatter(
 
       case TokenType.specialBracketOpening:
         contextStack.push([context, overflow, blockLevel]);
-
         if (context === FormatCategory.doubleTypeorIdentifier) {
           context = FormatCategory.varDec;
         }
@@ -152,7 +148,6 @@ function formatter(
       case TokenType.specialParenthesisOpening:
         ++parenCount;
         contextStack.push([context, overflow, blockLevel]);
-
         if (context === FormatCategory.doubleTypeorIdentifier) {
           context = FormatCategory.funcDec;
         } else if (previousType === TokenType.identifier) {
@@ -160,7 +155,6 @@ function formatter(
         } else if (context !== TokenType.keywordFor) {
           context = null;
         }
-
         overflow = checkForLineOverflow(
           fileContents,
           context,
@@ -177,22 +171,18 @@ function formatter(
       case TokenType.specialParenthesisClosing:
         --parenCount;
         previousContext = contextStack.pop();
-
         if (overflow) {
           currString = `\n${indentation.repeat(--blockLevel) + currString}`;
           startLineIndex = position;
         }
-
         if (previousContext[0] === TokenType.keywordFor && parenCount === 0) {
           context = null;
         } else {
           context = previousContext[0];
         }
-
         overflow = previousContext[1];
         blockLevel = previousContext[2];
         nextType = nextTypeNotNL(tokens, i);
-
         if (context === TokenType.keywordIf) {
           if (nextType !== TokenType.specialBraceOpening) {
             newLine = true;
@@ -206,7 +196,6 @@ function formatter(
 
       case TokenType.specialBraceOpening:
         contextStack.push([context, overflow, blockLevel]);
-
         if (
           context === FormatCategory.varDec ||
           context === FormatCategory.multiVarDec ||
@@ -225,9 +214,9 @@ function formatter(
             break;
           }
         } else {
+          context = null;
           currString = ' ' + currString;
         }
-
         ++blockLevel;
         newLine = true;
         break;
@@ -256,7 +245,6 @@ function formatter(
           context = null;
         }
         overflow = previousContext[1];
-
         break;
 
       // Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
@@ -294,7 +282,18 @@ function formatter(
 
       case TokenType.operatorUnaryIndirection:
       case TokenType.ambiguousAsterisk:
-        if (
+        if (nextTypeNotNL(tokens, i) === TokenType.specialParenthesisClosing) {
+        } else if (
+          ((context === FormatCategory.varDec ||
+            context === FormatCategory.multiVarDec) &&
+            previousType !== TokenType.operatorBinaryAssignmentDirect) ||
+          previousType === TokenType.specialParenthesisClosing ||
+          (context !== FormatCategory.funcDec &&
+            parenCount > 0 &&
+            previousType !== TokenType.specialParenthesisOpening)
+        ) {
+          currString = ` ${currNodeData} `;
+        } else if (
           getPrevTokenTypeNotNewLine(tokens, i) ===
           FormatCategory.typeOrIdentifier
         ) {
@@ -308,6 +307,8 @@ function formatter(
 
       // Binary operators
       case TokenType.operatorBinaryArithmeticMultiplication:
+        currString = 'pp';
+        break;
       case TokenType.operatorBinaryArithmeticAddition:
       case TokenType.operatorBinaryArithmeticSubtraction:
       case TokenType.operatorBinaryArithmeticDivision:
@@ -361,6 +362,7 @@ function formatter(
         }
         currString = ` ${currNodeData} `;
         break;
+
       case TokenType.operatorBinaryAssignmentAddition:
       case TokenType.operatorBinaryAssignmentSubtraction:
       case TokenType.operatorBinaryAssignmentMultiplication:
@@ -406,6 +408,7 @@ function formatter(
         context = TokenType.keywordIf;
         currString += ' ';
         break;
+
       case TokenType.keywordElse:
         context = TokenType.keywordElse;
         if (nextTypeNotNL(tokens, i) !== TokenType.keywordIf) {
@@ -413,6 +416,10 @@ function formatter(
         } else {
           currString = ' else ';
         }
+        break;
+
+      case TokenType.keywordUnsigned:
+        currString += ' ';
         break;
 
       case TokenType.keywordInt:
@@ -432,7 +439,6 @@ function formatter(
         ) {
           currString += ' ';
         }
-
         break;
 
       case TokenType.keywordSwitch:
@@ -446,6 +452,7 @@ function formatter(
         currString = `\n${indentation.repeat(previousContext[2] + 1)}case `;
         blockLevel = previousContext[2] + 2;
         break;
+
       case TokenType.keywordDefault:
         context = TokenType.keywordDefault;
         previousContext = contextStack.peek();
@@ -479,7 +486,6 @@ function formatter(
           context = TokenType.keywordWhile;
           currString += ' ';
         }
-
         break;
 
       case TokenType.keywordAlignas:
@@ -518,7 +524,8 @@ function formatter(
           contextStack.peek()[0] === TokenType.keywordSwitch &&
           tempLabel === 'default:'
         ) {
-          currString = '\n' + indentation.repeat(blockLevel - 1) + tempLabel;
+          currString =
+            '\n' + indentation.repeat(contextStack.peek()[2] + 1) + tempLabel;
         } else {
           currString += tempLabel;
         }
@@ -542,6 +549,7 @@ function formatter(
           currString = ' ' + currString;
         }
         break;
+
       case TokenType.constantNumber:
       case TokenType.constantCharacter:
       case TokenType.preproStandardHeader:
@@ -595,12 +603,12 @@ function formatter(
           position,
           previousType,
         );
-
         if (context === FormatCategory.prepro) {
           if (tokenDecode(tokens[i + 1])[1] !== TokenType.newline) {
             currString += ' ';
           } else {
             newLine = true;
+            context = null;
           }
         } else if (nextTypeNotNL(tokens, i) === TokenType.identifier) {
           currString += ' ';
@@ -616,7 +624,6 @@ function formatter(
     previousType = type;
     currString = '';
   }
-
   if (
     tokenDecode(tokens[tokenArray.getCount() - 1])[1] === TokenType.newline &&
     formattedFileStr !== ''

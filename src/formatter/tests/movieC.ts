@@ -67,12 +67,12 @@ bool movie_collection_add(
 }
 
 int movie_comparer(const void *left, const void *right) {
-  const movie_t *const leftMovie = (movie_t *)left;
-  const movie_t *const rightMovie = (movie_t *)right;
+  const movie_t *const leftMovie = (movie_t*)left;
+  const movie_t *const rightMovie = (movie_t*)right;
   return strcmp(leftMovie->name, rightMovie->name);
 }
 void movie_collection_sort(movie_collection_t *const collection) {
-  qsort(collection, collection->count, sizef(movie_t), movie_comparer);
+  qsort(collection, collection->count, sizeof(movie_t), movie_comparer);
 }
 
 void movie_collection_delete(

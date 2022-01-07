@@ -14,12 +14,14 @@ import testInfoParserC from './parserC';
 import testInfoSimulationC from './simulationC';
 import testInfoStrC from './strC';
 import testInfoStrH from './strH';
+import testInfoGridC from "./gridC";
 
 
 assert(testInfoAntC);
 assert(testInfoAntH);
 assert(testInfoCommandC);
 assert(testInfoEmptyC);
+assert(testInfoGridC);
 assert(testInfoHandleAddC);
 assert(testInfoHandleChangeC);
 assert(testInfoHeaderGH);

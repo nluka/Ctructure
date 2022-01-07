@@ -53,7 +53,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.keywordReturn, 'return'],
   [TokenType.keywordShort, 'short'],
   [TokenType.keywordSigned, 'signed'],
-  [TokenType.keywordSizeof, 'sizef'],
+  [TokenType.keywordSizeof, 'sizeof'],
   [TokenType.keywordStatic, 'static'],
   [TokenType.keywordStaticassert, 'static_assert'],
   [TokenType.keywordStruct, 'struct'],

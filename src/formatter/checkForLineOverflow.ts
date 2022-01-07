@@ -19,8 +19,7 @@ export default function checkForLineOverflow(
     return false;
   } else if (context === TokenType.specialBracketOpening) {
     return checkForBracketOverflow(tokens, fileContents, index, startLineIndex);
-  }
-  {
+  } else {
     return checkForParenOverflow(tokens, fileContents, index, startLineIndex);
   }
 }

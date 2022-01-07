@@ -29,7 +29,7 @@ typedef struct command_arg_setter_pair {
   const char *fullName;
   const char *shortName;
   union command_var_setter_func {
-    void (*forValue)(const void *);
+    void (*forValue)(const void*);
     void (*forFlag)();
   } setter;
   ArgType_t argType;
@@ -55,7 +55,7 @@ void cvar_setter_emit_image_files() {
 void cvar_setter_event_log_file_pathname(const void *value) {
   strncpy(
     g_comVars.eventLogFilePathname,
-    (const char *)value,
+    (const char*)value,
     MAX_FILE_PATHNAME_LENGTH
   );
 }
