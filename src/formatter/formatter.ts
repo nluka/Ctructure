@@ -3,10 +3,9 @@ import { tokenDecode } from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import { tokenFindLastIndex } from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
-import tokenTypeToNameMap from '../lexer/tokenTypeToNameMap';
 import checkForLineOverflow from './checkForLineOverflow';
 import FormatCategory from './FormatCategory';
-import nextTypeNotNL from './getNextTokenTypeNotNewLine';
+import nextTypeNotNewline from './getNextTokenTypeNotNewLine';
 import getPrevTokenTypeNotNewLine from './getPreviousTypeNotNewLine';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
@@ -60,7 +59,7 @@ function formatter(
   for (
     let i = 0;
     i < tokenArray.getCount();
-    ++i, nextType = nextTypeNotNL(tokens, i)
+    ++i, nextType = nextTypeNotNewline(tokens, i)
   ) {
     const [position, type] = tokenDecode(tokens[i]);
     const currNodeData = tokenTypeToValueMap.get(type);
@@ -182,7 +181,7 @@ function formatter(
         }
         overflow = previousContext[1];
         blockLevel = previousContext[2];
-        nextType = nextTypeNotNL(tokens, i);
+        nextType = nextTypeNotNewline(tokens, i);
         if (context === TokenType.keywordIf) {
           if (nextType !== TokenType.specialBraceOpening) {
             newLine = true;
@@ -236,7 +235,7 @@ function formatter(
             previousContext[0] === TokenType.keywordStruct ||
             previousContext[0] === TokenType.keywordDo
           ) {
-            if (nextTypeNotNL(tokens, i) !== TokenType.specialSemicolon) {
+            if (nextTypeNotNewline(tokens, i) !== TokenType.specialSemicolon) {
               currString += ' ';
             }
           } else {
@@ -285,7 +284,9 @@ function formatter(
 
       case TokenType.operatorUnaryIndirection:
       case TokenType.ambiguousAsterisk:
-        if (nextTypeNotNL(tokens, i) === TokenType.specialParenthesisClosing) {
+        if (
+          nextTypeNotNewline(tokens, i) === TokenType.specialParenthesisClosing
+        ) {
         } else if (
           ((context === FormatCategory.varDec ||
             context === FormatCategory.multiVarDec) &&
@@ -414,7 +415,7 @@ function formatter(
 
       case TokenType.keywordElse:
         context = TokenType.keywordElse;
-        if (nextTypeNotNL(tokens, i) !== TokenType.keywordIf) {
+        if (nextTypeNotNewline(tokens, i) !== TokenType.keywordIf) {
           currString = ' else';
         } else {
           currString = ' else ';
@@ -435,7 +436,7 @@ function formatter(
         if (context === null) {
           context = FormatCategory.typeOrIdentifier;
         }
-        nextType = nextTypeNotNL(tokens, i);
+        nextType = nextTypeNotNewline(tokens, i);
         if (
           nextType !== TokenType.specialParenthesisClosing &&
           nextType !== TokenType.operatorUnaryIndirection
@@ -464,7 +465,7 @@ function formatter(
         break;
 
       case TokenType.keywordReturn:
-        if (nextTypeNotNL(tokens, i) !== TokenType.specialSemicolon) {
+        if (nextTypeNotNewline(tokens, i) !== TokenType.specialSemicolon) {
           currString += ' ';
         }
         break;
@@ -535,7 +536,7 @@ function formatter(
         newLine = true;
         break;
       case TokenType.constantString:
-        nextType = nextTypeNotNL(tokens, i);
+        nextType = nextTypeNotNewline(tokens, i);
         currString += getDataFromFileContent(
           fileContents,
           position,
@@ -579,7 +580,7 @@ function formatter(
         if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
           newLine = true;
         }
-        nextType = nextTypeNotNL(tokens, i);
+        nextType = nextTypeNotNewline(tokens, i);
         if (
           nextType === TokenType.specialBraceClosing ||
           nextType === TokenType.keywordCase ||
@@ -613,7 +614,7 @@ function formatter(
             newLine = true;
             context = null;
           }
-        } else if (nextTypeNotNL(tokens, i) === TokenType.identifier) {
+        } else if (nextTypeNotNewline(tokens, i) === TokenType.identifier) {
           currString += ' ';
         } else if (context === FormatCategory.typeOrIdentifier) {
           context = FormatCategory.doubleTypeorIdentifier;

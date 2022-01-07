@@ -218,4 +218,14 @@ export function isTokenMemberSelectionOperator(type: TokenType) {
     type <= TokenType.operatorMemberSelectionIndirect;
 }
 
+export function isTokenAssignmentOperator(type: TokenType) {
+  return type >= TokenType.operatorBinaryAssignmentDirect &&
+    type <= TokenType.operatorBinaryAssignmentBitwiseXor;
+}
+
+export function isTokenPreprocessor(type: TokenType) {
+  return type >= TokenType.preproDirectiveInclude &&
+    type <= TokenType.preproLineContinuation;
+}
+
 export default TokenType;
