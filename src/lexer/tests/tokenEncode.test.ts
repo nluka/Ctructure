@@ -25,9 +25,9 @@ describe('tokenEncode', () => {
 
   // // 20_847                    109
   // // 0000000000101000101101111 1101101 = 2_668_525
-  assert(20_847, TokenType.specialParenthesisClosing, 2_668_525);
+  assert(20_847, TokenType.specialBraceOpening, 2_668_525);
 
   // // 33_554_431                126
   // // 1111111111111111111111111 1111110 = -1
-  assert(33_554_431, TokenType.ambiguousAmpersand, -2);
+  assert(33_554_431, TokenType.ambiguousColon, -2);
 });

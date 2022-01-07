@@ -325,10 +325,10 @@ describe('tokenDetermineType', () => {
       assert('a? b', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
       assert('a?\nb', 1, 1, TokenCategory.operator, TokenType.operatorTernaryQuestion);
 
-      assert(':', 0, 0, TokenCategory.operator, TokenType.operatorTernaryColon);
-      assert('a :b', 2, 2, TokenCategory.operator, TokenType.operatorTernaryColon);
-      assert('a : b', 2, 2, TokenCategory.operator, TokenType.operatorTernaryColon);
-      assert('a?b\n:c', 4, 4, TokenCategory.operator, TokenType.operatorTernaryColon);
+      assert(':', 0, 0, TokenCategory.operator, TokenType.ambiguousColon);
+      assert('a :b', 2, 2, TokenCategory.operator, TokenType.ambiguousColon);
+      assert('a : b', 2, 2, TokenCategory.operator, TokenType.ambiguousColon);
+      assert('a?b\n:c', 4, 4, TokenCategory.operator, TokenType.ambiguousColon);
     });
   });
 

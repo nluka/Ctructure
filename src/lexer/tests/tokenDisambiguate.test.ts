@@ -569,7 +569,7 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
-          TokenType.operatorTernaryColon,
+          TokenType.ambiguousColon,
           TokenType.newline,
           TokenType.newline,
           TokenType.ambiguousAsterisk,

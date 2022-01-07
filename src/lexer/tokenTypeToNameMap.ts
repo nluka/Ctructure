@@ -116,7 +116,7 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.operatorMemberSelectionDirect, 'operatorMemberSelectionDirect'],
   [TokenType.operatorMemberSelectionIndirect, 'operatorMemberSelectionIndirect'],
   [TokenType.operatorTernaryQuestion, 'operatorTernaryQuestion'],
-  [TokenType.operatorTernaryColon, 'operatorTernaryColon'],
+  [TokenType.ambiguousColon, 'operatorTernaryColon'],
 
   // Special
   [TokenType.specialParenthesisOpening, 'specialParenthesisOpening'],

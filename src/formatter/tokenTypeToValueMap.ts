@@ -107,7 +107,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.operatorBinaryAssignmentBitwiseOr, '|='],
   [TokenType.operatorBinaryAssignmentBitwiseXor, '^='],
   [TokenType.operatorTernaryQuestion, '?'],
-  [TokenType.operatorTernaryColon, ':'],
+  [TokenType.ambiguousColon, ':'],
   [TokenType.operatorMemberSelectionDirect, '.'],
   [TokenType.operatorMemberSelectionIndirect, '->'],
 

@@ -395,7 +395,7 @@ function formatter(
         currString = ' ? ';
         break;
 
-      case TokenType.operatorTernaryColon:
+      case TokenType.ambiguousColon:
         if (
           context === TokenType.keywordCase ||
           context === TokenType.keywordDefault
