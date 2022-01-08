@@ -2,9 +2,9 @@
 
 Ctructure is an opinionated code formatter for the C programming language, inspired by Prettier. Currently WIP.
 
-## Current Caveats
+### Issues
 
-- The ':' in a ternary statement must have a leading space or newline, otherwise it will be interpreted as a label
+If you unexpected behaviour or failures, please create an [issue](https://github.com/nluka/Ctructure/issues).
 
 ### Contributing
 
