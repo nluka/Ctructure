@@ -293,7 +293,6 @@ function formatter(
       case TokenType.operatorUnaryAddressOf:
         break;
 
-      case TokenType.operatorUnaryIndirection:
       case TokenType.ambiguousAsterisk:
         nextType = nextTypeNotNewline(tokens, i);
         previousType = prevTypeNotNewline(tokens, i);
@@ -305,7 +304,6 @@ function formatter(
         }
         if (
           nextType !== TokenType.ambiguousAsterisk &&
-          nextType !== TokenType.operatorUnaryIndirection &&
           nextType !== TokenType.specialParenthesisClosing
         ) {
           currString += ' ';
@@ -317,7 +315,6 @@ function formatter(
         break;
 
       // Binary operators
-      case TokenType.operatorBinaryArithmeticMultiplication:
       case TokenType.operatorBinaryArithmeticAddition:
       case TokenType.operatorBinaryArithmeticSubtraction:
       case TokenType.operatorBinaryArithmeticDivision:
@@ -450,7 +447,7 @@ function formatter(
         nextType = nextTypeNotNewline(tokens, i);
         if (
           nextType !== TokenType.specialParenthesisClosing &&
-          nextType !== TokenType.operatorUnaryIndirection
+          nextType !== TokenType.ambiguousAsterisk
         ) {
           currString += ' ';
         }

@@ -92,14 +92,12 @@ enum TokenType {
     // Other
       operatorUnaryPlus,
       operatorUnaryMinus,
-      operatorUnaryIndirection,
       operatorUnaryAddressOf,
   // Binary
     // Arithmetic
       operatorBinaryArithmeticAddition,
       operatorBinaryArithmeticSubtraction,
       operatorBinaryArithmeticDivision,
-      operatorBinaryArithmeticMultiplication,
       operatorBinaryArithmeticModulo,
     // Comparison
       operatorBinaryComparisonEqualTo,
