@@ -15,7 +15,7 @@ const expectedFormat = `#include <stdio.h>
 
 bool g_isGrayscaleModeEnabled = false;
 
-int main(int argc, char **argv) {
+int main(int argc, char ** argv) {
   if (argc > 1 && strcmp(argv[1], "--grayscale") == 0)
     g_isGrayscaleModeEnabled = true;
   

@@ -367,7 +367,7 @@ import assert from './assert';
     '#include thing\n\
 #include thing\n\
 bool thing = thing;\n\
-int thing(int thing, char **thing) {\n\
+int thing(int thing, char ** thing) {\n\
   if (thing > thing && thing(thing[thing], thing) == thing)\n\
     thing = thing;\n\
   \n\
@@ -385,7 +385,7 @@ int thing(int thing, char **thing) {\n\
     [tokenizedfile,
     '#include <stdio.h>\n\
 \n\
-int main(int argc, char **argv) {\n\
+int main(int argc, char ** argv) {\n\
   printf("Hello World!\\n");\n\
   return -1;\n\
 }\n',

@@ -4,14 +4,15 @@ import { tokenizeFile } from '../../lexer/tokenizeFile';
 
 const filePath = path.join(__dirname, '../../sample_code/ant.c');
 const tokenizedfile = tokenizeFile(filePath);
+
 const expectedFormat = `#include "ant.h"
 #include "log_event.h"
 #include "../util/terminate.h"
 
 void ant_validate(
-  const ant_t *const ant,
-  const grid_t *const grid,
-  const char *const simName
+  const ant_t * const ant,
+  const grid_t * const grid,
+  const char * const simName
 ) {
   if (
     !grid_is_col_in_bounds(grid, ant->col) ||
@@ -26,10 +27,10 @@ void ant_validate(
   }
 }
 
-AntStepResult_t ant_take_step(ant_t *const ant) {
+AntStepResult_t ant_take_step(ant_t * const ant) {
   const size_t cellIndex = grid_get_cell_index(ant->grid, ant->col, ant->row);
   const color_t currentCellColor = ant->grid->cells[cellIndex];
-  const rule_t *const governingRule = &ant->ruleset->rules[currentCellColor];
+  const rule_t * const governingRule = &ant->ruleset->rules[currentCellColor];
   
   ant_turn(ant, governingRule->turnDirection);
   
@@ -43,7 +44,7 @@ AntStepResult_t ant_take_step(ant_t *const ant) {
   return moveResult;
 }
 
-void ant_turn(ant_t *const ant, const TurnDirection_t direction) {
+void ant_turn(ant_t * const ant, const TurnDirection_t direction) {
   ant->orientation = (AntOrientation_t)((int)ant->orientation + (int)direction);
   
   // Normalize
@@ -55,7 +56,7 @@ void ant_turn(ant_t *const ant, const TurnDirection_t direction) {
 }
 
 void ant_set_cell_color(
-  const ant_t *const ant,
+  const ant_t * const ant,
   const color_t color,
   const size_t cellIndex
 ) {
@@ -63,7 +64,7 @@ void ant_set_cell_color(
   ant->grid->cells[cellIndex] = color;
 }
 
-AntStepResult_t ant_move_to_next_cell(ant_t *const ant) {
+AntStepResult_t ant_move_to_next_cell(ant_t * const ant) {
   const int nextCol = ant_get_next_col(ant),
     nextRow = ant_get_next_row(ant);
   
@@ -80,7 +81,7 @@ AntStepResult_t ant_move_to_next_cell(ant_t *const ant) {
   return ASR_OK;
 }
 
-int ant_get_next_col(const ant_t *const ant) {
+int ant_get_next_col(const ant_t * const ant) {
   if (ant->orientation == AO_EAST) {
     return (int)(ant->col) + 1;
   }
@@ -90,7 +91,7 @@ int ant_get_next_col(const ant_t *const ant) {
   return (int)(ant->col);
 }
 
-int ant_get_next_row(const ant_t *const ant) {
+int ant_get_next_row(const ant_t * const ant) {
   if (ant->orientation == AO_NORTH) {
     return (int)(ant->row) - 1;
   }

@@ -13,16 +13,16 @@ const expectedFormat = `#include <stdlib.h>
 #include "handlers.h"
 #include "ui/ui.h"
 
-void handle_change_movie(movie_collection_t *const collection) {
+void handle_change_movie(movie_collection_t * const collection) {
   MovieIdType_t idType;
   if (!ui_get_movie_id_type(&idType))
     goto abort_update;
   
-  movie_t *const movie = ui_get_existing_movie_by_id(idType, collection);
+  movie_t * const movie = ui_get_existing_movie_by_id(idType, collection);
   if (movie == NULL)
     goto abort_update;
   
-  const movie_t before = *movie;
+  const movie_t before = * movie;
   
   char nameInput[MAX_MOVIE_NAME_LENGTH + 1];
   if (ui_get_movie_name(nameInput))

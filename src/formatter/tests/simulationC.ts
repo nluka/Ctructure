@@ -1,7 +1,6 @@
 import path = require('path');
 import TokenArray from '../../lexer/TokenArray';
 import { tokenizeFile } from '../../lexer/tokenizeFile';
-import assert from './assert';
 
 const filePath = path.join(__dirname, '../../sample_code/simulation.c');
 const tokenizedfile = tokenizeFile(filePath);
@@ -22,7 +21,7 @@ const expectedFormat = `#define _CRT_SECURE_NO_WARNINGS
 extern const command_vars_t g_comVars;
 
 void simulation_handle_bad_status(
-  simulation_t *const sim,
+  simulation_t * const sim,
   const SimulationStatus_t status
 ) {
   switch (status) {
@@ -46,7 +45,7 @@ void simulation_handle_bad_status(
   }
 }
 
-void simulation_run(simulation_t *const sim) {
+void simulation_run(simulation_t * const sim) {
   SimulationStatus_t status;
   
   status = simulation_init(sim);
@@ -67,14 +66,14 @@ void simulation_run(simulation_t *const sim) {
   simulation_destroy(sim);
 }
 
-SimulationStatus_t simulation_init(simulation_t *const sim) {
+SimulationStatus_t simulation_init(simulation_t * const sim) {
   sim->result = SR_NOT_STARTED;
   
   if (!grid_init_cells(&sim->grid)) {
     return SS_FAILED_TO_ALLOCATE_MEMORY_FOR_GRID_CELLS;
   }
   
-  ant_t *const ant = &sim->ant;
+  ant_t * const ant = &sim->ant;
   ant->grid = &sim->grid;
   ant->ruleset = &sim->ruleset;
   ant->stepsTaken = 0;
@@ -82,7 +81,7 @@ SimulationStatus_t simulation_init(simulation_t *const sim) {
   return SS_OK;
 }
 
-void simulation_iterate(simulation_t *const sim) {
+void simulation_iterate(simulation_t * const sim) {
   sim->result = SR_STARTED;
   
   log_event(ET_INFO, "Started simulation '%s'", sim->name);
@@ -134,12 +133,12 @@ void simulation_iterate(simulation_t *const sim) {
   str_destroy(&elapsedTimeStr);
 }
 
-SimulationStatus_t simulation_emit_image(const simulation_t *const sim) {
+SimulationStatus_t simulation_emit_image(const simulation_t * const sim) {
   str_t filePathnameStr = str_create(strlen(sim->name) + 3);
   str_append(&filePathnameStr, sim->name);
   str_append(&filePathnameStr, ".pgm");
   
-  FILE *file = fopen(filePathnameStr.value, "w");
+  FILE * file = fopen(filePathnameStr.value, "w");
   assert_file_handle(file, filePathnameStr.value, false);
   if (file == NULL) {
     return SS_FAILED_TO_OPEN_IMAGE_FILE;
@@ -191,7 +190,7 @@ SimulationStatus_t simulation_emit_image(const simulation_t *const sim) {
   return SS_OK;
 }
 
-void simulation_destroy(simulation_t *const sim) {
+void simulation_destroy(simulation_t * const sim) {
   grid_destroy(&sim->grid);
 }
 `;

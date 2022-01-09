@@ -5,7 +5,7 @@ import TokenType, {
 } from '../lexer/TokenType';
 import FormatCategory from './FormatCategory';
 
-export default function getNextTokenTypeNotNewline(
+export default function nextTypeNotNewline(
   tokens: Uint32Array,
   index: number,
 ): TokenType | FormatCategory | null {

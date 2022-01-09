@@ -8,7 +8,7 @@ const tokenizedfile = tokenizeFile(filePath);
 const expectedFormat = `#include "handlers.h"
 #include "ui/ui.h"
 
-void handle_add_movie(movie_collection_t *const collection) {
+void handle_add_movie(movie_collection_t * const collection) {
   MovieIdType_t idType;
   if (!ui_get_movie_id_type(&idType))
     goto abort_addition;

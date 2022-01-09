@@ -20,8 +20,8 @@ const expectedFormat = `#define _CRT_SECURE_NO_WARNINGS
 
 extern const command_vars_t g_comVars;
 
-size_t parse_simulation_file(simulation_t *const sims) {
-  FILE *file = fopen(g_comVars.simulationFilePathname, "r");
+size_t parse_simulation_file(simulation_t * const sims) {
+  FILE * file = fopen(g_comVars.simulationFilePathname, "r");
   assert_file_handle(file, g_comVars.simulationFilePathname, true);
   
   const size_t parsedCount = parse_simulation_array(file, sims);
@@ -37,11 +37,11 @@ size_t parse_simulation_file(simulation_t *const sims) {
   return parsedCount;
 }
 
-size_t parse_simulation_array(FILE *const file, simulation_t *const sims) {
+size_t parse_simulation_array(FILE * const file, simulation_t * const sims) {
   size_t parsedCount = 0;
   
   do {
-    simulation_t *sim = &sims[parsedCount];
+    simulation_t * sim = &sims[parsedCount];
     parse_simulation_struct(file, sim);
     ++parsedCount;
   } while (
@@ -52,7 +52,7 @@ size_t parse_simulation_array(FILE *const file, simulation_t *const sims) {
   return parsedCount;
 }
 
-void parse_simulation_struct(FILE *const file, simulation_t *const sim) {
+void parse_simulation_struct(FILE * const file, simulation_t * const sim) {
   move_cursor_to_next_char_occurence(file, "(");
   parse_simulation_name(file, sim);
   parse_simulation_output_format(file, sim);
@@ -83,8 +83,8 @@ void parse_simulation_struct(FILE *const file, simulation_t *const sim) {
 }
 
 void move_cursor_to_next_char_occurence(
-  FILE *const file,
-  const char *const searchChar
+  FILE * const file,
+  const char * const searchChar
 ) {
   int c;
   do {
@@ -96,7 +96,7 @@ void move_cursor_to_next_char_occurence(
   } while (c != searchChar[0]);
 }
 
-char move_cursor_to_next_struct_or_array_end(FILE *const file) {
+char move_cursor_to_next_struct_or_array_end(FILE * const file) {
   int c;
   do {
     c = fgetc(file);
@@ -109,11 +109,11 @@ char move_cursor_to_next_struct_or_array_end(FILE *const file) {
 }
 
 void parse_struct_field(
-  FILE *const file,
-  const char *const format,
-  void *const destination,
-  const char *const fieldName,
-  const char *const simName
+  FILE * const file,
+  const char * const format,
+  void * const destination,
+  const char * const fieldName,
+  const char * const simName
 ) {
   if (fscanf(file, format, destination) != 1) {
     if (simName != NULL) {
@@ -135,11 +135,11 @@ void parse_struct_field(
   }
 }
 
-void parse_simulation_name(FILE *const file, simulation_t *const sim) {
+void parse_simulation_name(FILE * const file, simulation_t * const sim) {
   parse_struct_field(file, "%255[^,], ", sim->name, "simulation name", NULL);
 }
 
-void parse_simulation_output_format(FILE *const file, simulation_t *const sim) {
+void parse_simulation_output_format(FILE * const file, simulation_t * const sim) {
   char outputFormat[5] = { NUL };
   
   parse_struct_field(
@@ -164,7 +164,7 @@ void parse_simulation_output_format(FILE *const file, simulation_t *const sim) {
   }
 }
 
-void parse_simulation_max_iterations(FILE *const file, simulation_t *const sim) {
+void parse_simulation_max_iterations(FILE * const file, simulation_t * const sim) {
   parse_struct_field(
     file,
     "%" PRId64 ")",
@@ -174,8 +174,8 @@ void parse_simulation_max_iterations(FILE *const file, simulation_t *const sim) 
   );
 }
 
-void parse_grid_struct(FILE *const file, simulation_t *const sim) {
-  grid_t *grid = &sim->grid;
+void parse_grid_struct(FILE * const file, simulation_t * const sim) {
+  grid_t * grid = &sim->grid;
   
   parse_struct_field(file, "%hu, ", &grid->width, "grid width", sim->name);
   parse_struct_field(file, "%hu, ", &grid->height, "grid height", sim->name);
@@ -188,7 +188,7 @@ void parse_grid_struct(FILE *const file, simulation_t *const sim) {
   );
 }
 
-void parse_rule_struct(FILE *const file, simulation_t *const sim) {
+void parse_rule_struct(FILE * const file, simulation_t * const sim) {
   rule_t rule = { 0 };
   
   parse_rule_color(file, sim, &rule);
@@ -201,9 +201,9 @@ void parse_rule_struct(FILE *const file, simulation_t *const sim) {
 }
 
 void parse_rule_color(
-  FILE *const file,
-  const simulation_t *const sim,
-  rule_t *const rule
+  FILE * const file,
+  const simulation_t * const sim,
+  rule_t * const rule
 ) {
   char fieldName[] = "rule x color";
   fieldName[5] = '0' + (sim->ruleset.count + 1);
@@ -218,9 +218,9 @@ void parse_rule_color(
 }
 
 void parse_rule_turn_direction(
-  FILE *const file,
-  const simulation_t *const sim,
-  rule_t *const rule
+  FILE * const file,
+  const simulation_t * const sim,
+  rule_t * const rule
 ) {
   char fieldName[] = "rule x turn-direction";
   const char ruleNumber = '0' + (sim->ruleset.count + 1);
@@ -247,9 +247,9 @@ void parse_rule_turn_direction(
 }
 
 void parse_rule_replacement_color(
-  FILE *const file,
-  const simulation_t *const sim,
-  rule_t *const rule
+  FILE * const file,
+  const simulation_t * const sim,
+  rule_t * const rule
 ) {
   char fieldName[] = "rule x replacement-color";
   fieldName[5] = '0' + (sim->ruleset.count + 1);
@@ -263,13 +263,13 @@ void parse_rule_replacement_color(
   );
 }
 
-void parse_ant_struct(FILE *const file, simulation_t *const sim) {
+void parse_ant_struct(FILE * const file, simulation_t * const sim) {
   parse_ant_initial_col(file, sim);
   parse_ant_initial_row(file, sim);
   parse_ant_initial_orientation(file, sim);
 }
 
-void parse_ant_initial_col(FILE *const file, simulation_t *const sim) {
+void parse_ant_initial_col(FILE * const file, simulation_t * const sim) {
   parse_struct_field(
     file,
     "%hu, ",
@@ -279,7 +279,7 @@ void parse_ant_initial_col(FILE *const file, simulation_t *const sim) {
   );
 }
 
-void parse_ant_initial_row(FILE *const file, simulation_t *const sim) {
+void parse_ant_initial_row(FILE * const file, simulation_t * const sim) {
   parse_struct_field(
     file,
     "%hu, ",
@@ -289,8 +289,8 @@ void parse_ant_initial_row(FILE *const file, simulation_t *const sim) {
   );
 }
 
-void parse_ant_initial_orientation(FILE *const file, simulation_t *const sim) {
-  ant_t *const ant = &sim->ant;
+void parse_ant_initial_orientation(FILE * const file, simulation_t * const sim) {
+  ant_t * const ant = &sim->ant;
   char orientationStr[6] = { NUL };
   
   parse_struct_field(
@@ -319,7 +319,7 @@ void parse_ant_initial_orientation(FILE *const file, simulation_t *const sim) {
   }
 }
 
-bool is_there_another_simulation(FILE *const file) {
+bool is_there_another_simulation(FILE * const file) {
   int c;
   while (1) {
     c = fgetc(file);

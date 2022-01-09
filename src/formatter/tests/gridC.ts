@@ -11,7 +11,7 @@ const formatted = `#include <stdlib.h>
 #include "log_event.h"
 #include "block.h"
 
-bool grid_init_cells(grid_t *const grid) {
+bool grid_init_cells(grid_t * const grid) {
   const size_t cellCount = grid->width * grid->height;
   
   grid->cells = malloc(sizeof(color_t) * cellCount);
@@ -28,22 +28,22 @@ bool grid_init_cells(grid_t *const grid) {
 }
 
 size_t grid_get_cell_index(
-  const grid_t *const grid,
+  const grid_t * const grid,
   const ushort_t col,
   const ushort_t row
 ) {
   return (row * grid->width) + col;
 }
 
-bool grid_is_col_in_bounds(const grid_t *const grid, const int col) {
+bool grid_is_col_in_bounds(const grid_t * const grid, const int col) {
   return col >= 0 && col < (grid->width - 1);
 }
 
-bool grid_is_row_in_bounds(const grid_t *const grid, const int row) {
+bool grid_is_row_in_bounds(const grid_t * const grid, const int row) {
   return row >= 0 && row < (grid->height - 1);
 }
 
-void grid_destroy(grid_t *const grid) {
+void grid_destroy(grid_t * const grid) {
   free(grid->cells);
   grid->cells = NULL;
   grid->width = 0;

@@ -26,21 +26,21 @@ typedef enum ArgType {
 } ArgType_t;
 
 typedef struct command_arg_setter_pair {
-  const char *fullName;
-  const char *shortName;
+  const char * fullName;
+  const char * shortName;
   union command_var_setter_func {
-    void (*forValue)(const void*);
-    void (*forFlag)();
+    void (* forValue)(const void *);
+    void (* forFlag)();
   } setter;
   ArgType_t argType;
 } command_arg_setter_pair_t;
 
-void process_optional_arguments(int argc, char **argv);
-void print_arg(const char *name, const char *value);
+void process_optional_arguments(int argc, char ** argv);
+void print_arg(const char * name, const char * value);
 bool set_command_var(
-  const char *argName,
-  const char *argValue,
-  const command_arg_setter_pair_t *optionalArgSetterPairs
+  const char * argName,
+  const char * argValue,
+  const command_arg_setter_pair_t * optionalArgSetterPairs
 );
 
 // --no-ansi-colors, -c
@@ -52,15 +52,15 @@ void cvar_setter_emit_image_files() {
   g_comVars.emitImageFiles = false;
 }
 // --save-event-log, -l
-void cvar_setter_event_log_file_pathname(const void *value) {
+void cvar_setter_event_log_file_pathname(const void * value) {
   strncpy(
     g_comVars.eventLogFilePathname,
-    (const char*)value,
+    (const char *)value,
     MAX_FILE_PATHNAME_LENGTH
   );
 }
 
-void process_command_line_args(const int argc, char **const argv) {
+void process_command_line_args(const int argc, char ** const argv) {
   if (argc < 2) {
     printf_colored(
       TC_RED,
@@ -86,7 +86,7 @@ void process_command_line_args(const int argc, char **const argv) {
   print_horizontal_rule();
 }
 
-void process_optional_arguments(const int argc, char **const argv) {
+void process_optional_arguments(const int argc, char ** const argv) {
   const command_arg_setter_pair_t optionalCommandArgSetterPairs[
     TOTAL_OPTIONAL_COMMAND_LINE_ARGUMENT_COUNT
   ] = {
@@ -113,8 +113,8 @@ void process_optional_arguments(const int argc, char **const argv) {
   size_t unsetOptionalArgCount = 0;
   
   for (int i = 2; i < argc; ++i) {
-    const char *argName = strtok(argv[i], "=");
-    const char *argValue = strtok(NULL, "\\0");
+    const char * argName = strtok(argv[i], "=");
+    const char * argValue = strtok(NULL, "\\0");
     
     print_arg(argName, argValue);
     
@@ -133,7 +133,7 @@ void process_optional_arguments(const int argc, char **const argv) {
   }
 }
 
-void print_arg(const char *const name, const char *const value) {
+void print_arg(const char * const name, const char * const value) {
   printf("%s", name);
   if (value != NULL) {
     printf(" => %s", value);
@@ -142,16 +142,16 @@ void print_arg(const char *const name, const char *const value) {
 }
 
 bool set_command_var(
-  const char *const argName,
-  const char *const argValue,
-  const command_arg_setter_pair_t *const optionalArgSetterPairs
+  const char * const argName,
+  const char * const argValue,
+  const command_arg_setter_pair_t * const optionalArgSetterPairs
 ) {
   bool isKnownArg = false,
     isFlag = false;
   
   // loop through each command_arg_setter_pair
   for (size_t i = 0; i < TOTAL_OPTIONAL_COMMAND_LINE_ARGUMENT_COUNT; ++i) {
-    const command_arg_setter_pair_t *argSetterPair = &optionalArgSetterPairs[i];
+    const command_arg_setter_pair_t * argSetterPair = &optionalArgSetterPairs[i];
     
     if ( // check if argSetterPair is not for the passed argument
       !are_strings_identical(argName, argSetterPair->fullName) &&

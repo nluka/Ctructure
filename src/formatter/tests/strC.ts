@@ -32,7 +32,7 @@ string_t string_create(const size_t initialCount) {
   resizes \`data\` by \`expansionAmount\`, returns boolean indicating whether
   expansion was successful
 */
-bool string_expand(string_t *const string, const size_t expansionAmount) {
+bool string_expand(string_t * const string, const size_t expansionAmount) {
   const size_t newAvailableCount = string->availableCount + expansionAmount;
   
   string->data = realloc(string->data, newAvailableCount + 1);
@@ -51,8 +51,8 @@ bool string_expand(string_t *const string, const size_t expansionAmount) {
   returns boolean indicating whether append was successful
 */
 bool string_append_chars(
-  string_t *const string,
-  const char *const chars,
+  string_t * const string,
+  const char * const chars,
   const size_t charCount
 ) {
   const long long int overflowCount = (string->count + charCount) - string->availableCount;
@@ -76,7 +76,7 @@ bool string_append_chars(
 /*
   destroys \`string\`, freeing \`string->data\`
 */
-void string_destroy(string_t *const string) {
+void string_destroy(string_t * const string) {
   free(string->data);
   string->data = NULL;
   string->count = 0;

@@ -16,7 +16,7 @@ const expectedFormat = `#include <stdio.h>
 #define MAX_MOVIE_PRICE_DIGITS 6
 
 // returns true if a value was inputted, false otherwise
-bool ui_get_movie_id_type(MovieIdType_t *const out) {
+bool ui_get_movie_id_type(MovieIdType_t * const out) {
   char input;
   
   while (1) {
@@ -35,9 +35,9 @@ bool ui_get_movie_id_type(MovieIdType_t *const out) {
     }
     
     if (input == \'u\') {
-      *out = MIT_UPC;
+      * out = MIT_UPC;
     } else if (input == \'s\') {
-      *out = MIT_SKU;
+      * out = MIT_SKU;
     } else {
       printfc(TC_RED, "ERROR: invalid movie ID type choice\\n");
       continue;
@@ -49,8 +49,8 @@ bool ui_get_movie_id_type(MovieIdType_t *const out) {
 // returns true if a value was inputted, false otherwise
 bool ui_get_unique_movie_id(
   const MovieIdType_t idType,
-  const movie_collection_t *const collection,
-  char *const out
+  const movie_collection_t * const collection,
+  char * const out
 ) {
   while (1) {
     printhr();
@@ -79,9 +79,9 @@ bool ui_get_unique_movie_id(
 }
 
 // returns NULL if no value was inputted
-movie_t *ui_get_existing_movie_by_id(
+movie_t * ui_get_existing_movie_by_id(
   const MovieIdType_t idType,
-  movie_collection_t *const collection
+  movie_collection_t * const collection
 ) {
   char input[MAX_MOVIE_ID_LENGTH + 1] = { 0 };
   
@@ -103,7 +103,7 @@ movie_t *ui_get_existing_movie_by_id(
     
     input[strcspn(input, "\\n")] = \'\\0\'; // remove captured newline from fgets
     
-    movie_t *const movie = movie_collection_find(collection, idType, input);
+    movie_t * const movie = movie_collection_find(collection, idType, input);
     if (movie == NULL) {
       printfc(TC_RED, "ERROR: movie not found\\n");
     } else {
@@ -113,7 +113,7 @@ movie_t *ui_get_existing_movie_by_id(
 }
 
 // returns true if a value was inputted, false otherwise
-bool ui_get_movie_name(char *const out) {
+bool ui_get_movie_name(char * const out) {
   printhr();
   printf("Enter movie name (max. 30 chars, leave blank to abort)\\n");
   printfc(TC_MAGENTA, "> ");
@@ -127,7 +127,7 @@ bool ui_get_movie_name(char *const out) {
 }
 
 // returns true if a value was inputted, false otherwise
-bool ui_get_movie_quantity(int *const out) {
+bool ui_get_movie_quantity(int * const out) {
   char input[MAX_MOVIE_QUANTITY_DIGITS + 1];
   int quantityInput;
   
@@ -151,14 +151,14 @@ bool ui_get_movie_quantity(int *const out) {
       printfc(TC_RED, "ERROR: quantity must be > 0\\n");
       continue;
     } else {
-      *out = quantityInput;
+      * out = quantityInput;
       return true;
     }
   }
 }
 
 // returns true if a value was inputted, false otherwise
-bool ui_get_movie_price(double *const out) {
+bool ui_get_movie_price(double * const out) {
   char input[MAX_MOVIE_PRICE_DIGITS + 1];
   double priceInput;
   
@@ -182,16 +182,16 @@ bool ui_get_movie_price(double *const out) {
       printfc(TC_RED, "ERROR: price must be > 0\\n");
       continue;
     } else {
-      *out = priceInput;
+      * out = priceInput;
       return true;
     }
   }
 }
 
-void ui_display_movie_collection(const movie_collection_t *const collection) {
+void ui_display_movie_collection(const movie_collection_t * const collection) {
   ui_display_movie_table_heading();
   for (int i = 0; i < collection->count; ++i) {
-    const movie_t *const movie = &collection->records[i];
+    const movie_t * const movie = &collection->records[i];
     ui_display_movie(movie);
   }
 }
@@ -204,7 +204,7 @@ void ui_display_movie_table_heading() {
   // printf("------------------------------  ----------------  ----------  ----------\\n");
 }
 
-void ui_display_movie(const movie_t *const movie) {
+void ui_display_movie(const movie_t * const movie) {
   printf(
     "%-30s  %s|%-12s  %-10d  $%-.2lf\\n",
     movie->name,
@@ -216,8 +216,8 @@ void ui_display_movie(const movie_t *const movie) {
 }
 
 void ui_display_movie_changes(
-  const movie_t *const before,
-  const movie_t *const after
+  const movie_t * const before,
+  const movie_t * const after
 ) {
   const bool wasNameChanged = strcmp(before->name, after->name) != 0,
     wasQuantityChanged = before->quantity != after->quantity,

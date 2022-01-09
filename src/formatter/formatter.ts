@@ -5,8 +5,8 @@ import { tokenFindLastIndex } from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
 import checkForLineOverflow from './checkForLineOverflow';
 import FormatCategory from './FormatCategory';
-import nextTypeNotNewline from './getNextTokenTypeNotNewline';
-import getPrevTokenTypeNotNewline from './getPreviousTypeNotNewline';
+import nextTypeNotNewline from './getNextTypeNotNewline';
+import prevTypeNotNewline from './getPreviousTypeNotNewline';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 
@@ -67,15 +67,18 @@ function formatter(
     if (currNodeData) {
       currString += currNodeData;
     }
-    if (newLine && type !== TokenType.commentSingleline) {
-      currString = '\n' + indentation.repeat(blockLevel) + currString;
-      if (type === TokenType.newline) {
-        if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
-          continue;
+    if (newLine) {
+      if (type !== TokenType.commentSingleline) {
+        currString = '\n' + indentation.repeat(blockLevel) + currString;
+        if (
+          type === TokenType.newline &&
+          tokenDecode(tokens[i + 1])[1] === TokenType.newline
+        ) {
+          currString = '\n' + indentation.repeat(blockLevel) + currString;
         }
+        newLine = false;
+        startLineIndex = position - blockLevel * indentation.length;
       }
-      newLine = false;
-      startLineIndex = position - blockLevel * indentation.length;
     }
 
     switch (type) {
@@ -184,12 +187,16 @@ function formatter(
         nextType = nextTypeNotNewline(tokens, i);
         if (context === TokenType.keywordIf) {
           if (nextType !== TokenType.specialBraceOpening) {
-            newLine = true;
-            ++blockLevel;
             context = FormatCategory.singleLineIf;
-          } else {
-            context = null;
+            ++blockLevel;
+            formattedFileStr += currString;
+            previousType = type;
+            currString = '\n' + indentation.repeat(blockLevel);
+            startLineIndex =
+              tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
+            continue;
           }
+          context = null;
         }
         break;
 
@@ -217,8 +224,12 @@ function formatter(
           currString = ' ' + currString;
         }
         ++blockLevel;
-        newLine = true;
-        break;
+        formattedFileStr += currString;
+        previousType = type;
+        currString = '\n' + indentation.repeat(blockLevel);
+        startLineIndex =
+          tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
+        continue;
 
       case TokenType.specialBraceClosing:
         previousContext = contextStack.pop();
@@ -284,24 +295,20 @@ function formatter(
 
       case TokenType.operatorUnaryIndirection:
       case TokenType.ambiguousAsterisk:
+        nextType = nextTypeNotNewline(tokens, i);
+        previousType = prevTypeNotNewline(tokens, i);
         if (
-          nextTypeNotNewline(tokens, i) === TokenType.specialParenthesisClosing
-        ) {
-        } else if (
-          ((context === FormatCategory.varDec ||
-            context === FormatCategory.multiVarDec) &&
-            previousType !== TokenType.operatorBinaryAssignmentDirect) ||
-          previousType === TokenType.specialParenthesisClosing ||
-          (context !== FormatCategory.funcDec &&
-            parenCount > 0 &&
-            previousType !== TokenType.specialParenthesisOpening)
-        ) {
-          currString = ` ${currNodeData} `;
-        } else if (
-          getPrevTokenTypeNotNewline(tokens, i) ===
-          FormatCategory.typeOrIdentifier
+          previousType === FormatCategory.typeOrIdentifier ||
+          previousType === TokenType.specialParenthesisClosing
         ) {
           currString = ' *';
+        }
+        if (
+          nextType !== TokenType.ambiguousAsterisk &&
+          nextType !== TokenType.operatorUnaryIndirection &&
+          nextType !== TokenType.specialParenthesisClosing
+        ) {
+          currString += ' ';
         }
         break;
 
@@ -311,8 +318,6 @@ function formatter(
 
       // Binary operators
       case TokenType.operatorBinaryArithmeticMultiplication:
-        currString = 'pp';
-        break;
       case TokenType.operatorBinaryArithmeticAddition:
       case TokenType.operatorBinaryArithmeticSubtraction:
       case TokenType.operatorBinaryArithmeticDivision:
@@ -400,8 +405,13 @@ function formatter(
           context === TokenType.keywordCase ||
           context === TokenType.keywordDefault
         ) {
-          newLine = true;
           context = null;
+          formattedFileStr += currString;
+          previousType = type;
+          currString = '\n' + indentation.repeat(blockLevel);
+          startLineIndex =
+            tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
+          continue;
         } else {
           currString = ' : ';
         }
@@ -534,8 +544,13 @@ function formatter(
         } else {
           currString += tempLabel;
         }
-        newLine = true;
-        break;
+        formattedFileStr += currString;
+        previousType = type;
+        currString = '\n' + indentation.repeat(blockLevel);
+        startLineIndex =
+          tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
+        continue;
+
       case TokenType.constantString:
         nextType = nextTypeNotNewline(tokens, i);
         currString += getDataFromFileContent(
@@ -570,9 +585,14 @@ function formatter(
         break;
 
       case TokenType.commentSingleline:
-        if (previousType !== null && currString === '') {
-          currString += ' ';
+        if (previousType !== null) {
+          if (tokenDecode(tokens[i - 1])[1] !== TokenType.newline) {
+            currString = ' ';
+          } else if (currString === '') {
+            currString += ' ';
+          }
         }
+
         currString += getDataFromFileContent(
           fileContents,
           position,

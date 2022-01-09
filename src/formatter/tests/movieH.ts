@@ -38,26 +38,26 @@ typedef struct movie_collection {
 
 extern movie_collection_t movieCollection;
 
-movie_t *movie_collection_find(
-  movie_collection_t *collection,
+movie_t * movie_collection_find(
+  movie_collection_t * collection,
   MovieIdType_t idType,
-  const char *id
+  const char * id
 );
-const movie_t *movie_collection_find_immut(
-  const movie_collection_t *collection,
+const movie_t * movie_collection_find_immut(
+  const movie_collection_t * collection,
   MovieIdType_t idType,
-  const char *id
+  const char * id
 );
 bool movie_collection_add(
-  movie_collection_t *collection,
+  movie_collection_t * collection,
   MovieIdType_t idType,
-  const char *idValue,
-  const char *name,
+  const char * idValue,
+  const char * name,
   int quantity,
   double price
 );
-void movie_collection_sort(movie_collection_t *collection);
-void movie_collection_delete(movie_collection_t *collection, movie_t *movie);
+void movie_collection_sort(movie_collection_t * collection);
+void movie_collection_delete(movie_collection_t * collection, movie_t * movie);
 
 #endif // CORE_MOVIE_H
 `;
