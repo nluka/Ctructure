@@ -430,6 +430,7 @@ function formatter(
         break;
 
       case TokenType.keywordUnsigned:
+      case TokenType.keywordVolatile:
         currString += ' ';
         break;
 
