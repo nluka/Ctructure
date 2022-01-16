@@ -1,7 +1,7 @@
 import TokenArray from '../lexer/TokenArray';
-import { tokenDecode } from '../lexer/tokenDecode';
+import tokenDecode from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
-import { tokenFindLastIndex } from '../lexer/tokenFindLastIndex';
+import tokenFindLastIndex from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
 import PrinterCategory from './FormatCategory';
 import getNextNonNewlineTokenType from './getNextNonNewlineTokenType';

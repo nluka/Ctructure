@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import format from './format';
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('*** extension "Ctructure" is now active\n');
+  console.log('*** EXTENSION ACTIVATED: Ctructure');
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -14,24 +14,28 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function handleFormatCurrentFile() {
-  const currentFilePathName = vscode.window.activeTextEditor?.document.fileName;
+  const currentFilePathname = vscode.window.activeTextEditor?.document.fileName;
 
-  if (currentFilePathName === undefined) {
-    const errMessage = 'current file is undefined';
-    console.error(errMessage);
-    vscode.window.showErrorMessage(errMessage);
+  if (currentFilePathname === undefined) {
+    console.error('format failed: currentFilePathname is undefined');
+    vscode.window.showErrorMessage(
+      'Failed to format file: currentFilePathname is undefined',
+    );
     return;
   }
 
-  const formatted = format(currentFilePathName);
-
-  writeFile(currentFilePathName, formatted, (err) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    // file written successfully
-  });
+  try {
+    const formatted = format(currentFilePathname);
+    writeFile(currentFilePathname, formatted, (err) => {
+      if (err !== null) {
+        console.error('writeFile failed:', err);
+        return;
+      }
+    });
+  } catch (err: any) {
+    console.error('format failed:', err);
+    vscode.window.showErrorMessage(`Failed to format file: ${err}`);
+  }
 }
 
 export function deactivate() {}

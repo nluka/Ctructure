@@ -10,7 +10,7 @@ const multiLineCommentRegex = /\*/,
   alphanumericRegex = /[0-9a-zA-Z]/,
   alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
 
-export function tokenFindLastIndex(
+export default function tokenFindLastIndex(
   fileContents: string,
   startIndex: number,
   category: TokenCategory,

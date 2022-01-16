@@ -1,4 +1,4 @@
-import { tokenDecode } from '../lexer/tokenDecode';
+import tokenDecode from '../lexer/tokenDecode';
 import TokenType from '../lexer/TokenType';
 import PrinterCategory from './FormatCategory';
 import { Types } from './printer';
