@@ -1,5 +1,5 @@
 import TokenCategory from '../TokenCategory';
-import { tokenFindLastIndex } from '../tokenFindLastIndex';
+import tokenFindLastIndex from '../tokenFindLastIndex';
 import TokenType from '../TokenType';
 
 describe('tokenFindLastIndex', () => {

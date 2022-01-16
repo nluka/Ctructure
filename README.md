@@ -4,7 +4,7 @@ Ctructure is an opinionated code formatter for the C programming language, inspi
 
 ## Limitations
 
-- Max supported input file size is 16MB
+- Max supported input file size is 32MB
 
 ## Issues
 

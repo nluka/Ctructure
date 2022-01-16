@@ -1,7 +1,7 @@
 import tokenDetermineCategory from './tokenDetermineCategory';
 import tokenDetermineType from './tokenDetermineType';
 import tokenEncode from './tokenEncode';
-import { tokenFindLastIndex } from './tokenFindLastIndex';
+import tokenFindLastIndex from './tokenFindLastIndex';
 import TokenType, { isTokenAmbiguous } from './TokenType';
 
 export default class Tokenizer {

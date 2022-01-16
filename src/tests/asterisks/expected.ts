@@ -1,25 +1,25 @@
 const expected =
-`typedef int CustomType_t;
+`#include <stdio.h>
 
-CustomType_t asterisks1(
-  CustomType_t * inp1,
-  CustomType_t * inp2,
-  CustomType_t * inp3
-) {
-  // some pointer stuff
-  CustomType_t a,
-    * p = &a,
-    ** pp = &p;
+typedef int CustomType_t;
 
-  int i1 = 1,
-    i2 = 2,
-    i3 = 3;
-
-  return i1 * i2 * i3 > 0;
+void indirection(CustomType_t * inp1, CustomType_t * inp2, CustomType_t * inp3) {
+  CustomType_t * p = inp1,
+    ** pp = &p,
+    *** ppp = &pp,
+    **** pppp = &ppp;
 }
 
-void asterisks2(int const * volatile a, int const * restrict b) {
+void dereferencing(int const * volatile a, int const * restrict b) {
   int arr[] = { (*a) * (*b) };
+}
+
+void multiplication() {
+  int a = 1,
+    b = 2,
+    c = 3,
+    d = 4;
+  int res = printf("%d %d %d %d", a * b, a + b * c, b * c - d, a * b + c * d);
 }`;
 
 export default expected;

@@ -1,4 +1,4 @@
-import { tokenDecode } from '../tokenDecode';
+import tokenDecode from '../tokenDecode';
 import TokenType from '../TokenType';
 
 describe('tokenDecode', () => {
