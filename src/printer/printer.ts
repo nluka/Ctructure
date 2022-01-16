@@ -45,7 +45,11 @@ export default function printer(
   let contextStack: Stack = new Stack();
 
   // Holds the popped context, used when closing parentheses/braces/brackets are present
-  let previousContext: [Types, boolean, number] | null = null;
+  let previousContext: {
+    context: Types;
+    overflow: boolean;
+    blockLevel: number;
+  } | null = null;
 
   // Used in determining if there is line overflow
   let startLineIndex: number = tokenDecode(tokens[0])[0];
@@ -58,10 +62,10 @@ export default function printer(
     ++i, nextTokenType = getNextNonNewlineTokenType(tokens, i)
   ) {
     const [position, type] = tokenDecode(tokens[i]);
-    const currNodeData = tokenTypeToValueMap.get(type);
+    const typeAsValue = tokenTypeToValueMap.get(type);
 
-    if (currNodeData) {
-      currString += currNodeData;
+    if (typeAsValue) {
+      currString += typeAsValue;
     }
     if (newline) {
       if (type !== TokenType.commentSingleline) {
@@ -116,7 +120,7 @@ export default function printer(
         break;
 
       case TokenType.specialBracketOpening:
-        contextStack.push([context, overflow, blockLevel]);
+        contextStack.push({ context, overflow, blockLevel });
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.variableDecl;
         }
@@ -135,17 +139,17 @@ export default function printer(
 
       case TokenType.specialBracketClosing:
         previousContext = contextStack.pop();
-        blockLevel = previousContext[2];
+        blockLevel = previousContext.blockLevel;
         if (overflow) {
           currString = `\n${indentation.repeat(blockLevel) + currString}`;
         }
-        context = previousContext[0];
-        overflow = previousContext[1];
+        context = previousContext.context;
+        overflow = previousContext.overflow;
         break;
 
       case TokenType.specialParenthesisOpening:
         ++parenCount;
-        contextStack.push([context, overflow, blockLevel]);
+        contextStack.push({ context, overflow, blockLevel });
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.functionDecl;
         } else if (previousType === TokenType.identifier) {
@@ -173,13 +177,16 @@ export default function printer(
           currString = `\n${indentation.repeat(--blockLevel) + currString}`;
           startLineIndex = position;
         }
-        if (previousContext[0] === TokenType.keywordFor && parenCount === 0) {
+        if (
+          previousContext.context === TokenType.keywordFor &&
+          parenCount === 0
+        ) {
           context = null;
         } else {
-          context = previousContext[0];
+          context = previousContext.context;
         }
-        overflow = previousContext[1];
-        blockLevel = previousContext[2];
+        overflow = previousContext.overflow;
+        blockLevel = previousContext.blockLevel;
         nextTokenType = getNextNonNewlineTokenType(tokens, i);
         if (context === TokenType.keywordIf) {
           if (nextTokenType !== TokenType.specialBraceOpening) {
@@ -197,7 +204,7 @@ export default function printer(
         break;
 
       case TokenType.specialBraceOpening:
-        contextStack.push([context, overflow, blockLevel]);
+        contextStack.push({ context, overflow, blockLevel });
         if (
           context === PrinterCategory.variableDecl ||
           context === PrinterCategory.multiVariableDecl ||
@@ -229,18 +236,19 @@ export default function printer(
 
       case TokenType.specialBraceClosing:
         previousContext = contextStack.pop();
-        blockLevel = previousContext[2];
+        blockLevel = previousContext.blockLevel;
         currString = `\n${indentation.repeat(blockLevel)}}`;
         if (context === PrinterCategory.array) {
           if (!overflow) {
             currString = ' }';
           }
-          context = previousContext[0];
+          context = previousContext.context;
         } else {
           if (
-            previousContext[0] === TokenType.keywordEnum ||
-            previousContext[0] === TokenType.keywordStruct ||
-            previousContext[0] === TokenType.keywordDo
+            previousContext.context === TokenType.keywordDo ||
+            previousContext.context === TokenType.keywordEnum ||
+            previousContext.context === TokenType.keywordStruct ||
+            previousContext.context === TokenType.keywordUnion
           ) {
             if (
               getNextNonNewlineTokenType(tokens, i) !==
@@ -253,33 +261,29 @@ export default function printer(
           }
           context = null;
         }
-        overflow = previousContext[1];
+        overflow = previousContext.overflow;
         break;
 
       // Preprocessor (https://www.cprogramming.com/reference/preprocessor/)
-      case TokenType.preproOperatorConcat:
       case TokenType.preproDirectiveInclude:
       case TokenType.preproDirectiveDefine:
       case TokenType.preproDirectiveUndef:
-      case TokenType.preproDirectiveIf:
       case TokenType.preproDirectiveIfdef:
       case TokenType.preproDirectiveIfndef:
+      case TokenType.preproDirectiveIf:
+      case TokenType.preproDirectiveEndif:
+      case TokenType.preproDirectivePragma:
       case TokenType.preproMacroFile:
       case TokenType.preproMacroLine:
       case TokenType.preproMacroDate:
       case TokenType.preproMacroTime:
       case TokenType.preproMacroTimestamp:
-      case TokenType.preproDirectivePragma:
+      case TokenType.preproOperatorConcat:
         context = PrinterCategory.prepro;
-        currString += ' ';
         break;
 
       case TokenType.preproLineContinuation:
         newline = true;
-        break;
-
-      case TokenType.preproDirectiveEndif:
-        context = PrinterCategory.prepro;
         break;
 
       // Unary operator:
@@ -289,6 +293,8 @@ export default function printer(
       case TokenType.operatorUnaryArithmeticDecrementPostfix:
       case TokenType.operatorUnaryBitwiseOnesComplement:
       case TokenType.operatorUnaryLogicalNegation:
+      case TokenType.operatorUnaryPlus:
+      case TokenType.operatorUnaryMinus:
       case TokenType.operatorUnaryAddressOf:
         break;
 
@@ -309,10 +315,6 @@ export default function printer(
         }
         break;
 
-      case TokenType.operatorUnaryPlus:
-      case TokenType.operatorUnaryMinus:
-        break;
-
       // Binary operators
       case TokenType.operatorBinaryArithmeticAddition:
       case TokenType.operatorBinaryArithmeticSubtraction:
@@ -329,45 +331,6 @@ export default function printer(
       case TokenType.operatorBinaryBitwiseXor:
       case TokenType.operatorBinaryBitwiseShiftLeft:
       case TokenType.operatorBinaryBitwiseShiftRight:
-        if (context === PrinterCategory.typeOrIdentifier) {
-          context = null;
-        }
-        currString = ` ${currNodeData} `;
-        break;
-
-      case TokenType.ambiguousPlus:
-      case TokenType.ambiguousMinus:
-        if (context === PrinterCategory.typeOrIdentifier) {
-          context = null;
-        }
-        currString = ` ${currNodeData} `;
-        break;
-
-      case TokenType.operatorBinaryLogicalAnd:
-      case TokenType.operatorBinaryLogicalOr:
-        if (context === PrinterCategory.typeOrIdentifier) {
-          context = null;
-        }
-        if (overflow) {
-          newline = true;
-          currString = ' ' + currString;
-          break;
-        }
-        currString = ` ${currNodeData} `;
-        break;
-
-      case TokenType.ambiguousAmpersand:
-      case TokenType.ambiguousDecrement:
-      case TokenType.ambiguousIncrement:
-        break;
-
-      case TokenType.operatorBinaryAssignmentDirect:
-        if (context === PrinterCategory.doubleTypeOrIdentifier) {
-          context = PrinterCategory.variableDecl;
-        }
-        currString = ` ${currNodeData} `;
-        break;
-
       case TokenType.operatorBinaryAssignmentAddition:
       case TokenType.operatorBinaryAssignmentSubtraction:
       case TokenType.operatorBinaryAssignmentMultiplication:
@@ -378,24 +341,42 @@ export default function printer(
       case TokenType.operatorBinaryAssignmentBitwiseAnd:
       case TokenType.operatorBinaryAssignmentBitwiseOr:
       case TokenType.operatorBinaryAssignmentBitwiseXor:
+      case TokenType.operatorMemberSelectionDirect:
+      case TokenType.operatorMemberSelectionIndirect:
+      case TokenType.ambiguousPlus:
+      case TokenType.ambiguousMinus:
         if (context === PrinterCategory.typeOrIdentifier) {
           context = null;
         }
-        currString = ` ${currNodeData} `;
         break;
 
-      case TokenType.operatorMemberSelectionDirect:
-      case TokenType.operatorMemberSelectionIndirect:
+      case TokenType.operatorBinaryLogicalAnd:
+      case TokenType.operatorBinaryLogicalOr:
         if (context === PrinterCategory.typeOrIdentifier) {
           context = null;
+        }
+        if (overflow) {
+          newline = true;
+          break;
+        }
+        currString += ' ';
+        break;
+
+      case TokenType.keywordBreak:
+      case TokenType.keywordContinue:
+      case TokenType.operatorTernaryQuestion:
+      case TokenType.ambiguousDecrement:
+      case TokenType.ambiguousIncrement:
+      case TokenType.ambiguousAmpersand:
+        break;
+
+      case TokenType.operatorBinaryAssignmentDirect:
+        if (context === PrinterCategory.doubleTypeOrIdentifier) {
+          context = PrinterCategory.variableDecl;
         }
         break;
 
       // Miscellanous operators
-      case TokenType.operatorTernaryQuestion:
-        currString = ' ? ';
-        break;
-
       case TokenType.ambiguousColon:
         if (
           context === TokenType.keywordCase ||
@@ -414,33 +395,22 @@ export default function printer(
         break;
 
       // Keywords (https://en.cppreference.com/w/c/keyword)
-      case TokenType.keywordIf:
-        context = TokenType.keywordIf;
-        currString += ' ';
-        break;
-
       case TokenType.keywordElse:
         context = TokenType.keywordElse;
-        if (getNextNonNewlineTokenType(tokens, i) !== TokenType.keywordIf) {
-          currString = ' else';
-        } else {
-          currString = ' else ';
+        currString = ' else';
+        if (getNextNonNewlineTokenType(tokens, i) === TokenType.keywordIf) {
+          currString += ' ';
         }
         break;
 
-      case TokenType.keywordUnsigned:
-      case TokenType.keywordVolatile:
-        currString += ' ';
-        break;
-
-      case TokenType.keywordShort:
-      case TokenType.keywordInt:
       case TokenType.keywordBool:
-      case TokenType.keywordFloat:
-      case TokenType.keywordDouble:
       case TokenType.keywordChar:
-      case TokenType.keywordVoid:
+      case TokenType.keywordDouble:
+      case TokenType.keywordFloat:
+      case TokenType.keywordInt:
       case TokenType.keywordLong:
+      case TokenType.keywordShort:
+      case TokenType.keywordVoid:
         if (context === null) {
           context = PrinterCategory.typeOrIdentifier;
         }
@@ -453,23 +423,24 @@ export default function printer(
         }
         break;
 
+      case TokenType.keywordDo:
+      case TokenType.keywordFor:
+      case TokenType.keywordIf:
+      case TokenType.keywordStruct:
       case TokenType.keywordSwitch:
-        context = TokenType.keywordSwitch;
-        currString += ' ';
+      case TokenType.keywordUnion:
+        context = type;
         break;
 
       case TokenType.keywordCase:
-        context = TokenType.keywordCase;
-        previousContext = contextStack.peek();
-        currString = `\n${indentation.repeat(previousContext[2] + 1)}case `;
-        blockLevel = previousContext[2] + 2;
-        break;
-
       case TokenType.keywordDefault:
-        context = TokenType.keywordDefault;
+        context = type;
         previousContext = contextStack.peek();
-        currString = `\n${indentation.repeat(previousContext[2] + 1)}default`;
-        blockLevel = previousContext[2] + 2;
+        currString = `\n${
+          (indentation.repeat(previousContext.blockLevel + 1),
+          tokenTypeToValueMap.get(type))
+        }`;
+        blockLevel = previousContext.blockLevel + 2;
         break;
 
       case TokenType.keywordReturn:
@@ -480,38 +451,24 @@ export default function printer(
         }
         break;
 
-      case TokenType.keywordBreak:
-      case TokenType.keywordContinue:
-        break;
-
-      case TokenType.keywordFor:
-        context = TokenType.keywordFor;
-        currString += ' ';
-        break;
-
-      case TokenType.keywordDo:
-        context = TokenType.keywordDo;
-        break;
-
       case TokenType.keywordWhile:
         if (context === TokenType.keywordDo) {
           currString = ' while ';
-        } else {
-          context = TokenType.keywordWhile;
-          currString += ' ';
         }
         break;
 
+      case TokenType.keywordStatic:
+      case TokenType.keywordUnsigned:
+      case TokenType.keywordAtomic:
+      case TokenType.keywordConst:
+      case TokenType.keywordVolatile:
       case TokenType.keywordAlignas:
       case TokenType.keywordAlignof:
       case TokenType.keywordAuto:
-      case TokenType.keywordAtomic:
       case TokenType.keywordComplex:
-      case TokenType.keywordConst:
       case TokenType.keywordExtern:
       case TokenType.keywordGeneric:
       case TokenType.keywordGoto:
-      case TokenType.keywordStatic:
       case TokenType.keywordTypedef:
         currString += ' ';
         break;
@@ -522,27 +479,23 @@ export default function printer(
         currString += ' ';
         break;
 
-      case TokenType.keywordUnion:
-      case TokenType.keywordStruct:
-        context = TokenType.keywordStruct;
-        currString += ' ';
-        break;
-
       // Other
       case TokenType.label:
-        const tempLabel = extractStringFromFile(
+        const extractedLabel = extractStringFromFile(
           fileContents,
           position,
           previousType,
         );
         if (
-          contextStack.peek()[0] === TokenType.keywordSwitch &&
-          tempLabel === 'default:'
+          contextStack.peek().context === TokenType.keywordSwitch &&
+          extractedLabel === 'default:'
         ) {
           currString =
-            '\n' + indentation.repeat(contextStack.peek()[2] + 1) + tempLabel;
+            '\n' +
+            indentation.repeat(contextStack.peek().blockLevel + 1) +
+            extractedLabel;
         } else {
-          currString += tempLabel;
+          currString += extractedLabel;
         }
         formattedFileStr += currString;
         previousType = type;
