@@ -1,7 +1,6 @@
 import { tokenDecode } from './tokenDecode';
 import TokenType from './TokenType';
 
-// TODO: write tests
 export default class TokenArray {
   private values: Uint32Array;
   private size;

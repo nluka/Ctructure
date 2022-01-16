@@ -1,6 +1,6 @@
 import TokenType from './TokenType';
 
-// For easier testing and debugging
+// For testing and debugging
 const tokenTypeToNameMap = new Map<TokenType, string>([
   // Preprocessor
   [TokenType.preproDirectiveInclude, 'preproDirectiveInclude'],

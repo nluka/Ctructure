@@ -5,7 +5,6 @@ import tokenDisambiguate from './tokenDisambiguate';
 import tokenEncode from './tokenEncode';
 import Tokenizer from './Tokenizer';
 
-// TODO: write tests
 /**
  * Tokenizes a file, encoding each token into a 32 bit number (using `tokenEncode`).
  * Each token stores its starting index in the first 25 bits and the type
@@ -31,23 +30,8 @@ export function tokenizeFile(filePathname: string): [string, TokenArray] {
   }
 
   // console.clear();
-  // console.log('FILE CONTENTS:');
-  // console.log('--------------------');
-  // console.log(fileContents);
-  // console.log('--------------------\n');
-
-  // console.log('TOKENS:');
-  // console.log('number - startIndex - type');
-  // for (let i = 0; i < tokens.getCount(); ++i) {
-  //   const [startIndex, tokenType] = tokens.getTokenDecoded(i);
-  //   console.log(
-  //     `${i + 1}`.padStart(6),
-  //     '-',
-  //     `${startIndex}`.padStart(10),
-  //     '-',
-  //     tokenTypeToNameMap.get(tokenType),
-  //   );
-  // }
+  // debugLogFileContents(fileContents);
+  // debugLogTokens(tokens);
 
   for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
     const disambiguatedTokenType = tokenDisambiguate(ambigTokenIndex, tokens);

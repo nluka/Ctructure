@@ -1,8 +1,6 @@
+import { writeFile } from 'fs';
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import formatFile from './formatter/formatter';
-import { tokenizeFile } from './lexer/tokenizeFile';
-import tokenTypeToNameMap from './lexer/tokenTypeToNameMap';
+import format from './format';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('*** extension "Ctructure" is now active\n');
@@ -25,42 +23,15 @@ function handleFormatCurrentFile() {
     return;
   }
 
-  const [fileContents, tokens] = tokenizeFile(currentFilePathName);
-  const formatted = formatFile([fileContents, tokens]);
+  const formatted = format(currentFilePathName);
 
-  currentFilePathName;
-
-  fs.writeFile(currentFilePathName, formatted, (err) => {
+  writeFile(currentFilePathName, formatted, (err) => {
     if (err) {
       console.error(err);
       return;
     }
-    //file written successfully
+    // file written successfully
   });
-
-  // console.clear();
-  // console.log('FILE CONTENTS:');
-  // console.log('--------------------');
-  // console.log(fileContents);
-  // console.log('--------------------\n');
-
-  // console.log('TOKENS:');
-  // console.log('number - startIndex - type');
-  // for (let i = 0; i < tokens.getCount(); ++i) {
-  //   const [startIndex, tokenType] = tokens.getTokenDecoded(i);
-  //   console.log(
-  //     `${i + 1}`.padStart(6),
-  //     '-',
-  //     `${startIndex}`.padStart(10),
-  //     '-',
-  //     tokenTypeToNameMap.get(tokenType),
-  //   );
-  // }
-
-  // console.log('\nFORMATTED FILE:');
-  // console.log('--------------------');
-  // console.log(formatted);
-  // console.log('--------------------');
 }
 
 export function deactivate() {}
