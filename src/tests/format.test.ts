@@ -19,12 +19,25 @@ describe('format', () => {
         debugLogFormatResult(formatResult);
       }
 
-      expect(formatResult).toBe(expected || fileContents);
+
+      expect(formatResult).toBe(expected !== undefined ? expected : fileContents);
     });
+  }
+
+  function extractFileContentsIntoString(fileRelativePathname: string) {
+    const resolvedFilePathname = path.resolve(__dirname, fileRelativePathname);
+    const fileContents = removeCarriageReturns(readFileSync(resolvedFilePathname).toString());
+    return fileContents;
   }
 
   assert('./ant_simulator_lite/command_line.c');
   assert('./ant_simulator_lite/Timespan.c');
+  {
+    const helloWorldFormatted =
+      extractFileContentsIntoString('./hello_world/hello_world_formatted.c');
+    assert('./hello_world/hello_world_minified.c', helloWorldFormatted);
+    assert('./hello_world/hello_world_expanded.c', helloWorldFormatted);
+  }
   assert('./string/String.c');
   assert('./string/String.h');
   assert('./asterisks.c');
