@@ -2,7 +2,10 @@ import TokenArray from './lexer/TokenArray';
 import { tokenizeFile } from './lexer/tokenizeFile';
 import printer from './printer/printer';
 
-export default function format(filePathname: string): {
+export default function format(
+  filePathname: string,
+  options = { shouldLogFileSize: false },
+): {
   formatted: string;
   lexerElapsedSeconds: number;
   printerElapsedSeconds: number;
@@ -15,7 +18,10 @@ export default function format(filePathname: string): {
 
   {
     const startTime = Date.now();
-    [fileContents, tokens] = tokenizeFile(filePathname);
+    [fileContents, tokens] = tokenizeFile(
+      filePathname,
+      options.shouldLogFileSize,
+    );
     const endTime = Date.now();
     lexerElapsedSeconds = (endTime - startTime) / 1000;
   }

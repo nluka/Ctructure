@@ -16,15 +16,20 @@ const MAX_25_BIT_UNSIGNED_VALUE = 33_554_431;
  * @returns An array, the first element is the contents of the file, the second
  * is the array of encoded tokens in their order of appearance within the file.
  */
-export function tokenizeFile(filePathname: string): [string, TokenArray] {
+export function tokenizeFile(
+  filePathname: string,
+  shouldLogFileSize: boolean,
+): [string, TokenArray] {
   const fileBuffer = readFileSync(filePathname);
-  console.log(
-    `file size: ${fileBuffer.length} bytes (${(
-      fileBuffer.length /
-      1024 /
-      1024
-    ).toFixed(6)} MB)`,
-  );
+  if (shouldLogFileSize) {
+    console.log(
+      `file size: ${fileBuffer.length} bytes (${(
+        fileBuffer.length /
+        1024 /
+        1024
+      ).toFixed(6)} MB)`,
+    );
+  }
   if (fileBuffer.length * 8 > MAX_25_BIT_UNSIGNED_VALUE + 1) {
     throw new Error('files larger than 4 MB are not supported');
   }

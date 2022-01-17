@@ -46,4 +46,6 @@ describe('format', () => {
 
   assert('./asterisks.c');
   assert('./empty_header.h');
+  assert('./func_pointers.h');
+  assert('./macros.c');
 });
