@@ -31,15 +31,20 @@ describe('format', () => {
   }
 
   assert('./ant_simulator_lite/command_line.c');
+  assert('./ant_simulator_lite/print.c');
+  assert('./ant_simulator_lite/print.h');
   assert('./ant_simulator_lite/Timespan.c');
+
   {
     const helloWorldFormatted =
       extractFileContentsIntoString('./hello_world/hello_world_formatted.c');
     assert('./hello_world/hello_world_minified.c', helloWorldFormatted);
     assert('./hello_world/hello_world_expanded.c', helloWorldFormatted);
   }
+
   assert('./string/String.c');
   assert('./string/String.h');
+
   assert('./asterisks.c');
   assert('./empty_header.h');
 });
