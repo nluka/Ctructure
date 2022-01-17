@@ -359,14 +359,6 @@ export default function printer(
         currString += ' ';
         break;
 
-      case TokenType.keywordBreak:
-      case TokenType.keywordContinue:
-      case TokenType.operatorTernaryQuestion:
-      case TokenType.ambiguousDecrement:
-      case TokenType.ambiguousIncrement:
-      case TokenType.ambiguousAmpersand:
-        break;
-
       case TokenType.operatorBinaryAssignmentDirect:
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.variableDecl;
@@ -405,9 +397,8 @@ export default function printer(
           startLineIndex =
             tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
           continue;
-        } else {
-          currString = ' : ';
         }
+        currString = ' : ';
         break;
 
       // Keywords (https://en.cppreference.com/w/c/keyword)
@@ -549,12 +540,12 @@ export default function printer(
         break;
 
       case TokenType.commentSingleline:
-        if (previousType !== null) {
-          if (tokenDecode(tokens[i - 1])[1] !== TokenType.newline) {
-            currString = ' ';
-          } else if (currString === '') {
-            currString += ' ';
-          }
+        if (
+          previousType !== null &&
+          (tokenDecode(tokens[i - 1])[1] !== TokenType.newline ||
+            currString === '')
+        ) {
+          currString = ' ';
         }
         currString += extractStringFromFile(
           fileContents,
