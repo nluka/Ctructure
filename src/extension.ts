@@ -30,14 +30,14 @@ function handleFormatCurrentFile() {
     console.log('--------------------');
     console.log('Ctructure:');
     console.log(`attempting to format file ${currentFilePathname}`);
-    console.log('');
-    console.log(' OPERATION - TIME TAKEN (s)');
 
     let formatted: string;
 
     {
       const result = format(currentFilePathname);
       formatted = result.formatted;
+      console.log('');
+      console.log(' OPERATION - TIME TAKEN (s)');
       console.log(`    lexing - ${result.lexerElapsedSeconds}`);
       console.log(`  printing - ${result.printerElapsedSeconds}`);
     }

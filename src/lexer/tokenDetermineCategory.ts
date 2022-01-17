@@ -50,6 +50,8 @@ export default function tokenDetermineCategory(
     tokenStartIndex,
   );
   throw new Error(
-    `unable to determine category of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, firstChar = ${tokenFirstChar})`,
+    `unable to determine category of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, firstChar = ${JSON.stringify(
+      tokenFirstChar,
+    )})`,
   );
 }
