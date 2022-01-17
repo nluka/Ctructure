@@ -5,6 +5,8 @@ import tokenDisambiguate from './tokenDisambiguate';
 import tokenEncode from './tokenEncode';
 import Tokenizer from './Tokenizer';
 
+const MAX_25_BIT_UNSIGNED_VALUE = 33_554_431;
+
 /**
  * Tokenizes a file, encoding each token into a 32 bit number (using `tokenEncode`).
  * Each token stores its starting index in the first 25 bits and the type
@@ -15,9 +17,11 @@ import Tokenizer from './Tokenizer';
  * is the array of encoded tokens in their order of appearance within the file.
  */
 export function tokenizeFile(filePathname: string): [string, TokenArray] {
-  const fileContents = removeCarriageReturns(
-    readFileSync(filePathname).toString(),
-  );
+  const fileBuffer = readFileSync(filePathname);
+  if (fileBuffer.length >= MAX_25_BIT_UNSIGNED_VALUE) {
+    throw new Error('files larger than 4MB are not supported');
+  }
+  const fileContents = removeCarriageReturns(fileBuffer.toString());
   const tokenizer = new Tokenizer(fileContents);
   const tokens = new TokenArray(Math.ceil(fileContents.length / 3));
 

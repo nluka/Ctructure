@@ -28,13 +28,16 @@ function handleFormatCurrentFile() {
     const formatted = format(currentFilePathname);
     writeFile(currentFilePathname, formatted, (err) => {
       if (err !== null) {
-        console.error('writeFile failed:', err);
+        console.error('Ctructure writeFile failed:', err);
+        vscode.window.showErrorMessage(
+          `Ctructure failed to write file: ${err.message}`,
+        );
         return;
       }
     });
   } catch (err: any) {
-    console.error('format failed:', err);
-    vscode.window.showErrorMessage(`Failed to format file: ${err}`);
+    console.error('Ctructure file formatting failed:', err);
+    vscode.window.showErrorMessage(`Ctructure failed to format file: ${err.message}`);
   }
 }
 
