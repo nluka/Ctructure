@@ -23,8 +23,10 @@ describe('format', () => {
     });
   }
 
+  assert('./ant_simulator_lite/command_line.c');
+  assert('./ant_simulator_lite/Timespan.c');
+  assert('./string/String.c');
+  assert('./string/String.h');
   assert('./asterisks.c');
   assert('./empty_header.h');
-  assert('./ant_simulator_lite/command_line.c');
-  assert('./ant_simulator_lite/timespan.c');
 });
