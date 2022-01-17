@@ -16,9 +16,8 @@ describe('format', () => {
       const formatResult = format(resolvedFilePathname);
 
       if (shouldConsoleLogFormatResult) {
-        debugLogFormatResult(formatResult);
+        debugLogFormatResult(formatResult.formatted);
       }
-
 
       expect(formatResult).toBe(expected !== undefined ? expected : fileContents);
     });

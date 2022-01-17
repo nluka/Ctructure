@@ -1,5 +1,5 @@
 export default function indexOfUnescaped(
-  searchString: string,
+  string: string,
   searchChar: string,
   startIndex: number,
 ) {
@@ -7,14 +7,11 @@ export default function indexOfUnescaped(
   let index = startIndex;
 
   while (true) {
-    index = searchString.indexOf(
-      searchChar,
-      searchCount === 0 ? index : index + 1,
-    );
+    index = string.indexOf(searchChar, searchCount === 0 ? index : index + 1);
     if (index === -1) {
       return -1;
     }
-    const isEscaped = searchString.charAt(index - 1) === '\\';
+    const isEscaped = string.charAt(index - 1) === '\\';
     if (!isEscaped) {
       return index;
     }

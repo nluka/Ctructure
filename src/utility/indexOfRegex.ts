@@ -1,10 +1,6 @@
-export default function indexOfRegex(
-  searchString: string,
-  regex: RegExp,
-  startIndex: number,
-) {
-  for (let i = startIndex; i < searchString.length; ++i) {
-    if (searchString.charAt(i).match(regex)) {
+export default function indexOfRegex(string: string, regex: RegExp, startIndex: number) {
+  for (let i = startIndex; i < string.length; ++i) {
+    if (string.charAt(i).match(regex)) {
       return i;
     }
   }

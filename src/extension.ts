@@ -33,7 +33,14 @@ function handleFormatCurrentFile() {
     console.log('');
     console.log(' OPERATION - TIME TAKEN (s)');
 
-    const formatted = format(currentFilePathname);
+    let formatted: string;
+
+    {
+      const result = format(currentFilePathname);
+      formatted = result.formatted;
+      console.log(`    lexing - ${result.lexerElapsedSeconds}`);
+      console.log(`  printing - ${result.printerElapsedSeconds}`);
+    }
 
     {
       const startTime = Date.now();
@@ -49,11 +56,11 @@ function handleFormatCurrentFile() {
       const endTime = Date.now();
       console.log(`file write - ${(endTime - startTime) / 1000}`);
     }
-
-    console.log('--------------------');
   } catch (err: any) {
-    console.error('Ctructure file formatting failed:', err);
+    console.error('FAILED:', err.message);
     vscode.window.showErrorMessage(`Failed to format file: ${err.message}`);
+  } finally {
+    console.log('--------------------');
   }
 }
 
