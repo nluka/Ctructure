@@ -28,8 +28,10 @@ function handleFormatCurrentFile() {
 
   try {
     console.log('--------------------');
-    console.log('[Ctructure]');
+    console.log('Ctructure:');
     console.log(`attempting to format file ${currentFilePathname}`);
+    console.log('');
+    console.log(' OPERATION - TIME TAKEN (s)');
 
     const formatted = format(currentFilePathname);
 
@@ -43,7 +45,7 @@ function handleFormatCurrentFile() {
     });
     const fileWriteEndTime = Date.now();
     const fileWriteElapsedSecs = (fileWriteEndTime - fileWriteStartTime) / 1000;
-    console.log(`file write took ${fileWriteElapsedSecs}s`);
+    console.log(`file write - ${fileWriteElapsedSecs}`);
 
     console.log('--------------------');
   } catch (err: any) {
