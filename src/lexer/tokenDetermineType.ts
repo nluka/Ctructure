@@ -56,11 +56,10 @@ export default function tokenDetermineType(
         return type;
       }
       // We have a comment
-      const commentStart = rawToken.slice(0, 2);
-      if (commentStart === '//') {
-        return TokenType.commentSingleline;
-      }
-      return TokenType.commentMultiline;
+      const commentFirstTwoChars = rawToken.slice(0, 2);
+      return commentFirstTwoChars === '//'
+        ? TokenType.commentSingleline
+        : TokenType.commentMultiline;
     }
 
     case TokenCategory.operator: {
@@ -74,13 +73,14 @@ export default function tokenDetermineType(
 
     case TokenCategory.constant: {
       const firstChar = fileContents.charAt(tokenStartIndex);
-      if (firstChar === '"') {
-        return TokenType.constantString;
+      switch (firstChar) {
+        case '"':
+          return TokenType.constantString;
+        case "'":
+          return TokenType.constantCharacter;
+        default:
+          return TokenType.constantNumber;
       }
-      if (firstChar === "'") {
-        return TokenType.constantCharacter;
-      }
-      return TokenType.constantNumber;
     }
 
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
@@ -88,15 +88,7 @@ export default function tokenDetermineType(
       if (rawToken.charAt(rawToken.length - 1) === ':') {
         return TokenType.label;
       }
-      let type = tokenValueToTypeMap.get(rawToken);
-      if (type !== undefined) {
-        return type;
-      }
-      type = tokenValueToTypeMap.get(rawToken);
-      if (type !== undefined) {
-        return type;
-      }
-      return TokenType.identifier;
+      return tokenValueToTypeMap.get(rawToken) || TokenType.identifier;
     }
   }
 }
