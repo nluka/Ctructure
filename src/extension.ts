@@ -35,17 +35,20 @@ function handleFormatCurrentFile() {
 
     const formatted = format(currentFilePathname);
 
-    const fileWriteStartTime = Date.now();
-    writeFile(currentFilePathname, formatted, (err) => {
-      if (err !== null) {
-        console.error('Ctructure writeFile failed:', err);
-        vscode.window.showErrorMessage(`Failed to write file: ${err.message}`);
-        return;
-      }
-    });
-    const fileWriteEndTime = Date.now();
-    const fileWriteElapsedSecs = (fileWriteEndTime - fileWriteStartTime) / 1000;
-    console.log(`file write - ${fileWriteElapsedSecs}`);
+    {
+      const startTime = Date.now();
+      writeFile(currentFilePathname, formatted, (err) => {
+        if (err !== null) {
+          console.error('Ctructure writeFile failed:', err);
+          vscode.window.showErrorMessage(
+            `Failed to write file: ${err.message}`,
+          );
+          return;
+        }
+      });
+      const endTime = Date.now();
+      console.log(`file write - ${(endTime - startTime) / 1000}`);
+    }
 
     console.log('--------------------');
   } catch (err: any) {
@@ -54,4 +57,6 @@ function handleFormatCurrentFile() {
   }
 }
 
-export function deactivate() {}
+export function deactivate() {
+  console.log('*** EXTENSION DEACTIVATED: Ctructure');
+}

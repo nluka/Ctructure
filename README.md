@@ -8,7 +8,7 @@ Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-in
 
 ## Issues
 
-If you encounter unexpected behaviour or failures, please create an [issue](https://github.com/nluka/Ctructure/issues). Please include a copy of the exact file you were trying to format and what the error/unexpected behavior.
+If you encounter unexpected behavior or failures, please create an [issue](https://github.com/nluka/Ctructure/issues). Include a copy of the exact file you were trying to format + the error / description of unexpected behavior.
 
 ## Contributing
 

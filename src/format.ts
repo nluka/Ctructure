@@ -1,18 +1,25 @@
+import TokenArray from './lexer/TokenArray';
 import { tokenizeFile } from './lexer/tokenizeFile';
 import printer from './printer/printer';
 
 export default function format(filePathname: string) {
-  const lexerStartTime = Date.now();
-  const [fileContents, tokens] = tokenizeFile(filePathname);
-  const lexerEndTime = Date.now();
-  const lexerElapsedSecs = (lexerEndTime - lexerStartTime) / 1000;
-  console.log(`    lexing - ${lexerElapsedSecs}`);
+  let formatted: string;
+  let fileContents: string;
+  let tokens: TokenArray;
 
-  const printerStartTime = Date.now();
-  const formatted = printer(fileContents, tokens, 2);
-  const printerEndTime = Date.now();
-  const printerElapsedSecs = (printerEndTime - printerStartTime) / 1000;
-  console.log(`  printing - ${printerElapsedSecs}`);
+  {
+    const startTime = Date.now();
+    [fileContents, tokens] = tokenizeFile(filePathname);
+    const endTime = Date.now();
+    console.log(`    lexing - ${(endTime - startTime) / 1000}`);
+  }
+
+  {
+    const startTime = Date.now();
+    formatted = printer(fileContents, tokens, 2);
+    const endTime = Date.now();
+    console.log(`  printing - ${(endTime - startTime) / 1000}`);
+  }
 
   return formatted;
 }

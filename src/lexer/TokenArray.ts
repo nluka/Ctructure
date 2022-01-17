@@ -55,7 +55,7 @@ export default class TokenArray {
   public checkIndexBounds(index: number): void {
     if (index < 0 || index >= this.count) {
       throw new RangeError(
-        `index ${index} out of bounds (count was ${this.count})`,
+        `TokenArray index ${index} out of bounds (count was ${this.count})`,
       );
     }
   }
