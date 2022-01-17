@@ -428,6 +428,79 @@ describe('tokenDisambiguate', () => {
     });
   });
 
+  describe('ambiguousDecrement', () => {
+    describe('Dereference', () => {
+      assert(
+        [
+          TokenType.specialBraceOpening,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryDereference, '{*a'
+      );
+      assert(
+        [
+          TokenType.specialBracketOpening,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryDereference, '[*a'
+      );
+      assert(
+        [
+          TokenType.specialBracketOpening,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryDereference, '(*a'
+      );
+      assert(
+        [
+          TokenType.specialSemicolon,
+          TokenType.newline,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        2, TokenType.operatorUnaryDereference, ';\n*a'
+      );
+      assert(
+        [
+          TokenType.specialComma,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryDereference, ', *a'
+      );
+      assert(
+        [
+          TokenType.operatorBinaryAssignmentDirect,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryDereference, '= *a'
+      );
+      assert(
+        [
+          TokenType.operatorBinaryAssignmentDirect,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryDereference, '+ *a'
+      );
+    });
+
+    describe('Multiplication or Indirection', () => {
+      assert(
+        [
+          TokenType.operatorBinaryMultiplicationOrIndirection,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, '** p'
+      );
+    });
+  });
+
   describe('ambiguousAmpersand', () => {
     describe('Bitwise AND', () => {
       assert(

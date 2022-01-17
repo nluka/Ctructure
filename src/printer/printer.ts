@@ -61,27 +61,27 @@ export default function printer(
     i < tokenArray.getCount();
     ++i, nextTokenType = getNextNonNewlineTokenType(tokens, i)
   ) {
-    const [position, type] = tokenDecode(tokens[i]);
-    const typeAsValue = tokenTypeToValueMap.get(type);
+    const [currTokenStartIndex, currTokenType] = tokenDecode(tokens[i]);
+    const typeAsValue = tokenTypeToValueMap.get(currTokenType);
 
     if (typeAsValue) {
       currString += typeAsValue;
     }
     if (newline) {
-      if (type !== TokenType.commentSingleline) {
+      if (currTokenType !== TokenType.commentSingleline) {
         currString = '\n' + indentation.repeat(blockLevel) + currString;
         if (
-          type === TokenType.newline &&
+          currTokenType === TokenType.newline &&
           tokenDecode(tokens[i + 1])[1] === TokenType.newline
         ) {
           currString = '\n' + indentation.repeat(blockLevel) + currString;
         }
         newline = false;
-        startLineIndex = position - blockLevel * indentation.length;
+        startLineIndex = currTokenStartIndex - blockLevel * indentation.length;
       }
     }
 
-    switch (type) {
+    switch (currTokenType) {
       case TokenType.newline:
         continue;
 
@@ -175,7 +175,7 @@ export default function printer(
         previousContext = contextStack.pop();
         if (overflow) {
           currString = `\n${indentation.repeat(--blockLevel) + currString}`;
-          startLineIndex = position;
+          startLineIndex = currTokenStartIndex;
         }
         if (
           previousContext.context === TokenType.keywordFor &&
@@ -193,7 +193,7 @@ export default function printer(
             context = PrinterCategory.singleLineIf;
             ++blockLevel;
             formattedFileStr += currString;
-            previousType = type;
+            previousType = currTokenType;
             currString = '\n' + indentation.repeat(blockLevel);
             startLineIndex =
               tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
@@ -228,7 +228,7 @@ export default function printer(
         }
         ++blockLevel;
         formattedFileStr += currString;
-        previousType = type;
+        previousType = currTokenType;
         currString = '\n' + indentation.repeat(blockLevel);
         startLineIndex =
           tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
@@ -384,7 +384,7 @@ export default function printer(
         ) {
           context = null;
           formattedFileStr += currString;
-          previousType = type;
+          previousType = currTokenType;
           currString = '\n' + indentation.repeat(blockLevel);
           startLineIndex =
             tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
@@ -429,16 +429,16 @@ export default function printer(
       case TokenType.keywordStruct:
       case TokenType.keywordSwitch:
       case TokenType.keywordUnion:
-        context = type;
+        context = currTokenType;
         break;
 
       case TokenType.keywordCase:
       case TokenType.keywordDefault:
-        context = type;
+        context = currTokenType;
         previousContext = contextStack.peek();
         currString = `\n${
           (indentation.repeat(previousContext.blockLevel + 1),
-          tokenTypeToValueMap.get(type))
+          tokenTypeToValueMap.get(currTokenType))
         }`;
         blockLevel = previousContext.blockLevel + 2;
         break;
@@ -483,7 +483,7 @@ export default function printer(
       case TokenType.label:
         const extractedLabel = extractStringFromFile(
           fileContents,
-          position,
+          currTokenStartIndex,
           previousType,
         );
         if (
@@ -498,7 +498,7 @@ export default function printer(
           currString += extractedLabel;
         }
         formattedFileStr += currString;
-        previousType = type;
+        previousType = currTokenType;
         currString = '\n' + indentation.repeat(blockLevel);
         startLineIndex =
           tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
@@ -508,7 +508,7 @@ export default function printer(
         nextTokenType = getNextNonNewlineTokenType(tokens, i);
         currString += extractStringFromFile(
           fileContents,
-          position,
+          currTokenStartIndex,
           previousType,
         );
         if (context === PrinterCategory.prepro) {
@@ -528,7 +528,7 @@ export default function printer(
       case TokenType.preproStandardHeader:
         currString += extractStringFromFile(
           fileContents,
-          position,
+          currTokenStartIndex,
           previousType,
         );
         if (context === PrinterCategory.prepro) {
@@ -548,7 +548,7 @@ export default function printer(
 
         currString += extractStringFromFile(
           fileContents,
-          position,
+          currTokenStartIndex,
           previousType,
         );
         if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
@@ -567,7 +567,7 @@ export default function printer(
       case TokenType.commentMultiline:
         currString += extractStringFromFile(
           fileContents,
-          position,
+          currTokenStartIndex,
           previousType,
         );
         if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
@@ -578,7 +578,7 @@ export default function printer(
       case TokenType.identifier:
         currString += extractStringFromFile(
           fileContents,
-          position,
+          currTokenStartIndex,
           previousType,
         );
         if (context === PrinterCategory.prepro) {
@@ -601,7 +601,7 @@ export default function printer(
         break;
     }
     formattedFileStr += currString;
-    previousType = type;
+    previousType = currTokenType;
     currString = '';
   }
   if (

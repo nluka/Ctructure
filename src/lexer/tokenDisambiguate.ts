@@ -4,10 +4,8 @@ import TokenArray from './TokenArray';
 import TokenType, {
   isTokenBinaryOperator,
   isTokenConstant,
-  isTokenSpecial,
-  isTokenTernaryOperatorComponent,
-  isTokenTypeOrTypeQualifierKeyword,
-  isTokenTypeQualifierKeyword,
+  isTokenNonMultiplicationOrIndirectionBinaryOperator,
+  isTokenSpecialNonClosing,
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -75,11 +73,9 @@ export default function tokenDisambiguate(
       if (firstTokenTypeAfterCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPrefix;
       }
-
       if (firstTokenTypeBehindCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticIncrementPostfix;
       }
-
       throw createErr();
     }
 
@@ -87,16 +83,23 @@ export default function tokenDisambiguate(
       if (firstTokenTypeBehindCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticDecrementPostfix;
       }
-
       if (firstTokenTypeAfterCurr === TokenType.identifier) {
         return TokenType.operatorUnaryArithmeticDecrementPrefix;
       }
-
       throw createErr();
     }
 
-    case TokenType.ambiguousAsterisk:
-      return TokenType.ambiguousAsterisk;
+    case TokenType.ambiguousAsterisk: {
+      if (
+        isTokenSpecialNonClosing(firstTokenTypeBehindCurr) ||
+        isTokenNonMultiplicationOrIndirectionBinaryOperator(
+          firstTokenTypeBehindCurr,
+        )
+      ) {
+        return TokenType.operatorUnaryDereference;
+      }
+      return TokenType.operatorBinaryMultiplicationOrIndirection;
+    }
 
     case TokenType.ambiguousAmpersand: {
       if (

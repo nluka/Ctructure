@@ -93,6 +93,7 @@ enum TokenType {
       operatorUnaryPlus,
       operatorUnaryMinus,
       operatorUnaryAddressOf,
+      operatorUnaryDereference,
   // Binary
     // Arithmetic
       operatorBinaryArithmeticAddition,
@@ -127,6 +128,8 @@ enum TokenType {
       operatorBinaryAssignmentBitwiseAnd,
       operatorBinaryAssignmentBitwiseOr,
       operatorBinaryAssignmentBitwiseXor,
+    // Misc
+      operatorBinaryMultiplicationOrIndirection,
   // Other
     operatorMemberSelectionDirect, // Dot (.) https://www.geeksforgeeks.org/dot-operator-in-c-c/
     operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
@@ -134,18 +137,16 @@ enum TokenType {
   //#endregion Operators
 
   //#region Special
-    // Parenthesis ()
+    specialComma,
+    specialSemicolon,
+    // Opening
       specialParenthesisOpening,
-      specialParenthesisClosing,
-    // Braces {}
       specialBraceOpening,
-      specialBraceClosing,
-    // Brackets []
       specialBracketOpening,
+    // Closing
+      specialParenthesisClosing,
+      specialBraceClosing,
       specialBracketClosing,
-    // Other
-      specialComma,
-      specialSemicolon,
   //#endregion Special
 
   //#region Other
@@ -162,23 +163,19 @@ enum TokenType {
     During the inital tokenization, these overlapping operators are assigned
     one of the following types. They are disambiguated in a later pass.
   */
-  ambiguousPlus, // (binary addition | unary plus) ?
-  ambiguousMinus, // (binary subtraction | unary minus) ?
-  ambiguousIncrement, // (prefix | postfix) ?
-  ambiguousDecrement, // (prefix | postfix) ?
-  ambiguousAsterisk, // (binary multiplication | indirection) ?
-  ambiguousAmpersand, // (bitwise and | address of) ?
-  ambiguousColon, // (switch case/default | ternary)
+    ambiguousPlus, // (binary addition | unary plus) ?
+    ambiguousMinus, // (binary subtraction | unary minus) ?
+    ambiguousIncrement, // (prefix | postfix) ?
+    ambiguousDecrement, // (prefix | postfix) ?
+    ambiguousAsterisk, // (binary multiplication | indirection) ?
+    ambiguousAmpersand, // (bitwise and | address of) ?
+    ambiguousColon, // (switch case/default | ternary)
   //#endregion Ambiguous
 }
 
-export function isTokenAmbiguous(type: TokenType) {
-  return type >= TokenType.ambiguousPlus && type <= TokenType.ambiguousAmpersand;
-}
-
-export function isTokenConstant(type: TokenType) {
-  return type >= TokenType.constantNumber &&
-    type <= TokenType.constantString;
+export function isTokenPreprocessor(type: TokenType) {
+  return type >= TokenType.preproDirectiveInclude &&
+    type <= TokenType.preproLineContinuation;
 }
 
 export function isTokenTypeKeyword(type: TokenType) {
@@ -196,24 +193,19 @@ export function isTokenTypeOrTypeQualifierKeyword(type: TokenType) {
     type <= TokenType.keywordVolatile;
 }
 
-export function isTokenSpecial(type: TokenType) {
-  return type >= TokenType.specialParenthesisOpening &&
-    type <= TokenType.specialSemicolon;
+export function isTokenConstant(type: TokenType) {
+  return type >= TokenType.constantNumber &&
+    type <= TokenType.constantString;
 }
 
 export function isTokenBinaryOperator(type: TokenType) {
   return type >= TokenType.operatorBinaryArithmeticAddition &&
+    type <= TokenType.operatorBinaryMultiplicationOrIndirection;
+}
+
+export function isTokenNonMultiplicationOrIndirectionBinaryOperator(type: TokenType) {
+  return type >= TokenType.operatorBinaryArithmeticAddition &&
     type <= TokenType.operatorBinaryAssignmentBitwiseXor;
-}
-
-export function isTokenTernaryOperatorComponent(type: TokenType) {
-  return type === TokenType.operatorTernaryQuestion ||
-    type === TokenType.ambiguousColon;
-}
-
-export function isTokenMemberSelectionOperator(type: TokenType) {
-  return type >= TokenType.operatorMemberSelectionDirect &&
-    type <= TokenType.operatorMemberSelectionIndirect;
 }
 
 export function isTokenAssignmentOperator(type: TokenType) {
@@ -221,9 +213,28 @@ export function isTokenAssignmentOperator(type: TokenType) {
     type <= TokenType.operatorBinaryAssignmentBitwiseXor;
 }
 
-export function isTokenPreprocessor(type: TokenType) {
-  return type >= TokenType.preproDirectiveInclude &&
-    type <= TokenType.preproLineContinuation;
+export function isTokenMemberSelectionOperator(type: TokenType) {
+  return type >= TokenType.operatorMemberSelectionDirect &&
+    type <= TokenType.operatorMemberSelectionIndirect;
+}
+
+export function isTokenTernaryOperatorComponent(type: TokenType) {
+  return type === TokenType.operatorTernaryQuestion ||
+    type === TokenType.ambiguousColon;
+}
+
+export function isTokenSpecial(type: TokenType) {
+  return type >= TokenType.specialParenthesisOpening &&
+    type <= TokenType.specialSemicolon;
+}
+
+export function isTokenSpecialNonClosing(type: TokenType) {
+  return type >= TokenType.specialComma &&
+    type <= TokenType.specialBracketOpening;
+}
+
+export function isTokenAmbiguous(type: TokenType) {
+  return type >= TokenType.ambiguousPlus && type <= TokenType.ambiguousAmpersand;
 }
 
 export default TokenType;

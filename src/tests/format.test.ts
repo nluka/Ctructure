@@ -6,22 +6,25 @@ import path = require('path');
 
 describe('format', () => {
   function assert(
-    filePathname: string,
+    fileRelativePathname: string,
+    expected?: string,
     shouldConsoleLogFormatResult = false,
   ) {
-    test(filePathname, () => {
-      const resolvedFilePathname = path.resolve(__dirname, filePathname);
+    test(fileRelativePathname, () => {
+      const resolvedFilePathname = path.resolve(__dirname, fileRelativePathname);
       const fileContents = removeCarriageReturns(readFileSync(resolvedFilePathname).toString());
       const formatResult = format(resolvedFilePathname);
+
       if (shouldConsoleLogFormatResult) {
         debugLogFormatResult(formatResult);
       }
-      expect(formatResult).toBe(fileContents);
+
+      expect(formatResult).toBe(expected || fileContents);
     });
   }
 
-  assert('./asterisks/asterisks.c');
-  assert('./empty_header/empty_header.h');
-  assert('./ant_simulator_lite/command_line/command_line.c');
-  assert('./ant_simulator_lite/timespan/timespan.c');
+  assert('./asterisks.c');
+  assert('./empty_header.h');
+  assert('./ant_simulator_lite/command_line.c');
+  assert('./ant_simulator_lite/timespan.c');
 });
