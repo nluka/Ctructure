@@ -46,6 +46,8 @@ describe('tokenDetermineType', () => {
 
     describe('Other', () => {
       assert('<stdio.h>', 0, 8, TokenCategory.preproOrOperator, TokenType.preproStandardHeader);
+      assert('<path/to/file123.h>', 0, 18, TokenCategory.preproOrOperator, TokenType.preproStandardHeader);
+      assert('<path\\to\\file123.h>', 0, 18, TokenCategory.preproOrOperator, TokenType.preproStandardHeader);
       assert('##', 0, 1, TokenCategory.prepro, TokenType.preproOperatorConcat);
     });
   });

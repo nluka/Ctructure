@@ -37,7 +37,7 @@ export default function tokenDetermineType(
 
     case TokenCategory.preproOrOperator: {
       const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      if (rawToken.match(/^<[a-zA-Z]+\.h>$/)) {
+      if (rawToken.match(/^<[a-zA-Z0-9/\\]+\.h>$/)) {
         return TokenType.preproStandardHeader;
       }
       const type = tokenValueToTypeMap.get(rawToken);
