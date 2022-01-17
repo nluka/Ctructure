@@ -59,6 +59,7 @@ function isThereArrayOverflow(
       ++whitespaceCount;
     }
   }
+
   return false;
 }
 
@@ -96,6 +97,7 @@ function isThereParenOverflow(
 
   return false;
 }
+
 function isThereBracketOverflow(
   tokens: Uint32Array,
   fileContents: string,
@@ -125,6 +127,7 @@ function isThereBracketOverflow(
       ++whiteSpace;
     }
   }
+
   return false;
 }
 
