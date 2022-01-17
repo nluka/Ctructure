@@ -6,8 +6,5 @@ export default function format(filePathname: string) {
 
   const formatted = printer(fileContents, tokens, 2);
 
-  // TODO: this is inefficient and empty lines should be trimmed within `printer`
-  const formattedAndTrimmed = formatted.replace(/\n +\n/g, '\n\n').trim();
-
-  return formattedAndTrimmed;
+  return formatted;
 }

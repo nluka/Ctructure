@@ -3,14 +3,15 @@ import tokenDecode from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import tokenFindLastIndex from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
-import PrinterCategory from './FormatCategory';
+import PrinterCategory from './PrinterCategory';
 import getNextNonNewlineTokenType from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import isThereLineOverflow from './isThereLineOverflow';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
+import areThereCommas from './areThereCommas';
 
-export type Types = TokenType | PrinterCategory | null;
+export type ContextTypes = TokenType | PrinterCategory | null;
 
 export default function printer(
   fileContents: string,
@@ -35,18 +36,18 @@ export default function printer(
   let currString: string = '';
 
   // Does not include newlines
-  let nextTokenType: Types;
+  let nextTokenType: ContextTypes;
 
-  let previousType: Types = null;
+  let previousType: ContextTypes = null;
 
   // Determines how a token should behave
-  let context: Types = null;
+  let context: ContextTypes = null;
 
   let contextStack: Stack = new Stack();
 
   // Holds the popped context, used when closing parentheses/braces/brackets are present
   let previousContext: {
-    context: Types;
+    context: ContextTypes;
     overflow: boolean;
     blockLevel: number;
   } | null = null;
@@ -67,22 +68,28 @@ export default function printer(
     if (typeAsValue) {
       currString += typeAsValue;
     }
-    if (newline) {
-      if (currTokenType !== TokenType.commentSingleline) {
+    if (newline && currTokenType !== TokenType.commentSingleline) {
+      if (
+        currTokenType === TokenType.newline &&
+        tokenDecode(tokens[i + 1])[1] === TokenType.newline
+      ) {
+        currString = '\n\n' + indentation.repeat(blockLevel) + currString;
+      } else {
         currString = '\n' + indentation.repeat(blockLevel) + currString;
-        if (
-          currTokenType === TokenType.newline &&
-          tokenDecode(tokens[i + 1])[1] === TokenType.newline
-        ) {
-          currString = '\n' + indentation.repeat(blockLevel) + currString;
-        }
-        newline = false;
-        startLineIndex = currTokenStartIndex - blockLevel * indentation.length;
       }
+      newline = false;
+      startLineIndex = currTokenStartIndex - blockLevel * indentation.length;
     }
 
     switch (currTokenType) {
       case TokenType.newline:
+        if (context === PrinterCategory.prepro) {
+          if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
+            formattedFileStr += '\n';
+          }
+          newline = true;
+          context = null;
+        }
         continue;
 
       case TokenType.specialComma:
@@ -287,18 +294,7 @@ export default function printer(
         break;
 
       // Unary operator:
-      case TokenType.operatorUnaryArithmeticIncrementPrefix:
-      case TokenType.operatorUnaryArithmeticIncrementPostfix:
-      case TokenType.operatorUnaryArithmeticDecrementPrefix:
-      case TokenType.operatorUnaryArithmeticDecrementPostfix:
-      case TokenType.operatorUnaryBitwiseOnesComplement:
-      case TokenType.operatorUnaryLogicalNegation:
-      case TokenType.operatorUnaryPlus:
-      case TokenType.operatorUnaryMinus:
-      case TokenType.operatorUnaryAddressOf:
-        break;
-
-      case TokenType.ambiguousAsterisk:
+      case TokenType.operatorBinaryMultiplicationOrIndirection:
         nextTokenType = getNextNonNewlineTokenType(tokens, i);
         previousType = getPrevNonNewlineTokenType(tokens, i);
         if (
@@ -308,7 +304,8 @@ export default function printer(
           currString = ' *';
         }
         if (
-          nextTokenType !== TokenType.ambiguousAsterisk &&
+          nextTokenType !==
+            TokenType.operatorBinaryMultiplicationOrIndirection &&
           nextTokenType !== TokenType.specialParenthesisClosing
         ) {
           currString += ' ';
@@ -374,6 +371,25 @@ export default function printer(
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.variableDecl;
         }
+        if (parenCount === 0) {
+          nextTokenType = getNextNonNewlineTokenType(tokens, i);
+          if (
+            nextTokenType !== PrinterCategory.typeOrIdentifier &&
+            nextTokenType !== TokenType.specialBraceOpening &&
+            getNextNonNewlineTokenType(tokens, i, 2) !==
+              TokenType.specialParenthesisOpening &&
+            !areThereCommas(tokens, i) &&
+            isThereLineOverflow(
+              fileContents,
+              TokenType.operatorBinaryAssignmentDirect,
+              tokens,
+              i,
+              startLineIndex,
+            )
+          ) {
+            currString = ' =\n' + indentation.repeat(blockLevel + 1);
+          }
+        }
         break;
 
       // Miscellanous operators
@@ -415,10 +431,7 @@ export default function printer(
           context = PrinterCategory.typeOrIdentifier;
         }
         nextTokenType = getNextNonNewlineTokenType(tokens, i);
-        if (
-          nextTokenType !== TokenType.specialParenthesisClosing &&
-          nextTokenType !== TokenType.ambiguousAsterisk
-        ) {
+        if (nextTokenType === PrinterCategory.typeOrIdentifier) {
           currString += ' ';
         }
         break;
@@ -470,6 +483,7 @@ export default function printer(
       case TokenType.keywordGeneric:
       case TokenType.keywordGoto:
       case TokenType.keywordTypedef:
+      case TokenType.keywordSizeof:
         currString += ' ';
         break;
 
@@ -505,7 +519,6 @@ export default function printer(
         continue;
 
       case TokenType.constantString:
-        nextTokenType = getNextNonNewlineTokenType(tokens, i);
         currString += extractStringFromFile(
           fileContents,
           currTokenStartIndex,
@@ -514,8 +527,10 @@ export default function printer(
         if (context === PrinterCategory.prepro) {
           newline = true;
           context = null;
+          break;
         }
-        if (nextTokenType === TokenType.identifier) {
+        nextTokenType = getNextNonNewlineTokenType(tokens, i);
+        if (nextTokenType === PrinterCategory.typeOrIdentifier) {
           currString += ' ';
         }
         if (previousType === TokenType.identifier) {
@@ -531,10 +546,6 @@ export default function printer(
           currTokenStartIndex,
           previousType,
         );
-        if (context === PrinterCategory.prepro) {
-          newline = true;
-          context = null;
-        }
         break;
 
       case TokenType.commentSingleline:
@@ -545,7 +556,6 @@ export default function printer(
             currString += ' ';
           }
         }
-
         currString += extractStringFromFile(
           fileContents,
           currTokenStartIndex,
@@ -581,15 +591,12 @@ export default function printer(
           currTokenStartIndex,
           previousType,
         );
-        if (context === PrinterCategory.prepro) {
-          if (tokenDecode(tokens[i + 1])[1] !== TokenType.newline) {
-            currString += ' ';
-          } else {
-            newline = true;
-            context = null;
-          }
-        } else if (
-          getNextNonNewlineTokenType(tokens, i) === TokenType.identifier
+        if (
+          getNextNonNewlineTokenType(tokens, i) ===
+            PrinterCategory.typeOrIdentifier ||
+          (context === PrinterCategory.prepro &&
+            i < tokenArray.getCount() - 1 &&
+            tokenDecode(tokens[i + 1])[1] !== TokenType.newline)
         ) {
           currString += ' ';
         } else if (context === PrinterCategory.typeOrIdentifier) {
@@ -598,6 +605,9 @@ export default function printer(
         if (context === null) {
           context = PrinterCategory.typeOrIdentifier;
         }
+        break;
+
+      default:
         break;
     }
     formattedFileStr += currString;

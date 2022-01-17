@@ -4,7 +4,7 @@ import TokenType, {
   isTokenPreprocessor,
   isTokenTypeKeyword,
 } from '../lexer/TokenType';
-import PrinterCategory from './FormatCategory';
+import PrinterCategory from './PrinterCategory';
 
 export default function getPrevNonNewlineTokenType(
   tokens: Uint32Array,

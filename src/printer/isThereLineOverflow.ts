@@ -1,24 +1,33 @@
 import tokenDecode from '../lexer/tokenDecode';
-import TokenType from '../lexer/TokenType';
-import PrinterCategory from './FormatCategory';
-import { Types } from './printer';
+import TokenType, { isTokenBinaryOperator } from '../lexer/TokenType';
+import PrinterCategory from './PrinterCategory';
+import { ContextTypes } from './printer';
 
 export default function isThereLineOverflow(
   fileContents: string,
-  context: Types,
+  context: ContextTypes,
   tokens: Uint32Array,
   index: number,
   startLineIndex: number,
 ): boolean {
-  if (context === PrinterCategory.array) {
-    return isThereArrayOverflow(tokens, fileContents, index, startLineIndex);
-  }
-
   if (
     context === PrinterCategory.variableDecl ||
     context === PrinterCategory.multiVariableDecl
   ) {
     return false;
+  }
+
+  if (context === PrinterCategory.array) {
+    return isThereArrayOverflow(tokens, fileContents, index, startLineIndex);
+  }
+
+  if (context === TokenType.operatorBinaryAssignmentDirect) {
+    return isThereAssignmentOverflow(
+      tokens,
+      fileContents,
+      index,
+      startLineIndex,
+    );
   }
 
   if (context === TokenType.specialBracketOpening) {
@@ -125,6 +134,35 @@ function isThereBracketOverflow(
       }
     } else if (decodedToken[1] === TokenType.specialComma) {
       ++whiteSpace;
+    }
+  }
+
+  return false;
+}
+
+function isThereAssignmentOverflow(
+  tokens: Uint32Array,
+  fileContents: string,
+  tokenIndex: number,
+  startLineIndex: number,
+): boolean {
+  let lineLength;
+  let bracketCount = 0;
+  let whiteSpace = 2;
+
+  for (let i = tokenIndex; bracketCount >= 0 && i < tokens.length; ++i) {
+    const decodedToken = tokenDecode(tokens[i]);
+    if (decodedToken[1] === TokenType.specialSemicolon) {
+      lineLength =
+        removeSpaces(fileContents.slice(startLineIndex, decodedToken[0]))
+          .length + whiteSpace;
+      if (lineLength > 80) {
+        return true;
+      }
+      return false;
+    }
+    if (isTokenBinaryOperator(decodedToken[1])) {
+      whiteSpace += 2;
     }
   }
 
