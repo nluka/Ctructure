@@ -83,7 +83,10 @@ export default function printer(
 
     switch (currTokenType) {
       case TokenType.newline:
-        if (context === PrinterCategory.prepro) {
+        if (
+          context === PrinterCategory.prepro &&
+          previousType !== TokenType.preproLineContinuation
+        ) {
           if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
             formattedFileStr += '\n';
           }
@@ -181,7 +184,7 @@ export default function printer(
         --parenCount;
         previousContext = contextStack.pop();
         if (overflow) {
-          currString = `\n${indentation.repeat(--blockLevel) + currString}`;
+          currString = `\n${indentation.repeat(--blockLevel)})`;
           startLineIndex = currTokenStartIndex;
         }
         if (
@@ -280,16 +283,21 @@ export default function printer(
       case TokenType.preproDirectiveIf:
       case TokenType.preproDirectiveEndif:
       case TokenType.preproDirectivePragma:
-      case TokenType.preproMacroFile:
-      case TokenType.preproMacroLine:
-      case TokenType.preproMacroDate:
-      case TokenType.preproMacroTime:
-      case TokenType.preproMacroTimestamp:
-      case TokenType.preproOperatorConcat:
         context = PrinterCategory.prepro;
+        if (
+          previousType &&
+          currString === typeAsValue &&
+          tokenDecode(tokens[i - 1])[1] === TokenType.newline
+        ) {
+          currString = '\n' + currString;
+          if (tokenDecode(tokens[i - 2])[1] === TokenType.newline) {
+            currString = '\n' + currString;
+          }
+        }
         break;
 
       case TokenType.preproLineContinuation:
+        currString = ' \\';
         newline = true;
         break;
 
@@ -424,6 +432,8 @@ export default function printer(
         nextTokenType = getNextNonNewlineTokenType(tokens, i);
         if (nextTokenType === PrinterCategory.typeOrIdentifier) {
           currString += ' ';
+        } else if (nextTokenType === TokenType.specialParenthesisOpening) {
+          currString += ' ';
         }
         break;
 
@@ -434,6 +444,9 @@ export default function printer(
       case TokenType.keywordSwitch:
       case TokenType.keywordUnion:
         context = currTokenType;
+        if (previousType === TokenType.specialParenthesisClosing) {
+          currString = ' ' + currString;
+        }
         break;
 
       case TokenType.keywordCase:
@@ -524,9 +537,6 @@ export default function printer(
         if (nextTokenType === PrinterCategory.typeOrIdentifier) {
           currString += ' ';
         }
-        if (previousType === TokenType.identifier) {
-          currString = ' ' + currString;
-        }
         break;
 
       case TokenType.constantNumber:
@@ -584,13 +594,13 @@ export default function printer(
         );
         if (
           getNextNonNewlineTokenType(tokens, i) ===
-            PrinterCategory.typeOrIdentifier ||
-          (context === PrinterCategory.prepro &&
-            i < tokenArray.getCount() - 1 &&
-            tokenDecode(tokens[i + 1])[1] !== TokenType.newline)
+          PrinterCategory.typeOrIdentifier
         ) {
           currString += ' ';
-        } else if (context === PrinterCategory.typeOrIdentifier) {
+        } else if (
+          context === PrinterCategory.typeOrIdentifier &&
+          parenCount === 0
+        ) {
           context = PrinterCategory.doubleTypeOrIdentifier;
         }
         if (context === null) {
@@ -624,10 +634,7 @@ function extractStringFromFile(
     tokenFindLastIndex(
       fileContents,
       startIndex,
-      tokenDetermineCategory(
-        fileContents,
-        startIndex,
-      ),
+      tokenDetermineCategory(fileContents, startIndex),
       prevTokenType,
     ) + 1,
   );

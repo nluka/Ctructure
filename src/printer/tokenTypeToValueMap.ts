@@ -14,12 +14,12 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.preproDirectiveEndif, '#endif'],
   [TokenType.preproDirectiveError, '#error'],
   [TokenType.preproDirectivePragma, '#pragma '],
-  [TokenType.preproMacroFile, '__FILE__ '],
-  [TokenType.preproMacroLine, '__LINE__ '],
-  [TokenType.preproMacroDate, '__DATE__ '],
-  [TokenType.preproMacroTime, '__TIME__ '],
-  [TokenType.preproMacroTimestamp, '__TIMESTAMP__ '],
-  [TokenType.preproOperatorConcat, '## '],
+  [TokenType.preproMacroFile, '__FILE__'],
+  [TokenType.preproMacroLine, '__LINE__'],
+  [TokenType.preproMacroDate, '__DATE__'],
+  [TokenType.preproMacroTime, '__TIME__'],
+  [TokenType.preproMacroTimestamp, '__TIMESTAMP__'],
+  [TokenType.preproOperatorConcat, '##'],
 
   // Keywords
   [TokenType.keywordAlignas, 'alignas'],

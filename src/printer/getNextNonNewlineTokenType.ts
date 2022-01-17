@@ -1,6 +1,7 @@
 import tokenDecode from '../lexer/tokenDecode';
 import TokenType, {
   isTokenAssignmentOperator,
+  isTokenConstant,
   isTokenPreprocessor,
   isTokenTypeOrTypeQualifierKeyword,
 } from '../lexer/TokenType';
@@ -26,7 +27,8 @@ export default function getNextNonNewlineTokenType(
     }
     if (
       isTokenTypeOrTypeQualifierKeyword(type) ||
-      type === TokenType.identifier
+      type === TokenType.identifier ||
+      isTokenConstant(type)
     ) {
       return PrinterCategory.typeOrIdentifier;
     }
