@@ -16,11 +16,11 @@ export default class TokenArray {
     return this.values;
   }
 
-  public push(token: number): void {
+  public push(encodedToken: number): void {
     if (this.count === this.size) {
       this.resize();
     }
-    this.values[this.count++] = token;
+    this.values[this.count++] = encodedToken;
   }
 
   public resize(): void {

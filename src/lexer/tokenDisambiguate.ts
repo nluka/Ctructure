@@ -1,6 +1,7 @@
 import findFirstTokenTypeMatchAhead from './findFirstTokenTypeMatchAhead';
 import findFirstTokenTypeMatchBehind from './findFirstTokenTypeMatchBehind';
 import TokenArray from './TokenArray';
+import tokenDetermineLineNumAndColNum from './tokenDetermineLineNumAndCol';
 import TokenType, {
   isTokenBinaryOperator,
   isTokenConstant,
@@ -132,9 +133,8 @@ function createError(
   tokenIndex: number,
   tokens: TokenArray,
 ) {
+  const [lineNum, colNum] = tokenDetermineLineNumAndColNum(tokenIndex, tokens);
   return new Error(
-    `${tokenTypeToNameMap.get(tokenType)} at index ${
-      tokens.getTokenDecoded(tokenIndex)[0]
-    }`,
+    `${tokenTypeToNameMap.get(tokenType)} at line ${lineNum} col ${colNum}`,
   );
 }

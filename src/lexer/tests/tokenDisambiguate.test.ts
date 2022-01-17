@@ -572,6 +572,14 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorUnaryAddressOf, '(&"string"'
       );
+      assert(
+        [
+          TokenType.specialParenthesisOpening,
+          TokenType.ambiguousAmpersand,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryAddressOf, '(&a'
+      );
     });
   });
 });

@@ -1,50 +1,54 @@
-import TokenCategory from './TokenCategory';
+import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
+import tokenDetermineLineNumAndColNumRaw from './tokenDetermineLineNumAndColNumRaw';
 import TokenType from './TokenType';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 export default function tokenDetermineType(
   fileContents: string,
-  startIndex: number,
-  lastIndex: number,
-  category: TokenCategory,
+  tokenStartIndex: number,
+  tokenLastIndex: number,
+  tokenCategory: TokenCategory,
 ): TokenType {
-  switch (category) {
+  const createErr = () =>
+    createError(fileContents, tokenStartIndex, tokenLastIndex, tokenCategory);
+
+  switch (tokenCategory) {
     case TokenCategory.newline: {
       return TokenType.newline;
     }
 
     case TokenCategory.special: {
-      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error(`unknown special token: ${rawToken}`);
+        throw createErr();
       }
       return type;
     }
 
     case TokenCategory.prepro: {
-      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error(`unknown preprocessor token: ${rawToken}`);
+        throw createErr();
       }
       return type;
     }
 
     case TokenCategory.preproOrOperator: {
-      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       if (rawToken.match(/^<[a-zA-Z]+\.h>$/)) {
         return TokenType.preproStandardHeader;
       }
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error(`unknown operator token: ${rawToken}`);
+        throw createErr();
       }
       return type;
     }
 
     case TokenCategory.commentOrOperator: {
-      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type !== undefined) {
         return type;
@@ -58,16 +62,16 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.operator: {
-      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       if (type === undefined) {
-        throw new Error(`unknown operator token: ${rawToken}`);
+        throw createErr();
       }
       return type;
     }
 
     case TokenCategory.constant: {
-      const firstChar = fileContents.charAt(startIndex);
+      const firstChar = fileContents.charAt(tokenStartIndex);
       if (firstChar === '"') {
         return TokenType.constantString;
       }
@@ -78,7 +82,7 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
-      const rawToken = fileContents.slice(startIndex, lastIndex + 1);
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       if (rawToken.charAt(rawToken.length - 1) === ':') {
         return TokenType.label;
       }
@@ -93,4 +97,23 @@ export default function tokenDetermineType(
       return TokenType.identifier;
     }
   }
+}
+
+function createError(
+  fileContents: string,
+  tokenStartIndex: number,
+  tokenLastIndex: number,
+  tokenCategory: TokenCategory,
+) {
+  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+    fileContents,
+    tokenStartIndex,
+  );
+  return new Error(
+    `unable to determine type of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
+      tokenCategory,
+    )}, value = ${JSON.stringify(
+      fileContents.slice(tokenStartIndex, tokenLastIndex + 1),
+    )})`,
+  );
 }
