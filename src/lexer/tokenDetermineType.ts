@@ -3,6 +3,8 @@ import tokenDetermineLineNumAndColNumRaw from './tokenDetermineLineNumAndColNumR
 import TokenType from './TokenType';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
+const standardHeaderRegex = /^<[a-zA-Z0-9_\-/\\]+(\.h)|(\.c)>$/;
+
 export default function tokenDetermineType(
   fileContents: string,
   tokenStartIndex: number,
@@ -37,7 +39,7 @@ export default function tokenDetermineType(
 
     case TokenCategory.preproOrOperator: {
       const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      if (rawToken.match(/^<[a-zA-Z0-9/\\]+\.h>$/)) {
+      if (rawToken.match(standardHeaderRegex)) {
         return TokenType.preproStandardHeader;
       }
       const type = tokenValueToTypeMap.get(rawToken);

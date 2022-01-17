@@ -17,7 +17,9 @@ function handleFormatCurrentFile() {
   const currentFilePathname = vscode.window.activeTextEditor?.document.fileName;
 
   if (currentFilePathname === undefined) {
-    console.error('format failed: currentFilePathname is undefined');
+    console.error(
+      'Ctructure formatting failed: currentFilePathname is undefined',
+    );
     vscode.window.showErrorMessage(
       'Failed to format file: currentFilePathname is undefined',
     );
@@ -25,19 +27,28 @@ function handleFormatCurrentFile() {
   }
 
   try {
+    console.log('--------------------');
+    console.log('[Ctructure]');
+    console.log(`attempting to format file ${currentFilePathname}`);
+
     const formatted = format(currentFilePathname);
+
+    const fileWriteStartTime = Date.now();
     writeFile(currentFilePathname, formatted, (err) => {
       if (err !== null) {
         console.error('Ctructure writeFile failed:', err);
-        vscode.window.showErrorMessage(
-          `Ctructure failed to write file: ${err.message}`,
-        );
+        vscode.window.showErrorMessage(`Failed to write file: ${err.message}`);
         return;
       }
     });
+    const fileWriteEndTime = Date.now();
+    const fileWriteElapsedSecs = (fileWriteEndTime - fileWriteStartTime) / 1000;
+    console.log(`file write took ${fileWriteElapsedSecs}s`);
+
+    console.log('--------------------');
   } catch (err: any) {
     console.error('Ctructure file formatting failed:', err);
-    vscode.window.showErrorMessage(`Ctructure failed to format file: ${err.message}`);
+    vscode.window.showErrorMessage(`Failed to format file: ${err.message}`);
   }
 }
 

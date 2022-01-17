@@ -4,7 +4,6 @@ import TokenArray from './TokenArray';
 import tokenDetermineLineNumAndColNum from './tokenDetermineLineNumAndCol';
 import TokenType, {
   isTokenBinaryOperator,
-  isTokenConstant,
   isTokenNonMultiplicationOrIndirectionBinaryOperator,
   isTokenSpecialNonClosing,
 } from './TokenType';
@@ -71,10 +70,16 @@ export default function tokenDisambiguate(
     }
 
     case TokenType.ambiguousIncrement: {
-      if (firstTokenTypeAfterCurr === TokenType.identifier) {
+      if (
+        firstTokenTypeAfterCurr === TokenType.identifier ||
+        firstTokenTypeAfterCurr === TokenType.specialParenthesisOpening
+      ) {
         return TokenType.operatorUnaryArithmeticIncrementPrefix;
       }
-      if (firstTokenTypeBehindCurr === TokenType.identifier) {
+      if (
+        firstTokenTypeBehindCurr === TokenType.identifier ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing
+      ) {
         return TokenType.operatorUnaryArithmeticIncrementPostfix;
       }
       throw createErr();
@@ -105,10 +110,13 @@ export default function tokenDisambiguate(
 
     case TokenType.ambiguousAmpersand: {
       if (
-        (firstTokenTypeBehindCurr === TokenType.identifier ||
-          isTokenConstant(firstTokenTypeBehindCurr)) &&
-        (firstTokenTypeAfterCurr === TokenType.identifier ||
-          isTokenConstant(firstTokenTypeAfterCurr))
+        firstTokenTypeBehindCurr === TokenType.constantNumber ||
+        firstTokenTypeBehindCurr === TokenType.constantCharacter ||
+        firstTokenTypeAfterCurr === TokenType.constantNumber ||
+        firstTokenTypeAfterCurr === TokenType.constantCharacter ||
+        firstTokenTypeBehindCurr === TokenType.identifier ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketClosing
       ) {
         return TokenType.operatorBinaryBitwiseAnd;
       }

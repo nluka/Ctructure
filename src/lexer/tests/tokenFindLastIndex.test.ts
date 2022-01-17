@@ -74,9 +74,11 @@ describe('tokenFindLastIndex', () => {
     assertThrowsError('0123# ', 4, TokenCategory.prepro);
     assertThrowsError('0123# define PI 3.14', 4, TokenCategory.prepro);
     assert('##', 0, TokenCategory.prepro, 1);
+    assert(' ##ident', 1, TokenCategory.prepro, 2);
+    assert(' ##identifier', 1, TokenCategory.prepro, 2);
     assert(' \\\n', 1, TokenCategory.prepro, 1);
-    assert('#define', 0, TokenCategory.prepro, 6);
-    assert('0123#define', 4, TokenCategory.prepro, 10);
+    assert('#define ', 0, TokenCategory.prepro, 6);
+    assert('0123#define ', 4, TokenCategory.prepro, 10);
     assert('0123#define PI', 4, TokenCategory.prepro, 10);
     assert('0123#define PI 3.14', 4, TokenCategory.prepro, 10);
     assert('#include <stdio.h>', 0, TokenCategory.prepro, 7);

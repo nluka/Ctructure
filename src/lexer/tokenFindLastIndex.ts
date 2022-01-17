@@ -1,3 +1,4 @@
+import indexOfRegex from '../utility/indexOfRegex';
 import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
 import tokenDetermineLineNumAndColNumRaw from './tokenDetermineLineNumAndColNumRaw';
@@ -10,7 +11,8 @@ const multiLineCommentRegex = /\*/,
   minusMinusOrMinusEqualOrArrowRegex = /[\-=>]/,
   singleOrDoubleQuoteRegex = /["']/,
   alphanumericRegex = /[0-9a-zA-Z]/,
-  alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
+  alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/,
+  spaceOrTabOrNewlineRegex = /[ \t\n]/;
 
 export default function tokenFindLastIndex(
   fileContents: string,
@@ -28,19 +30,38 @@ export default function tokenFindLastIndex(
         // We have a line continuation
         return tokenStartIndex;
       }
-      const searchStartIndex = tokenStartIndex + 1;
-      const firstSpaceIndex = fileContents.indexOf(' ', searchStartIndex);
-      if (firstSpaceIndex === searchStartIndex) {
-        throw new Error('null preprocessor directives are not supported');
+      if (fileContents.charAt(tokenStartIndex + 1) === '#') {
+        // We have concat operator
+        return tokenStartIndex + 1;
       }
-      if (firstSpaceIndex === -1) {
+      const searchStartIndex = tokenStartIndex + 1;
+      const firstTerminatorIndex = indexOfRegex(
+        fileContents,
+        spaceOrTabOrNewlineRegex,
+        searchStartIndex,
+      );
+      if (firstTerminatorIndex === null) {
+        throw createErrorStandard(fileContents, tokenStartIndex, tokenCategory);
+      }
+      if (firstTerminatorIndex === searchStartIndex) {
+        throw createErrorNullPreproDirective(
+          fileContents,
+          tokenStartIndex,
+          tokenCategory,
+        );
+      }
+      if (firstTerminatorIndex === -1) {
         const lastFileIndex = fileContents.length - 1;
         if (lastFileIndex === tokenStartIndex) {
-          throw new Error('null preprocessor directives are not supported');
+          throw createErrorNullPreproDirective(
+            fileContents,
+            tokenStartIndex,
+            tokenCategory,
+          );
         }
         return lastFileIndex;
       }
-      return firstSpaceIndex - 1;
+      return firstTerminatorIndex - 1;
     }
 
     case TokenCategory.preproOrOperator: {
@@ -243,4 +264,36 @@ export default function tokenFindLastIndex(
       return fileContents.length - 1;
     }
   }
+}
+
+function createErrorStandard(
+  fileContents: string,
+  tokenStartIndex: number,
+  tokenCategory: TokenCategory,
+) {
+  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+    fileContents,
+    tokenStartIndex,
+  );
+  return new Error(
+    `unable to find last index of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+      tokenCategory,
+    )})`,
+  );
+}
+
+function createErrorNullPreproDirective(
+  fileContents: string,
+  tokenStartIndex: number,
+  tokenCategory: TokenCategory,
+) {
+  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+    fileContents,
+    tokenStartIndex,
+  );
+  return new Error(
+    `null preprocessor directives are not supported - found at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+      tokenCategory,
+    )})`,
+  );
 }

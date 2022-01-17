@@ -367,6 +367,30 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
+          TokenType.identifier,
+          TokenType.ambiguousIncrement,
+          TokenType.specialParenthesisClosing
+        ],
+        1, TokenType.operatorUnaryArithmeticIncrementPostfix, 'a++)'
+      );
+      assert(
+        [
+          TokenType.identifier,
+          TokenType.ambiguousIncrement,
+          TokenType.specialBracketClosing
+        ],
+        1, TokenType.operatorUnaryArithmeticIncrementPostfix, 'a++]'
+      );
+      assert(
+        [
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousIncrement,
+          TokenType.specialParenthesisClosing
+        ],
+        1, TokenType.operatorUnaryArithmeticIncrementPostfix, ')++)'
+      );
+      assert(
+        [
           TokenType.newline,
           TokenType.newline,
           TokenType.identifier,
@@ -553,6 +577,22 @@ describe('tokenDisambiguate', () => {
           TokenType.constantCharacter
         ],
         2, TokenType.operatorBinaryBitwiseAnd, "'a'\n&\n\n'b'"
+      );
+      assert(
+        [
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAmpersand,
+          TokenType.specialParenthesisOpening
+        ],
+        1, TokenType.operatorBinaryBitwiseAnd, ') & ('
+      );
+      assert(
+        [
+          TokenType.identifier,
+          TokenType.ambiguousAmpersand,
+          TokenType.specialParenthesisOpening
+        ],
+        1, TokenType.operatorBinaryBitwiseAnd, 'report_mask & ('
       );
     });
     describe('Address Of', () => {
