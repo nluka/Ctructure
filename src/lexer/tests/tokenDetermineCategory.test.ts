@@ -3,12 +3,12 @@ import tokenDetermineCategory from '../tokenDetermineCategory';
 
 describe('tokenDetermineCategory', () => {
   function assert(
-    firstCharOfToken: string,
+    fileContents: string,
     expectedCategory: TokenCategory,
-    firstIndexOfToken = 0,
+    tokenStartIndex = 0,
   ) {
-    test(`return ${expectedCategory} when firstCharOfToken=${firstCharOfToken}`, () => {
-      expect(tokenDetermineCategory(firstCharOfToken, firstIndexOfToken)).toBe(
+    test(`return ${expectedCategory} when firstChar=${JSON.stringify(fileContents.charAt(tokenStartIndex))}`, () => {
+      expect(tokenDetermineCategory(fileContents, tokenStartIndex)).toBe(
         expectedCategory,
       );
     });

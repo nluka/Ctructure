@@ -3,13 +3,13 @@ import tokenDecode from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import tokenFindLastIndex from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
-import PrinterCategory from './PrinterCategory';
+import areThereCommas from './areThereCommas';
 import getNextNonNewlineTokenType from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import isThereLineOverflow from './isThereLineOverflow';
+import PrinterCategory from './PrinterCategory';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
-import areThereCommas from './areThereCommas';
 
 export type ContextTypes = TokenType | PrinterCategory | null;
 
@@ -624,7 +624,10 @@ function extractStringFromFile(
     tokenFindLastIndex(
       fileContents,
       startIndex,
-      tokenDetermineCategory(fileContents.charAt(startIndex), startIndex),
+      tokenDetermineCategory(
+        fileContents,
+        startIndex,
+      ),
       prevTokenType,
     ) + 1,
   );

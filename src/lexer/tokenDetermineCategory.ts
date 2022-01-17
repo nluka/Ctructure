@@ -1,4 +1,5 @@
 import TokenCategory from './TokenCategory';
+import tokenDetermineLineNumAndColNumRaw from './tokenDetermineLineNumAndColNumRaw';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 const preproRegex = /^[#\\]/,
@@ -10,46 +11,45 @@ const preproRegex = /^[#\\]/,
 
 /**
  * Determines the category of a token based on its first character.
- * @param tokenStart A string that begins with the first character of the token.
- * @param tokenStartIndex The starting index of the token.
- * @returns The category of the token - throws `TokenCategoryDeterminationError`
- * if category cannot be determined.
+ * @param fileContents
+ * @param tokenStartIndex The index of the first char in `fileContents`.
  */
 export default function tokenDetermineCategory(
-  tokenStart: string,
+  fileContents: string,
   tokenStartIndex: number,
 ): TokenCategory {
-  if (tokenStart.charAt(0) === '\n') {
+  const tokenFirstChar = fileContents.charAt(tokenStartIndex);
+
+  if (tokenFirstChar.charAt(0) === '\n') {
     return TokenCategory.newline;
   }
-  if (tokenStart.match(preproRegex)) {
+  if (tokenFirstChar.match(preproRegex)) {
     return TokenCategory.prepro;
   }
-  if (tokenStart.match(preproOrOperatorRegex)) {
+  if (tokenFirstChar.match(preproOrOperatorRegex)) {
     return TokenCategory.preproOrOperator;
   }
-  if (tokenStart.match(commentOrOperatorRegex)) {
+  if (tokenFirstChar.match(commentOrOperatorRegex)) {
     return TokenCategory.commentOrOperator;
   }
-  if (tokenStart.match(preproMacroOrKeywordOrIdentifierOrLabelRegex)) {
+  if (tokenFirstChar.match(preproMacroOrKeywordOrIdentifierOrLabelRegex)) {
     return TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel;
   }
-  if (tokenStart.match(constantRegex)) {
+  if (tokenFirstChar.match(constantRegex)) {
     return TokenCategory.constant;
   }
-  if (tokenStart.match(operatorRegex)) {
+  if (tokenFirstChar.match(operatorRegex)) {
     return TokenCategory.operator;
   }
-  if (tokenValueToTypeMap.get(tokenStart) !== undefined) {
+  if (tokenValueToTypeMap.get(tokenFirstChar) !== undefined) {
     return TokenCategory.special;
   }
 
-  throw new TokenCategoryDeterminationError(tokenStartIndex, tokenStart);
-}
-
-export class TokenCategoryDeterminationError {
-  constructor(
-    public readonly tokenStartIndex: number,
-    public readonly tokenFirstChar: string,
-  ) {}
+  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+    fileContents,
+    tokenStartIndex,
+  );
+  throw new Error(
+    `unable to determine category of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, firstChar = ${tokenFirstChar})`,
+  );
 }

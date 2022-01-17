@@ -19,7 +19,7 @@ describe('format', () => {
         debugLogFormatResult(formatResult.formatted);
       }
 
-      expect(formatResult).toBe(expected !== undefined ? expected : fileContents);
+      expect(formatResult.formatted).toBe(expected !== undefined ? expected : fileContents);
     });
   }
 

@@ -19,7 +19,7 @@ export default class Tokenizer {
     }
 
     const tokenCategory = tokenDetermineCategory(
-      this.fileContents.charAt(this.cursorPosition),
+      this.fileContents,
       this.cursorPosition,
     );
 
