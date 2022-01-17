@@ -113,6 +113,7 @@ const tokenValueToTypeMap = new Map<string, TokenType>([
   ['.', TokenType.operatorMemberSelectionDirect],
   ['->', TokenType.operatorMemberSelectionIndirect],
   ['?', TokenType.operatorTernaryQuestion],
+  ['...', TokenType.operatorEllipses],
   [':', TokenType.ambiguousColon],
 
   // Special

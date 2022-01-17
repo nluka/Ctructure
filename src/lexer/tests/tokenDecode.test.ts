@@ -16,8 +16,8 @@ describe('tokenDecode', () => {
   }
 
   // same cases from `tokenEncode.test.ts` but reversed
-  assert(0, 0, TokenType.preproDirectiveInclude);
-  assert(1793, 14, TokenType.preproDirectiveDefine);
-  assert(2_668_525, 20_847, TokenType.specialParenthesisOpening);
-  assert(-2, 33_554_431, TokenType.ambiguousColon);
+  assert(0, 0, 0);
+  assert(1793, 14, 1);
+  assert(2_668_525, 20_847, 109);
+  assert(-1, 33_554_431, 127);
 });

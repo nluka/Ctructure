@@ -134,6 +134,7 @@ enum TokenType {
     operatorMemberSelectionDirect, // Dot (.) https://www.geeksforgeeks.org/dot-operator-in-c-c/
     operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
     operatorTernaryQuestion,
+    operatorEllipses,
   //#endregion Operators
 
   //#region Special

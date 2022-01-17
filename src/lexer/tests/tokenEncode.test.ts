@@ -17,17 +17,17 @@ describe('tokenEncode', () => {
 
   // // 0                         0
   // // 0000000000000000000000000 0000000 = 0
-  assert(0, TokenType.preproDirectiveInclude, 0);
+  assert(0, 0, 0);
 
   // // 14                        1
   // // 0000000000000000000001110 0000001 = 1793
-  assert(14, TokenType.preproDirectiveDefine, 1793);
+  assert(14, 1, 1793);
 
   // // 20_847                    109
   // // 0000000000101000101101111 1101101 = 2_668_525
-  assert(20_847, TokenType.specialParenthesisOpening, 2_668_525);
+  assert(20_847, 109, 2_668_525);
 
-  // // 33_554_431                126
-  // // 1111111111111111111111111 1111110 = -2
-  assert(33_554_431, TokenType.ambiguousColon, -2);
+  // // 33_554_431                127
+  // // 1111111111111111111111111 1111111 = -1
+  assert(33_554_431, 127, -1);
 });

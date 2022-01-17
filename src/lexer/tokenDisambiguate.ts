@@ -94,7 +94,8 @@ export default function tokenDisambiguate(
         isTokenSpecialNonClosing(firstTokenTypeBehindCurr) ||
         isTokenNonMultiplicationOrIndirectionBinaryOperator(
           firstTokenTypeBehindCurr,
-        )
+        ) ||
+        firstTokenTypeBehindCurr === TokenType.keywordSizeof
       ) {
         return TokenType.operatorUnaryDereference;
       }

@@ -90,6 +90,7 @@ describe('tokenDetermineCategory', () => {
       assert('->', TokenCategory.operator);
       assert('?', TokenCategory.operator);
       assert(':', TokenCategory.operator);
+      assert('...', TokenCategory.operator);
     });
   });
 

@@ -487,6 +487,14 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorUnaryDereference, '+ *a'
       );
+      assert(
+        [
+          TokenType.keywordSizeof,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryDereference, 'sizeof *a'
+      );
     });
 
     describe('Multiplication or Indirection', () => {

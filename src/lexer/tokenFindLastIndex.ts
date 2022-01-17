@@ -3,7 +3,8 @@ import TokenCategory from './TokenCategory';
 import TokenType from './TokenType';
 
 const multiLineCommentRegex = /\*/,
-  singleCharOperatorRegex = /[.?:~]/,
+  singleCharOperatorRegex = /[?:~]/,
+  // singleCharOperatorRegex = /[.?:~]/,
   plusPlusOrPlusEqualRegex = /[+=]/,
   minusMinusOrMinusEqualOrArrowRegex = /[\-=>]/,
   singleOrDoubleQuoteRegex = /["']/,
@@ -116,6 +117,7 @@ export default function tokenFindLastIndex(
           }
           return startIndex;
         }
+
         case '-': {
           const secondChar = fileContents.charAt(startIndex + 1);
           if (secondChar.match(minusMinusOrMinusEqualOrArrowRegex)) {
@@ -124,6 +126,7 @@ export default function tokenFindLastIndex(
           }
           return startIndex;
         }
+
         case '/': /* falls through */
         case '*': /* falls through */
         case '%': /* falls through */
@@ -134,6 +137,7 @@ export default function tokenFindLastIndex(
           const secondChar = fileContents.charAt(secondCharIndex);
           return secondChar === '=' ? secondCharIndex : startIndex;
         }
+
         case '>': {
           const secondCharIndex = startIndex + 1;
           const secondChar = fileContents.charAt(secondCharIndex);
@@ -153,6 +157,7 @@ export default function tokenFindLastIndex(
           }
           return startIndex;
         }
+
         case '&': /* falls through */
         case '|': {
           const secondCharIndex = startIndex + 1;
@@ -160,6 +165,14 @@ export default function tokenFindLastIndex(
           if (secondChar === firstChar || secondChar === '=') {
             // We have && or &= or || or |=
             return secondCharIndex;
+          }
+          return startIndex;
+        }
+
+        case '.': {
+          const firstThreeChars = fileContents.slice(startIndex, startIndex + 3);
+          if (firstThreeChars === '...') {
+            return startIndex + 2;
           }
           return startIndex;
         }

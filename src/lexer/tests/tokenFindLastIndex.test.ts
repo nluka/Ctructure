@@ -165,133 +165,167 @@ describe('tokenFindLastIndex', () => {
     });
 
     describe('Logical', () => {
-      assert('!', 0, TokenCategory.operator, 0);
-      assert('! ', 0, TokenCategory.operator, 0);
-      assert('!!a', 0, TokenCategory.operator, 0);
-      assert('!!a', 1, TokenCategory.operator, 1);
-
-      assert('&&', 0, TokenCategory.operator, 1);
-      assert('&& ', 0, TokenCategory.operator, 1);
-      assert('a&&b', 1, TokenCategory.operator, 2);
-      assert('a && 1', 2, TokenCategory.operator, 3);
-
-      assert('||', 0, TokenCategory.operator, 1);
-      assert('|| ', 0, TokenCategory.operator, 1);
-      assert('a||b', 1, TokenCategory.operator, 2);
-      assert('a || 1', 2, TokenCategory.operator, 3);
+      describe('Negation', () => {
+        assert('!', 0, TokenCategory.operator, 0);
+        assert('! ', 0, TokenCategory.operator, 0);
+        assert('!!a', 0, TokenCategory.operator, 0);
+        assert('!!a', 1, TokenCategory.operator, 1);
+      });
+      describe('And', () => {
+        assert('&&', 0, TokenCategory.operator, 1);
+        assert('&& ', 0, TokenCategory.operator, 1);
+        assert('a&&b', 1, TokenCategory.operator, 2);
+        assert('a && 1', 2, TokenCategory.operator, 3);
+      });
+      describe('Or', () => {
+        assert('||', 0, TokenCategory.operator, 1);
+        assert('|| ', 0, TokenCategory.operator, 1);
+        assert('a||b', 1, TokenCategory.operator, 2);
+        assert('a || 1', 2, TokenCategory.operator, 3);
+      });
     });
 
     describe('Comparison', () => {
-      assert('==', 0, TokenCategory.operator, 1);
-      assert('== ', 0, TokenCategory.operator, 1);
-      assert('==b', 0, TokenCategory.operator, 1);
-      assert('==1', 0, TokenCategory.operator, 1);
-
-      assert('!=', 0, TokenCategory.operator, 1);
-      assert('!= ', 0, TokenCategory.operator, 1);
-      assert('!=b', 0, TokenCategory.operator, 1);
-      assert('!=1', 0, TokenCategory.operator, 1);
-
-      assert('>', 0, TokenCategory.operator, 0);
-      assert('> ', 0, TokenCategory.operator, 0);
-      assert('>b', 0, TokenCategory.operator, 0);
-      assert('>1', 0, TokenCategory.operator, 0);
-
-      assert('>=', 0, TokenCategory.operator, 1);
-      assert('>= ', 0, TokenCategory.operator, 1);
-      assert('>=b', 0, TokenCategory.operator, 1);
-      assert('>=1', 0, TokenCategory.operator, 1);
+      describe('EqualTo', () => {
+        assert('==', 0, TokenCategory.operator, 1);
+        assert('== ', 0, TokenCategory.operator, 1);
+        assert('==b', 0, TokenCategory.operator, 1);
+        assert('==1', 0, TokenCategory.operator, 1);
+      });
+      describe('NotEqualTo', () => {
+        assert('!=', 0, TokenCategory.operator, 1);
+        assert('!= ', 0, TokenCategory.operator, 1);
+        assert('!=b', 0, TokenCategory.operator, 1);
+        assert('!=1', 0, TokenCategory.operator, 1);
+      });
+      describe('GreaterThan', () => {
+        assert('>', 0, TokenCategory.operator, 0);
+        assert('> ', 0, TokenCategory.operator, 0);
+        assert('>b', 0, TokenCategory.operator, 0);
+        assert('>1', 0, TokenCategory.operator, 0);
+      });
+      describe('GreaterThanOrEqualTo', () => {
+        assert('>=', 0, TokenCategory.operator, 1);
+        assert('>= ', 0, TokenCategory.operator, 1);
+        assert('>=b', 0, TokenCategory.operator, 1);
+        assert('>=1', 0, TokenCategory.operator, 1);
+      });
     });
 
-    describe('', () => {
-      assert('~a', 0, TokenCategory.operator, 0);
-      assert('~ ', 0, TokenCategory.operator, 0);
-      assert('~\n', 0, TokenCategory.operator, 0);
-
-      assert('a&b', 1, TokenCategory.operator, 1);
-      assert('a&1', 1, TokenCategory.operator, 1);
-      assert('a & b', 2, TokenCategory.operator, 2);
-      assert('a &\nb', 2, TokenCategory.operator, 2);
-
-      assert('a|b', 1, TokenCategory.operator, 1);
-      assert('a|1', 1, TokenCategory.operator, 1);
-      assert('a | b', 2, TokenCategory.operator, 2);
-      assert('a |\nb', 2, TokenCategory.operator, 2);
+    describe('Bitwise', () => {
+      describe('OnesComplements', () => {
+        assert('~a', 0, TokenCategory.operator, 0);
+        assert('~ ', 0, TokenCategory.operator, 0);
+        assert('~\n', 0, TokenCategory.operator, 0);
+      });
+      describe('And', () => {
+        assert('a&b', 1, TokenCategory.operator, 1);
+        assert('a&1', 1, TokenCategory.operator, 1);
+        assert('a & b', 2, TokenCategory.operator, 2);
+        assert('a &\nb', 2, TokenCategory.operator, 2);
+      });
+      describe('Or', () => {
+        assert('a|b', 1, TokenCategory.operator, 1);
+        assert('a|1', 1, TokenCategory.operator, 1);
+        assert('a | b', 2, TokenCategory.operator, 2);
+        assert('a |\nb', 2, TokenCategory.operator, 2);
+      });
     });
 
     describe('Assignment', () => {
-      assert('=', 0, TokenCategory.operator, 0);
-      assert('=b', 0, TokenCategory.operator, 0);
-      assert('=1', 0, TokenCategory.operator, 0);
-      assert('= ', 0, TokenCategory.operator, 0);
-
-      assert('+=', 0, TokenCategory.operator, 1);
-      assert('+=b', 0, TokenCategory.operator, 1);
-      assert('+=1', 0, TokenCategory.operator, 1);
-      assert('+= ', 0, TokenCategory.operator, 1);
-
-      assert('-=', 0, TokenCategory.operator, 1);
-      assert('-=b', 0, TokenCategory.operator, 1);
-      assert('-=1', 0, TokenCategory.operator, 1);
-      assert('-= ', 0, TokenCategory.operator, 1);
-
-      assert('*=', 0, TokenCategory.operator, 1);
-      assert('*=b', 0, TokenCategory.operator, 1);
-      assert('*=1', 0, TokenCategory.operator, 1);
-      assert('*= ', 0, TokenCategory.operator, 1);
-
-      assert('%=', 0, TokenCategory.operator, 1);
-      assert('%=b', 0, TokenCategory.operator, 1);
-      assert('%=1', 0, TokenCategory.operator, 1);
-      assert('%= ', 0, TokenCategory.operator, 1);
-
-      assert('>>=', 0, TokenCategory.operator, 2);
-      assert('>>=b', 0, TokenCategory.operator, 2);
-      assert('>>=1', 0, TokenCategory.operator, 2);
-      assert('>>= ', 0, TokenCategory.operator, 2);
-
-      assert('&=', 0, TokenCategory.operator, 1);
-      assert('&=b', 0, TokenCategory.operator, 1);
-      assert('&=1', 0, TokenCategory.operator, 1);
-      assert('&= ', 0, TokenCategory.operator, 1);
-
-      assert('|=', 0, TokenCategory.operator, 1);
-      assert('|=b', 0, TokenCategory.operator, 1);
-      assert('|=1', 0, TokenCategory.operator, 1);
-      assert('|= ', 0, TokenCategory.operator, 1);
-
-      assert('^=', 0, TokenCategory.operator, 1);
-      assert('^=b', 0, TokenCategory.operator, 1);
-      assert('^=1', 0, TokenCategory.operator, 1);
-      assert('^= ', 0, TokenCategory.operator, 1);
+      describe('Direct', () => {
+        assert('=', 0, TokenCategory.operator, 0);
+        assert('=b', 0, TokenCategory.operator, 0);
+        assert('=1', 0, TokenCategory.operator, 0);
+        assert('= ', 0, TokenCategory.operator, 0);
+      });
+      describe('Addition', () => {
+        assert('+=', 0, TokenCategory.operator, 1);
+        assert('+=b', 0, TokenCategory.operator, 1);
+        assert('+=1', 0, TokenCategory.operator, 1);
+        assert('+= ', 0, TokenCategory.operator, 1);
+      });
+      describe('Subtraction', () => {
+        assert('-=', 0, TokenCategory.operator, 1);
+        assert('-=b', 0, TokenCategory.operator, 1);
+        assert('-=1', 0, TokenCategory.operator, 1);
+        assert('-= ', 0, TokenCategory.operator, 1);
+      });
+      describe('Multiplication', () => {
+        assert('*=', 0, TokenCategory.operator, 1);
+        assert('*=b', 0, TokenCategory.operator, 1);
+        assert('*=1', 0, TokenCategory.operator, 1);
+        assert('*= ', 0, TokenCategory.operator, 1);
+      });
+      describe('Modulo', () => {
+        assert('%=', 0, TokenCategory.operator, 1);
+        assert('%=b', 0, TokenCategory.operator, 1);
+        assert('%=1', 0, TokenCategory.operator, 1);
+        assert('%= ', 0, TokenCategory.operator, 1);
+      });
+      describe('BitwiseShiftRight', () => {
+        assert('>>=', 0, TokenCategory.operator, 2);
+        assert('>>=b', 0, TokenCategory.operator, 2);
+        assert('>>=1', 0, TokenCategory.operator, 2);
+        assert('>>= ', 0, TokenCategory.operator, 2);
+      });
+      describe('BitwiseAnd', () => {
+        assert('&=', 0, TokenCategory.operator, 1);
+        assert('&=b', 0, TokenCategory.operator, 1);
+        assert('&=1', 0, TokenCategory.operator, 1);
+        assert('&= ', 0, TokenCategory.operator, 1);
+      });
+      describe('BitwiseOr', () => {
+        assert('|=', 0, TokenCategory.operator, 1);
+        assert('|=b', 0, TokenCategory.operator, 1);
+        assert('|=1', 0, TokenCategory.operator, 1);
+        assert('|= ', 0, TokenCategory.operator, 1);
+      });
+      describe('BitwiseXor', () => {
+        assert('^=', 0, TokenCategory.operator, 1);
+        assert('^=b', 0, TokenCategory.operator, 1);
+        assert('^=1', 0, TokenCategory.operator, 1);
+        assert('^= ', 0, TokenCategory.operator, 1);
+      });
     });
+  });
 
-    describe('Other', () => {
+  describe('Other', () => {
+    describe('Asterisk', () => {
       assert('*', 0, TokenCategory.operator, 0);
       assert('**a', 0, TokenCategory.operator, 0);
       assert('**a', 1, TokenCategory.operator, 1);
       assert('int *const', 4, TokenCategory.operator, 4);
       assert('int * const', 4, TokenCategory.operator, 4);
-
+    });
+    describe('Ampersand', () => {
       assert('&', 0, TokenCategory.operator, 0);
       assert('& ', 0, TokenCategory.operator, 0);
       assert('&a);', 0, TokenCategory.operator, 0);
-
+    });
+    describe('MemberSelectionDirect', () => {
       assert('.', 0, TokenCategory.operator, 0);
       assert('a.b', 1, TokenCategory.operator, 1);
       assert('a. b', 1, TokenCategory.operator, 1);
       assert('a.\nb', 1, TokenCategory.operator, 1);
-
+    });
+    describe('MemberSelectionIndirect', () => {
       assert('->', 0, TokenCategory.operator, 1);
       assert('a->b', 1, TokenCategory.operator, 2);
       assert('a-> b', 1, TokenCategory.operator, 2);
       assert('a->\nb', 1, TokenCategory.operator, 2);
-
+    });
+    describe('TernaryQuestion', () => {
       assert('?', 0, TokenCategory.operator, 0);
       assert('a?b', 1, TokenCategory.operator, 1);
       assert('a? b', 1, TokenCategory.operator, 1);
       assert('a?\nb', 1, TokenCategory.operator, 1);
-
+    });
+    describe('Ellipses', () => {
+      assert('...', 0, TokenCategory.operator, 2);
+      assert(' ... ', 1, TokenCategory.operator, 3);
+    });
+    describe('Colon', () => {
       assert(':', 0, TokenCategory.operator, 0);
       assert('a :b', 2, TokenCategory.operator, 2);
       assert('a : b', 2, TokenCategory.operator, 2);
@@ -374,7 +408,6 @@ describe('tokenFindLastIndex', () => {
       assert('__TIME__;', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 7);
       assert('__TIMESTAMP__', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 12);
     });
-
     describe('Identifiers', () => {
       assert('money', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
       assert('[i++]', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 1);
@@ -384,7 +417,6 @@ describe('tokenFindLastIndex', () => {
       assert('struct my_struct{\n', 7, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 15);
       assert('myVar;', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
     });
-
     describe('Labels', () => {
       assert('\nend:\n', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
       assert('\nbreak_out:\n', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 10);
