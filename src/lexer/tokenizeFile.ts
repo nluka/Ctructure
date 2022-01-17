@@ -18,9 +18,15 @@ const MAX_25_BIT_UNSIGNED_VALUE = 33_554_431;
  */
 export function tokenizeFile(filePathname: string): [string, TokenArray] {
   const fileBuffer = readFileSync(filePathname);
-  console.log(`file length: ${fileBuffer.length} bytes`);
+  console.log(
+    `file size: ${fileBuffer.length} bytes (${(
+      fileBuffer.length /
+      1024 /
+      1024
+    ).toFixed(6)} MB)`,
+  );
   if (fileBuffer.length * 8 > MAX_25_BIT_UNSIGNED_VALUE + 1) {
-    throw new Error('files larger than 4MB are not supported');
+    throw new Error('files larger than 4 MB are not supported');
   }
   const fileContents = removeCarriageReturns(fileBuffer.toString());
   const tokenizer = new Tokenizer(fileContents);
