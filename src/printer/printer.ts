@@ -446,7 +446,9 @@ export default function printer(
       case TokenType.keywordStruct:
       case TokenType.keywordSwitch:
       case TokenType.keywordUnion:
-        context = currTokenType;
+        if (parenCount === 0) {
+          context = currTokenType;
+        }
         if (previousType === TokenType.specialParenthesisClosing) {
           currString = ' ' + currString;
         }
@@ -479,8 +481,10 @@ export default function printer(
         break;
 
       case TokenType.keywordEnum:
-        context = TokenType.keywordEnum;
-        overflow = true;
+        if (parenCount === 0) {
+          context = TokenType.keywordEnum;
+          overflow = true;
+        }
         break;
 
       // Other
