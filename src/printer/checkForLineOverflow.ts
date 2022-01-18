@@ -3,7 +3,7 @@ import TokenType, { isTokenBinaryOperator } from '../lexer/TokenType';
 import PrinterCategory from './PrinterCategory';
 import { ContextTypes } from './printer';
 
-export default function isThereLineOverflow(
+export default function checkForLineOverflow(
   fileContents: string,
   context: ContextTypes,
   tokens: Uint32Array,

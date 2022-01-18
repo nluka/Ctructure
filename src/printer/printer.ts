@@ -6,7 +6,7 @@ import TokenType from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
 import getNextNonNewlineTokenType from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
-import isThereLineOverflow from './isThereLineOverflow';
+import checkForLineOverflow from './checkForLineOverflow';
 import PrinterCategory from './PrinterCategory';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
@@ -24,7 +24,11 @@ export default function printer(
   // If true (due to line overflow), the line will split where it's appropriate.
   let overflow: boolean = false;
 
+  // When true, a new line will be added after the current token
   let newline: boolean = false;
+
+  // When true, no extra new lines for are allowed
+  let noExtraNewline: boolean = false;
 
   // Current indentation level
   let blockLevel: number = 0;
@@ -38,14 +42,16 @@ export default function printer(
   // Does not include newlines
   let nextTokenType: ContextTypes;
 
+  // Previous token's type
   let previousType: ContextTypes = null;
 
   // Determines how a token should behave
   let context: ContextTypes = null;
 
+  // Used to store context when opening parentheses/braces/brackets are present
   let contextStack: Stack = new Stack();
 
-  // Holds the popped context, used when closing parentheses/braces/brackets are present
+  // Holds the popped context from contextStack
   let previousContext: {
     context: ContextTypes;
     overflow: boolean;
@@ -55,7 +61,34 @@ export default function printer(
   // Used in determining if there is line overflow
   let startLineIndex: number = tokenDecode(tokens[0])[0];
 
+  // Final string to be printed
   let formattedFileStr: string = '';
+
+  function isThereLineOverflow(i: number, overflowType: ContextTypes): boolean {
+    overflow = checkForLineOverflow(
+      fileContents,
+      overflowType,
+      tokens,
+      i,
+      startLineIndex,
+    );
+    return overflow;
+  }
+
+  function extractStringFromFile(
+    startIndex: number,
+    prevTokenType: TokenType | null,
+  ): string {
+    return fileContents.slice(
+      startIndex,
+      tokenFindLastIndex(
+        fileContents,
+        startIndex,
+        tokenDetermineCategory(fileContents, startIndex),
+        prevTokenType,
+      ) + 1,
+    );
+  }
 
   for (
     let i = 0;
@@ -65,30 +98,32 @@ export default function printer(
     const [currTokenStartIndex, currTokenType] = tokenDecode(tokens[i]);
     const typeAsValue = tokenTypeToValueMap.get(currTokenType);
 
-    if (typeAsValue) {
-      currString += typeAsValue;
-    }
+    currString += typeAsValue;
     if (newline && currTokenType !== TokenType.commentSingleline) {
       if (
         currTokenType === TokenType.newline &&
-        tokenDecode(tokens[i + 1])[1] === TokenType.newline
+        tokenDecode(tokens[i + 1])[1] === TokenType.newline &&
+        !noExtraNewline
       ) {
         currString = '\n\n' + indentation.repeat(blockLevel) + currString;
       } else {
         currString = '\n' + indentation.repeat(blockLevel) + currString;
       }
+      noExtraNewline = false;
       newline = false;
-      startLineIndex = currTokenStartIndex - blockLevel * indentation.length;
+      startLineIndex = currTokenStartIndex - blockLevel * spaceAmount;
     }
 
     switch (currTokenType) {
       case TokenType.newline:
         if (
           context === PrinterCategory.prepro &&
-          previousType !== TokenType.preproLineContinuation
+          previousType !== TokenType.preproLineContinuation &&
+          previousType !== TokenType.commentMultiline &&
+          previousType !== TokenType.commentSingleline
         ) {
           if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
-            formattedFileStr += '\n';
+            currString += '\n';
           }
           newline = true;
           context = null;
@@ -118,7 +153,11 @@ export default function printer(
           --blockLevel;
           newline = true;
           context = null;
-        } else if (context === PrinterCategory.variableDecl) {
+        } else if (
+          context === PrinterCategory.variableDecl ||
+          context === TokenType.keywordStruct ||
+          context === TokenType.keywordEnum
+        ) {
           newline = true;
           context = null;
         } else if (context === TokenType.keywordFor) {
@@ -134,14 +173,7 @@ export default function printer(
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.variableDecl;
         }
-        overflow = isThereLineOverflow(
-          fileContents,
-          TokenType.specialBracketOpening,
-          tokens,
-          i,
-          startLineIndex,
-        );
-        if (overflow) {
+        if (isThereLineOverflow(i, currTokenType)) {
           ++blockLevel;
           newline = true;
         }
@@ -167,68 +199,52 @@ export default function printer(
         } else if (context !== TokenType.keywordFor) {
           context = null;
         }
-        overflow = isThereLineOverflow(
-          fileContents,
-          context,
-          tokens,
-          i,
-          startLineIndex,
-        );
-        if (overflow) {
+
+        if (isThereLineOverflow(i, context)) {
           newline = true;
           ++blockLevel;
         }
         break;
 
       case TokenType.specialParenthesisClosing:
-        --parenCount;
-        previousContext = contextStack.pop();
         if (overflow) {
           currString = `\n${indentation.repeat(--blockLevel)})`;
           startLineIndex = currTokenStartIndex;
         }
+        --parenCount;
+        previousContext = contextStack.pop();
+        overflow = previousContext.overflow;
+        blockLevel = previousContext.blockLevel;
         if (
           previousContext.context === TokenType.keywordFor &&
           parenCount === 0
         ) {
           context = null;
-        } else {
-          context = previousContext.context;
-        }
-        overflow = previousContext.overflow;
-        blockLevel = previousContext.blockLevel;
-        nextTokenType = getNextNonNewlineTokenType(tokens, i);
-        if (context === TokenType.keywordIf) {
-          if (nextTokenType !== TokenType.specialBraceOpening) {
+        } else if (previousContext.context === TokenType.keywordIf) {
+          if (
+            getNextNonNewlineTokenType(tokens, i) !==
+            TokenType.specialBraceOpening
+          ) {
             context = PrinterCategory.singleLineIf;
             ++blockLevel;
-            formattedFileStr += currString;
-            previousType = currTokenType;
-            currString = '\n' + indentation.repeat(blockLevel);
-            startLineIndex =
-              tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
-            continue;
+            newline = true;
+            noExtraNewline = true;
+          } else {
+            context = null;
           }
-          context = null;
+        } else {
+          context = previousContext.context;
         }
         break;
 
       case TokenType.specialBraceOpening:
         contextStack.push({ context, overflow, blockLevel });
         if (
-          context === PrinterCategory.variableDecl ||
-          context === PrinterCategory.multiVariableDecl ||
+          previousType === TokenType.operatorBinaryAssignmentDirect ||
           context === PrinterCategory.array
         ) {
           context = PrinterCategory.array;
-          overflow = isThereLineOverflow(
-            fileContents,
-            PrinterCategory.array,
-            tokens,
-            i,
-            startLineIndex,
-          );
-          if (!overflow) {
+          if (!isThereLineOverflow(i, context)) {
             currString += ' ';
             break;
           }
@@ -237,12 +253,8 @@ export default function printer(
           currString = ' ' + currString;
         }
         ++blockLevel;
-        formattedFileStr += currString;
-        previousType = currTokenType;
-        currString = '\n' + indentation.repeat(blockLevel);
-        startLineIndex =
-          tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
-        continue;
+        newline = true;
+        break;
 
       case TokenType.specialBraceClosing:
         previousContext = contextStack.pop();
@@ -252,25 +264,15 @@ export default function printer(
           if (!overflow) {
             currString = ' }';
           }
-          context = previousContext.context;
+        } else if (
+          previousContext.context === TokenType.keywordStruct ||
+          previousContext.context === TokenType.keywordEnum
+        ) {
+          currString += ' ';
         } else {
-          if (
-            previousContext.context === TokenType.keywordDo ||
-            previousContext.context === TokenType.keywordEnum ||
-            previousContext.context === TokenType.keywordStruct ||
-            previousContext.context === TokenType.keywordUnion
-          ) {
-            if (
-              getNextNonNewlineTokenType(tokens, i) !==
-              TokenType.specialSemicolon
-            ) {
-              currString += ' ';
-            }
-          } else {
-            newline = true;
-          }
-          context = null;
+          newline = true;
         }
+        context = previousContext.context;
         overflow = previousContext.overflow;
         break;
 
@@ -375,17 +377,10 @@ export default function printer(
           nextTokenType = getNextNonNewlineTokenType(tokens, i);
           if (
             nextTokenType !== PrinterCategory.typeOrIdentifier &&
-            nextTokenType !== TokenType.specialBraceOpening &&
             getNextNonNewlineTokenType(tokens, i, 2) !==
               TokenType.specialParenthesisOpening &&
             !areThereCommas(tokens, i) &&
-            isThereLineOverflow(
-              fileContents,
-              TokenType.operatorBinaryAssignmentDirect,
-              tokens,
-              i,
-              startLineIndex,
-            )
+            isThereLineOverflow(i, TokenType.operatorBinaryAssignmentDirect)
           ) {
             currString = ' =\n' + indentation.repeat(blockLevel + 1);
           }
@@ -412,9 +407,17 @@ export default function printer(
       // Keywords (https://en.cppreference.com/w/c/keyword)
       case TokenType.keywordElse:
         context = TokenType.keywordElse;
-        currString = ' else';
-        if (getNextNonNewlineTokenType(tokens, i) === TokenType.keywordIf) {
+        if (previousType === TokenType.specialBraceClosing) {
+          currString = ' else';
+        }
+        nextTokenType = getNextNonNewlineTokenType(tokens, i);
+        if (nextTokenType === TokenType.keywordIf) {
           currString += ' ';
+        } else if (nextTokenType !== TokenType.specialBraceOpening) {
+          context = PrinterCategory.singleLineIf;
+          newline = true;
+          noExtraNewline = true;
+          ++blockLevel;
         }
         break;
 
@@ -454,8 +457,8 @@ export default function printer(
         context = currTokenType;
         previousContext = contextStack.peek();
         currString = `\n${
-          (indentation.repeat(previousContext.blockLevel + 1),
-          tokenTypeToValueMap.get(currTokenType))
+          indentation.repeat(previousContext.blockLevel + 1) +
+          tokenTypeToValueMap.get(currTokenType)
         }`;
         blockLevel = previousContext.blockLevel + 2;
         break;
@@ -471,36 +474,18 @@ export default function printer(
       case TokenType.keywordWhile:
         if (context === TokenType.keywordDo) {
           currString = ' while ';
+          context = null;
         }
-        break;
-
-      case TokenType.keywordStatic:
-      case TokenType.keywordUnsigned:
-      case TokenType.keywordAtomic:
-      case TokenType.keywordConst:
-      case TokenType.keywordVolatile:
-      case TokenType.keywordAlignas:
-      case TokenType.keywordAlignof:
-      case TokenType.keywordAuto:
-      case TokenType.keywordComplex:
-      case TokenType.keywordExtern:
-      case TokenType.keywordGeneric:
-      case TokenType.keywordGoto:
-      case TokenType.keywordTypedef:
-      case TokenType.keywordSizeof:
-        currString += ' ';
         break;
 
       case TokenType.keywordEnum:
         context = TokenType.keywordEnum;
         overflow = true;
-        currString += ' ';
         break;
 
       // Other
       case TokenType.label:
         const extractedLabel = extractStringFromFile(
-          fileContents,
           currTokenStartIndex,
           previousType,
         );
@@ -515,19 +500,12 @@ export default function printer(
         } else {
           currString += extractedLabel;
         }
-        formattedFileStr += currString;
-        previousType = currTokenType;
-        currString = '\n' + indentation.repeat(blockLevel);
-        startLineIndex =
-          tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
-        continue;
+        newline = true;
+        noExtraNewline = true;
+        break;
 
       case TokenType.constantString:
-        currString += extractStringFromFile(
-          fileContents,
-          currTokenStartIndex,
-          previousType,
-        );
+        currString += extractStringFromFile(currTokenStartIndex, previousType);
         if (context === PrinterCategory.prepro) {
           newline = true;
           context = null;
@@ -542,26 +520,18 @@ export default function printer(
       case TokenType.constantNumber:
       case TokenType.constantCharacter:
       case TokenType.preproStandardHeader:
-        currString += extractStringFromFile(
-          fileContents,
-          currTokenStartIndex,
-          previousType,
-        );
+        currString += extractStringFromFile(currTokenStartIndex, previousType);
         break;
 
       case TokenType.commentSingleline:
         if (
-          previousType !== null &&
+          previousType &&
           (tokenDecode(tokens[i - 1])[1] !== TokenType.newline ||
             currString === '')
         ) {
           currString = ' ';
         }
-        currString += extractStringFromFile(
-          fileContents,
-          currTokenStartIndex,
-          previousType,
-        );
+        currString += extractStringFromFile(currTokenStartIndex, previousType);
         if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
           newline = true;
         }
@@ -576,22 +546,17 @@ export default function printer(
         break;
 
       case TokenType.commentMultiline:
-        currString += extractStringFromFile(
-          fileContents,
-          currTokenStartIndex,
-          previousType,
-        );
+        if (currString === '') {
+          currString = ' ';
+        }
+        currString += extractStringFromFile(currTokenStartIndex, previousType);
         if (tokenDecode(tokens[i + 1])[1] === TokenType.newline) {
           newline = true;
         }
         break;
 
       case TokenType.identifier:
-        currString += extractStringFromFile(
-          fileContents,
-          currTokenStartIndex,
-          previousType,
-        );
+        currString += extractStringFromFile(currTokenStartIndex, previousType);
         if (
           getNextNonNewlineTokenType(tokens, i) ===
           PrinterCategory.typeOrIdentifier
@@ -622,20 +587,4 @@ export default function printer(
     formattedFileStr += '\n';
   }
   return formattedFileStr;
-}
-
-function extractStringFromFile(
-  fileContents: string,
-  startIndex: number,
-  prevTokenType: TokenType | null,
-) {
-  return fileContents.slice(
-    startIndex,
-    tokenFindLastIndex(
-      fileContents,
-      startIndex,
-      tokenDetermineCategory(fileContents, startIndex),
-      prevTokenType,
-    ) + 1,
-  );
 }
