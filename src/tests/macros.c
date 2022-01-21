@@ -17,8 +17,8 @@ fprintf( \
 )
 
 #define HOSTINFO_INIT { \
-	.hostname = STRBUF_INIT, \
-	.canon_hostname = STRBUF_INIT, \
-	.ip_address = STRBUF_INIT, \
-	.tcp_port = STRBUF_INIT, \
+  .hostname = STRBUF_INIT, \
+  .canon_hostname = STRBUF_INIT, \
+  .ip_address = STRBUF_INIT, \
+  .tcp_port = STRBUF_INIT, \
 }

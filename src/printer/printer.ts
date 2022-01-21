@@ -131,6 +131,8 @@ export default function printer(
           newline = true;
           ++blockLevel;
           context = PrinterCategory.multiVariableDecl;
+        } else if (getNextNonNewlineTokenType(tokens, i) === TokenType.preproLineContinuation) {
+          currString = ',';
         } else {
           currString = ', ';
         }
@@ -191,7 +193,9 @@ export default function printer(
           context = null;
         }
 
-        if (isThereLineOverflow(i, context)) {
+        if (getNextNonNewlineTokenType(tokens, i) === TokenType.specialParenthesisClosing) {
+          overflow = false;
+        } else if (isThereLineOverflow(i, context)) {
           newline = true;
           ++blockLevel;
         }
@@ -253,7 +257,9 @@ export default function printer(
           previousContext.context === TokenType.keywordStruct ||
           previousContext.context === TokenType.keywordEnum
         ) {
-          currString += ' ';
+          if (getNextNonNewlineTokenType(tokens, i) !== TokenType.specialSemicolon) {
+            currString += ' ';
+          }
         } else {
           newline = true;
         }
@@ -357,17 +363,17 @@ export default function printer(
       case TokenType.operatorBinaryAssignmentDirect:
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.variableDecl;
+        } else if (context === PrinterCategory.typeOrIdentifier) {
+          context = null;
         }
-        if (parenCount === 0) {
-          nextTokenType = getNextNonNewlineTokenType(tokens, i);
-          if (
-            nextTokenType !== PrinterCategory.typeOrIdentifier &&
-            getNextNonNewlineTokenType(tokens, i, 2) !== TokenType.specialParenthesisOpening &&
-            !areThereCommas(tokens, i) &&
-            isThereLineOverflow(i, TokenType.operatorBinaryAssignmentDirect)
-          ) {
-            currString = ' =\n' + indentation.repeat(blockLevel + 1);
-          }
+        if (
+          parenCount === 0 &&
+          getNextNonNewlineTokenType(tokens, i) !== PrinterCategory.typeOrIdentifier &&
+          getNextNonNewlineTokenType(tokens, i, 2) !== TokenType.specialParenthesisOpening &&
+          !areThereCommas(tokens, i) &&
+          isThereLineOverflow(i, TokenType.operatorBinaryAssignmentDirect)
+        ) {
+          currString = ' =\n' + indentation.repeat(blockLevel + 1);
         }
         break;
 
