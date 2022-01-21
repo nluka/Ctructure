@@ -1,5 +1,5 @@
 import TokenCategory from './TokenCategory';
-import tokenDetermineLineNumAndColNumRaw from './tokenDetermineLineNumAndColNumRaw';
+import tokenDetermineLineAndCol from './tokenDetermineLineAndCol';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 const preproRegex = /^[#\\]/,
@@ -45,7 +45,7 @@ export default function tokenDetermineCategory(
     return TokenCategory.special;
   }
 
-  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+  const { lineNum, colNum } = tokenDetermineLineAndCol(
     fileContents,
     tokenStartIndex,
   );

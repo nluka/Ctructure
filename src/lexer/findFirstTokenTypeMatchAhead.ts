@@ -7,7 +7,9 @@ export default function findFirstTokenTypeMatchAhead(
   searchTokenTypes: TokenType[],
   equality: boolean,
 ): [number, TokenType] | null {
-  tokens.checkIndexBounds(firstSearchIndex);
+  if (!tokens.isIndexInBounds(firstSearchIndex)) {
+    return null;
+  }
 
   for (let i = firstSearchIndex; i < tokens.getCount(); ++i) {
     const [tokenStartIndex, tokenType] = tokens.getTokenDecoded(i);

@@ -1,7 +1,7 @@
 import indexOfRegex from '../utility/indexOfRegex';
 import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
-import tokenDetermineLineNumAndColNumRaw from './tokenDetermineLineNumAndColNumRaw';
+import tokenDetermineLineAndCol from './tokenDetermineLineAndCol';
 import TokenType from './TokenType';
 
 const multiLineCommentRegex = /\*/,
@@ -206,7 +206,7 @@ export default function tokenFindLastIndex(
         }
       }
 
-      const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+      const { lineNum, colNum } = tokenDetermineLineAndCol(
         fileContents,
         tokenStartIndex,
       );
@@ -271,7 +271,7 @@ function createErrorStandard(
   tokenStartIndex: number,
   tokenCategory: TokenCategory,
 ) {
-  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+  const { lineNum, colNum } = tokenDetermineLineAndCol(
     fileContents,
     tokenStartIndex,
   );
@@ -287,7 +287,7 @@ function createErrorNullPreproDirective(
   tokenStartIndex: number,
   tokenCategory: TokenCategory,
 ) {
-  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+  const { lineNum, colNum } = tokenDetermineLineAndCol(
     fileContents,
     tokenStartIndex,
   );

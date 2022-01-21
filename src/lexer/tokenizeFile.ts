@@ -31,7 +31,11 @@ export function tokenizeFile(
   }
 
   for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
-    const disambiguatedTokenType = tokenDisambiguate(ambigTokenIndex, tokens);
+    const disambiguatedTokenType = tokenDisambiguate(
+      ambigTokenIndex,
+      tokens,
+      fileContents,
+    );
     const ambigTokenStartIndex = tokens.getTokenDecoded(ambigTokenIndex)[0];
     tokens.setTokenEncoded(
       ambigTokenIndex,

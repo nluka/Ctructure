@@ -16,7 +16,7 @@ describe('tokenDisambiguate', () => {
       for (const tokenType of tokenTypes) {
         tokenArray.push(tokenEncode(0, tokenType));
       }
-      expect(tokenDisambiguate(ambiguousTokenIndex, tokenArray)).toBe(expectedTokenType);
+      expect(tokenDisambiguate(ambiguousTokenIndex, tokenArray, tokensDescription)).toBe(expectedTokenType);
     });
   }
 
@@ -355,6 +355,15 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorUnaryArithmeticIncrementPrefix, '= ++a'
       );
+      assert(
+        [
+          TokenType.specialSemicolon,
+          TokenType.ambiguousIncrement,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+        ],
+        1, TokenType.operatorUnaryArithmeticIncrementPrefix, ';++*a'
+      );
     });
     describe('Postfix', () => {
       assert(
@@ -415,12 +424,12 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
-          TokenType.operatorBinaryArithmeticDivision,
+          TokenType.operatorBinaryArithmeticAddition,
           TokenType.newline,
           TokenType.ambiguousDecrement,
           TokenType.identifier
         ],
-        2, TokenType.operatorUnaryArithmeticDecrementPrefix, '/\n--a'
+        2, TokenType.operatorUnaryArithmeticDecrementPrefix, '+\n--a'
       );
       assert(
         [
@@ -429,6 +438,15 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier
         ],
         1, TokenType.operatorUnaryArithmeticDecrementPrefix, '= --a'
+      );
+      assert(
+        [
+          TokenType.specialSemicolon,
+          TokenType.ambiguousDecrement,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+        ],
+        1, TokenType.operatorUnaryArithmeticDecrementPrefix, ';--*a'
       );
     });
     describe('Postfix', () => {
@@ -443,11 +461,36 @@ describe('tokenDisambiguate', () => {
       assert(
         [
           TokenType.identifier,
+          TokenType.ambiguousDecrement,
+          TokenType.specialParenthesisClosing
+        ],
+        1, TokenType.operatorUnaryArithmeticDecrementPostfix, 'a--)'
+      );
+      assert(
+        [
+          TokenType.identifier,
+          TokenType.ambiguousDecrement,
+          TokenType.specialBracketClosing
+        ],
+        1, TokenType.operatorUnaryArithmeticDecrementPostfix, 'a--]'
+      );
+      assert(
+        [
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousDecrement,
+          TokenType.specialParenthesisClosing
+        ],
+        1, TokenType.operatorUnaryArithmeticDecrementPostfix, ')--)'
+      );
+      assert(
+        [
           TokenType.newline,
+          TokenType.newline,
+          TokenType.identifier,
           TokenType.ambiguousDecrement,
           TokenType.specialSemicolon
         ],
-        2, TokenType.operatorUnaryArithmeticDecrementPostfix, 'a\n--;'
+        3, TokenType.operatorUnaryArithmeticDecrementPostfix, 'a\n\n--;'
       );
     });
   });
@@ -462,6 +505,14 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorUnaryDereference, '{*a'
       );
+      // assert(
+      //   [
+      //     TokenType.specialBraceClosing,
+      //     TokenType.ambiguousAsterisk,
+      //     TokenType.identifier
+      //   ],
+      //   1, TokenType.operatorUnaryDereference, '}*a'
+      // );
       assert(
         [
           TokenType.specialBracketOpening,
@@ -529,6 +580,15 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier
         ],
         1, TokenType.operatorBinaryMultiplicationOrIndirection, '** p'
+      );
+      assert(
+        [
+          TokenType.specialBraceClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialSemicolon
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, '} * a'
       );
     });
   });
@@ -606,6 +666,14 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
+          TokenType.specialComma,
+          TokenType.ambiguousAmpersand,
+          TokenType.identifier
+        ],
+        1, TokenType.operatorUnaryAddressOf, ', &b'
+      );
+      assert(
+        [
           TokenType.specialParenthesisOpening,
           TokenType.ambiguousAmpersand,
           TokenType.constantString
@@ -619,6 +687,14 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier
         ],
         1, TokenType.operatorUnaryAddressOf, '(&a'
+      );
+      assert(
+        [
+          TokenType.operatorBinaryAssignmentDirect,
+          TokenType.ambiguousAmpersand,
+          TokenType.specialParenthesisOpening
+        ],
+        1, TokenType.operatorUnaryAddressOf, '= &('
       );
     });
   });

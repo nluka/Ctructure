@@ -4,9 +4,9 @@ import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import tokenFindLastIndex from '../lexer/tokenFindLastIndex';
 import TokenType from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
+import checkForLineOverflow from './checkForLineOverflow';
 import getNextNonNewlineTokenType from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
-import checkForLineOverflow from './checkForLineOverflow';
 import PrinterCategory from './PrinterCategory';
 import Stack from './Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
@@ -268,6 +268,7 @@ export default function printer(
       case TokenType.preproDirectiveIfdef:
       case TokenType.preproDirectiveIfndef:
       case TokenType.preproDirectiveIf:
+      case TokenType.preproDirectiveElse:
       case TokenType.preproDirectiveEndif:
       case TokenType.preproDirectivePragma:
         context = PrinterCategory.prepro;

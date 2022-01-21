@@ -1,9 +1,9 @@
-export default function tokenDetermineLineNumAndColNumRaw(
+export default function tokenDetermineLineAndCol(
   fileContents: string,
   tokenStartIndex: number,
-): [number, number] {
+): { lineNum: number; colNum: number } {
   if (tokenStartIndex === 0) {
-    return [1, 1];
+    return { lineNum: 1, colNum: 1 };
   }
 
   let lineNum = 1;
@@ -13,7 +13,7 @@ export default function tokenDetermineLineNumAndColNumRaw(
     }
   }
   if (lineNum === 1) {
-    return [lineNum, tokenStartIndex + 1];
+    return { lineNum, colNum: tokenStartIndex + 1 };
   }
 
   let firstNewlineBehindStartIndex = 0;
@@ -26,5 +26,5 @@ export default function tokenDetermineLineNumAndColNumRaw(
 
   const colNum = tokenStartIndex - firstNewlineBehindStartIndex;
 
-  return [lineNum, colNum];
+  return { lineNum, colNum };
 }

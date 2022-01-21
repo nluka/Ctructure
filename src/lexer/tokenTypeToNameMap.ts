@@ -83,6 +83,7 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.operatorUnaryPlus, 'operatorUnaryPlus'],
   [TokenType.operatorUnaryMinus, 'operatorUnaryMinus'],
   [TokenType.operatorUnaryAddressOf, 'operatorUnaryAddressOf'],
+  [TokenType.operatorUnaryDereference, 'operatorUnaryDereference'],
   [TokenType.operatorBinaryArithmeticAddition, 'operatorBinaryArithmeticAddition'],
   [TokenType.operatorBinaryArithmeticSubtraction, 'operatorBinaryArithmeticSubtraction'],
   [TokenType.operatorBinaryArithmeticDivision, 'operatorBinaryArithmeticDivision'],
@@ -111,9 +112,11 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
   [TokenType.operatorBinaryAssignmentBitwiseAnd, 'operatorBinaryAssignmentBitwiseAnd'],
   [TokenType.operatorBinaryAssignmentBitwiseOr, 'operatorBinaryAssignmentBitwiseOr'],
   [TokenType.operatorBinaryAssignmentBitwiseXor, 'operatorBinaryAssignmentBitwiseXor'],
+  [TokenType.operatorBinaryMultiplicationOrIndirection, 'operatorBinaryMultiplicationOrIndirection'],
   [TokenType.operatorMemberSelectionDirect, 'operatorMemberSelectionDirect'],
   [TokenType.operatorMemberSelectionIndirect, 'operatorMemberSelectionIndirect'],
   [TokenType.operatorTernaryQuestion, 'operatorTernaryQuestion'],
+  [TokenType.operatorEllipses, 'operatorEllipses'],
   [TokenType.ambiguousColon, 'operatorTernaryColon'],
 
   // Special

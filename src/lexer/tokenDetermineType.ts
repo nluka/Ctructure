@@ -1,5 +1,5 @@
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
-import tokenDetermineLineNumAndColNumRaw from './tokenDetermineLineNumAndColNumRaw';
+import tokenDetermineLineAndCol from './tokenDetermineLineAndCol';
 import TokenType from './TokenType';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
@@ -99,7 +99,7 @@ function createError(
   tokenLastIndex: number,
   tokenCategory: TokenCategory,
 ) {
-  const [lineNum, colNum] = tokenDetermineLineNumAndColNumRaw(
+  const { lineNum, colNum } = tokenDetermineLineAndCol(
     fileContents,
     tokenStartIndex,
   );

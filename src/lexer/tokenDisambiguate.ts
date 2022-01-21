@@ -1,7 +1,7 @@
 import findFirstTokenTypeMatchAhead from './findFirstTokenTypeMatchAhead';
 import findFirstTokenTypeMatchBehind from './findFirstTokenTypeMatchBehind';
 import TokenArray from './TokenArray';
-import tokenDetermineLineNumAndColNum from './tokenDetermineLineNumAndCol';
+import tokenDetermineLineAndCol from './tokenDetermineLineAndCol';
 import TokenType, {
   isTokenBinaryOperator,
   isTokenNonMultiplicationOrIndirectionBinaryOperator,
@@ -18,10 +18,13 @@ const tokenTypesNewlineOrComment: TokenType[] = [
 export default function tokenDisambiguate(
   currTokenIndex: number,
   tokens: TokenArray,
+  fileContents: string,
 ): TokenType {
-  const createErr = () => createError(currTokenType, currTokenIndex, tokens);
+  const [currTokenStartIndex, currTokenType] =
+    tokens.getTokenDecoded(currTokenIndex);
 
-  const currTokenType = tokens.getTokenDecoded(currTokenIndex)[1];
+  const createErr = () =>
+    createError(fileContents, currTokenStartIndex, currTokenType);
 
   const firstNonNewlineOrCommentTokenBehindCurr = findFirstTokenTypeMatchBehind(
     tokens,
@@ -72,7 +75,8 @@ export default function tokenDisambiguate(
     case TokenType.ambiguousIncrement: {
       if (
         firstTokenTypeAfterCurr === TokenType.identifier ||
-        firstTokenTypeAfterCurr === TokenType.specialParenthesisOpening
+        firstTokenTypeAfterCurr === TokenType.specialParenthesisOpening ||
+        firstTokenTypeAfterCurr === TokenType.ambiguousAsterisk
       ) {
         return TokenType.operatorUnaryArithmeticIncrementPrefix;
       }
@@ -86,17 +90,45 @@ export default function tokenDisambiguate(
     }
 
     case TokenType.ambiguousDecrement: {
-      if (firstTokenTypeBehindCurr === TokenType.identifier) {
-        return TokenType.operatorUnaryArithmeticDecrementPostfix;
-      }
-      if (firstTokenTypeAfterCurr === TokenType.identifier) {
+      if (
+        firstTokenTypeAfterCurr === TokenType.identifier ||
+        firstTokenTypeAfterCurr === TokenType.specialParenthesisOpening ||
+        firstTokenTypeAfterCurr === TokenType.ambiguousAsterisk
+      ) {
         return TokenType.operatorUnaryArithmeticDecrementPrefix;
+      }
+      if (
+        firstTokenTypeBehindCurr === TokenType.identifier ||
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing
+      ) {
+        return TokenType.operatorUnaryArithmeticDecrementPostfix;
       }
       throw createErr();
     }
 
     case TokenType.ambiguousAsterisk: {
       if (
+        firstTokenTypeBehindCurr === TokenType.specialBraceClosing &&
+        firstTokenTypeAfterCurr === TokenType.identifier
+      ) {
+        const secondNonNewlineOrCommentTokenAfterCurr =
+          findFirstTokenTypeMatchAhead(
+            tokens,
+            currTokenIndex + 2,
+            tokenTypesNewlineOrComment,
+            false,
+          );
+        if (
+          secondNonNewlineOrCommentTokenAfterCurr === null ||
+          secondNonNewlineOrCommentTokenAfterCurr[1] !==
+            TokenType.specialSemicolon
+        ) {
+          throw createErr();
+        }
+        return TokenType.operatorBinaryMultiplicationOrIndirection;
+      }
+      if (
+        firstTokenTypeBehindCurr === TokenType.specialBraceClosing ||
         isTokenSpecialNonClosing(firstTokenTypeBehindCurr) ||
         isTokenNonMultiplicationOrIndirectionBinaryOperator(
           firstTokenTypeBehindCurr,
@@ -123,7 +155,8 @@ export default function tokenDisambiguate(
 
       if (
         firstTokenTypeAfterCurr === TokenType.identifier ||
-        firstTokenTypeAfterCurr === TokenType.constantString
+        firstTokenTypeAfterCurr === TokenType.constantString ||
+        firstTokenTypeAfterCurr === TokenType.specialParenthesisOpening
       ) {
         return TokenType.operatorUnaryAddressOf;
       }
@@ -137,11 +170,14 @@ export default function tokenDisambiguate(
 }
 
 function createError(
+  fileContents: string,
+  tokenStartIndex: number,
   tokenType: TokenType,
-  tokenIndex: number,
-  tokens: TokenArray,
 ) {
-  const [lineNum, colNum] = tokenDetermineLineNumAndColNum(tokenIndex, tokens);
+  const { lineNum, colNum } = tokenDetermineLineAndCol(
+    fileContents,
+    tokenStartIndex,
+  );
   return new Error(
     `${tokenTypeToNameMap.get(tokenType)} at line ${lineNum} col ${colNum}`,
   );

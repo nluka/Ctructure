@@ -64,6 +64,10 @@ export default class TokenArray {
     }
   }
 
+  public isIndexInBounds(index: number): boolean {
+    return index >= 0 && index < this.count;
+  }
+
   public getSize(): number {
     return this.size;
   }

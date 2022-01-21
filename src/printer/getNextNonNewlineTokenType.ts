@@ -16,7 +16,7 @@ export default function getNextNonNewlineTokenType(
     const type = tokenDecode(tokens[i])[1];
     if (type === TokenType.newline) {
       continue;
-    } else if (tokensAhead && --tokensAhead > 0) {
+    } else if (tokensAhead !== undefined && --tokensAhead > 0) {
       continue;
     }
     if (isTokenAssignmentOperator(type)) {
