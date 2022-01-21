@@ -13,13 +13,13 @@ describe('format', () => {
     test(fileRelativePathname, () => {
       const resolvedFilePathname = path.resolve(__dirname, fileRelativePathname);
       const fileContents = removeCarriageReturns(readFileSync(resolvedFilePathname).toString());
-      const formatResult = format(resolvedFilePathname);
+      const formatted = format(resolvedFilePathname);
 
       if (shouldConsoleLogFormatResult) {
-        debugLogFormatResult(formatResult.formatted);
+        debugLogFormatResult(formatted);
       }
 
-      expect(formatResult.formatted).toBe(expected !== undefined ? expected : fileContents);
+      expect(formatted).toBe(expected !== undefined ? expected : fileContents);
     });
   }
 

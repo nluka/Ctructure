@@ -5,8 +5,6 @@ import tokenDisambiguate from './tokenDisambiguate';
 import tokenEncode from './tokenEncode';
 import Tokenizer from './Tokenizer';
 
-const MAX_25_BIT_UNSIGNED_VALUE = 33_554_431;
-
 /**
  * Tokenizes a file, encoding each token into a 32 bit number (using `tokenEncode`).
  * Each token stores its starting index in the first 25 bits and the type
@@ -17,22 +15,9 @@ const MAX_25_BIT_UNSIGNED_VALUE = 33_554_431;
  * is the array of encoded tokens in their order of appearance within the file.
  */
 export function tokenizeFile(
-  filePathname: string,
-  shouldLogFileSize: boolean,
+  filePathname: string
 ): [string, TokenArray] {
   const fileBuffer = readFileSync(filePathname);
-  if (shouldLogFileSize) {
-    console.log(
-      `file size: ${fileBuffer.length} bytes (${(
-        fileBuffer.length /
-        1024 /
-        1024
-      ).toFixed(6)} MB)`,
-    );
-  }
-  if (fileBuffer.length * 8 > MAX_25_BIT_UNSIGNED_VALUE + 1) {
-    throw new Error('files larger than 4 MB are not supported');
-  }
   const fileContents = removeCarriageReturns(fileBuffer.toString());
   const tokenizer = new Tokenizer(fileContents);
   const tokens = new TokenArray(Math.ceil(fileContents.length / 3));
@@ -44,10 +29,6 @@ export function tokenizeFile(
     }
     tokens.push(extractedToken);
   }
-
-  // console.clear();
-  // debugLogFileContents(fileContents);
-  // debugLogTokens(tokens);
 
   for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
     const disambiguatedTokenType = tokenDisambiguate(ambigTokenIndex, tokens);

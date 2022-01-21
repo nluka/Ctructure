@@ -2,12 +2,16 @@ import tokenDecode from './tokenDecode';
 import TokenType from './TokenType';
 
 export default class TokenArray {
+  // private startIndices: Uint32Array;
+  // private types: Uint8Array;
   private values: Uint32Array;
   private size;
   private count = 0;
   private resizeCount = 0;
 
   constructor(initialSize: number, private readonly resizeMultiplier = 1.25) {
+    // this.startIndices = new Uint32Array(initialSize);
+    // this.types = new Uint8Array(initialSize);
     this.values = new Uint32Array(initialSize);
     this.size = initialSize;
   }

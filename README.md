@@ -5,6 +5,7 @@ Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-in
 ## Limitations
 
 - Max supported input file size is 4 MB
+- [Stringizing](https://gcc.gnu.org/onlinedocs/cpp/Stringizing.html) is not currently supported
 
 ## Issues
 

@@ -1,13 +1,13 @@
-def generate_file(megs):
-    f = open(f'../tests/just_over_{megs}megs.c', 'w')
-    byte_count = (megs * 1024 * 1024)
-    f.seek(byte_count)
+def generate_file(name, byte_count):
+    f = open(f'../tests/{name}', 'w')
+    f.seek(byte_count - 1)
     f.write('\0')
     f.close()
 
 
 def main():
-    generate_file(4)
+    generate_file('exactly4megs.c', 1024 * 1024 * 4)
+    generate_file('justover4megs.c', (1024 * 1024 * 4) + 1)
 
 
 if __name__ == '__main__':
