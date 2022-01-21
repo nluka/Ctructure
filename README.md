@@ -2,10 +2,11 @@
 
 Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-inspired code formatter for the C programming language. Currently work in progress.
 
-## Limitations
+## Limitations/Caveats
 
 - Max supported input file size is 4 MB
 - [Stringizing](https://gcc.gnu.org/onlinedocs/cpp/Stringizing.html) is not currently supported
+- Bit field ':' requires at least 1 leading whitespace in order to be formatted correctly (e.g. `int a : 3`)
 
 ## Issues
 

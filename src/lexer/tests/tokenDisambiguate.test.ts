@@ -540,11 +540,14 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [
+          TokenType.identifier,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
           TokenType.specialComma,
           TokenType.ambiguousAsterisk,
           TokenType.identifier
         ],
-        1, TokenType.operatorUnaryDereference, ', *a'
+        4, TokenType.operatorUnaryDereference, 'func(a, *b'
       );
       assert(
         [
@@ -570,6 +573,25 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorUnaryDereference, 'sizeof *a'
       );
+      assert(
+        [
+          TokenType.keywordIf,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.operatorBinaryComparisonGreaterThan,
+          TokenType.identifier,
+          TokenType.operatorBinaryLogicalAnd,
+          TokenType.identifier,
+          TokenType.operatorBinaryArithmeticAddition,
+          TokenType.constantNumber,
+          TokenType.operatorBinaryComparisonNotEqualTo,
+          TokenType.identifier,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+        ],
+        12, TokenType.operatorUnaryDereference, 'if (a > b && b + 1 != c) *a'
+      );
     });
 
     describe('Multiplication or Indirection', () => {
@@ -589,6 +611,43 @@ describe('tokenDisambiguate', () => {
           TokenType.specialSemicolon
         ],
         1, TokenType.operatorBinaryMultiplicationOrIndirection, '} * a'
+      );
+      assert(
+        [
+          TokenType.specialBraceOpening,
+          TokenType.keywordInt,
+          TokenType.identifier,
+          TokenType.operatorBinaryAssignmentDirect,
+          TokenType.constantNumber,
+          TokenType.specialComma,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        6, TokenType.operatorBinaryMultiplicationOrIndirection, '{ int a = 1, * p1 = &a;'
+      );
+      assert(
+        [
+          TokenType.specialSemicolon,
+          TokenType.identifier,
+          TokenType.operatorBinaryAssignmentDirect,
+          TokenType.constantNumber,
+          TokenType.specialComma,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        5, TokenType.operatorBinaryMultiplicationOrIndirection, '; a = 1, * p1;'
+      );
+      assert(
+        [
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.operatorBinaryArithmeticAddition,
+          TokenType.constantNumber,
+          TokenType.specialComma,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier
+        ],
+        5, TokenType.operatorUnaryDereference, '(a + 1, *p1'
       );
     });
   });

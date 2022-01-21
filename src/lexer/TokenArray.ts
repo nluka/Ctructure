@@ -26,6 +26,14 @@ export default class TokenArray {
     }
     this.values[this.count++] = encodedToken;
   }
+  // public push(startIndex: number, type: TokenType): void {
+  //   if (this.count === this.size) {
+  //     this.resize();
+  //   }
+  //   this.startIndices[this.count] = startIndex;
+  //   this.types[this.count] = type;
+  //   ++this.count;
+  // }
 
   public resize(): void {
     const newSize = Math.max(
@@ -40,21 +48,54 @@ export default class TokenArray {
     this.size = newSize;
     ++this.resizeCount;
   }
+  // public resize(): void {
+  //   const newSize = Math.max(
+  //     Math.ceil(this.size * this.resizeMultiplier),
+  //     this.size + 1,
+  //   );
 
-  public getTokenEncoded(index: number): number {
-    this.checkIndexBounds(index);
-    return this.values[index];
-  }
+  //   const newStartIndices = new Uint32Array(newSize);
+  //   if (newStartIndices !== this.startIndices) {
+  //     for (let i = 0; i < this.count; ++i) {
+  //       newStartIndices[i] = this.startIndices[i];
+  //     }
+  //   }
+  //   this.startIndices = newStartIndices;
+
+  //   const newTypes = new Uint8Array(newSize);
+  //   if (newTypes !== this.types) {
+  //     for (let i = 0; i < this.count; ++i) {
+  //       newTypes[i] = this.types[i];
+  //     }
+  //   }
+  //   this.types = newTypes;
+
+  //   this.size = newSize;
+  //   ++this.resizeCount;
+  // }
 
   public getTokenDecoded(index: number): [number, TokenType] {
     this.checkIndexBounds(index);
     return tokenDecode(this.values[index]);
   }
+  // public getTokenStartIndex(index: number): number {
+  //   this.checkIndexBounds(index);
+  //   return this.startIndices[index];
+  // }
+  // public getTokenType(index: number): TokenType {
+  //   this.checkIndexBounds(index);
+  //   return this.types[index];
+  // }
 
   public setTokenEncoded(index: number, encodedToken: number) {
     this.checkIndexBounds(index);
     this.values[index] = encodedToken;
   }
+  // public setToken(index: number, tokenStartIndex: number, tokenType: TokenType) {
+  //   this.checkIndexBounds(index);
+  //   this.startIndices[index] = tokenStartIndex;
+  //   this.types[index] = tokenType;
+  // }
 
   public checkIndexBounds(index: number): void {
     if (index < 0 || index >= this.count) {

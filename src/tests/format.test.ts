@@ -44,10 +44,13 @@ describe('format', () => {
   assert('./string/String.c');
   assert('./string/String.h');
 
+  assert('./__attribute__.c');
   assert('./asterisks.c');
   assert('./empty_func_call.c');
   assert('./empty_header.h');
+  assert('./for.c');
   assert('./func_pointers.h');
   assert('./macros.c');
   assert('./struct.c');
+  assert('./switch.c');
 });

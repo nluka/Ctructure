@@ -108,6 +108,7 @@ export default function tokenDisambiguate(
 
     case TokenType.ambiguousAsterisk: {
       if (
+        // for struct pointer decls/defs
         firstTokenTypeBehindCurr === TokenType.specialBraceClosing &&
         firstTokenTypeAfterCurr === TokenType.identifier
       ) {
@@ -120,13 +121,68 @@ export default function tokenDisambiguate(
           );
         if (
           secondNonNewlineOrCommentTokenAfterCurr === null ||
-          secondNonNewlineOrCommentTokenAfterCurr[1] !==
-            TokenType.specialSemicolon
+          (secondNonNewlineOrCommentTokenAfterCurr[1] !==
+            TokenType.specialSemicolon &&
+            secondNonNewlineOrCommentTokenAfterCurr[1] !==
+              TokenType.operatorBinaryAssignmentDirect)
         ) {
           throw createErr();
         }
         return TokenType.operatorBinaryMultiplicationOrIndirection;
       }
+
+      if (
+        // for dereference as first statement of if with no braces
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing &&
+        firstTokenTypeAfterCurr === TokenType.identifier
+      ) {
+        const firstMatchBehind = findFirstTokenTypeMatchBehind(
+          tokens,
+          currTokenIndex - 2,
+          [
+            TokenType.specialSemicolon,
+            TokenType.specialBraceOpening,
+            TokenType.keywordIf,
+          ],
+          true,
+        );
+        if (firstMatchBehind === null) {
+          throw createErr();
+        }
+        switch (firstMatchBehind[1]) {
+          case TokenType.keywordIf:
+            return TokenType.operatorUnaryDereference;
+          default:
+            return TokenType.operatorBinaryMultiplicationOrIndirection;
+        }
+      }
+
+      if (
+        // for dereference in func call or pointer in multvar decl/def
+        firstTokenTypeBehindCurr === TokenType.specialComma &&
+        firstTokenTypeAfterCurr === TokenType.identifier
+      ) {
+        const firstMatchBehind = findFirstTokenTypeMatchBehind(
+          tokens,
+          currTokenIndex - 2,
+          [
+            TokenType.specialSemicolon,
+            TokenType.specialBraceOpening,
+            TokenType.specialParenthesisOpening,
+          ],
+          true,
+        );
+        if (firstMatchBehind === null) {
+          throw createErr();
+        }
+        switch (firstMatchBehind[1]) {
+          case TokenType.specialParenthesisOpening:
+            return TokenType.operatorUnaryDereference;
+          default:
+            return TokenType.operatorBinaryMultiplicationOrIndirection;
+        }
+      }
+
       if (
         firstTokenTypeBehindCurr === TokenType.specialBraceClosing ||
         isTokenSpecialNonClosing(firstTokenTypeBehindCurr) ||
@@ -137,6 +193,7 @@ export default function tokenDisambiguate(
       ) {
         return TokenType.operatorUnaryDereference;
       }
+
       return TokenType.operatorBinaryMultiplicationOrIndirection;
     }
 
