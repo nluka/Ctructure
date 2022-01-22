@@ -11,7 +11,8 @@ export default function indexOfUnescaped(
     if (index === -1) {
       return -1;
     }
-    const isEscaped = string.charAt(index - 1) === '\\';
+    const isEscaped =
+      string.charAt(index - 1) === '\\' && string.charAt(index - 2) !== '\\';
     if (!isEscaped) {
       return index;
     }

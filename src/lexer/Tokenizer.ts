@@ -1,6 +1,6 @@
 import tokenDetermineCategory from './tokenDetermineCategory';
 import tokenDetermineType from './tokenDetermineType';
-import tokenEncode from './tokenEncode';
+// import tokenEncode from './tokenEncode';
 import tokenFindLastIndex from './tokenFindLastIndex';
 import TokenType, { isTokenAmbiguous } from './TokenType';
 
@@ -12,7 +12,7 @@ export default class Tokenizer {
 
   constructor(private fileContents: string) {}
 
-  public extractNextTokenEncoded(): number | null {
+  public extractNextTokenEncoded(): [number, TokenType] | null {
     const isThereAnotherToken = this.moveCursorToBeginningOfNextToken();
     if (!isThereAnotherToken) {
       return null;
@@ -40,13 +40,13 @@ export default class Tokenizer {
       this.ambiguousTokenIndices.push(this.tokensExtractedCount);
     }
 
-    const encodedToken = tokenEncode(this.cursorPosition, tokenType);
+    const tokenStartIndex = this.cursorPosition;
 
     this.prevTokenType = tokenType;
     this.cursorPosition = tokenLastIndex + 1;
     ++this.tokensExtractedCount;
 
-    return encodedToken;
+    return [tokenStartIndex, tokenType];
   }
 
   /**

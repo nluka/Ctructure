@@ -1,18 +1,18 @@
 import TokenType from '../lexer/TokenType';
 
 export default function areThereCommas(
-  typeArray: TokenType[],
+  tokenTypes: Uint8Array,
   index: number,
 ): boolean {
   let parenCount = 0;
-  for (let i = index + 1; i < typeArray.length; ++i) {
-    if (typeArray[i] === TokenType.specialParenthesisOpening) {
+  for (let i = index + 1; i < tokenTypes.length; ++i) {
+    if (tokenTypes[i] === TokenType.specialParenthesisOpening) {
       ++parenCount;
-    } else if (typeArray[i] === TokenType.specialParenthesisClosing) {
+    } else if (tokenTypes[i] === TokenType.specialParenthesisClosing) {
       --parenCount;
-    } else if (parenCount === 0 && typeArray[i] === TokenType.specialComma) {
+    } else if (parenCount === 0 && tokenTypes[i] === TokenType.specialComma) {
       return true;
-    } else if (typeArray[i] === TokenType.specialSemicolon) {
+    } else if (tokenTypes[i] === TokenType.specialSemicolon) {
       return false;
     }
   }

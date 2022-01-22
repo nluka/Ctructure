@@ -5,7 +5,7 @@ export default function debugLogTokens(tokens: TokenArray) {
   console.log('TOKENS:');
   console.log('number - startIndex - type');
   for (let i = 0; i < tokens.getCount(); ++i) {
-    const [startIndex, tokenType] = tokens.getTokenDecoded(i);
+    const [startIndex, tokenType] = tokens.getToken(i);
     console.log(
       `${i + 1}`.padStart(6),
       '-',

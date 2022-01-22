@@ -12,7 +12,7 @@ export default function findFirstTokenTypeMatchAhead(
   }
 
   for (let i = firstSearchIndex; i < tokens.getCount(); ++i) {
-    const [tokenStartIndex, tokenType] = tokens.getTokenDecoded(i);
+    const [tokenStartIndex, tokenType] = tokens.getToken(i);
     if (searchTokenTypes.includes(tokenType) === equality) {
       return [tokenStartIndex, tokenType];
     }

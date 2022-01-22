@@ -1,6 +1,5 @@
 import TokenArray from '../TokenArray';
 import tokenDisambiguate from '../tokenDisambiguate';
-import tokenEncode from '../tokenEncode';
 import TokenType from '../TokenType';
 import tokenTypeToNameMap from '../tokenTypeToNameMap';
 
@@ -12,11 +11,11 @@ describe('tokenDisambiguate', () => {
     tokensDescription: string,
   ) {
     test(`return ${tokenTypeToNameMap.get(expectedTokenType)} when tokens=${JSON.stringify(tokensDescription)}`, () => {
-      const tokenArray = new TokenArray(tokenTypes.length);
+      const tokens = new TokenArray(tokenTypes.length);
       for (const tokenType of tokenTypes) {
-        tokenArray.push(tokenEncode(0, tokenType));
+        tokens.pushPacked([0, tokenType]);
       }
-      expect(tokenDisambiguate(ambiguousTokenIndex, tokenArray, tokensDescription)).toBe(expectedTokenType);
+      expect(tokenDisambiguate(ambiguousTokenIndex, tokens, tokensDescription)).toBe(expectedTokenType);
     });
   }
 

@@ -335,12 +335,13 @@ describe('tokenFindLastIndex', () => {
     });
   });
 
-  describe('constant', () => {
+  describe('Constant', () => {
     describe('Character', () => {
       assert("'\\''", 0, TokenCategory.constant, 3);
       assert("'a'", 0, TokenCategory.constant, 2);
       assert("'a' ", 0, TokenCategory.constant, 2);
       assert(" 'a' ", 1, TokenCategory.constant, 3);
+      assert(" '@' ", 1, TokenCategory.constant, 3);
     });
     describe('String', () => {
       assert('"string literal"', 0, TokenCategory.constant, 15);

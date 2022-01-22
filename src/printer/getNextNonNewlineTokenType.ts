@@ -1,4 +1,3 @@
-import tokenDecode from '../lexer/tokenDecode';
 import TokenType, {
   isTokenAssignmentOperator,
   isTokenConstant,
@@ -9,12 +8,12 @@ import TokenType, {
 import PrinterCategory from './PrinterCategory';
 
 export default function getNextNonNewlineTokenType(
-  tokens: TokenType[],
+  tokenTypes: Uint8Array,
   index: number,
   tokensAhead?: number,
 ): TokenType | PrinterCategory | null {
-  for (let i = index + 1; i < tokens.length; ++i) {
-    const type = tokenDecode(tokens[i])[1];
+  for (let i = index + 1; i < tokenTypes.length; ++i) {
+    const type = tokenTypes[i];
     if (type === TokenType.newline) {
       continue;
     } else if (tokensAhead !== undefined && --tokensAhead > 0) {
@@ -44,17 +43,17 @@ export default function getNextNonNewlineTokenType(
   return null;
 }
 export function getNextNonNewlineTokenTypeRaw(
-  typeArray: TokenType[],
+  tokenTypes: Uint8Array,
   index: number,
   tokensAhead?: number,
 ): TokenType {
-  for (let i = index + 1; i < typeArray.length; ++i) {
-    if (typeArray[i] === TokenType.newline) {
+  for (let i = index + 1; i < tokenTypes.length; ++i) {
+    if (tokenTypes[i] === TokenType.newline) {
       continue;
     } else if (tokensAhead !== undefined && --tokensAhead > 0) {
       continue;
     }
-    return typeArray[i];
+    return tokenTypes[i];
   }
   return TokenType.newline;
 }

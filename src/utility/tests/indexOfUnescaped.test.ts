@@ -24,4 +24,5 @@ describe('indexOfUnescaped', () => {
   assert('0123\\""', '"', 0, 6);
   assert('0123\\"\\""', '"', 0, 8);
   assert('0123\\"\\"" ', '"', 0, 8);
+  assert(' \\\\x ', 'x', 0, 3);
 });

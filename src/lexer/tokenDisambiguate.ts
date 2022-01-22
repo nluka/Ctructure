@@ -20,8 +20,7 @@ export default function tokenDisambiguate(
   tokens: TokenArray,
   fileContents: string,
 ): TokenType {
-  const [currTokenStartIndex, currTokenType] =
-    tokens.getTokenDecoded(currTokenIndex);
+  const [currTokenStartIndex, currTokenType] = tokens.getToken(currTokenIndex);
 
   const createErr = () =>
     createError(fileContents, currTokenStartIndex, currTokenType);

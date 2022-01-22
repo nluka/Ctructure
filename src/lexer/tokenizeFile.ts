@@ -2,7 +2,6 @@ import { readFileSync } from 'fs';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
 import TokenArray from './TokenArray';
 import tokenDisambiguate from './tokenDisambiguate';
-import tokenEncode from './tokenEncode';
 import Tokenizer from './Tokenizer';
 
 /**
@@ -14,9 +13,7 @@ import Tokenizer from './Tokenizer';
  * @returns An array, the first element is the contents of the file, the second
  * is the array of encoded tokens in their order of appearance within the file.
  */
-export function tokenizeFile(
-  filePathname: string
-): [string, TokenArray] {
+export function tokenizeFile(filePathname: string): [string, TokenArray] {
   const fileBuffer = readFileSync(filePathname);
   const fileContents = removeCarriageReturns(fileBuffer.toString());
   const tokenizer = new Tokenizer(fileContents);
@@ -27,7 +24,7 @@ export function tokenizeFile(
     if (extractedToken === null) {
       break;
     }
-    tokens.push(extractedToken);
+    tokens.pushPacked(extractedToken);
   }
 
   for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
@@ -36,11 +33,7 @@ export function tokenizeFile(
       tokens,
       fileContents,
     );
-    const ambigTokenStartIndex = tokens.getTokenDecoded(ambigTokenIndex)[0];
-    tokens.setTokenEncoded(
-      ambigTokenIndex,
-      tokenEncode(ambigTokenStartIndex, disambiguatedTokenType),
-    );
+    tokens.setTokenType(ambigTokenIndex, disambiguatedTokenType);
   }
 
   return [fileContents, tokens];

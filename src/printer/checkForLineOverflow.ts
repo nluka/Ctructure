@@ -1,13 +1,12 @@
-import tokenDecode from '../lexer/tokenDecode';
 import TokenType, { isTokenBinaryOperator } from '../lexer/TokenType';
-import PrinterCategory from './PrinterCategory';
 import { ContextTypes } from './printer';
+import PrinterCategory from './PrinterCategory';
 
 export default function checkForLineOverflow(
   fileContents: string,
   context: ContextTypes,
-  indexArray: number[],
-  typeArray: TokenType[],
+  tokenStartIndices: Uint32Array,
+  tokenTypes: Uint8Array,
   index: number,
   startLineIndex: number,
   blockLevel: number,
@@ -21,8 +20,8 @@ export default function checkForLineOverflow(
 
   if (context === PrinterCategory.array) {
     return isThereArrayOverflow(
-      indexArray,
-      typeArray,
+      tokenStartIndices,
+      tokenTypes,
       fileContents,
       index,
       startLineIndex,
@@ -31,8 +30,8 @@ export default function checkForLineOverflow(
 
   if (context === TokenType.operatorBinaryAssignmentDirect) {
     return isThereAssignmentOverflow(
-      indexArray,
-      typeArray,
+      tokenStartIndices,
+      tokenTypes,
       fileContents,
       index,
       startLineIndex,
@@ -41,8 +40,8 @@ export default function checkForLineOverflow(
 
   if (context === TokenType.specialBracketOpening) {
     return isThereBracketOverflow(
-      indexArray,
-      typeArray,
+      tokenStartIndices,
+      tokenTypes,
       fileContents,
       index,
       startLineIndex,
@@ -50,8 +49,8 @@ export default function checkForLineOverflow(
   }
 
   return isThereParenOverflow(
-    indexArray,
-    typeArray,
+    tokenStartIndices,
+    tokenTypes,
     fileContents,
     index,
     startLineIndex,
@@ -60,8 +59,8 @@ export default function checkForLineOverflow(
 }
 
 function isThereArrayOverflow(
-  indexArray: number[],
-  typeArray: TokenType[],
+  tokenStartIndices: Uint32Array,
+  tokenTypes: Uint8Array,
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -70,23 +69,23 @@ function isThereArrayOverflow(
   let braceCount = 0;
   let whitespaceCount = 0;
 
-  for (let i = tokenIndex; braceCount >= 0 && i < typeArray.length; ++i) {
-    if (typeArray[i] === TokenType.specialBraceOpening) {
+  for (let i = tokenIndex; braceCount >= 0 && i < tokenTypes.length; ++i) {
+    if (tokenTypes[i] === TokenType.specialBraceOpening) {
       whitespaceCount += 2;
       ++braceCount;
-    } else if (typeArray[i] === TokenType.specialBraceClosing) {
+    } else if (tokenTypes[i] === TokenType.specialBraceClosing) {
       whitespaceCount += 2;
       --braceCount;
       if (braceCount === 0) {
         lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, indexArray[i]))
+          removeSpaces(fileContents.slice(startLineIndex, tokenStartIndices[i]))
             .length + whitespaceCount;
         if (lineLength > 80) {
           return true;
         }
         return false;
       }
-    } else if (typeArray[i] === TokenType.specialComma) {
+    } else if (tokenTypes[i] === TokenType.specialComma) {
       ++whitespaceCount;
     }
   }
@@ -95,8 +94,8 @@ function isThereArrayOverflow(
 }
 
 function isThereParenOverflow(
-  indexArray: number[],
-  typeArray: TokenType[],
+  tokenStartIndices: Uint32Array,
+  tokenTypes: Uint8Array,
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -106,23 +105,23 @@ function isThereParenOverflow(
   let parenCount = 0;
   let whiteSpace = blockLevel * 2;
 
-  for (let i = tokenIndex; parenCount >= 0 && i < typeArray.length; ++i) {
-    if (typeArray[i] === TokenType.specialParenthesisOpening) {
+  for (let i = tokenIndex; parenCount >= 0 && i < tokenTypes.length; ++i) {
+    if (tokenTypes[i] === TokenType.specialParenthesisOpening) {
       ++parenCount;
-    } else if (typeArray[i] === TokenType.specialParenthesisClosing) {
+    } else if (tokenTypes[i] === TokenType.specialParenthesisClosing) {
       --parenCount;
       if (parenCount === 0) {
         lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, indexArray[i]))
+          removeSpaces(fileContents.slice(startLineIndex, tokenStartIndices[i]))
             .length + whiteSpace;
         if (lineLength > 80) {
           return true;
         }
         return false;
       }
-    } else if (typeArray[i] === TokenType.specialComma) {
+    } else if (tokenTypes[i] === TokenType.specialComma) {
       ++whiteSpace;
-    } else if (typeArray[i] >= 80 && typeArray[i] <= 87) {
+    } else if (tokenTypes[i] >= 80 && tokenTypes[i] <= 87) {
       whiteSpace += 2;
     }
   }
@@ -131,8 +130,8 @@ function isThereParenOverflow(
 }
 
 function isThereBracketOverflow(
-  indexArray: number[],
-  typeArray: TokenType[],
+  tokenStartIndices: Uint32Array,
+  tokenTypes: Uint8Array,
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -141,21 +140,21 @@ function isThereBracketOverflow(
   let bracketCount = 0;
   let whiteSpace = 0;
 
-  for (let i = tokenIndex; bracketCount >= 0 && i < typeArray.length; ++i) {
-    if (typeArray[i] === TokenType.specialBracketOpening) {
+  for (let i = tokenIndex; bracketCount >= 0 && i < tokenTypes.length; ++i) {
+    if (tokenTypes[i] === TokenType.specialBracketOpening) {
       ++bracketCount;
-    } else if (typeArray[i] === TokenType.specialBracketClosing) {
+    } else if (tokenTypes[i] === TokenType.specialBracketClosing) {
       --bracketCount;
       if (bracketCount === 0) {
         lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, indexArray[i]))
+          removeSpaces(fileContents.slice(startLineIndex, tokenStartIndices[i]))
             .length + whiteSpace;
         if (lineLength > 80) {
           return true;
         }
         return false;
       }
-    } else if (typeArray[i] === TokenType.specialComma) {
+    } else if (tokenTypes[i] === TokenType.specialComma) {
       ++whiteSpace;
     }
   }
@@ -164,8 +163,8 @@ function isThereBracketOverflow(
 }
 
 function isThereAssignmentOverflow(
-  indexArray: number[],
-  typeArray: TokenType[],
+  tokenStartIndices: Uint32Array,
+  tokenTypes: Uint8Array,
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -174,17 +173,17 @@ function isThereAssignmentOverflow(
   let bracketCount = 0;
   let whiteSpace = 2;
 
-  for (let i = tokenIndex; bracketCount >= 0 && i < typeArray.length; ++i) {
-    if (typeArray[i] === TokenType.specialSemicolon) {
+  for (let i = tokenIndex; bracketCount >= 0 && i < tokenTypes.length; ++i) {
+    if (tokenTypes[i] === TokenType.specialSemicolon) {
       lineLength =
-        removeSpaces(fileContents.slice(startLineIndex, indexArray[i])).length +
-        whiteSpace;
+        removeSpaces(fileContents.slice(startLineIndex, tokenStartIndices[i]))
+          .length + whiteSpace;
       if (lineLength > 80) {
         return true;
       }
       return false;
     }
-    if (isTokenBinaryOperator(typeArray[i])) {
+    if (isTokenBinaryOperator(tokenTypes[i])) {
       whiteSpace += 2;
     }
   }

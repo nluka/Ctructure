@@ -32,7 +32,7 @@ describe('TokenArray.checkIndexBounds', () => {
     const count = 10;
     const ta = new TokenArray(count);
     for (let i = 1; i <= count; ++i) {
-      ta.push(i);
+      ta.pushUnpacked(0, 0);
     }
     assert(ta, -10, true);
     assert(ta, -1, true);
@@ -47,7 +47,7 @@ describe('TokenArray.checkIndexBounds', () => {
     const count = 100;
     const ta = new TokenArray(count);
     for (let i = 1; i <= count; ++i) {
-      ta.push(i);
+      ta.pushUnpacked(0, 0);
     }
     assert(ta, -10, true);
     assert(ta, -1, true);
