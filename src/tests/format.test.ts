@@ -50,6 +50,7 @@ describe('format', () => {
   assert('./empty_header.h');
   assert('./for.c');
   assert('./func_pointers.h');
+  assert('./if_else.c');
   assert('./macros.c');
   assert('./struct.c');
   assert('./switch.c');

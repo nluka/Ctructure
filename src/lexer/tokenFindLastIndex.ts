@@ -6,7 +6,6 @@ import TokenType from './TokenType';
 
 const multiLineCommentRegex = /\*/,
   singleCharOperatorRegex = /[?:~]/,
-  // singleCharOperatorRegex = /[.?:~]/,
   plusPlusOrPlusEqualRegex = /[+=]/,
   minusMinusOrMinusEqualOrArrowRegex = /[\-=>]/,
   singleOrDoubleQuoteRegex = /["']/,

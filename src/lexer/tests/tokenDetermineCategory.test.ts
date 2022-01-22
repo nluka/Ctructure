@@ -219,18 +219,15 @@ describe('tokenDetermineCategory', () => {
       assert('_func_name', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('some_struct_t', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     });
-
     describe('Labels', () => {
       assert('get_out:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('exit:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
       assert('handle_error:', TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel);
     });
-
     describe('Comments', () => {
       assert('// Single line comment', TokenCategory.commentOrOperator);
       assert('/* Multiple line comment */', TokenCategory.commentOrOperator);
     });
-
     describe('Newline', () => {
       assert('\n', TokenCategory.newline);
     });
