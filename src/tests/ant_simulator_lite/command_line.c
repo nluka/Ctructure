@@ -32,7 +32,11 @@ void validate_next_arg(const char * argName, int argIndex, int argc);
 
 void process_command_line_args(const int argc, char ** const argv) {
   if (argc < 2) {
-    printfc(TC_RED, "%s\n", "Missing simulation file pathname as first argument");
+    printfc(
+      TC_RED,
+      "%s\n",
+      "Missing simulation file pathname as first argument"
+    );
     end(EC_MISSING_SIMULATION_FILE, NULL);
   }
 

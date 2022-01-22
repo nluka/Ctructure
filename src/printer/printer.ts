@@ -2,10 +2,12 @@ import TokenArray from '../lexer/TokenArray';
 import tokenDecode from '../lexer/tokenDecode';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import tokenFindLastIndex from '../lexer/tokenFindLastIndex';
-import TokenType from '../lexer/TokenType';
+import TokenType, { isTokenTypeOrTypeQualifierKeyword } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
 import checkForLineOverflow from './checkForLineOverflow';
-import getNextNonNewlineTokenType from './getNextNonNewlineTokenType';
+import getNextNonNewlineTokenType, {
+  getNextNonNewlineTokenTypeRaw,
+} from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import PrinterCategory from './PrinterCategory';
 import Stack from './Stack';
@@ -65,7 +67,14 @@ export default function printer(
   let formattedFileStr: string = '';
 
   function isThereLineOverflow(i: number, overflowType: ContextTypes): boolean {
-    overflow = checkForLineOverflow(fileContents, overflowType, tokens, i, startLineIndex);
+    overflow = checkForLineOverflow(
+      fileContents,
+      overflowType,
+      tokens,
+      i,
+      startLineIndex,
+      blockLevel,
+    );
     return overflow;
   }
 
@@ -102,7 +111,7 @@ export default function printer(
       }
       noExtraNewline = false;
       newline = false;
-      startLineIndex = currTokenStartIndex - blockLevel * spaceAmount;
+      startLineIndex = currTokenStartIndex;
     }
 
     switch (currTokenType) {
@@ -210,9 +219,10 @@ export default function printer(
         previousContext = contextStack.pop();
         overflow = previousContext.overflow;
         blockLevel = previousContext.blockLevel;
-        if (previousContext.context === TokenType.keywordFor && parenCount === 0) {
-          context = null;
-        } else if (previousContext.context === TokenType.keywordIf) {
+        if (
+          previousContext.context === TokenType.keywordIf ||
+          (previousContext.context === TokenType.keywordFor && parenCount === 0)
+        ) {
           if (getNextNonNewlineTokenType(tokens, i) !== TokenType.specialBraceOpening) {
             context = PrinterCategory.singleLineIf;
             ++blockLevel;
@@ -222,6 +232,9 @@ export default function printer(
             context = null;
           }
         } else {
+          if (isTokenTypeOrTypeQualifierKeyword(getNextNonNewlineTokenTypeRaw(tokens, i))) {
+            currString += ' ';
+          }
           context = previousContext.context;
         }
         break;
@@ -381,13 +394,15 @@ export default function printer(
       case TokenType.ambiguousColon:
         if (context === TokenType.keywordCase || context === TokenType.keywordDefault) {
           context = null;
-          formattedFileStr += currString;
-          previousType = currTokenType;
-          currString = '\n' + indentation.repeat(blockLevel);
-          startLineIndex = tokenDecode(tokens[i + 1])[0] - blockLevel * indentation.length;
-          continue;
+          if (getNextNonNewlineTokenType(tokens, i) !== TokenType.specialBraceOpening) {
+            newline = true;
+            noExtraNewline = true;
+          } else {
+            --blockLevel;
+          }
+        } else {
+          currString = ' : ';
         }
-        currString = ' : ';
         break;
 
       // Keywords (https://en.cppreference.com/w/c/keyword)
@@ -419,16 +434,24 @@ export default function printer(
           context = PrinterCategory.typeOrIdentifier;
         }
         nextTokenType = getNextNonNewlineTokenType(tokens, i);
-        if (nextTokenType === PrinterCategory.typeOrIdentifier) {
+        if (
+          nextTokenType === PrinterCategory.typeOrIdentifier ||
+          nextTokenType === PrinterCategory.typeQualifier
+        ) {
           currString += ' ';
         } else if (nextTokenType === TokenType.specialParenthesisOpening) {
           currString += ' ';
         }
         break;
 
-      case TokenType.keywordDo:
       case TokenType.keywordFor:
       case TokenType.keywordIf:
+        if (parenCount === 0) {
+          context = currTokenType;
+        }
+        break;
+
+      case TokenType.keywordDo:
       case TokenType.keywordStruct:
       case TokenType.keywordSwitch:
       case TokenType.keywordUnion:

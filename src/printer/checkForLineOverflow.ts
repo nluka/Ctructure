@@ -9,6 +9,7 @@ export default function checkForLineOverflow(
   tokens: Uint32Array,
   index: number,
   startLineIndex: number,
+  blockLevel: number,
 ): boolean {
   if (
     context === PrinterCategory.variableDecl ||
@@ -34,7 +35,13 @@ export default function checkForLineOverflow(
     return isThereBracketOverflow(tokens, fileContents, index, startLineIndex);
   }
 
-  return isThereParenOverflow(tokens, fileContents, index, startLineIndex);
+  return isThereParenOverflow(
+    tokens,
+    fileContents,
+    index,
+    startLineIndex,
+    blockLevel,
+  );
 }
 
 function isThereArrayOverflow(
@@ -77,10 +84,11 @@ function isThereParenOverflow(
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
+  blockLevel: number,
 ): boolean {
   let lineLength;
   let parenCount = 0;
-  let whiteSpace = 0;
+  let whiteSpace = blockLevel * 2;
 
   for (let i = tokenIndex; parenCount >= 0 && i < tokens.length; ++i) {
     const decodedToken = tokenDecode(tokens[i]);

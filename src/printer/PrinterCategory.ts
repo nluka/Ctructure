@@ -10,6 +10,7 @@ enum PrinterCategory {
   functionCall,
   assignment,
   operator,
+  typeQualifier,
 }
 
 export default PrinterCategory;

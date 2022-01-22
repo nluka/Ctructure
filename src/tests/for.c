@@ -6,7 +6,7 @@ static struct child {
 };
 
 void for_loop() {
-  const struct child * blanket, *next;
+  const struct child * blanket, * next;
 
   for (; (next = blanket->next); blanket = next)
     if (!addrcmp(&blanket->address, &next->address)) {
