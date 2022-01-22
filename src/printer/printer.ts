@@ -47,7 +47,7 @@ export default function printer(
   let nextTokenType: ContextTypes;
 
   // Previous token's type
-  let previousType: TokenType = TokenType.startFile;
+  let previousType: TokenType | null = null;
 
   // Determines how a token should behave
   let context: ContextTypes = null;
@@ -296,7 +296,7 @@ export default function printer(
       case TokenType.preproDirectivePragma:
         context = PrinterCategory.prepro;
         if (
-          previousType !== TokenType.startFile &&
+          previousType !== null &&
           currString === typeAsValue &&
           typeArray[i - 1] === TokenType.newline
         ) {
@@ -536,7 +536,7 @@ export default function printer(
 
       case TokenType.commentSingleline:
         if (
-          previousType !== TokenType.startFile &&
+          previousType !== null &&
           (typeArray[i - 1] !== TokenType.newline || currString === '')
         ) {
           currString = ' ';
