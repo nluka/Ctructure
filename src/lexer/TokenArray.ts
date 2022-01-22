@@ -16,8 +16,16 @@ export default class TokenArray {
     this.size = initialSize;
   }
 
-  public getValues(): Uint32Array {
-    return this.values;
+  public getValues(): { indexArray: number[]; typeArray: TokenType[] } {
+    const indexArray: number[] = [];
+    const typeArray: TokenType[] = [];
+    for (let i = 0; i < this.getCount(); ++i) {
+      [indexArray[i], typeArray[i]] = this.getTokenDecoded(i);
+    }
+    return {
+      indexArray: indexArray,
+      typeArray: typeArray,
+    };
   }
 
   public push(encodedToken: number): void {

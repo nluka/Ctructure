@@ -9,7 +9,7 @@ import TokenType, {
 import PrinterCategory from './PrinterCategory';
 
 export default function getNextNonNewlineTokenType(
-  tokens: Uint32Array,
+  tokens: TokenType[],
   index: number,
   tokensAhead?: number,
 ): TokenType | PrinterCategory | null {
@@ -44,18 +44,17 @@ export default function getNextNonNewlineTokenType(
   return null;
 }
 export function getNextNonNewlineTokenTypeRaw(
-  tokens: Uint32Array,
+  typeArray: TokenType[],
   index: number,
   tokensAhead?: number,
 ): TokenType {
-  for (let i = index + 1; i < tokens.length; ++i) {
-    const type = tokenDecode(tokens[i])[1];
-    if (type === TokenType.newline) {
+  for (let i = index + 1; i < typeArray.length; ++i) {
+    if (typeArray[i] === TokenType.newline) {
       continue;
     } else if (tokensAhead !== undefined && --tokensAhead > 0) {
       continue;
     }
-    return type;
+    return typeArray[i];
   }
   return TokenType.newline;
 }

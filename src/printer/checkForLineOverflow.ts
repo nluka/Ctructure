@@ -6,7 +6,8 @@ import { ContextTypes } from './printer';
 export default function checkForLineOverflow(
   fileContents: string,
   context: ContextTypes,
-  tokens: Uint32Array,
+  indexArray: number[],
+  typeArray: TokenType[],
   index: number,
   startLineIndex: number,
   blockLevel: number,
@@ -19,12 +20,19 @@ export default function checkForLineOverflow(
   }
 
   if (context === PrinterCategory.array) {
-    return isThereArrayOverflow(tokens, fileContents, index, startLineIndex);
+    return isThereArrayOverflow(
+      indexArray,
+      typeArray,
+      fileContents,
+      index,
+      startLineIndex,
+    );
   }
 
   if (context === TokenType.operatorBinaryAssignmentDirect) {
     return isThereAssignmentOverflow(
-      tokens,
+      indexArray,
+      typeArray,
       fileContents,
       index,
       startLineIndex,
@@ -32,11 +40,18 @@ export default function checkForLineOverflow(
   }
 
   if (context === TokenType.specialBracketOpening) {
-    return isThereBracketOverflow(tokens, fileContents, index, startLineIndex);
+    return isThereBracketOverflow(
+      indexArray,
+      typeArray,
+      fileContents,
+      index,
+      startLineIndex,
+    );
   }
 
   return isThereParenOverflow(
-    tokens,
+    indexArray,
+    typeArray,
     fileContents,
     index,
     startLineIndex,
@@ -45,7 +60,8 @@ export default function checkForLineOverflow(
 }
 
 function isThereArrayOverflow(
-  tokens: Uint32Array,
+  indexArray: number[],
+  typeArray: TokenType[],
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -54,24 +70,23 @@ function isThereArrayOverflow(
   let braceCount = 0;
   let whitespaceCount = 0;
 
-  for (let i = tokenIndex; braceCount >= 0 && i < tokens.length; ++i) {
-    const decodedToken = tokenDecode(tokens[i]);
-    if (decodedToken[1] === TokenType.specialBraceOpening) {
+  for (let i = tokenIndex; braceCount >= 0 && i < typeArray.length; ++i) {
+    if (typeArray[i] === TokenType.specialBraceOpening) {
       whitespaceCount += 2;
       ++braceCount;
-    } else if (decodedToken[1] === TokenType.specialBraceClosing) {
+    } else if (typeArray[i] === TokenType.specialBraceClosing) {
       whitespaceCount += 2;
       --braceCount;
       if (braceCount === 0) {
         lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, decodedToken[0]))
+          removeSpaces(fileContents.slice(startLineIndex, indexArray[i]))
             .length + whitespaceCount;
         if (lineLength > 80) {
           return true;
         }
         return false;
       }
-    } else if (decodedToken[1] === TokenType.specialComma) {
+    } else if (typeArray[i] === TokenType.specialComma) {
       ++whitespaceCount;
     }
   }
@@ -80,7 +95,8 @@ function isThereArrayOverflow(
 }
 
 function isThereParenOverflow(
-  tokens: Uint32Array,
+  indexArray: number[],
+  typeArray: TokenType[],
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -90,24 +106,23 @@ function isThereParenOverflow(
   let parenCount = 0;
   let whiteSpace = blockLevel * 2;
 
-  for (let i = tokenIndex; parenCount >= 0 && i < tokens.length; ++i) {
-    const decodedToken = tokenDecode(tokens[i]);
-    if (decodedToken[1] === TokenType.specialParenthesisOpening) {
+  for (let i = tokenIndex; parenCount >= 0 && i < typeArray.length; ++i) {
+    if (typeArray[i] === TokenType.specialParenthesisOpening) {
       ++parenCount;
-    } else if (decodedToken[1] === TokenType.specialParenthesisClosing) {
+    } else if (typeArray[i] === TokenType.specialParenthesisClosing) {
       --parenCount;
       if (parenCount === 0) {
         lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, decodedToken[0]))
+          removeSpaces(fileContents.slice(startLineIndex, indexArray[i]))
             .length + whiteSpace;
         if (lineLength > 80) {
           return true;
         }
         return false;
       }
-    } else if (decodedToken[1] === TokenType.specialComma) {
+    } else if (typeArray[i] === TokenType.specialComma) {
       ++whiteSpace;
-    } else if (decodedToken[1] >= 80 && decodedToken[1] <= 87) {
+    } else if (typeArray[i] >= 80 && typeArray[i] <= 87) {
       whiteSpace += 2;
     }
   }
@@ -116,7 +131,8 @@ function isThereParenOverflow(
 }
 
 function isThereBracketOverflow(
-  tokens: Uint32Array,
+  indexArray: number[],
+  typeArray: TokenType[],
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -125,22 +141,21 @@ function isThereBracketOverflow(
   let bracketCount = 0;
   let whiteSpace = 0;
 
-  for (let i = tokenIndex; bracketCount >= 0 && i < tokens.length; ++i) {
-    const decodedToken = tokenDecode(tokens[i]);
-    if (decodedToken[1] === TokenType.specialBracketOpening) {
+  for (let i = tokenIndex; bracketCount >= 0 && i < typeArray.length; ++i) {
+    if (typeArray[i] === TokenType.specialBracketOpening) {
       ++bracketCount;
-    } else if (decodedToken[1] === TokenType.specialBracketClosing) {
+    } else if (typeArray[i] === TokenType.specialBracketClosing) {
       --bracketCount;
       if (bracketCount === 0) {
         lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, decodedToken[0]))
+          removeSpaces(fileContents.slice(startLineIndex, indexArray[i]))
             .length + whiteSpace;
         if (lineLength > 80) {
           return true;
         }
         return false;
       }
-    } else if (decodedToken[1] === TokenType.specialComma) {
+    } else if (typeArray[i] === TokenType.specialComma) {
       ++whiteSpace;
     }
   }
@@ -149,7 +164,8 @@ function isThereBracketOverflow(
 }
 
 function isThereAssignmentOverflow(
-  tokens: Uint32Array,
+  indexArray: number[],
+  typeArray: TokenType[],
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
@@ -158,18 +174,17 @@ function isThereAssignmentOverflow(
   let bracketCount = 0;
   let whiteSpace = 2;
 
-  for (let i = tokenIndex; bracketCount >= 0 && i < tokens.length; ++i) {
-    const decodedToken = tokenDecode(tokens[i]);
-    if (decodedToken[1] === TokenType.specialSemicolon) {
+  for (let i = tokenIndex; bracketCount >= 0 && i < typeArray.length; ++i) {
+    if (typeArray[i] === TokenType.specialSemicolon) {
       lineLength =
-        removeSpaces(fileContents.slice(startLineIndex, decodedToken[0]))
-          .length + whiteSpace;
+        removeSpaces(fileContents.slice(startLineIndex, indexArray[i])).length +
+        whiteSpace;
       if (lineLength > 80) {
         return true;
       }
       return false;
     }
-    if (isTokenBinaryOperator(decodedToken[1])) {
+    if (isTokenBinaryOperator(typeArray[i])) {
       whiteSpace += 2;
     }
   }

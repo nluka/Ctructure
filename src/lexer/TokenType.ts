@@ -172,6 +172,7 @@ enum TokenType {
     ambiguousAmpersand, // (bitwise and | address of) ?
     ambiguousColon, // (switch case/default | ternary)
   //#endregion Ambiguous
+  startFile
 }
 
 export function isTokenPreprocessor(type: TokenType) {

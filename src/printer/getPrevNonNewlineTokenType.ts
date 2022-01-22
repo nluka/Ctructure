@@ -1,30 +1,14 @@
-import tokenDecode from '../lexer/tokenDecode';
-import TokenType, {
-  isTokenAssignmentOperator,
-  isTokenPreprocessor,
-  isTokenTypeKeyword,
-} from '../lexer/TokenType';
-import PrinterCategory from './PrinterCategory';
+import TokenType from '../lexer/TokenType';
 
 export default function getPrevNonNewlineTokenType(
-  tokens: Uint32Array,
+  typeArray: TokenType[],
   index: number,
-): TokenType | PrinterCategory | null {
-  for (let i = index - 1; i < tokens.length; --i) {
-    const type = tokenDecode(tokens[i])[1];
-    if (type === TokenType.newline) {
+): TokenType {
+  for (let i = index - 1; i < typeArray.length; --i) {
+    if (typeArray[i] === TokenType.newline) {
       continue;
     }
-    if (isTokenAssignmentOperator(type)) {
-      return PrinterCategory.assignment;
-    }
-    if (isTokenPreprocessor(type)) {
-      return PrinterCategory.prepro;
-    }
-    if (isTokenTypeKeyword(type) || type === TokenType.identifier) {
-      return PrinterCategory.typeOrIdentifier;
-    }
-    return type;
+    return typeArray[i];
   }
-  return null;
+  return TokenType.newline;
 }
