@@ -293,7 +293,11 @@ export default function printer(
       case TokenType.specialBraceClosing:
         previousContext = contextStack.pop();
         blockLevel = previousContext.blockLevel;
-        currString = `\n${indentation.repeat(blockLevel)}}`;
+        if (previousType === TokenType.specialBraceOpening) {
+          currString = '}';
+        } else {
+          currString = `\n${indentation.repeat(blockLevel)}}`;
+        }
         if (context === PrinterCategory.array) {
           if (!overflow) {
             currString = ' }';
