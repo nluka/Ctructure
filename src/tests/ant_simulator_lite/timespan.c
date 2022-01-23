@@ -9,13 +9,13 @@ typedef struct Timespan {
 
 Timespan_t timespan_calculate(const time_t secondsElapsed) {
   const static size_t SECONDS_PER_DAY = 86400,
-    SECONDS_PER_HOUR = 3600,
-    SECONDS_PER_MINUTE = 60;
+                      SECONDS_PER_HOUR = 3600,
+                      SECONDS_PER_MINUTE = 60;
 
   size_t days = 0,
-    hours = 0,
-    minutes = 0,
-    seconds = (size_t)secondsElapsed;
+         hours = 0,
+         minutes = 0,
+         seconds = (size_t)secondsElapsed;
 
   while (seconds >= SECONDS_PER_DAY) {
     ++days;
