@@ -12,10 +12,7 @@ Timespan_t timespan_calculate(const time_t secondsElapsed) {
                       SECONDS_PER_HOUR = 3600,
                       SECONDS_PER_MINUTE = 60;
 
-  size_t days = 0,
-         hours = 0,
-         minutes = 0,
-         seconds = (size_t)secondsElapsed;
+  size_t days = 0, hours = 0, minutes = 0, seconds = (size_t)secondsElapsed;
 
   while (seconds >= SECONDS_PER_DAY) {
     ++days;

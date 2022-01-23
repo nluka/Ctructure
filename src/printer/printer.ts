@@ -73,6 +73,8 @@ export default function printer(
 
   let indentAmount: number = 0;
 
+  const multiVarDecAlwaysNewLine = false;
+
   function isThereLineOverflow(i: number, overflowType: ContextTypes): boolean {
     overflow = checkForLineOverflow(
       fileContents,
@@ -152,14 +154,25 @@ export default function printer(
           newline = true;
           noExtraNewline = true;
         } else if (context === PrinterCategory.multiVariableDecl) {
-          checkForIndirectionAndAddIndentation(i);
+          if (multiVarDecAlwaysNewLine) {
+            checkForIndirectionAndAddIndentation(i);
+          } else {
+            currString = ', ';
+          }
         } else if (
           context === PrinterCategory.variableDecl ||
           context === PrinterCategory.doubleTypeOrIdentifier
         ) {
-          indentAmount = getIndentAmount(formattedFileStr);
-          checkForIndirectionAndAddIndentation(i);
           context = PrinterCategory.multiVariableDecl;
+          contextStack.push({ context, overflow, blockLevel });
+          if (multiVarDecAlwaysNewLine || isThereLineOverflow(i, context)) {
+            indentAmount = getIndentAmount(formattedFileStr);
+            blockLevel = Math.ceil(indentAmount / 2);
+            checkForIndirectionAndAddIndentation(i);
+          } else {
+            contextStack.pop();
+            currString = ', ';
+          }
         } else if (getNextNonNewlineTokenType(tokenTypes, i) === TokenType.preproLineContinuation) {
           currString = ',';
         } else {
@@ -171,6 +184,11 @@ export default function printer(
         if (context === PrinterCategory.multiVariableDecl) {
           newline = true;
           context = null;
+          if (multiVarDecAlwaysNewLine || overflow) {
+            const oldContext = contextStack.pop();
+            blockLevel = oldContext.blockLevel;
+            overflow = oldContext.overflow;
+          }
         } else if (context === PrinterCategory.singleLineIf) {
           --blockLevel;
           newline = true;

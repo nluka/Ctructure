@@ -11,15 +11,12 @@ export default function checkForLineOverflow(
   startLineIndex: number,
   blockLevel: number,
 ): boolean {
-  if (
-    context === PrinterCategory.variableDecl ||
-    context === PrinterCategory.multiVariableDecl
-  ) {
+  if (context === PrinterCategory.variableDecl) {
     return false;
   }
 
   if (context === PrinterCategory.array) {
-    return isThereArrayOverflow(
+    return overflowArray(
       tokenStartIndices,
       tokenTypes,
       fileContents,
@@ -28,8 +25,11 @@ export default function checkForLineOverflow(
     );
   }
 
-  if (context === TokenType.operatorBinaryAssignmentDirect) {
-    return isThereAssignmentOverflow(
+  if (
+    context === TokenType.operatorBinaryAssignmentDirect ||
+    context === PrinterCategory.multiVariableDecl
+  ) {
+    return overflowSemicolon(
       tokenStartIndices,
       tokenTypes,
       fileContents,
@@ -39,7 +39,7 @@ export default function checkForLineOverflow(
   }
 
   if (context === TokenType.specialBracketOpening) {
-    return isThereBracketOverflow(
+    return overflowBracket(
       tokenStartIndices,
       tokenTypes,
       fileContents,
@@ -48,7 +48,7 @@ export default function checkForLineOverflow(
     );
   }
 
-  return isThereParenOverflow(
+  return overflowParen(
     tokenStartIndices,
     tokenTypes,
     fileContents,
@@ -58,7 +58,7 @@ export default function checkForLineOverflow(
   );
 }
 
-function isThereArrayOverflow(
+function overflowArray(
   tokenStartIndices: Uint32Array,
   tokenTypes: Uint8Array,
   fileContents: string,
@@ -93,7 +93,7 @@ function isThereArrayOverflow(
   return false;
 }
 
-function isThereParenOverflow(
+function overflowParen(
   tokenStartIndices: Uint32Array,
   tokenTypes: Uint8Array,
   fileContents: string,
@@ -129,7 +129,7 @@ function isThereParenOverflow(
   return false;
 }
 
-function isThereBracketOverflow(
+function overflowBracket(
   tokenStartIndices: Uint32Array,
   tokenTypes: Uint8Array,
   fileContents: string,
@@ -162,7 +162,7 @@ function isThereBracketOverflow(
   return false;
 }
 
-function isThereAssignmentOverflow(
+function overflowSemicolon(
   tokenStartIndices: Uint32Array,
   tokenTypes: Uint8Array,
   fileContents: string,
