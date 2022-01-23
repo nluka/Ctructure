@@ -5,7 +5,6 @@ import TokenType, {
   isTokenTypeKeyword,
   isTokenTypeOrTypeQualifierKeyword,
 } from '../lexer/TokenType';
-import tokenValueToTypeMap from '../lexer/tokenValueToTypeMap';
 import areThereCommas from './areThereCommas';
 import checkForLineOverflow from './checkForLineOverflow';
 import getNextNonNewlineTokenType, {
@@ -108,7 +107,6 @@ export default function printer(
     ) {
       isThereIndirection = 2;
     }
-    console.log(getNextNonNewlineTokenTypeRaw(tokenTypes, i));
     currString += '\n' + ' '.repeat(indentAmount - isThereIndirection);
   }
 
@@ -153,12 +151,8 @@ export default function printer(
         if (overflow) {
           newline = true;
           noExtraNewline = true;
-        } else if (context === PrinterCategory.multiVariableDecl) {
-          if (multiVarDecAlwaysNewLine) {
-            checkForIndirectionAndAddIndentation(i);
-          } else {
-            currString = ', ';
-          }
+        } else if (context === PrinterCategory.multiVariableDecl && multiVarDecAlwaysNewLine) {
+          checkForIndirectionAndAddIndentation(i);
         } else if (
           context === PrinterCategory.variableDecl ||
           context === PrinterCategory.doubleTypeOrIdentifier
@@ -173,16 +167,18 @@ export default function printer(
             contextStack.pop();
             currString = ', ';
           }
-        } else if (getNextNonNewlineTokenType(tokenTypes, i) === TokenType.preproLineContinuation) {
-          currString = ',';
         } else {
           currString = ', ';
         }
         break;
 
       case TokenType.specialSemicolon:
+        if (context === TokenType.keywordFor) {
+          currString = '; ';
+          break;
+        }
+
         if (context === PrinterCategory.multiVariableDecl) {
-          newline = true;
           context = null;
           if (multiVarDecAlwaysNewLine || overflow) {
             const oldContext = contextStack.pop();
@@ -191,21 +187,17 @@ export default function printer(
           }
         } else if (context === PrinterCategory.singleLineIf) {
           --blockLevel;
-          newline = true;
           context = null;
         } else if (
           context === PrinterCategory.variableDecl ||
           context === TokenType.keywordStruct ||
           context === TokenType.keywordEnum
         ) {
-          newline = true;
           context = null;
-        } else if (context === TokenType.keywordFor) {
-          currString = '; ';
         } else {
           overflow = false;
-          newline = true;
         }
+        newline = true;
         break;
 
       case TokenType.specialBracketOpening:
@@ -356,7 +348,11 @@ export default function printer(
         break;
 
       case TokenType.preproLineContinuation:
-        currString = ' \\';
+        if (formattedFileStr.charAt(formattedFileStr.length - 1) === ' ') {
+          currString = '\\';
+        } else {
+          currString = ' \\';
+        }
         newline = true;
         break;
 
