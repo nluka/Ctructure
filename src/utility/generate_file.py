@@ -6,8 +6,8 @@ def generate_file(name, byte_count):
 
 
 def main():
-    generate_file('exactly4megs.c', 1024 * 1024 * 4)
-    generate_file('justover4megs.c', (1024 * 1024 * 4) + 1)
+    generate_file('exactly512megs.c', 1024 * 1024 * 512)
+    generate_file('justover512megs.c', (1024 * 1024 * 512) + 1)
 
 
 if __name__ == '__main__':

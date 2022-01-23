@@ -4,7 +4,7 @@ import TokenArray from './lexer/TokenArray';
 import { tokenizeFile } from './lexer/tokenizeFile';
 import printer from './printer/printer';
 
-const MAX_25_BIT_UNSIGNED_VALUE = 33_554_431;
+const BYTES_IN_512_MEGABYTES = 536_870_912;
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('*** EXTENSION ACTIVATED: Ctructure');
@@ -43,8 +43,8 @@ function attemptToFormatFile(filePathname: string) {
       (1024 * 1024)
     ).toFixed(6)} MB)`,
   );
-  if (fileByteCount * 8 > MAX_25_BIT_UNSIGNED_VALUE + 1) {
-    reportError('files larger than 4 MB are not supported');
+  if (fileByteCount > BYTES_IN_512_MEGABYTES) {
+    reportError('files larger than 512 MB are not supported');
     return;
   }
 

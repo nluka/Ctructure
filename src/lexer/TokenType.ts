@@ -1,27 +1,27 @@
 enum TokenType {
   //#region Preprocessor (https://www.tutorialspoint.com/cprogramming/c_preprocessors.htm)
-  // Directives
-    preproDirectiveInclude,
-    preproDirectiveDefine,
-    preproDirectiveUndef,
-    preproDirectiveIfdef,
-    preproDirectiveIfndef,
-    preproDirectiveIf,
-    preproDirectiveElse,
-    preproDirectiveElif,
-    preproDirectiveEndif,
-    preproDirectiveError,
-    preproDirectivePragma,
-  // Macros
-    preproMacroFile,
-    preproMacroLine,
-    preproMacroDate,
-    preproMacroTime,
-    preproMacroTimestamp,
-  // Other
-    preproStandardHeader, // e.g. <stdio.h>
-    preproOperatorConcat,
-    preproLineContinuation,
+    // Directives
+      preproDirectiveInclude,
+      preproDirectiveDefine,
+      preproDirectiveUndef,
+      preproDirectiveIfdef,
+      preproDirectiveIfndef,
+      preproDirectiveIf,
+      preproDirectiveElse,
+      preproDirectiveElif,
+      preproDirectiveEndif,
+      preproDirectiveError,
+      preproDirectivePragma,
+    // Macros
+      preproMacroFile,
+      preproMacroLine,
+      preproMacroDate,
+      preproMacroTime,
+      preproMacroTimestamp,
+    // Other
+      preproStandardHeader, // e.g. <stdio.h>
+      preproOperatorConcat,
+      preproLineContinuation,
   //#endregion Preprocessor
 
   //#region Keywords (https://en.cppreference.com/w/c/keyword)
@@ -80,61 +80,61 @@ enum TokenType {
   //#endregion Constants
 
   //#region Operators (https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B)
-  // Unary
-    // Arithmetic
-      operatorUnaryArithmeticIncrementPrefix,
-      operatorUnaryArithmeticIncrementPostfix,
-      operatorUnaryArithmeticDecrementPrefix,
-      operatorUnaryArithmeticDecrementPostfix,
-      operatorUnaryBitwiseOnesComplement,
-    // Logical
-      operatorUnaryLogicalNegation,
+    // Unary
+      // Arithmetic
+        operatorUnaryArithmeticIncrementPrefix,
+        operatorUnaryArithmeticIncrementPostfix,
+        operatorUnaryArithmeticDecrementPrefix,
+        operatorUnaryArithmeticDecrementPostfix,
+        operatorUnaryBitwiseOnesComplement,
+      // Logical
+        operatorUnaryLogicalNegation,
+      // Other
+        operatorUnaryPlus,
+        operatorUnaryMinus,
+        operatorUnaryAddressOf,
+        operatorUnaryDereference,
+    // Binary
+      // Arithmetic
+        operatorBinaryArithmeticAddition,
+        operatorBinaryArithmeticSubtraction,
+        operatorBinaryArithmeticDivision,
+        operatorBinaryArithmeticModulo,
+      // Comparison
+        operatorBinaryComparisonEqualTo,
+        operatorBinaryComparisonNotEqualTo,
+        operatorBinaryComparisonGreaterThan,
+        operatorBinaryComparisonGreaterThanOrEqualTo,
+        operatorBinaryComparisonLessThan,
+        operatorBinaryComparisonLessThanOrEqualTo,
+      // Logical
+        operatorBinaryLogicalAnd,
+        operatorBinaryLogicalOr,
+      // Bitwise
+        operatorBinaryBitwiseAnd,
+        operatorBinaryBitwiseOr,
+        operatorBinaryBitwiseXor,
+        operatorBinaryBitwiseShiftLeft,
+        operatorBinaryBitwiseShiftRight,
+      // Assignment
+        operatorBinaryAssignmentDirect,
+        operatorBinaryAssignmentAddition,
+        operatorBinaryAssignmentSubtraction,
+        operatorBinaryAssignmentMultiplication,
+        operatorBinaryAssignmentDivision,
+        operatorBinaryAssignmentModulo,
+        operatorBinaryAssignmentBitwiseShiftLeft,
+        operatorBinaryAssignmentBitwiseShiftRight,
+        operatorBinaryAssignmentBitwiseAnd,
+        operatorBinaryAssignmentBitwiseOr,
+        operatorBinaryAssignmentBitwiseXor,
+      // Misc
+        operatorBinaryMultiplicationOrIndirection,
     // Other
-      operatorUnaryPlus,
-      operatorUnaryMinus,
-      operatorUnaryAddressOf,
-      operatorUnaryDereference,
-  // Binary
-    // Arithmetic
-      operatorBinaryArithmeticAddition,
-      operatorBinaryArithmeticSubtraction,
-      operatorBinaryArithmeticDivision,
-      operatorBinaryArithmeticModulo,
-    // Comparison
-      operatorBinaryComparisonEqualTo,
-      operatorBinaryComparisonNotEqualTo,
-      operatorBinaryComparisonGreaterThan,
-      operatorBinaryComparisonGreaterThanOrEqualTo,
-      operatorBinaryComparisonLessThan,
-      operatorBinaryComparisonLessThanOrEqualTo,
-    // Logical
-      operatorBinaryLogicalAnd,
-      operatorBinaryLogicalOr,
-    // Bitwise
-      operatorBinaryBitwiseAnd,
-      operatorBinaryBitwiseOr,
-      operatorBinaryBitwiseXor,
-      operatorBinaryBitwiseShiftLeft,
-      operatorBinaryBitwiseShiftRight,
-    // Assignment
-      operatorBinaryAssignmentDirect,
-      operatorBinaryAssignmentAddition,
-      operatorBinaryAssignmentSubtraction,
-      operatorBinaryAssignmentMultiplication,
-      operatorBinaryAssignmentDivision,
-      operatorBinaryAssignmentModulo,
-      operatorBinaryAssignmentBitwiseShiftLeft,
-      operatorBinaryAssignmentBitwiseShiftRight,
-      operatorBinaryAssignmentBitwiseAnd,
-      operatorBinaryAssignmentBitwiseOr,
-      operatorBinaryAssignmentBitwiseXor,
-    // Misc
-      operatorBinaryMultiplicationOrIndirection,
-  // Other
-    operatorMemberSelectionDirect, // Dot (.) https://www.geeksforgeeks.org/dot-operator-in-c-c/
-    operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
-    operatorTernaryQuestion,
-    operatorEllipses,
+      operatorMemberSelectionDirect, // Dot (.) https://www.geeksforgeeks.org/dot-operator-in-c-c/
+      operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
+      operatorTernaryQuestion,
+      operatorEllipses,
   //#endregion Operators
 
   //#region Special
@@ -159,18 +159,18 @@ enum TokenType {
   //#endregion Other
 
   //#region Ambiguous
-  /*
-    These are for cases where 2 or more operators share the exact same symbol.
-    During the inital tokenization, these overlapping operators are assigned
-    one of the following types. They are disambiguated in a later pass.
-  */
+    /*
+      These are for cases where 2 or more operators share the exact same symbol.
+      During the inital tokenization, these overlapping operators are assigned
+      one of the following types. They are disambiguated in a later pass.
+    */
     ambiguousPlus, // (binary addition | unary plus) ?
     ambiguousMinus, // (binary subtraction | unary minus) ?
     ambiguousIncrement, // (prefix | postfix) ?
     ambiguousDecrement, // (prefix | postfix) ?
     ambiguousAsterisk, // (binary multiplication | indirection) ?
     ambiguousAmpersand, // (bitwise and | address of) ?
-    ambiguousColon, // (switch case/default | ternary)
+    ambiguousColon, // (switch case/default | ternary) ?
   //#endregion Ambiguous
 }
 
