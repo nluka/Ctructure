@@ -1,6 +1,5 @@
 import tokenDetermineCategory from './tokenDetermineCategory';
 import tokenDetermineType from './tokenDetermineType';
-// import tokenEncode from './tokenEncode';
 import tokenFindLastIndex from './tokenFindLastIndex';
 import TokenType, { isTokenAmbiguous } from './TokenType';
 
@@ -12,7 +11,7 @@ export default class Tokenizer {
 
   constructor(private fileContents: string) {}
 
-  public extractNextTokenEncoded(): [number, TokenType] | null {
+  public extractNextToken(): [number, TokenType] | null {
     const isThereAnotherToken = this.moveCursorToBeginningOfNextToken();
     if (!isThereAnotherToken) {
       return null;
@@ -56,12 +55,12 @@ export default class Tokenizer {
    */
   private moveCursorToBeginningOfNextToken(): boolean {
     while (true) {
-      const currentChar = this.fileContents.charAt(this.cursorPosition);
-
       if (this.cursorPosition >= this.fileContents.length) {
         // Reached end of file
         return false;
       }
+
+      const currentChar = this.fileContents.charAt(this.cursorPosition);
       if (!currentChar.match(whitespaceRegex)) {
         // Reached next token
         return true;

@@ -1,5 +1,5 @@
 import TokenCategory from './TokenCategory';
-import tokenDetermineLineAndCol from './tokenDetermineLineAndCol';
+import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 const preproRegex = /^[#\\]/,
@@ -45,12 +45,12 @@ export default function tokenDetermineCategory(
     return TokenCategory.special;
   }
 
-  const { lineNum, colNum } = tokenDetermineLineAndCol(
+  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
     fileContents,
     tokenStartIndex,
   );
   throw new Error(
-    `unable to determine category of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, firstChar = ${JSON.stringify(
+    `unable to determine category of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, firstChar = ${JSON.stringify(
       tokenFirstChar,
     )})`,
   );

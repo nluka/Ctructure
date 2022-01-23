@@ -52,6 +52,7 @@ describe('format', () => {
   assert('./func_pointers.h');
   assert('./if_else.c');
   assert('./macros.c');
+  assert('./multivar_decls.c');
   assert('./struct.c');
   assert('./switch.c');
 });

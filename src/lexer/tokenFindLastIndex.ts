@@ -1,7 +1,7 @@
 import indexOfRegex from '../utility/indexOfRegex';
 import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
-import tokenDetermineLineAndCol from './tokenDetermineLineAndCol';
+import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
 import TokenType from './TokenType';
 
 const multiLineCommentRegex = /\*/,
@@ -205,12 +205,12 @@ export default function tokenFindLastIndex(
         }
       }
 
-      const { lineNum, colNum } = tokenDetermineLineAndCol(
+      const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
         fileContents,
         tokenStartIndex,
       );
       throw new Error(
-        `unable to find last index of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+        `unable to find last index of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
           tokenCategory,
         )})`,
       );
@@ -270,12 +270,12 @@ function createErrorStandard(
   tokenStartIndex: number,
   tokenCategory: TokenCategory,
 ) {
-  const { lineNum, colNum } = tokenDetermineLineAndCol(
+  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
     fileContents,
     tokenStartIndex,
   );
   return new Error(
-    `unable to find last index of token at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+    `unable to find last index of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
       tokenCategory,
     )})`,
   );
@@ -286,12 +286,12 @@ function createErrorNullPreproDirective(
   tokenStartIndex: number,
   tokenCategory: TokenCategory,
 ) {
-  const { lineNum, colNum } = tokenDetermineLineAndCol(
+  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
     fileContents,
     tokenStartIndex,
   );
   return new Error(
-    `null preprocessor directives are not supported - found at line ${lineNum} col ${colNum} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+    `null preprocessor directives are not supported - found at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
       tokenCategory,
     )})`,
   );

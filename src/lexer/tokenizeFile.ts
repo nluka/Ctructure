@@ -5,13 +5,9 @@ import tokenDisambiguate from './tokenDisambiguate';
 import Tokenizer from './Tokenizer';
 
 /**
- * Tokenizes a file, encoding each token into a 32 bit number (using `tokenEncode`).
- * Each token stores its starting index in the first 25 bits and the type
- * (`TokenType`) in the remaining 7 bits. Use `tokenDecode` to extract the start
- * index and type for any encoded token.
  * @param filePathname The pathname of the file to tokenize.
- * @returns An array, the first element is the contents of the file, the second
- * is the array of encoded tokens in their order of appearance within the file.
+ * @returns An array, the first element is normalized contents of the file, the second
+ * is the array of tokens in their order of appearance within the file.
  */
 export function tokenizeFile(filePathname: string): [string, TokenArray] {
   const fileBuffer = readFileSync(filePathname);
@@ -20,7 +16,7 @@ export function tokenizeFile(filePathname: string): [string, TokenArray] {
   const tokens = new TokenArray(Math.ceil(fileContents.length / 3));
 
   while (true) {
-    const extractedToken = tokenizer.extractNextTokenEncoded();
+    const extractedToken = tokenizer.extractNextToken();
     if (extractedToken === null) {
       break;
     }
