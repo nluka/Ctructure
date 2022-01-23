@@ -1,5 +1,11 @@
-// #define ASSERT_EQ(expected, seen) \
-// __EXPECT(expected, #expected, seen, #seen, ==, 1)
+#define ASSERT_EQ(expected, seen) \
+__EXPECT(expected, #expected, seen, #seen, ==, 1)
+
+#define __thm_setting(raw) \
+({ \
+	u8 __v = (raw); \
+	((__v & 0x1) << 3) | ((__v & 0x1f) >> 1);	\
+})
 
 #define TH_LOG(fmt, ...) do { \
   if (TH_LOG_ENABLED) \

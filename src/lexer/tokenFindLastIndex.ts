@@ -11,6 +11,7 @@ const multiLineCommentRegex = /\*/,
   singleOrDoubleQuoteRegex = /["']/,
   alphanumericRegex = /[0-9a-zA-Z]/,
   alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/,
+  NotAlphanumericOrUnderscoreRegex = /[^a-zA-Z0-9_]/,
   spaceOrTabOrNewlineRegex = /[ \t\n]/;
 
 export default function tokenFindLastIndex(
@@ -34,13 +35,23 @@ export default function tokenFindLastIndex(
         return tokenStartIndex + 1;
       }
       const searchStartIndex = tokenStartIndex + 1;
+      if (
+        searchStartIndex === fileContents.length ||
+        fileContents.charAt(tokenStartIndex + 1).match(spaceOrTabOrNewlineRegex)
+      ) {
+        throw createErrorNullPreproDirective(
+          fileContents,
+          tokenStartIndex,
+          tokenCategory,
+        );
+      }
       const firstTerminatorIndex = indexOfRegex(
         fileContents,
-        spaceOrTabOrNewlineRegex,
+        NotAlphanumericOrUnderscoreRegex,
         searchStartIndex,
       );
       if (firstTerminatorIndex === null) {
-        throw createErrorStandard(fileContents, tokenStartIndex, tokenCategory);
+        return fileContents.length - 1;
       }
       if (firstTerminatorIndex === searchStartIndex) {
         throw createErrorNullPreproDirective(
@@ -48,17 +59,6 @@ export default function tokenFindLastIndex(
           tokenStartIndex,
           tokenCategory,
         );
-      }
-      if (firstTerminatorIndex === -1) {
-        const lastFileIndex = fileContents.length - 1;
-        if (lastFileIndex === tokenStartIndex) {
-          throw createErrorNullPreproDirective(
-            fileContents,
-            tokenStartIndex,
-            tokenCategory,
-          );
-        }
-        return lastFileIndex;
       }
       return firstTerminatorIndex - 1;
     }

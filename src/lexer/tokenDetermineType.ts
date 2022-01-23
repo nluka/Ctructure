@@ -31,10 +31,7 @@ export default function tokenDetermineType(
     case TokenCategory.prepro: {
       const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
-      if (type === undefined) {
-        throw createErr();
-      }
-      return type;
+      return type !== undefined ? type : TokenType.identifier; // stringized
     }
 
     case TokenCategory.preproOrOperator: {

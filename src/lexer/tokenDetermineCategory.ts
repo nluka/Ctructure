@@ -12,7 +12,7 @@ const preproRegex = /^[#\\]/,
 /**
  * Determines the category of a token based on its first character.
  * @param fileContents
- * @param tokenStartIndex The index of the first char in `fileContents`.
+ * @param tokenStartIndex The index of the token's first char within `fileContents`.
  */
 export default function tokenDetermineCategory(
   fileContents: string,

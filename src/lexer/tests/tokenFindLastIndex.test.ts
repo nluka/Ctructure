@@ -37,6 +37,7 @@ describe('tokenFindLastIndex', () => {
   describe('newline', () => {
     assert('\n', 0, TokenCategory.newline, 0);
     assert(' \n ', 1, TokenCategory.newline, 1);
+    assert(' \n\n ', 1, TokenCategory.newline, 1);
   });
 
   describe('special', () => {
@@ -83,6 +84,8 @@ describe('tokenFindLastIndex', () => {
     assert('0123#define PI 3.14', 4, TokenCategory.prepro, 10);
     assert('#include <stdio.h>', 0, TokenCategory.prepro, 7);
     assert('#define PI 3.14\n#include <stdio.h>', 16, TokenCategory.prepro, 23);
+    assert('#stringized', 0, TokenCategory.prepro, 10);
+    assert(' #stringized,', 1, TokenCategory.prepro, 11);
   });
 
   describe('preproOrOperator', () => {

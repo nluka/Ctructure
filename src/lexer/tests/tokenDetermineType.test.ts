@@ -360,6 +360,7 @@ describe('tokenDetermineType', () => {
       assert('_func_name', 0, 9, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
       assert('__funcname', 0, 9, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
       assert('SomeStruct', 0, 9, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
+      assert('#stringized', 0, 10, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier);
     });
     describe('Label', () => {
       assert('finally:', 0, 7, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, TokenType.label);
