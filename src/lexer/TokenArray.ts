@@ -8,6 +8,7 @@ export default class TokenArray {
   private resizeCount = 0;
 
   constructor(initialSize: number, private readonly resizeMultiplier = 1.25) {
+    initialSize = Math.ceil(initialSize);
     this.startIndices = new Uint32Array(initialSize);
     this.types = new Uint8Array(initialSize);
     this.size = initialSize;
@@ -19,21 +20,27 @@ export default class TokenArray {
       this.size + 1,
     );
 
-    const newStartIndices = new Uint32Array(newSize);
-    if (newStartIndices !== this.startIndices) {
-      for (let i = 0; i < this.count; ++i) {
-        newStartIndices[i] = this.startIndices[i];
+    {
+      // resize startIndices
+      const newStartIndices = new Uint32Array(newSize);
+      if (newStartIndices !== this.startIndices) {
+        for (let i = 0; i < this.count; ++i) {
+          newStartIndices[i] = this.startIndices[i];
+        }
       }
+      this.startIndices = newStartIndices;
     }
-    this.startIndices = newStartIndices;
 
-    const newTypes = new Uint8Array(newSize);
-    if (newTypes !== this.types) {
-      for (let i = 0; i < this.count; ++i) {
-        newTypes[i] = this.types[i];
+    {
+      // resize types
+      const newTypes = new Uint8Array(newSize);
+      if (newTypes !== this.types) {
+        for (let i = 0; i < this.count; ++i) {
+          newTypes[i] = this.types[i];
+        }
       }
+      this.types = newTypes;
     }
-    this.types = newTypes;
 
     this.size = newSize;
     ++this.resizeCount;

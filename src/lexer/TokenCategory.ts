@@ -9,6 +9,8 @@ enum TokenCategory {
   preproMacroOrKeywordOrIdentifierOrLabel,
 }
 
+export default TokenCategory;
+
 export const tokenCategoryToStringMap = new Map<TokenCategory, string>([
   [TokenCategory.newline, 'newline'],
   [TokenCategory.special, 'special'],
@@ -19,5 +21,3 @@ export const tokenCategoryToStringMap = new Map<TokenCategory, string>([
   [TokenCategory.constant, 'constant'],
   [TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 'preproMacroOrKeywordOrIdentifierOrLabel'],
 ]);
-
-export default TokenCategory;

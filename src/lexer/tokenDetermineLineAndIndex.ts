@@ -25,11 +25,7 @@ export default function tokenDetermineLineAndIndex(
   );
   const tokenizer = new Tokenizer(line);
   let indexOnLine = 0;
-  while (true) {
-    const t = tokenizer.extractNextToken();
-    if (t === null) {
-      break;
-    }
+  while (tokenizer.extractNextToken() !== null) {
     ++indexOnLine;
   }
 
