@@ -5,14 +5,34 @@ import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 const standardHeaderRegex = /^<[a-zA-Z0-9_\-/\\]+(\.h)|(\.c)>$/;
 
+/**
+ * Determines a token's type given its category, start position, and end position.
+ * May return an ambiguous type.
+ * @param fileContents The contents of the file the token exists in.
+ * @param tokenStartIndex The index of the token's first character within `fileContents`.
+ * @param tokenLastIndex The index of the token's last character within `fileContents`.
+ * @param tokenCategory The category of the token.
+ * @returns The precise type of the token, or an ambiguous type if there is ambiguity.
+ */
 export default function tokenDetermineType(
   fileContents: string,
   tokenStartIndex: number,
   tokenLastIndex: number,
   tokenCategory: TokenCategory,
 ): TokenType {
-  const createErr = () =>
-    createError(fileContents, tokenStartIndex, tokenLastIndex, tokenCategory);
+  function createErr() {
+    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+      fileContents,
+      tokenStartIndex,
+    );
+    return new Error(
+      `unable to determine type of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
+        tokenCategory,
+      )}, value = ${JSON.stringify(
+        fileContents.slice(tokenStartIndex, tokenLastIndex + 1),
+      )})`,
+    );
+  }
 
   switch (tokenCategory) {
     case TokenCategory.newline: {
@@ -88,23 +108,4 @@ export default function tokenDetermineType(
       return tokenValueToTypeMap.get(rawToken) || TokenType.identifier;
     }
   }
-}
-
-function createError(
-  fileContents: string,
-  tokenStartIndex: number,
-  tokenLastIndex: number,
-  tokenCategory: TokenCategory,
-) {
-  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-    fileContents,
-    tokenStartIndex,
-  );
-  return new Error(
-    `unable to determine type of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
-      tokenCategory,
-    )}, value = ${JSON.stringify(
-      fileContents.slice(tokenStartIndex, tokenLastIndex + 1),
-    )})`,
-  );
 }

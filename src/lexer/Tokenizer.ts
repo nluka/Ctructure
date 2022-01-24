@@ -3,6 +3,9 @@ import tokenDetermineType from './tokenDetermineType';
 import tokenFindLastIndex from './tokenFindLastIndex';
 import TokenType, { isTokenAmbiguous } from './TokenType';
 
+/**
+ * An object which can sequentially extract tokens from a string.
+ */
 export default class Tokenizer {
   private cursorPosition = 0;
   private prevTokenType: TokenType | null = null;

@@ -14,12 +14,32 @@ const multiLineCommentRegex = /\*/,
   NotAlphanumericOrUnderscoreRegex = /[^a-zA-Z0-9_]/,
   spaceOrTabOrNewlineRegex = /[ \t\n]/;
 
+/**
+ * Finds the index of the last character of a token based on its category and what came before it.
+ * @param fileContents The contents of the file.
+ * @param tokenStartIndex The index of the token's first character.
+ * @param tokenCategory The category of the token.
+ * @param prevTokenType THe type of the previous token.
+ * @returns The index of the last character of the token.
+ */
 export default function tokenFindLastIndex(
   fileContents: string,
   tokenStartIndex: number,
   tokenCategory: TokenCategory,
   prevTokenType: TokenType | null,
 ): number {
+  function createErrorNullPreproDirective() {
+    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+      fileContents,
+      tokenStartIndex,
+    );
+    return new Error(
+      `null preprocessor directives are not supported - found at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+        tokenCategory,
+      )})`,
+    );
+  }
+
   switch (tokenCategory) {
     case TokenCategory.newline:
     case TokenCategory.special:
@@ -39,11 +59,7 @@ export default function tokenFindLastIndex(
         searchStartIndex === fileContents.length ||
         fileContents.charAt(tokenStartIndex + 1).match(spaceOrTabOrNewlineRegex)
       ) {
-        throw createErrorNullPreproDirective(
-          fileContents,
-          tokenStartIndex,
-          tokenCategory,
-        );
+        throw createErrorNullPreproDirective();
       }
       const firstTerminatorIndex = indexOfRegex(
         fileContents,
@@ -54,11 +70,7 @@ export default function tokenFindLastIndex(
         return fileContents.length - 1;
       }
       if (firstTerminatorIndex === searchStartIndex) {
-        throw createErrorNullPreproDirective(
-          fileContents,
-          tokenStartIndex,
-          tokenCategory,
-        );
+        throw createErrorNullPreproDirective();
       }
       return firstTerminatorIndex - 1;
     }
@@ -263,36 +275,4 @@ export default function tokenFindLastIndex(
       return fileContents.length - 1;
     }
   }
-}
-
-function createErrorStandard(
-  fileContents: string,
-  tokenStartIndex: number,
-  tokenCategory: TokenCategory,
-) {
-  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-    fileContents,
-    tokenStartIndex,
-  );
-  return new Error(
-    `unable to find last index of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
-      tokenCategory,
-    )})`,
-  );
-}
-
-function createErrorNullPreproDirective(
-  fileContents: string,
-  tokenStartIndex: number,
-  tokenCategory: TokenCategory,
-) {
-  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-    fileContents,
-    tokenStartIndex,
-  );
-  return new Error(
-    `null preprocessor directives are not supported - found at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
-      tokenCategory,
-    )})`,
-  );
 }

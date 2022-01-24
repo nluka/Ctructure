@@ -15,6 +15,14 @@ const tokenTypesNewlineOrComment: TokenType[] = [
   TokenType.commentMultiline,
 ];
 
+/**
+ *
+ * @param currTokenIndex The index of the ambiguous token in `tokens`.
+ * @param tokens The array of tokens extracted from `fileContents`.
+ * @param fileContents The contents of the file.
+ * @returns The disambiguated type of the ambiguous token. May throw an error if
+ * disambiguation is not possible (when syntax or semantics are wrong).
+ */
 export default function tokenDisambiguate(
   currTokenIndex: number,
   tokens: TokenArray,
@@ -22,8 +30,17 @@ export default function tokenDisambiguate(
 ): TokenType {
   const [currTokenStartIndex, currTokenType] = tokens.getToken(currTokenIndex);
 
-  const createErr = () =>
-    createError(fileContents, currTokenStartIndex, currTokenType);
+  function createErr() {
+    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+      fileContents,
+      currTokenStartIndex,
+    );
+    return new Error(
+      `${tokenTypeToNameMap.get(
+        currTokenType,
+      )} at line ${lineNum} indexOnLine ${indexOnLine}`,
+    );
+  }
 
   const firstNonNewlineOrCommentTokenBehindCurr = findFirstTokenTypeMatchBehind(
     tokens,
@@ -221,22 +238,6 @@ export default function tokenDisambiguate(
     }
 
     default:
-      throw createErr();
+      return currTokenType;
   }
-}
-
-function createError(
-  fileContents: string,
-  tokenStartIndex: number,
-  tokenType: TokenType,
-) {
-  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-    fileContents,
-    tokenStartIndex,
-  );
-  return new Error(
-    `${tokenTypeToNameMap.get(
-      tokenType,
-    )} at line ${lineNum} indexOnLine ${indexOnLine}`,
-  );
 }

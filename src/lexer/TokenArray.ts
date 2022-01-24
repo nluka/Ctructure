@@ -1,5 +1,9 @@
 import TokenType from './TokenType';
 
+/**
+ * A container that stores the startIndex (index of first character) and
+ * type of a group of tokens.
+ */
 export default class TokenArray {
   private startIndices: Uint32Array;
   private types: Uint8Array;
@@ -8,7 +12,7 @@ export default class TokenArray {
   private resizeCount = 0;
 
   constructor(initialSize: number, private readonly resizeMultiplier = 1.25) {
-    initialSize = Math.ceil(initialSize);
+    initialSize = Math.max(Math.ceil(initialSize), 1);
     this.startIndices = new Uint32Array(initialSize);
     this.types = new Uint8Array(initialSize);
     this.size = initialSize;
