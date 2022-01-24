@@ -41,9 +41,14 @@ describe('format', () => {
     assert('./hello_world/hello_world_expanded.c', helloWorldFormatted);
   }
 
+  {
+    const preProFormatted = 
+      extractFileContentsIntoString('./prepro/prepro_formatted.c');
+    assert('./prepro/prepro.c', preProFormatted);
+  }
+
   assert('./string/String.c');
   assert('./string/String.h');
-
   assert('./__attribute__.c');
   assert('./asterisks.c');
   assert('./bugs.c');
@@ -55,6 +60,6 @@ describe('format', () => {
   assert('./macros.c');
   assert('./multivar_decls.c');
   assert('./struct.c');
-  assert('./prepro.c');
+  assert('./prepro/prepro_formatted.c');
   assert('./switch.c');
 });
