@@ -117,7 +117,9 @@ export default function printer(
 
     currString += typeAsValue;
     if (newline && currTokenType !== TokenType.commentSingleline) {
-      if (
+      if (context === PrinterCategory.prepro && previousType !== TokenType.preproLineContinuation) {
+        currString = ' \\\n' + indentation.repeat(blockLevel) + currString;
+      } else if (
         currTokenType === TokenType.newline &&
         tokenTypes[i + 1] === TokenType.newline &&
         !noExtraNewline
@@ -228,6 +230,12 @@ export default function printer(
           context = PrinterCategory.functionDecl;
         } else if (previousType === TokenType.identifier) {
           context = PrinterCategory.functionCall;
+        } else if (context === PrinterCategory.prepro) {
+          if (isThereLineOverflow(i, null)) {
+            newline = true;
+            ++blockLevel;
+            break;
+          }
         } else if (context !== TokenType.keywordFor) {
           context = null;
         }
@@ -242,7 +250,14 @@ export default function printer(
 
       case TokenType.specialParenthesisClosing:
         if (overflow) {
-          currString = `\n${indentation.repeat(--blockLevel)})`;
+          if (
+            context === PrinterCategory.prepro &&
+            previousType !== TokenType.preproLineContinuation
+          ) {
+            currString = ` \\\n${indentation.repeat(--blockLevel)})`;
+          } else {
+            currString = `\n${indentation.repeat(--blockLevel)})`;
+          }
           startLineIndex = currTokenStartIndex;
         }
         --parenCount;
