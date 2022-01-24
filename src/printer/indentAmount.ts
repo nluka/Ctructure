@@ -2,6 +2,7 @@ export default function getIndentAmount(formattedFileStr: string): number {
   let startIndex = 0;
   let assignmentFound = false;
   let i = formattedFileStr.length - 1;
+
   for (let testIndex = i; testIndex >= 0; --testIndex) {
     const char = formattedFileStr.charAt(testIndex);
     if (char === '=') {
@@ -13,6 +14,7 @@ export default function getIndentAmount(formattedFileStr: string): number {
       break;
     }
   }
+
   for (; i >= 0; --i) {
     const char = formattedFileStr.charAt(i);
     if (char === ' ' && startIndex === 0) {

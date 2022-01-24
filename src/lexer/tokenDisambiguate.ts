@@ -124,6 +124,14 @@ export default function tokenDisambiguate(
 
     case TokenType.ambiguousAsterisk: {
       if (
+        firstTokenTypeBehindCurr ===
+          TokenType.operatorBinaryMultiplicationOrIndirection ||
+        firstTokenTypeAfterCurr === TokenType.ambiguousAsterisk
+      ) {
+        return TokenType.operatorBinaryMultiplicationOrIndirection;
+      }
+
+      if (
         // for struct pointer decls/defs
         firstTokenTypeBehindCurr === TokenType.specialBraceClosing &&
         firstTokenTypeAfterCurr === TokenType.identifier
@@ -165,12 +173,10 @@ export default function tokenDisambiguate(
         if (firstMatchBehind === null) {
           throw createErr();
         }
-        switch (firstMatchBehind[1]) {
-          case TokenType.keywordIf:
-            return TokenType.operatorUnaryDereference;
-          default:
-            return TokenType.operatorBinaryMultiplicationOrIndirection;
+        if (firstMatchBehind[1] === TokenType.keywordIf) {
+          return TokenType.operatorUnaryDereference;
         }
+        return TokenType.operatorBinaryMultiplicationOrIndirection;
       }
 
       if (
@@ -191,12 +197,10 @@ export default function tokenDisambiguate(
         if (firstMatchBehind === null) {
           throw createErr();
         }
-        switch (firstMatchBehind[1]) {
-          case TokenType.specialParenthesisOpening:
-            return TokenType.operatorUnaryDereference;
-          default:
-            return TokenType.operatorBinaryMultiplicationOrIndirection;
+        if (firstMatchBehind[1] === TokenType.specialParenthesisOpening) {
+          return TokenType.operatorUnaryDereference;
         }
+        return TokenType.operatorBinaryMultiplicationOrIndirection;
       }
 
       if (

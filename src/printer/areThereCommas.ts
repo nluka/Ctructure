@@ -5,6 +5,7 @@ export default function areThereCommas(
   index: number,
 ): boolean {
   let parenCount = 0;
+
   for (let i = index + 1; i < tokenTypes.length; ++i) {
     if (tokenTypes[i] === TokenType.specialParenthesisOpening) {
       ++parenCount;
@@ -16,5 +17,6 @@ export default function areThereCommas(
       return false;
     }
   }
+
   return false;
 }

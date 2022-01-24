@@ -494,7 +494,7 @@ describe('tokenDisambiguate', () => {
     });
   });
 
-  describe('ambiguousDecrement', () => {
+  describe('ambiguousAsterisk', () => {
     describe('Dereference', () => {
       assert(
         [
@@ -504,14 +504,6 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorUnaryDereference, '{*a'
       );
-      // assert(
-      //   [
-      //     TokenType.specialBraceClosing,
-      //     TokenType.ambiguousAsterisk,
-      //     TokenType.identifier
-      //   ],
-      //   1, TokenType.operatorUnaryDereference, '}*a'
-      // );
       assert(
         [
           TokenType.specialBracketOpening,
@@ -592,8 +584,41 @@ describe('tokenDisambiguate', () => {
         12, TokenType.operatorUnaryDereference, 'if (a > b && b + 1 != c) *a'
       );
     });
-
     describe('Multiplication or Indirection', () => {
+      assert(
+        [
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.operatorBinaryAssignmentDirect,
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'custype * p ='
+      );
+      assert(
+        [
+          TokenType.specialComma,
+          TokenType.ambiguousAsterisk,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, ', ** pp'
+      );
+      assert(
+        [
+          TokenType.operatorBinaryMultiplicationOrIndirection,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, '** pp'
+      );
+      assert(
+        [
+          TokenType.keywordInt,
+          TokenType.ambiguousAsterisk,
+          TokenType.ambiguousAsterisk,
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'int **'
+      );
       assert(
         [
           TokenType.operatorBinaryMultiplicationOrIndirection,
@@ -601,6 +626,14 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier
         ],
         1, TokenType.operatorBinaryMultiplicationOrIndirection, '** p'
+      );
+      assert(
+        [
+          TokenType.operatorBinaryMultiplicationOrIndirection,
+          TokenType.ambiguousAsterisk,
+          TokenType.ambiguousAsterisk,
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, '***'
       );
       assert(
         [
