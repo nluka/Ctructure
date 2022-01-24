@@ -111,7 +111,7 @@ export default function printer(
   }
 
   function getIndentation(blockLevel: number) {
-    return indentation.repeat(blockLevel >= 0 ? blockLevel : 0);
+    return indentation.repeat(blockLevel);
   }
 
   function decreaseBlockLevel() {
