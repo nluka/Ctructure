@@ -54,7 +54,7 @@ export default class Tokenizer {
   /**
    * Moves `this.cursorPosition` to the starting index of the next token (or
    * the end of file if no more tokens exist).
-   * @returns True if another token exists, false otherwise.
+   * @returns True if a new token was found, false otherwise.
    */
   private moveCursorToBeginningOfNextToken(): boolean {
     while (true) {
