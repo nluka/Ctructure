@@ -153,11 +153,9 @@ export default function printer(
           previousType !== TokenType.commentMultiline &&
           previousType !== TokenType.commentSingleline
         ) {
-          if (tokenTypes[i + 1] === TokenType.newline) {
-            currString += '\n';
-          }
           newline = true;
           context = null;
+          --i;
         }
         continue;
 
@@ -363,8 +361,6 @@ export default function printer(
       case TokenType.preproDirectiveInclude:
       case TokenType.preproDirectiveDefine:
       case TokenType.preproDirectiveUndef:
-      case TokenType.preproDirectiveIf:
-      case TokenType.preproDirectiveIfdef:
       case TokenType.preproDirectiveIfndef:
       case TokenType.preproDirectivePragma:
         context = PrinterCategory.prepro;
@@ -378,14 +374,28 @@ export default function printer(
             currString = '\n' + currString;
           }
         }
-        if (currTokenType === TokenType.preproDirectiveIf) {
-          ++blockLevel;
+        break;
+
+      case TokenType.preproDirectiveIf:
+      case TokenType.preproDirectiveIfdef:
+        context = PrinterCategory.prepro;
+        if (
+          previousType !== null &&
+          currString === typeAsValue &&
+          tokenTypes[i - 1] === TokenType.newline
+        ) {
+          currString = '\n' + getIndentation(blockLevel) + typeAsValue;
+          if (tokenTypes[i - 2] === TokenType.newline) {
+            currString = '\n' + currString;
+          }
         }
+        ++blockLevel;
         break;
 
       case TokenType.preproDirectiveElse:
       case TokenType.preproDirectiveElif:
-        currString = '\n' + getIndentation(blockLevel - 1) + typeAsValue;
+        decreaseBlockLevel();
+        currString = '\n' + getIndentation(blockLevel++) + typeAsValue;
         break;
 
       case TokenType.preproDirectiveEndif:
@@ -620,13 +630,11 @@ export default function printer(
 
       case TokenType.constantString:
         currString += extractStringFromFile(currTokenStartIndex, previousType);
-        if (context === PrinterCategory.prepro) {
-          newline = true;
-          context = null;
-          break;
-        }
         nextTokenType = getNextNonNewlineTokenType(tokenTypes, i);
-        if (nextTokenType === PrinterCategory.typeOrIdentifier) {
+        if (
+          nextTokenType === PrinterCategory.typeOrIdentifier &&
+          context !== PrinterCategory.prepro
+        ) {
           currString += ' ';
         }
         break;
