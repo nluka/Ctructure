@@ -31,7 +31,6 @@ export default function tokenDisambiguate(
 ): TokenType {
   const [currTokenStartIndex, currTokenType] = tokens.getToken(currTokenIndex);
 
-  console.log(currTokenType);
   function createErr() {
     const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
       fileContents,

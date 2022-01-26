@@ -697,6 +697,14 @@ describe('tokenDisambiguate', () => {
         ],
         1, TokenType.operatorBinaryMultiplicationOrIndirection, 'custype * volatile'
       );
+      assert(
+        [
+          TokenType.keywordVoid,
+          TokenType.ambiguousAsterisk,
+          TokenType.specialComma
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'void *,'
+      );
     });
   });
 

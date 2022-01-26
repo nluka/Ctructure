@@ -14,3 +14,8 @@ void multiplication() {
   int a = 1, b = 2, c = 3, d = 4;
   int res = printf("%d %d %d %d", a * b, a + b * c, b * c - d, a * b + c * d);
 }
+
+static BLAKE2_INLINE void secure_zero_memory(void * v, size_t n) {
+  static void * (* const volatile memset_v)(void *, int, size_t) = &memset;
+  memset_v(v, 0, n);
+}
