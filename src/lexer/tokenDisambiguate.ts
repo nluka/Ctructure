@@ -6,6 +6,7 @@ import TokenType, {
   isTokenBinaryOperator,
   isTokenNonMultiplicationOrIndirectionBinaryOperator,
   isTokenSpecialNonClosing,
+  isTokenTypeQualifierKeyword,
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -30,13 +31,14 @@ export default function tokenDisambiguate(
 ): TokenType {
   const [currTokenStartIndex, currTokenType] = tokens.getToken(currTokenIndex);
 
+  console.log(currTokenType);
   function createErr() {
     const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
       fileContents,
       currTokenStartIndex,
     );
     return new Error(
-      `${tokenTypeToNameMap.get(
+      `unable to diambiguate ${tokenTypeToNameMap.get(
         currTokenType,
       )} at line ${lineNum} indexOnLine ${indexOnLine}`,
     );
@@ -124,6 +126,15 @@ export default function tokenDisambiguate(
 
     case TokenType.ambiguousAsterisk: {
       if (
+        // for indirection with type qualifiers
+        isTokenTypeQualifierKeyword(firstTokenTypeBehindCurr) ||
+        isTokenTypeQualifierKeyword(firstTokenTypeAfterCurr)
+      ) {
+        return TokenType.operatorBinaryMultiplicationOrIndirection;
+      }
+
+      if (
+        // for multi indirection
         firstTokenTypeBehindCurr ===
           TokenType.operatorBinaryMultiplicationOrIndirection ||
         firstTokenTypeAfterCurr === TokenType.ambiguousAsterisk

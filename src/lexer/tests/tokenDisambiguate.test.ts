@@ -679,7 +679,23 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousAsterisk,
           TokenType.identifier
         ],
-        5, TokenType.operatorUnaryDereference, '(a + 1, *p1'
+        5, TokenType.operatorUnaryDereference, '(a + 1, * p1'
+      );
+      assert(
+        [
+          TokenType.specialParenthesisOpening,
+          TokenType.ambiguousAsterisk,
+          TokenType.keywordConst
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, '(* const'
+      );
+      assert(
+        [
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.keywordVolatile
+        ],
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'custype * volatile'
       );
     });
   });
