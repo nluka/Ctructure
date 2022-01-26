@@ -42,7 +42,8 @@ describe('format', () => {
   }
 
   {
-    const preProFormatted = 
+    assert('./prepro/prepro_formatted.c');
+    const preProFormatted =
       extractFileContentsIntoString('./prepro/prepro_formatted.c');
     assert('./prepro/prepro.c', preProFormatted);
   }
@@ -57,9 +58,8 @@ describe('format', () => {
   assert('./for.c');
   assert('./func_pointers.h');
   assert('./if_else.c');
-  assert('./macros.c');
   assert('./multivar_decls.c');
+  assert('./prepro.c');
   assert('./struct.c');
-  assert('./prepro/prepro_formatted.c');
   assert('./switch.c');
 });
