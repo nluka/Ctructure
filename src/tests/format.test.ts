@@ -53,6 +53,7 @@ describe('format', () => {
   assert('./__attribute__.c');
   assert('./asterisks.c');
   assert('./bugs.c');
+  assert('./comments.c');
   assert('./empty_func_call.c');
   assert('./empty_header.h');
   assert('./for.c');
