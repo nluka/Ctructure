@@ -45,3 +45,11 @@ static BLAKE2_INLINE uint32_t load32(const void * src) {
 #else
   #define BLAKE2_PACKED(x) x __attribute__((packed))
 #endif
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+  // stuff
+#if defined(__cplusplus)
+}
+#endif
