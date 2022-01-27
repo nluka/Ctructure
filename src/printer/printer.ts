@@ -124,7 +124,11 @@ export default function printer(
     const typeAsValue = tokenTypeToValueMap.get(currTokenType);
 
     currString += typeAsValue;
-    if (newline && currTokenType !== TokenType.commentSingleline) {
+    if (
+      newline &&
+      currTokenType !== TokenType.commentSingleline &&
+      currTokenType !== TokenType.commentMultiline
+    ) {
       if (
         context === PrinterCategory.prepro &&
         overflow &&
@@ -392,7 +396,11 @@ export default function printer(
         ++blockLevel;
         break;
 
+      // @ts-ignore
       case TokenType.preproDirectiveElse:
+        newline = true;
+        noExtraNewline = true;
+      /* falls through */
       case TokenType.preproDirectiveElif:
         decreaseBlockLevel();
         currString = '\n' + getIndentation(blockLevel++) + typeAsValue;
@@ -428,7 +436,8 @@ export default function printer(
         }
         if (
           nextTokenType !== TokenType.operatorBinaryMultiplicationOrIndirection &&
-          nextTokenType !== TokenType.specialParenthesisClosing
+          nextTokenType !== TokenType.specialParenthesisClosing &&
+          nextTokenType !== TokenType.specialComma
         ) {
           currString += ' ';
         }
