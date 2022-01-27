@@ -522,6 +522,15 @@ export default function printer(
         }
         break;
 
+      case TokenType.operatorSwitchColon:
+        if (getNextNonNewlineTokenTypeRaw(tokenTypes, i) === TokenType.specialBraceOpening) {
+          decreaseBlockLevel();
+          break;
+        }
+        newline = true;
+        noExtraNewline = true;
+        break;
+
       case TokenType.ambiguousColon:
         if (context === TokenType.keywordCase || context === TokenType.keywordDefault) {
           context = null;
