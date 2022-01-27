@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import debugLogTokens from '../debugLogTokens';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
 import TokenArray from './TokenArray';
 import tokenDisambiguate from './tokenDisambiguate';
@@ -25,8 +24,6 @@ export function tokenizeFile(filePathname: string): [string, TokenArray] {
     }
     tokens.pushPacked(extractedToken);
   }
-
-  debugLogTokens(tokens);
 
   for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
     const disambiguatedTokenType = tokenDisambiguate(
