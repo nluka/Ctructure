@@ -168,7 +168,6 @@ describe('tokenFindLastIndex', () => {
       assert('a -b', 2, TokenCategory.operator, 2);
       assert('a -', 2, TokenCategory.operator, 2);
     });
-
     describe('Logical', () => {
       describe('Negation', () => {
         assert('!', 0, TokenCategory.operator, 0);
@@ -189,7 +188,6 @@ describe('tokenFindLastIndex', () => {
         assert('a || 1', 2, TokenCategory.operator, 3);
       });
     });
-
     describe('Comparison', () => {
       describe('EqualTo', () => {
         assert('==', 0, TokenCategory.operator, 1);
@@ -216,7 +214,6 @@ describe('tokenFindLastIndex', () => {
         assert('>=1', 0, TokenCategory.operator, 1);
       });
     });
-
     describe('Bitwise', () => {
       describe('OnesComplements', () => {
         assert('~a', 0, TokenCategory.operator, 0);
@@ -236,7 +233,6 @@ describe('tokenFindLastIndex', () => {
         assert('a |\nb', 2, TokenCategory.operator, 2);
       });
     });
-
     describe('Assignment', () => {
       describe('Direct', () => {
         assert('=', 0, TokenCategory.operator, 0);
@@ -422,6 +418,11 @@ describe('tokenFindLastIndex', () => {
       assert('if (_myVar.member) {\n', 4, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 9);
       assert('struct my_struct{\n', 7, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 15);
       assert('myVar;', 0, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
+    });
+    describe('Keywords', () => {
+      assert(' int ', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 3);
+      assert(' case ', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);
+      assert(' default: ', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 7);
     });
     describe('Labels', () => {
       assert('\nend:\n', 1, TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel, 4);

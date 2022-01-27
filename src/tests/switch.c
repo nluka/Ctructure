@@ -13,5 +13,7 @@ void switch_statement() {
     case 2:
     case 3:
       printf("2!\n");
+    default:
+      break;
   }
 }

@@ -2,12 +2,12 @@ import TokenCategory from './TokenCategory';
 import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
-const preproRegex = /^[#\\]/,
-  preproOrOperatorRegex = /^[<]/,
-  commentOrOperatorRegex = /^\//,
-  preproMacroOrKeywordOrIdentifierOrLabelRegex = /^[a-zA-Z_]/,
-  constantRegex = /^[0-9'"]/,
-  operatorRegex = /^[+\-~!*/%=>&|^.?:]/;
+const preproRegex = /^[#\\]$/,
+  preproOrOperatorRegex = /^[<]$/,
+  commentOrOperatorRegex = /^\/$/,
+  preproMacroOrKeywordOrIdentifierOrLabelRegex = /^[a-zA-Z_]$/,
+  constantRegex = /^[0-9'"]$/,
+  operatorRegex = /^[+\-~!*/%=>&|^.?:]$/;
 
 /**
  * Determines the category of a token based on its first character.
@@ -20,7 +20,7 @@ export default function tokenDetermineCategory(
 ): TokenCategory {
   const tokenFirstChar = fileContents.charAt(tokenStartIndex);
 
-  if (tokenFirstChar.charAt(0) === '\n') {
+  if (tokenFirstChar === '\n') {
     return TokenCategory.newline;
   }
   if (tokenFirstChar.match(preproRegex)) {

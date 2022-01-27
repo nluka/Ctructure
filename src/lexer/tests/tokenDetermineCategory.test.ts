@@ -60,7 +60,6 @@ describe('tokenDetermineCategory', () => {
       assert('+', TokenCategory.operator);
       assert('-', TokenCategory.operator);
       assert('/', TokenCategory.commentOrOperator);
-      assert('*', TokenCategory.operator);
       assert('%', TokenCategory.operator);
       assert('==', TokenCategory.operator);
       assert('!=', TokenCategory.operator);
@@ -86,11 +85,15 @@ describe('tokenDetermineCategory', () => {
       assert('&=', TokenCategory.operator);
       assert('|=', TokenCategory.operator);
       assert('^=', TokenCategory.operator);
+    });
+    describe('Other', () => {
+      assert('*', TokenCategory.operator);
       assert('.', TokenCategory.operator);
       assert('->', TokenCategory.operator);
       assert('?', TokenCategory.operator);
       assert(':', TokenCategory.operator);
       assert('...', TokenCategory.operator);
+      assert(':', TokenCategory.operator);
     });
   });
 

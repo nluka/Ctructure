@@ -813,4 +813,61 @@ describe('tokenDisambiguate', () => {
       );
     });
   });
+
+  describe('ambiguousColon', () => {
+    describe('Switch', () => {
+      assert(
+        [
+          TokenType.keywordCase,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.operatorBinaryArithmeticAddition,
+          TokenType.constantNumber,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousColon,
+        ],
+        6, TokenType.operatorSwitchColon, 'case (a + 1):'
+      );
+      assert(
+        [
+          TokenType.keywordDefault,
+          TokenType.ambiguousColon,
+        ],
+        1, TokenType.operatorSwitchColon, 'default:'
+      );
+    });
+    describe('Ternary', () => {
+      assert(
+        [
+          TokenType.operatorTernaryQuestion,
+          TokenType.identifier,
+          TokenType.ambiguousColon,
+        ],
+        2, TokenType.operatorTernaryColon, '? a : b'
+      );
+      assert(
+        [
+          TokenType.operatorTernaryQuestion,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.operatorBinaryArithmeticAddition,
+          TokenType.constantNumber,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousColon,
+        ],
+        6, TokenType.operatorTernaryColon, '? (a + 1) :'
+      );
+    });
+    describe('Bit Field', () => {
+      assert(
+        [
+          TokenType.specialBraceOpening,
+          TokenType.keywordInt,
+          TokenType.identifier,
+          TokenType.ambiguousColon,
+        ],
+        3, TokenType.operatorBitFieldColon, '{ int a:1'
+      );
+    });
+  });
 });

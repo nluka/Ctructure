@@ -77,12 +77,6 @@ const tokenValueToTypeMap = new Map<string, TokenType>([
   ['while', TokenType.keywordWhile],
 
   // Operators
-  ['+', TokenType.ambiguousPlus],
-  ['-', TokenType.ambiguousMinus],
-  ['++', TokenType.ambiguousIncrement],
-  ['--', TokenType.ambiguousDecrement],
-  ['*', TokenType.ambiguousAsterisk],
-  ['&', TokenType.ambiguousAmpersand],
   ['~', TokenType.operatorUnaryBitwiseOnesComplement],
   ['!', TokenType.operatorUnaryLogicalNegation],
   ['/', TokenType.operatorBinaryArithmeticDivision],
@@ -114,7 +108,6 @@ const tokenValueToTypeMap = new Map<string, TokenType>([
   ['->', TokenType.operatorMemberSelectionIndirect],
   ['?', TokenType.operatorTernaryQuestion],
   ['...', TokenType.operatorEllipses],
-  [':', TokenType.ambiguousColon],
 
   // Special
   ['(', TokenType.specialParenthesisOpening],
@@ -125,6 +118,15 @@ const tokenValueToTypeMap = new Map<string, TokenType>([
   [']', TokenType.specialBracketClosing],
   [',', TokenType.specialComma],
   [';', TokenType.specialSemicolon],
+
+  // Ambiguous
+  ['+', TokenType.ambiguousPlus],
+  ['-', TokenType.ambiguousMinus],
+  ['++', TokenType.ambiguousIncrement],
+  ['--', TokenType.ambiguousDecrement],
+  ['*', TokenType.ambiguousAsterisk],
+  ['&', TokenType.ambiguousAmpersand],
+  [':', TokenType.ambiguousColon],
 ]);
 
 export default tokenValueToTypeMap;

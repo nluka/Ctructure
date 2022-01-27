@@ -29,12 +29,38 @@ export default function tokenDisambiguate(
   tokens: TokenArray,
   fileContents: string,
 ): TokenType {
-  const [currTokenStartIndex, currTokenType] = tokens.getToken(currTokenIndex);
+  const currTokenType = tokens.getTokenType(currTokenIndex);
+
+  if (currTokenType === TokenType.ambiguousColon) {
+    const firstMatchBehind = findFirstTokenTypeMatchBehind(
+      tokens,
+      currTokenIndex - 1,
+      [
+        TokenType.keywordCase,
+        TokenType.keywordDefault,
+        TokenType.operatorTernaryQuestion,
+        TokenType.specialBraceOpening,
+      ],
+      true,
+    );
+    if (firstMatchBehind === null) {
+      throw createErr();
+    }
+    switch (firstMatchBehind[1]) {
+      case TokenType.keywordCase:
+      case TokenType.keywordDefault:
+        return TokenType.operatorSwitchColon;
+      case TokenType.operatorTernaryQuestion:
+        return TokenType.operatorTernaryColon;
+      default:
+        return TokenType.operatorBitFieldColon;
+    }
+  }
 
   function createErr() {
     const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
       fileContents,
-      currTokenStartIndex,
+      tokens.getTokenStartIndex(currTokenIndex),
     );
     return new Error(
       `unable to diambiguate ${tokenTypeToNameMap.get(

@@ -137,6 +137,9 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
       [TokenType.operatorMemberSelectionDirect, 'operatorMemberSelectionDirect'],
       [TokenType.operatorMemberSelectionIndirect, 'operatorMemberSelectionIndirect'],
       [TokenType.operatorTernaryQuestion, 'operatorTernaryQuestion'],
+      [TokenType.operatorTernaryColon, 'operatorTernaryColon'],
+      [TokenType.operatorSwitchColon, 'operatorSwitchColon'],
+      [TokenType.operatorBitFieldColon, 'operatorBitFieldColon'],
       [TokenType.operatorEllipses, 'operatorEllipses'],
   //#endregion Operators
 

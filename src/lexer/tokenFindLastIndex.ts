@@ -28,24 +28,23 @@ export default function tokenFindLastIndex(
   tokenCategory: TokenCategory,
   prevTokenType: TokenType | null,
 ): number {
-  function createErrorNullPreproDirective() {
-    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-      fileContents,
-      tokenStartIndex,
-    );
-    return new Error(
-      `null preprocessor directives are not supported - found at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
-        tokenCategory,
-      )})`,
-    );
-  }
-
   switch (tokenCategory) {
     case TokenCategory.newline:
     case TokenCategory.special:
       return tokenStartIndex;
 
     case TokenCategory.prepro: {
+      function createErrorNullPreproDirective() {
+        const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+          fileContents,
+          tokenStartIndex,
+        );
+        return new Error(
+          `null preprocessor directives are not supported - found at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+            tokenCategory,
+          )})`,
+        );
+      }
       if (fileContents.charAt(tokenStartIndex) === '\\') {
         // We have a line continuation
         return tokenStartIndex;
@@ -267,6 +266,9 @@ export default function tokenFindLastIndex(
           continue;
         }
         if (char === ':') {
+          if (fileContents.slice(tokenStartIndex, i) === 'default') {
+            return i - 1;
+          }
           // We have a label
           return i;
         }

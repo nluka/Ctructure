@@ -134,6 +134,9 @@ enum TokenType {
       operatorMemberSelectionDirect, // Dot (.) https://www.geeksforgeeks.org/dot-operator-in-c-c/
       operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
       operatorTernaryQuestion,
+      operatorTernaryColon,
+      operatorSwitchColon,
+      operatorBitFieldColon,
       operatorEllipses,
   //#endregion Operators
 
@@ -170,7 +173,7 @@ enum TokenType {
     ambiguousDecrement, // (prefix | postfix) ?
     ambiguousAsterisk, // (binary multiplication | indirection) ?
     ambiguousAmpersand, // (bitwise and | address of) ?
-    ambiguousColon, // (switch case/default | ternary) ?
+    ambiguousColon, // (switch case/default | ternary | bit field) ?
   //#endregion Ambiguous
 }
 
@@ -235,7 +238,7 @@ export function isTokenSpecialNonClosing(type: TokenType) {
 }
 
 export function isTokenAmbiguous(type: TokenType) {
-  return type >= TokenType.ambiguousPlus && type <= TokenType.ambiguousAmpersand;
+  return type >= TokenType.ambiguousPlus;
 }
 
 export default TokenType;

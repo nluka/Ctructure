@@ -20,50 +20,15 @@ export default function tokenDetermineType(
   tokenLastIndex: number,
   tokenCategory: TokenCategory,
 ): TokenType {
-  function createErr() {
-    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-      fileContents,
-      tokenStartIndex,
-    );
-    return new Error(
-      `unable to determine type of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
-        tokenCategory,
-      )}, value = ${JSON.stringify(
-        fileContents.slice(tokenStartIndex, tokenLastIndex + 1),
-      )})`,
-    );
-  }
-
   switch (tokenCategory) {
     case TokenCategory.newline: {
       return TokenType.newline;
-    }
-
-    case TokenCategory.special: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      const type = tokenValueToTypeMap.get(rawToken);
-      if (type === undefined) {
-        throw createErr();
-      }
-      return type;
     }
 
     case TokenCategory.prepro: {
       const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
       const type = tokenValueToTypeMap.get(rawToken);
       return type !== undefined ? type : TokenType.identifier; // stringized
-    }
-
-    case TokenCategory.preproOrOperator: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      if (rawToken.match(standardHeaderRegex)) {
-        return TokenType.preproStandardHeader;
-      }
-      const type = tokenValueToTypeMap.get(rawToken);
-      if (type === undefined) {
-        throw createErr();
-      }
-      return type;
     }
 
     case TokenCategory.commentOrOperator: {
@@ -77,15 +42,6 @@ export default function tokenDetermineType(
       return commentFirstTwoChars === '//'
         ? TokenType.commentSingleline
         : TokenType.commentMultiline;
-    }
-
-    case TokenCategory.operator: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      const type = tokenValueToTypeMap.get(rawToken);
-      if (type === undefined) {
-        throw createErr();
-      }
-      return type;
     }
 
     case TokenCategory.constant: {
@@ -106,6 +62,52 @@ export default function tokenDetermineType(
         return TokenType.label;
       }
       return tokenValueToTypeMap.get(rawToken) || TokenType.identifier;
+    }
+  }
+
+  function createErr() {
+    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+      fileContents,
+      tokenStartIndex,
+    );
+    return new Error(
+      `unable to determine type of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
+        tokenCategory,
+      )}, value = ${JSON.stringify(
+        fileContents.slice(tokenStartIndex, tokenLastIndex + 1),
+      )})`,
+    );
+  }
+
+  switch (tokenCategory) {
+    case TokenCategory.special: {
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
+      const type = tokenValueToTypeMap.get(rawToken);
+      if (type === undefined) {
+        throw createErr();
+      }
+      return type;
+    }
+
+    case TokenCategory.preproOrOperator: {
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
+      if (rawToken.match(standardHeaderRegex)) {
+        return TokenType.preproStandardHeader;
+      }
+      const type = tokenValueToTypeMap.get(rawToken);
+      if (type === undefined) {
+        throw createErr();
+      }
+      return type;
+    }
+
+    case TokenCategory.operator: {
+      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
+      const type = tokenValueToTypeMap.get(rawToken);
+      if (type === undefined) {
+        throw createErr();
+      }
+      return type;
     }
   }
 }
