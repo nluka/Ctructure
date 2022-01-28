@@ -134,15 +134,15 @@ export default function printer(
         overflow &&
         previousType !== TokenType.preproLineContinuation
       ) {
-        currString = ' \\\n' + getIndentation(blockLevel) + currString;
+        currString = ' \\\n' + getIndentation(blockLevel) + typeAsValue;
       } else if (
         currTokenType === TokenType.newline &&
         tokenTypes[i + 1] === TokenType.newline &&
         !noExtraNewline
       ) {
-        currString = '\n\n' + getIndentation(blockLevel) + currString;
+        currString = '\n\n' + getIndentation(blockLevel) + typeAsValue;
       } else {
-        currString = '\n' + getIndentation(blockLevel) + currString;
+        currString = '\n' + getIndentation(blockLevel) + typeAsValue;
       }
       noExtraNewline = false;
       newline = false;
