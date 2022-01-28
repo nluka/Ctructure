@@ -13,7 +13,7 @@ import getNextNonNewlineTokenType, {
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import getIndentAmount from './indentAmount';
 import PrinterCategory from './PrinterCategory';
-import Stack from './Stack';
+import Stack from './contextStack/Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 import whichOccursFirst from './whichOccursFirst';
 

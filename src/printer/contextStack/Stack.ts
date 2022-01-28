@@ -1,5 +1,5 @@
 import Node from './Node';
-import { ContextTypes } from './printer';
+import { ContextTypes } from '../printer';
 
 export default class Stack {
   private head: Node<{

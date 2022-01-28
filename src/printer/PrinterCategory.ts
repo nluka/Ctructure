@@ -8,8 +8,6 @@ enum PrinterCategory {
   array,
   functionDecl,
   functionCall,
-  assignment,
-  operator,
   typeQualifier,
 }
 

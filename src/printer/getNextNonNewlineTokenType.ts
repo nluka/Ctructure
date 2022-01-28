@@ -19,9 +19,6 @@ export default function getNextNonNewlineTokenType(
     } else if (tokensAhead !== undefined && --tokensAhead >= 0) {
       continue;
     }
-    if (isTokenAssignmentOperator(type)) {
-      return PrinterCategory.assignment;
-    }
     if (type === TokenType.preproLineContinuation) {
       return type;
     }

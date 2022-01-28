@@ -50,6 +50,13 @@ Once the pass described above is finished, a second pass is done to disambiguate
 
 ### Printing
 
+Printing is the process of using data that the `lexer` has handed off to create a formatted string, which is then used in the `file-writting` process.
+
+The printer formats each token based on the following:
+1. Type. The printer uses a map (`tokenTypeToValueMap`) for keywords, preprocessors, operators, and special types to get the tokens 'value'. When the file must be read to gather its value, the token's start index and the token's last index (`tokenFindLastIndex`) is used to slice it's value from the file's contents.
+2. Context. Context is set as the printer goes through each token's type. Context can be set to a `PrinterCategory` or to a `TokenType`. Each type may have a large or small impact on context, and it's formatting may be influenced heavily or not at all by context. When there are parentheses, braces, or brackets, context is stored in a `Stack` so that it can be retrieved later.
+3. Overflow. Overflow is determined in `checkForLineOverflow`. This is mostly checked for with parentheses, brackets, and arrays. If a line exceeds the set character limit, the line will be broken up at appropriate points.
+
 ### File-writing
 
 Once a formatted string has been created by the `printer`, it is used to override the input file and thus the formatted process is complete.
