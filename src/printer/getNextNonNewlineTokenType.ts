@@ -1,5 +1,4 @@
 import TokenType, {
-  isTokenAssignmentOperator,
   isTokenConstant,
   isTokenPreprocessor,
   isTokenTypeKeyword,

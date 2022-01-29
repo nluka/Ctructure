@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import debugLogFormatResult from '../debugLogFormatResult';
+import { debugLogFormatResult } from '../debugLog';
 import format from '../format';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
 import path = require('path');
@@ -52,13 +52,13 @@ describe('format', () => {
   assert('./string/String.h');
   assert('./__attribute__.c');
   assert('./asterisks.c');
-  assert('./bugs.c');
   assert('./comments.c');
   assert('./empty_func_call.c');
   assert('./empty_header.h');
   assert('./for.c');
   assert('./func_pointers.h');
   assert('./if_else.c');
+  assert('./misc.c');
   assert('./multivar_decls.c');
   assert('./prepro2.c');
   assert('./struct.c');

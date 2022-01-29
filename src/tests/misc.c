@@ -1,4 +1,3 @@
-// start of bug 1
 static const struct userdiff_funcname * diff_funcname_pattern(
   struct diff_options * o,
   struct diff_filespec * one
@@ -17,7 +16,6 @@ void diff_set_mnemonic_prefix(
   if (!options->b_prefix)
     options->b_prefix = b;
 }
-// end of bug 1
 
 void bug2() {
   #if LIBCURL_VERSION_NUM >= 0x072400 // A lot of servers don't yet support ALPN
@@ -31,7 +29,6 @@ void bug2() {
   }
 }
 
-// start of bug 3
 static bool update_files_to_local(void * param, obs_data_t * local_file) {
   struct update_info * info = param;
   struct file_update_data data = {
@@ -45,4 +42,3 @@ static bool update_files_to_local(void * param, obs_data_t * local_file) {
 
   return true;
 }
-// end of bug 3

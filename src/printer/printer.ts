@@ -7,13 +7,13 @@ import TokenType, {
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
 import checkForLineOverflow from './checkForLineOverflow';
+import Stack from './context_stack/Stack';
 import getNextNonNewlineTokenType, {
   getNextNonNewlineTokenTypeRaw,
 } from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import getIndentAmount from './indentAmount';
 import PrinterCategory from './PrinterCategory';
-import Stack from './contextStack/Stack';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 import whichOccursFirst from './whichOccursFirst';
 

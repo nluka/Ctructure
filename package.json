@@ -10,7 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:Ctructure.formatCurrentFile"
+    "onCommand:Ctructure.formatCurrentFile",
+    "onCommand:Ctructure.generateConfigFile"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -18,6 +19,10 @@
       {
         "command": "Ctructure.formatCurrentFile",
         "title": "Ctructure: Format Current File"
+      },
+      {
+        "command": "Ctructure.generateConfigFile",
+        "title": "Ctructure: Generate Config File"
       }
     ]
   },
