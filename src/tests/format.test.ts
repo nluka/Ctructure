@@ -13,7 +13,7 @@ describe('format', () => {
     test(fileRelativePathname, () => {
       const resolvedFilePathname = path.resolve(__dirname, fileRelativePathname);
       const fileContents = removeCarriageReturns(readFileSync(resolvedFilePathname).toString());
-      const formatted = format(resolvedFilePathname);
+      const formatted = format(resolvedFilePathname, true);
 
       if (shouldConsoleLogFormatResult) {
         debugLogFormatResult(formatted);

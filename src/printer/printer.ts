@@ -22,10 +22,29 @@ export type ContextTypes = TokenType | PrinterCategory | null;
 export default function printer(
   fileContents: string,
   tokenArray: TokenArray,
-  spaceAmount: number,
+  testing: boolean = false,
 ): string {
-  const indentation = ' '.repeat(spaceAmount);
   const { startIndices: tokenStartIndices, types: tokenTypes } = tokenArray.getValues();
+
+  let configSettings = {
+    indentationSize: 2,
+    indentationType: 'spaces',
+    lineEndings: 'unix',
+    multiVariableNewLine: false,
+  };
+
+  // Config settings
+  if (!testing) {
+    import('../config').then((exports) => {
+      configSettings = exports.currentConfig;
+    });
+  }
+
+  const indentationType = configSettings.indentationType === 'spaces' ? ' ' : '\t';
+  const indentationSize = configSettings.indentationSize;
+  const lineEndings = configSettings.lineEndings === 'unix' ? '\n' : '\r\n';
+  const multiVarAlwaysNewLine = configSettings.multiVariableNewLine;
+  const indentation = indentationType.repeat(indentationSize);
 
   // If true (due to line overflow), the line will split where it's appropriate.
   let overflow: boolean = false;
@@ -72,8 +91,6 @@ export default function printer(
 
   let indentAmount: number = 0;
 
-  const multiVarDecAlwaysNewLine = false;
-
   function isThereLineOverflow(i: number, overflowType: ContextTypes): boolean {
     overflow = checkForLineOverflow(
       fileContents,
@@ -107,7 +124,7 @@ export default function printer(
     ) {
       isThereIndirection = 2;
     }
-    currString += '\n' + ' '.repeat(indentAmount - isThereIndirection);
+    currString += lineEndings + ' '.repeat(indentAmount - isThereIndirection);
   }
 
   function getIndentation(blockLevel: number) {
@@ -134,15 +151,15 @@ export default function printer(
         overflow &&
         previousType !== TokenType.preproLineContinuation
       ) {
-        currString = ' \\\n' + getIndentation(blockLevel) + typeAsValue;
+        currString = ' \\' + lineEndings + getIndentation(blockLevel) + typeAsValue;
       } else if (
         currTokenType === TokenType.newline &&
         tokenTypes[i + 1] === TokenType.newline &&
         !noExtraNewline
       ) {
-        currString = '\n\n' + getIndentation(blockLevel) + typeAsValue;
+        currString = lineEndings + lineEndings + getIndentation(blockLevel) + typeAsValue;
       } else {
-        currString = '\n' + getIndentation(blockLevel) + typeAsValue;
+        currString = lineEndings + getIndentation(blockLevel) + typeAsValue;
       }
       noExtraNewline = false;
       newline = false;
@@ -167,7 +184,7 @@ export default function printer(
         if (overflow) {
           newline = true;
           noExtraNewline = true;
-        } else if (context === PrinterCategory.multiVariableDecl && multiVarDecAlwaysNewLine) {
+        } else if (context === PrinterCategory.multiVariableDecl && multiVarAlwaysNewLine) {
           checkForIndirectionAndAddIndentation(i);
         } else if (
           context === PrinterCategory.variableDecl ||
@@ -175,7 +192,7 @@ export default function printer(
         ) {
           context = PrinterCategory.multiVariableDecl;
           contextStack.push({ context, overflow, blockLevel });
-          if (multiVarDecAlwaysNewLine || isThereLineOverflow(i, context)) {
+          if (multiVarAlwaysNewLine || isThereLineOverflow(i, context)) {
             indentAmount = getIndentAmount(formattedFileStr);
             blockLevel = Math.ceil(indentAmount / 2);
             checkForIndirectionAndAddIndentation(i);
@@ -197,7 +214,7 @@ export default function printer(
           context = null;
         } else if (context === PrinterCategory.multiVariableDecl) {
           context = null;
-          if (multiVarDecAlwaysNewLine || overflow) {
+          if (multiVarAlwaysNewLine || overflow) {
             const oldContext = contextStack.pop();
             blockLevel = oldContext.blockLevel;
             overflow = oldContext.overflow;
@@ -232,7 +249,7 @@ export default function printer(
         previousContext = contextStack.pop();
         blockLevel = previousContext.blockLevel;
         if (overflow) {
-          currString = `\n${getIndentation(blockLevel) + currString}`;
+          currString = lineEndings + getIndentation(blockLevel) + currString;
         }
         context = previousContext.context;
         overflow = previousContext.overflow;
@@ -270,9 +287,9 @@ export default function printer(
             context === PrinterCategory.prepro &&
             previousType !== TokenType.preproLineContinuation
           ) {
-            currString = ` \\\n${getIndentation(blockLevel)})`;
+            currString = ' \\' + lineEndings + getIndentation(blockLevel) + ')';
           } else {
-            currString = `\n${getIndentation(blockLevel)})`;
+            currString = lineEndings + getIndentation(blockLevel) + ')';
           }
           startLineIndex = currTokenStartIndex;
         }
@@ -330,7 +347,7 @@ export default function printer(
       case TokenType.specialBraceClosing:
         previousContext = contextStack.pop();
         blockLevel = previousContext.blockLevel;
-        currString = `\n${getIndentation(blockLevel)}}`;
+        currString = lineEndings + getIndentation(blockLevel) + '}';
         startLineIndex = currTokenStartIndex;
         nextTokenType = getNextNonNewlineTokenTypeRaw(tokenTypes, i);
         if (context === PrinterCategory.array) {
@@ -373,9 +390,9 @@ export default function printer(
           currString === typeAsValue &&
           tokenTypes[i - 1] === TokenType.newline
         ) {
-          currString = '\n' + getIndentation(blockLevel) + typeAsValue;
+          currString = lineEndings + getIndentation(blockLevel) + typeAsValue;
           if (tokenTypes[i - 2] === TokenType.newline) {
-            currString = '\n' + currString;
+            currString = lineEndings + currString;
           }
         }
         break;
@@ -388,9 +405,9 @@ export default function printer(
           currString === typeAsValue &&
           tokenTypes[i - 1] === TokenType.newline
         ) {
-          currString = '\n' + getIndentation(blockLevel) + typeAsValue;
+          currString = lineEndings + getIndentation(blockLevel) + typeAsValue;
           if (tokenTypes[i - 2] === TokenType.newline) {
-            currString = '\n' + currString;
+            currString = lineEndings + currString;
           }
         }
         ++blockLevel;
@@ -403,14 +420,14 @@ export default function printer(
       /* falls through */
       case TokenType.preproDirectiveElif:
         decreaseBlockLevel();
-        currString = '\n' + getIndentation(blockLevel++) + typeAsValue;
+        currString = lineEndings + getIndentation(blockLevel++) + typeAsValue;
         break;
 
       case TokenType.preproDirectiveEndif:
         decreaseBlockLevel();
-        currString = '\n' + getIndentation(blockLevel) + typeAsValue;
+        currString = lineEndings + getIndentation(blockLevel) + typeAsValue;
         if (tokenTypes[i - 2] === TokenType.newline) {
-          currString = '\n' + currString;
+          currString = lineEndings + currString;
         }
         newline = true;
         break;
@@ -518,7 +535,7 @@ export default function printer(
           !areThereCommas(tokenTypes, i) &&
           isThereLineOverflow(i, TokenType.operatorBinaryAssignmentDirect)
         ) {
-          currString = ' =\n' + getIndentation(blockLevel + 1);
+          currString = ' =' + lineEndings + getIndentation(blockLevel + 1);
         }
         break;
 
@@ -606,9 +623,10 @@ export default function printer(
       case TokenType.keywordDefault:
         context = currTokenType;
         previousContext = contextStack.peek();
-        currString = `\n${
-          getIndentation(previousContext.blockLevel + 1) + tokenTypeToValueMap.get(currTokenType)
-        }`;
+        currString =
+          lineEndings +
+          getIndentation(previousContext.blockLevel + 1) +
+          tokenTypeToValueMap.get(currTokenType);
         blockLevel = previousContext.blockLevel + 2;
         break;
 
@@ -638,7 +656,8 @@ export default function printer(
           contextStack.peek().context === TokenType.keywordSwitch &&
           extractedLabel === 'default:'
         ) {
-          currString = '\n' + getIndentation(contextStack.peek().blockLevel + 1) + extractedLabel;
+          currString =
+            lineEndings + getIndentation(contextStack.peek().blockLevel + 1) + extractedLabel;
         } else {
           currString += extractedLabel;
         }
@@ -715,7 +734,7 @@ export default function printer(
     currString = '';
   }
   if (tokenTypes[tokenArray.getCount() - 1] === TokenType.newline && formattedFileStr !== '') {
-    formattedFileStr += '\n';
+    formattedFileStr += lineEndings;
   }
   return formattedFileStr;
 }

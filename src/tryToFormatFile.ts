@@ -48,7 +48,7 @@ export default async function tryToFormatFile(filePathname: string) {
   let printTime: number;
   try {
     const startTime = Date.now();
-    formatted = printer(fileContents, tokens, 2);
+    formatted = printer(fileContents, tokens);
     printTime = (Date.now() - startTime) / 1000;
   } catch (err: any) {
     return reportErr(filePathname, err);
