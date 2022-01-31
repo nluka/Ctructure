@@ -29,6 +29,7 @@ describe('format', () => {
     return fileContents;
   }
 
+  assert('./ant_simulator_lite/ant.c');
   assert('./ant_simulator_lite/command_line.c');
   assert('./ant_simulator_lite/print.c');
   assert('./ant_simulator_lite/print.h');
@@ -50,6 +51,7 @@ describe('format', () => {
 
   assert('./string/String.c');
   assert('./string/String.h');
+
   assert('./__attribute__.c');
   assert('./asterisks.c');
   assert('./comments.c');

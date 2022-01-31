@@ -25,9 +25,9 @@ export default async function tryToFormatFile(filePathname: string) {
     reportErr(
       filePathname,
       new Error(
-        `files larger than 512 MB (was ${(fileSize / (1024 * 1024)).toFixed(
+        `files larger than 512 MB (got ${(fileSize / (1024 * 1024)).toFixed(
           6,
-        )}) are not supported`,
+        )} MB) are not supported`,
       ),
     );
   }
