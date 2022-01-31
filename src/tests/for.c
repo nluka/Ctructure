@@ -1,5 +1,3 @@
-#define SIGTERM 1
-
 static struct child {
   struct child * next;
   int address;
@@ -13,4 +11,8 @@ void for_loop() {
       // do something
       break;
     }
+
+  for (int i = 0; i < 10; ++i) {
+    // do something
+  }
 }
