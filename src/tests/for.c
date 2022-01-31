@@ -1,4 +1,4 @@
-#define SIGTERM 1
+#include <stdio.h>
 
 static struct child {
   struct child * next;
@@ -13,4 +13,11 @@ void for_loop() {
       // do something
       break;
     }
+
+  for (int i = 0; i < 10; ++i) {
+    // do something
+  }
+
+  for (int i = 0; i < 10; ++i)
+    printf("%d\n", i);
 }
