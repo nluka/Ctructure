@@ -42,12 +42,8 @@ describe('format', () => {
     assert('./hello_world/hello_world_expanded.c', helloWorldFormatted);
   }
 
-  {
-    assert('./prepro/prepro_formatted.c');
-    const preProFormatted =
-      extractFileContentsIntoString('./prepro/prepro_formatted.c');
-    assert('./prepro/prepro.c', preProFormatted);
-  }
+  assert('./prepro/prepro_lineCont.c');
+  assert('./prepro/prepro.c');
 
   assert('./string/String.c');
   assert('./string/String.h');

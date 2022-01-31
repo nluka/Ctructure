@@ -1,6 +1,7 @@
 enum PrinterCategory {
   prepro,
   singleLineIf,
+  singleLineIfBlock,
   typeOrIdentifier,
   doubleTypeOrIdentifier,
   variableDecl,

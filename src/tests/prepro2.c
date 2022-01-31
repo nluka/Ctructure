@@ -14,12 +14,12 @@ __EXPECT(expected, #expected, seen, #seen, ==, 1)
 
 #define __TH_LOG(fmt, ...) \
 fprintf( \
-  TH_LOG_STREAM, \
-  "# %s:%d:%s:" fmt "\n", \
-  __FILE__, \
-  __LINE__, \
-  _metadata->name, \
-  ##__VA_ARGS__ \
+TH_LOG_STREAM, \
+"# %s:%d:%s:" fmt "\n", \
+__FILE__, \
+__LINE__, \
+_metadata->name, \
+##__VA_ARGS__ \
 )
 
 #define HOSTINFO_INIT { \
@@ -41,16 +41,16 @@ static BLAKE2_INLINE uint32_t load32(const void * src) {
 }
 
 #if defined(_MSC_VER)
-#define BLAKE2_PACKED(x) __pragma(pack(push, 1)) x __pragma(pack(pop))
+#define BLAKE2_PACKED(x)__pragma(pack(push, 1))x __pragma(pack(pop))
 #else
-#define BLAKE2_PACKED(x) x __attribute__((packed))
+#define BLAKE2_PACKED(x)x __attribute__((packed))
 #endif
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-// stuff
+  // stuff
 
 #if defined(__cplusplus)
 }

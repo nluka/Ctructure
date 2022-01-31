@@ -1,7 +1,7 @@
 #include "Ant.hpp"
 #include "event_log.hpp"
 #include "../ui/ui.hpp"
-#include "../util/util.hpp"
+#include "../util/util.hpp" 
 
 void ant_validate(
   Ant const * const ant,

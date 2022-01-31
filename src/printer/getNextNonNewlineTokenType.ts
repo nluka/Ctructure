@@ -1,5 +1,4 @@
 import TokenType, {
-  isTokenConstant,
   isTokenPreprocessor,
   isTokenTypeKeyword,
   isTokenTypeQualifierKeyword,
@@ -24,11 +23,7 @@ export default function getNextNonNewlineTokenType(
     if (isTokenPreprocessor(type)) {
       return PrinterCategory.prepro;
     }
-    if (
-      isTokenTypeKeyword(type) ||
-      type === TokenType.identifier ||
-      isTokenConstant(type)
-    ) {
+    if (isTokenTypeKeyword(type) || type === TokenType.identifier) {
       return PrinterCategory.typeOrIdentifier;
     }
     if (isTokenTypeQualifierKeyword(type)) {
