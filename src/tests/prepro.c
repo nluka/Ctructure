@@ -1,3 +1,20 @@
+#include <stdio.h>
+
+#define A 1
+#define b 2
+
+#if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L)
+#if defined(_MSC_VER)
+#define BLAKE2_INLINE __inline
+#elif defined(__GNUC__)
+#define BLAKE2_INLINE __inline__
+#else
+#define BLAKE2_INLINE
+#endif
+#else
+#define BLAKE2_INLINE inline
+#endif
+
 #define ASSERT_EQ(expected, seen) \
 __EXPECT(expected, #expected, seen, #seen, ==, 1)
 
@@ -14,12 +31,12 @@ __EXPECT(expected, #expected, seen, #seen, ==, 1)
 
 #define __TH_LOG(fmt, ...) \
 fprintf( \
-TH_LOG_STREAM, \
-"# %s:%d:%s:" fmt "\n", \
-__FILE__, \
-__LINE__, \
-_metadata->name, \
-##__VA_ARGS__ \
+  TH_LOG_STREAM, \
+  "# %s:%d:%s:" fmt "\n", \
+  __FILE__, \
+  __LINE__, \
+  _metadata->name, \
+  ##__VA_ARGS__ \
 )
 
 #define HOSTINFO_INIT { \

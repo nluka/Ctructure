@@ -42,9 +42,6 @@ describe('format', () => {
     assert('./hello_world/hello_world_expanded.c', helloWorldFormatted);
   }
 
-  assert('./prepro/prepro_lineCont.c');
-  assert('./prepro/prepro.c');
-
   assert('./string/String.c');
   assert('./string/String.h');
 
@@ -58,7 +55,7 @@ describe('format', () => {
   assert('./if_else.c');
   assert('./misc.c');
   assert('./multivar_decls.c');
-  assert('./prepro2.c');
+  assert('./prepro.c');
   assert('./struct.c');
   assert('./switch.c');
 });
