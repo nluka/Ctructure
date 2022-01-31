@@ -136,6 +136,18 @@ export default function printer(
     blockLevel = blockLevel > 0 ? --blockLevel : 0;
   }
 
+  function getIndexOfNextNewline(index: number): number {
+    for (let i = index + 1; i < fileContents.length; ++i) {
+      if (
+        tokenTypes[i] === TokenType.newline &&
+        tokenTypes[i - 1] !== TokenType.preproLineContinuation
+      ) {
+        return i;
+      }
+    }
+    return tokenTypes.length - 1;
+  }
+
   for (let i = 0; i < tokenArray.getCount(); ++i) {
     const currTokenStartIndex = tokenStartIndices[i];
     const currTokenType = tokenTypes[i];
@@ -148,12 +160,6 @@ export default function printer(
       currTokenType !== TokenType.commentMultiline
     ) {
       if (
-        context === PrinterCategory.prepro &&
-        overflow &&
-        previousType !== TokenType.preproLineContinuation
-      ) {
-        currString = ' \\' + lineEndings + getIndentation(blockLevel) + typeAsValue;
-      } else if (
         currTokenType === TokenType.newline &&
         tokenTypes[i + 1] === TokenType.newline &&
         !noExtraNewline
@@ -169,16 +175,6 @@ export default function printer(
 
     switch (currTokenType) {
       case TokenType.newline:
-        if (
-          context === PrinterCategory.prepro &&
-          previousType !== TokenType.preproLineContinuation &&
-          previousType !== TokenType.commentMultiline &&
-          previousType !== TokenType.commentSingleline
-        ) {
-          newline = true;
-          context = null;
-          --i;
-        }
         continue;
 
       case TokenType.specialComma:
@@ -210,9 +206,7 @@ export default function printer(
           currString = '; ';
           break;
         }
-        if (context === PrinterCategory.prepro) {
-          context = null;
-        } else if (context === PrinterCategory.multiVariableDecl) {
+        if (context === PrinterCategory.multiVariableDecl) {
           context = null;
           if (multiVarAlwaysNewLine || overflow) {
             const oldContext = contextStack.pop();
@@ -260,9 +254,6 @@ export default function printer(
         ++parenCount;
         contextStack.push({ context, overflow, blockLevel });
         nextTokenType = getNextNonNewlineTokenTypeRaw(tokenTypes, i);
-        if (context === PrinterCategory.prepro) {
-          break;
-        }
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.functionDecl;
         } else if (previousType === TokenType.identifier) {
@@ -391,43 +382,25 @@ export default function printer(
       case TokenType.preproDirectiveIf:
       case TokenType.preproDirectiveIfndef:
       case TokenType.preproDirectivePragma:
-        context = PrinterCategory.prepro;
-        if (previousType !== null) {
-          currString = lineEndings + typeAsValue;
-          if (tokenTypes[i - 2] === TokenType.newline) {
-            currString = lineEndings + currString;
-          }
-        } else {
-          currString = currString.replace(/\t/g, '');
-          currString = currString.replace(/ +/g, '');
-          currString += ' ';
-        }
-        break;
-
-      // @ts-ignore
       case TokenType.preproDirectiveElse:
-        newline = true;
-        noExtraNewline = true;
-      /* falls through */
-      case TokenType.preproDirectiveElif:
-        currString = lineEndings + typeAsValue;
-        break;
-
       case TokenType.preproDirectiveEndif:
-        currString = lineEndings + typeAsValue;
-        if (tokenTypes[i - 2] === TokenType.newline) {
-          currString = lineEndings + currString;
+      case TokenType.preproDirectiveElif:
+        const newLineIndex = getIndexOfNextNewline(i);
+        currString = '';
+        if (previousType !== null) {
+          if (tokenTypes[i - 2] === TokenType.newline) {
+            currString = lineEndings + lineEndings;
+          } else {
+            currString = lineEndings;
+          }
         }
-        newline = true;
-        break;
-
-      case TokenType.preproLineContinuation:
-        if (formattedFileStr.charAt(formattedFileStr.length - 1) === ' ') {
-          currString = '\\';
+        if (newLineIndex === tokenTypes.length - 1) {
+          currString += fileContents.slice(tokenStartIndices[i], fileContents.length);
         } else {
-          currString = ' \\';
+          currString += fileContents.slice(tokenStartIndices[i], tokenStartIndices[newLineIndex]);
         }
         newline = true;
+        i = newLineIndex - 1;
         break;
 
       case TokenType.operatorBinaryMultiplicationOrIndirection:

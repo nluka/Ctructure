@@ -41,9 +41,9 @@ static BLAKE2_INLINE uint32_t load32(const void * src) {
 }
 
 #if defined(_MSC_VER)
-#define BLAKE2_PACKED(x)__pragma(pack(push, 1))x __pragma(pack(pop))
+#define BLAKE2_PACKED(x) __pragma(pack(push, 1)) x __pragma(pack(pop))
 #else
-#define BLAKE2_PACKED(x)x __attribute__((packed))
+#define BLAKE2_PACKED(x) x __attribute__((packed))
 #endif
 
 #if defined(__cplusplus)
