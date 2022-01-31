@@ -26,7 +26,7 @@ export default function printer(
 ): string {
   const { startIndices: tokenStartIndices, types: tokenTypes } = tokenArray.getValues();
 
-  let config = {
+  let configSettings = {
     indentationSize: 2,
     indentationType: 'spaces',
     lineEndings: 'unix',
@@ -36,15 +36,15 @@ export default function printer(
   // Config settings
   if (!testing) {
     import('../config').then((exports) => {
-      config = exports.currentConfig;
+      configSettings = exports.currentConfig;
     });
   }
 
-  const indentationChar = config.indentationType === 'spaces' ? ' ' : '\t';
-  const indentationSize = config.indentationSize;
-  const lineEndings = config.lineEndings === 'unix' ? '\n' : '\r\n';
-  const multiVarAlwaysNewLine = config.multiVariableNewLine;
-  const indentation = indentationChar.repeat(indentationSize);
+  const indentationType = configSettings.indentationType === 'spaces' ? ' ' : '\t';
+  const indentationSize = configSettings.indentationSize;
+  const lineEndings = configSettings.lineEndings === 'unix' ? '\n' : '\r\n';
+  const multiVarAlwaysNewLine = configSettings.multiVariableNewLine;
+  const indentation = indentationType.repeat(indentationSize);
 
   // If true (due to line overflow), the line will split where it's appropriate.
   let overflow: boolean = false;

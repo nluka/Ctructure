@@ -31,19 +31,19 @@ fprintf( \
 
 static BLAKE2_INLINE uint32_t load32(const void * src) {
   uint32_t w;
-#if defined(NATIVE_LITTLE_ENDIAN)
-  memcpy(&w, src, sizeof w);
-#else
-  const uint8_t * p = (const uint8_t *)src;
-  w = *p;
-#endif
+  #if defined(NATIVE_LITTLE_ENDIAN)
+    memcpy(&w, src, sizeof w);
+  #else
+    const uint8_t * p = (const uint8_t *)src;
+    w = *p;
+  #endif
   return w;
 }
 
 #if defined(_MSC_VER)
-#define BLAKE2_PACKED(x) __pragma(pack(push, 1))x __pragma(pack(pop))
+  #define BLAKE2_PACKED(x)__pragma(pack(push, 1))x __pragma(pack(pop))
 #else
-#define BLAKE2_PACKED(x) x __attribute__((packed))
+  #define BLAKE2_PACKED(x)x __attribute__((packed))
 #endif
 
 #if defined(__cplusplus)
