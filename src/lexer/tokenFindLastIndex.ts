@@ -11,7 +11,7 @@ const multiLineCommentRegex = /\*/,
   singleOrDoubleQuoteRegex = /["']/,
   alphanumericRegex = /[0-9a-zA-Z]/,
   alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/,
-  NotAlphanumericOrUnderscoreRegex = /[^a-zA-Z0-9_]/,
+  notAlphanumericOrUnderscoreRegex = /[^a-zA-Z0-9_]/,
   spaceOrTabOrNewlineRegex = /[ \t\n]/;
 
 /**
@@ -62,7 +62,7 @@ export default function tokenFindLastIndex(
       }
       const firstTerminatorIndex = indexOfRegex(
         fileContents,
-        NotAlphanumericOrUnderscoreRegex,
+        notAlphanumericOrUnderscoreRegex,
         searchStartIndex,
       );
       if (firstTerminatorIndex === null) {
