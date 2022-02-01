@@ -42,7 +42,7 @@ export default function printer(
   }
 
   const indentationType = config.indentationType === 'spaces' ? ' ' : '\t';
-  const indentationSize = config.indentationSize;
+  const indentationSize = config.indentationType === 'spaces' ? config.indentationSize : 1;
   const lineEndings = config.lineEndings === 'unix' ? '\n' : '\r\n';
   const multiVarAlwaysNewLine = config.multiVariableNewLine;
   const indentation = indentationType.repeat(indentationSize);
@@ -395,9 +395,12 @@ export default function printer(
           }
         }
         if (newLineIndex === tokenTypes.length - 1) {
-          currString += fileContents.slice(tokenStartIndices[i], fileContents.length);
+          currString += fileContents.slice(tokenStartIndices[i - 1] + 1, fileContents.length);
         } else {
-          currString += fileContents.slice(tokenStartIndices[i], tokenStartIndices[newLineIndex]);
+          currString += fileContents.slice(
+            tokenStartIndices[i - 1] + 1,
+            tokenStartIndices[newLineIndex],
+          );
         }
         newline = true;
         i = newLineIndex - 1;
