@@ -20,7 +20,7 @@ export const defaultConfigString = `{
   "indentationSize": 2,
   "indentationType": "spaces",
   "lineEndings": "unix",
-  "multiVariableNewLine": "false"
+  "multiVariableNewLine": false
 }
 `;
 

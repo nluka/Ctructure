@@ -36,9 +36,11 @@ export default function printer(
 
   // Config settings
   if (!testing) {
-    import('../config').then((exports) => {
-      config = exports.currentConfig;
-    });
+    const userConfig = require('../config').currentConfig;
+    config.indentationSize = userConfig.indentationSize;
+    config.indentationType = userConfig.indentationType;
+    config.lineEndings = userConfig.lineEndings;
+    config.multiVariableNewLine = userConfig.multiVariableNewLine;
   }
 
   const indentationType = config.indentationType === 'spaces' ? ' ' : '\t';
@@ -178,11 +180,11 @@ export default function printer(
         continue;
 
       case TokenType.specialComma:
-        if (overflow) {
+        if (context === PrinterCategory.multiVariableDecl && (multiVarAlwaysNewLine || overflow)) {
+          checkForIndirectionAndAddIndentation(i);
+        } else if (overflow) {
           newline = true;
           noExtraNewline = true;
-        } else if (context === PrinterCategory.multiVariableDecl && multiVarAlwaysNewLine) {
-          checkForIndirectionAndAddIndentation(i);
         } else if (
           context === PrinterCategory.variableDecl ||
           context === PrinterCategory.doubleTypeOrIdentifier
@@ -191,7 +193,10 @@ export default function printer(
           if (multiVarAlwaysNewLine || isThereLineOverflow(i, context)) {
             contextStack.push({ context, overflow, blockLevel });
             indentAmount = getIndentAmount(formattedFileStr);
-            blockLevel = Math.ceil(indentAmount / 2);
+            blockLevel =
+              indentationType === '\t'
+                ? Math.ceil(indentAmount / 4)
+                : Math.ceil(indentAmount / indentationSize);
             checkForIndirectionAndAddIndentation(i);
           } else {
             currString = ', ';
@@ -330,6 +335,7 @@ export default function printer(
         }
         ++blockLevel;
         newline = true;
+        noExtraNewline = true;
         break;
 
       case TokenType.specialBraceClosing:
