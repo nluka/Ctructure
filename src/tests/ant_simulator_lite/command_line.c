@@ -71,9 +71,8 @@ void process_command_line_args(const int argc, char ** const argv) {
     ) {
       validate_next_arg(argName, i, argc);
       string_append_chars(&g_comVars.imageFileOutputPath, argv[i + 1]);
-      const char * fileSeparator = string_fix_file_separators(
-        &g_comVars.imageFileOutputPath
-      );
+      const char * fileSeparator =
+        string_fix_file_separators(&g_comVars.imageFileOutputPath);
       if (!string_is_last_char(&g_comVars.imageFileOutputPath, fileSeparator[0])) {
         string_append_chars(&g_comVars.imageFileOutputPath, fileSeparator);
       }

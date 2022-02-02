@@ -51,12 +51,8 @@ bool string_append_chars(String_t * const string, const char * const chars) {
     return false;
   }
 
-  const size_t writtenCount = snprintf(
-    string->data + string->length,
-    charCount + 1,
-    "%s",
-    chars
-  );
+  const size_t writtenCount =
+    snprintf(string->data + string->length, charCount + 1, "%s", chars);
 
   string->length += writtenCount;
   const bool wasAppendSuccessful = writtenCount == charCount;
@@ -78,12 +74,8 @@ bool string_append_int(String_t * const string, const int number) {
     return false;
   }
 
-  const size_t writtenCount = snprintf(
-    string->data + string->length,
-    digitCount + 1,
-    "%s",
-    buffer
-  );
+  const size_t writtenCount =
+    snprintf(string->data + string->length, digitCount + 1, "%s", buffer);
 
   string->length += writtenCount;
   const bool wasAppendSuccessful = writtenCount == digitCount;
@@ -105,7 +97,12 @@ bool string_append_uint64(String_t * const string, const uint64_t number) {
     return false;
   }
 
+  const size_t writtenCount =
+    snprintf(string->data + string->length, digitCount + 1, "%s", buffer);
+
   const size_t writtenCount = snprintf(
+    string->data + string->length,
+    string->data + string->length,
     string->data + string->length,
     digitCount + 1,
     "%s",

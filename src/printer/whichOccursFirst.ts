@@ -9,7 +9,8 @@ export default function whichOccursFirst(
   for (let i = index; i < tokenTypes.length; ++i) {
     if (tokenTypes[i] === tokenTypeOne) {
       return tokenTypeOne;
-    } else if (tokenTypes[i] === tokenTypeTwo) {
+    }
+    if (tokenTypes[i] === tokenTypeTwo) {
       return tokenTypeTwo;
     }
   }

@@ -6,9 +6,10 @@ export default function getNextNonNewlineTokenType(
   tokensAhead?: number,
 ): TokenType {
   for (let i = index + 1; i < tokenTypes.length; ++i) {
-    if (tokenTypes[i] === TokenType.newline) {
-      continue;
-    } else if (tokensAhead !== undefined && --tokensAhead >= 0) {
+    if (
+      tokenTypes[i] === TokenType.newline ||
+      (tokensAhead !== undefined && --tokensAhead >= 0)
+    ) {
       continue;
     }
     return tokenTypes[i];

@@ -9,7 +9,7 @@ enum PrinterCategory {
   array,
   functionDecl,
   functionCall,
-  typeQualifier,
+  assignmentOverflow,
 }
 
 export default PrinterCategory;
