@@ -304,7 +304,7 @@ export default function printer(
       case TokenType.specialBraceOpening:
         contextStack.push({ context, overflow, indentationLevel: indentationDepth });
         if (context === PrinterCategory.array) {
-          if (!isThereLineOverflow(i, PrinterCategory.array)) {
+          if (!isThereLineOverflow(i, TokenType.specialBraceOpening)) {
             currString += ' ';
             break;
           }
@@ -313,7 +313,7 @@ export default function printer(
             currString = '{';
           } else {
             context = PrinterCategory.array;
-            if (!isThereLineOverflow(i, PrinterCategory.array)) {
+            if (!isThereLineOverflow(i, TokenType.specialBraceOpening)) {
               currString += ' ';
               break;
             }

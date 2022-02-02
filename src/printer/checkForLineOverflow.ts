@@ -1,9 +1,6 @@
 import TokenType, { isTokenBinaryOperator } from '../lexer/TokenType';
-import PrinterCategory from './PrinterCategory';
 
 export type OverflowableContext =
-  | PrinterCategory.array
-  | PrinterCategory.variableDecl
   | TokenType.specialSemicolon
   | TokenType.specialBracketOpening
   | TokenType.specialBraceOpening
@@ -23,23 +20,6 @@ export default function checkForLineOverflow(
   startLineIndex: number,
   whiteSpace: number,
 ): boolean {
-  if (context === PrinterCategory.variableDecl) {
-    return false;
-  }
-
-  if (context === PrinterCategory.array) {
-    return overflowArray(
-      TokenType.specialBraceOpening,
-      TokenType.specialBraceClosing,
-      tokenStartIndices,
-      tokenTypes,
-      fileContents,
-      index,
-      startLineIndex,
-      whiteSpace,
-    );
-  }
-
   if (context === TokenType.specialSemicolon) {
     return overflowSemicolon(
       tokenStartIndices,
@@ -50,77 +30,41 @@ export default function checkForLineOverflow(
     );
   }
 
-  if (context === TokenType.specialBracketOpening) {
-    return overflowBracket(
+  function overflowCaller(
+    overflowMarkerOpening: OverflowableContext,
+    overflowMarkerClosing: ClosingMarkers,
+  ) {
+    return checkOverflow(
+      overflowMarkerOpening,
+      overflowMarkerClosing,
       tokenStartIndices,
       tokenTypes,
       fileContents,
       index,
       startLineIndex,
+      whiteSpace,
     );
   }
 
-  return overflowParen(
-    tokenStartIndices,
-    tokenTypes,
-    fileContents,
-    index,
-    startLineIndex,
-    whiteSpace,
+  if (context === TokenType.specialBraceOpening)
+    return overflowCaller(
+      TokenType.specialBraceOpening,
+      TokenType.specialBraceClosing,
+    );
+
+  if (context === TokenType.specialBracketOpening)
+    return overflowCaller(
+      TokenType.specialBracketOpening,
+      TokenType.specialBracketClosing,
+    );
+
+  return overflowCaller(
+    TokenType.specialParenthesisOpening,
+    TokenType.specialParenthesisClosing,
   );
-
-  // if (context === PrinterCategory.variableDecl) {
-  //   return false;
-  // }
-
-  // if (
-  //   context === TokenType.operatorBinaryAssignmentDirect ||
-  //   context === PrinterCategory.multiVariableDecl
-  // ) {
-  //   return overflowSemicolon(
-  //     tokenStartIndices,
-  //     tokenTypes,
-  //     fileContents,
-  //     index,
-  //     startLineIndex,
-  //   );
-  // }
-
-  // function overflowCaller(
-  //   overflowMarkerOpening: OverflowableContext,
-  //   overflowMarkerClosing: OverflowableContext,
-  // ) {
-  //   return checkOverflow(
-  //     overflowMarkerOpening,
-  //     overflowMarkerClosing,
-  //     tokenStartIndices,
-  //     tokenTypes,
-  //     fileContents,
-  //     index,
-  //     startLineIndex,
-  //     whiteSpace,
-  //   );
-  // }
-
-  // if (context === TokenType.specialBraceOpening)
-  //   return overflowCaller(
-  //     TokenType.specialBraceOpening,
-  //     TokenType.specialBraceClosing,
-  //   );
-
-  // if (context === TokenType.specialBracketOpening)
-  //   return overflowCaller(
-  //     TokenType.specialBracketOpening,
-  //     TokenType.specialBracketClosing,
-  //   );
-
-  // return overflowCaller(
-  //   TokenType.specialParenthesisOpening,
-  //   TokenType.specialParenthesisClosing,
-  // );
 }
 
-function overflowArray(
+function checkOverflow(
   overflowMarkerOpening: OverflowableContext,
   overflowMarkerClosing: ClosingMarkers,
   tokenStartIndices: Uint32Array,
@@ -128,22 +72,23 @@ function overflowArray(
   fileContents: string,
   tokenIndex: number,
   startLineIndex: number,
-  whiteSpace: number,
+  indentation: number,
 ): boolean {
   let lineLength;
-  let braceCount = 0;
-  for (let i = tokenIndex; braceCount >= 0 && i < tokenTypes.length; ++i) {
+  let overflowMarker = 0;
+  let whiteSpace = 0;
+  for (let i = tokenIndex; overflowMarker >= 0 && i < tokenTypes.length; ++i) {
     const currTokenType = tokenTypes[i];
     if (currTokenType === overflowMarkerOpening) {
-      whiteSpace += 2;
-      ++braceCount;
+      ++overflowMarker;
     } else if (currTokenType === overflowMarkerClosing) {
-      whiteSpace += 2;
-      --braceCount;
-      if (braceCount === 0) {
+      --overflowMarker;
+      if (overflowMarker === 0) {
         lineLength =
           removeSpaces(fileContents.slice(startLineIndex, tokenStartIndices[i]))
-            .length + whiteSpace;
+            .length +
+          whiteSpace +
+          indentation;
         if (lineLength > 80) {
           return true;
         }
@@ -153,74 +98,6 @@ function overflowArray(
       ++whiteSpace;
     } else if (isTokenBinaryOperator(currTokenType)) {
       whiteSpace += 2;
-    }
-  }
-
-  return false;
-}
-
-function overflowParen(
-  tokenStartIndices: Uint32Array,
-  tokenTypes: Uint8Array,
-  fileContents: string,
-  tokenIndex: number,
-  startLineIndex: number,
-  whiteSpace: number,
-): boolean {
-  let lineLength;
-  let parenCount = 0;
-
-  for (let i = tokenIndex; parenCount >= 0 && i < tokenTypes.length; ++i) {
-    if (tokenTypes[i] === TokenType.specialParenthesisOpening) {
-      ++parenCount;
-    } else if (tokenTypes[i] === TokenType.specialParenthesisClosing) {
-      --parenCount;
-      if (parenCount === 0) {
-        lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, tokenStartIndices[i]))
-            .length + whiteSpace;
-        if (lineLength > 80) {
-          return true;
-        }
-        return false;
-      }
-    } else if (tokenTypes[i] === TokenType.specialComma) {
-      ++whiteSpace;
-    } else if (tokenTypes[i] >= 80 && tokenTypes[i] <= 87) {
-      whiteSpace += 2;
-    }
-  }
-
-  return false;
-}
-
-function overflowBracket(
-  tokenStartIndices: Uint32Array,
-  tokenTypes: Uint8Array,
-  fileContents: string,
-  tokenIndex: number,
-  startLineIndex: number,
-): boolean {
-  let lineLength;
-  let bracketCount = 0;
-  let whiteSpace = 0;
-
-  for (let i = tokenIndex; bracketCount >= 0 && i < tokenTypes.length; ++i) {
-    if (tokenTypes[i] === TokenType.specialBracketOpening) {
-      ++bracketCount;
-    } else if (tokenTypes[i] === TokenType.specialBracketClosing) {
-      --bracketCount;
-      if (bracketCount === 0) {
-        lineLength =
-          removeSpaces(fileContents.slice(startLineIndex, tokenStartIndices[i]))
-            .length + whiteSpace;
-        if (lineLength > 80) {
-          return true;
-        }
-        return false;
-      }
-    } else if (tokenTypes[i] === TokenType.specialComma) {
-      ++whiteSpace;
     }
   }
 
