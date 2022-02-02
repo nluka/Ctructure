@@ -31,6 +31,18 @@ export default function tokenDisambiguate(
 ): TokenType {
   const currTokenType = tokens.getTokenType(currTokenIndex);
 
+  function createErr() {
+    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+      fileContents,
+      tokens.getTokenStartIndex(currTokenIndex),
+    );
+    return new Error(
+      `unable to diambiguate ${tokenTypeToNameMap.get(
+        currTokenType,
+      )} at line ${lineNum} indexOnLine ${indexOnLine}`,
+    );
+  }
+
   if (currTokenType === TokenType.ambiguousColon) {
     const firstMatchBehind = findFirstTokenTypeMatchBehind(
       tokens,
@@ -55,18 +67,6 @@ export default function tokenDisambiguate(
       default:
         return TokenType.operatorBitFieldColon;
     }
-  }
-
-  function createErr() {
-    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-      fileContents,
-      tokens.getTokenStartIndex(currTokenIndex),
-    );
-    return new Error(
-      `unable to diambiguate ${tokenTypeToNameMap.get(
-        currTokenType,
-      )} at line ${lineNum} indexOnLine ${indexOnLine}`,
-    );
   }
 
   const firstNonNewlineOrCommentTokenBehindCurr = findFirstTokenTypeMatchBehind(

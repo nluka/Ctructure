@@ -17,11 +17,10 @@ Will be added once extension is released.
 ## Limitations/Caveats
 
 - Max supported input file size is 512 MB
-- Bit field ':' requires at least 1 leading whitespace in order to be formatted correctly (e.g. `int a : 3`)
 
 ## Issues
 
-If you encounter unexpected behavior or failures, please create an [issue](https://github.com/nluka/Ctructure/issues). Include a copy of the exact file you were trying to format + the error / description of unexpected behavior.
+If you encounter unexpected behavior/failures or just have a suggestion, please create an [issue](https://github.com/nluka/Ctructure/issues). If the issue is a bug, include a copy of the exact file you were trying to format + the error or description of unexpected behavior.
 
 ## Contributing
 

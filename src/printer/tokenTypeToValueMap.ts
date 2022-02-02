@@ -2,24 +2,12 @@ import TokenType from '../lexer/TokenType';
 
 const tokenTypeToValueMap = new Map<TokenType, string>([
   // Preprocessor
-  [TokenType.preproDirectiveInclude, '#include '],
-  [TokenType.preproDirectiveDefine, '#define '],
-  [TokenType.preproLineContinuation, '\\'],
-  [TokenType.preproDirectiveUndef, '#undef '],
-  [TokenType.preproDirectiveIfdef, '#ifdef '],
-  [TokenType.preproDirectiveIfndef, '#ifndef '],
-  [TokenType.preproDirectiveIf, '#if '],
-  [TokenType.preproDirectiveElif, '#elif '],
-  [TokenType.preproDirectiveElse, '#else'],
-  [TokenType.preproDirectiveEndif, '#endif'],
-  [TokenType.preproDirectiveError, '#error'],
-  [TokenType.preproDirectivePragma, '#pragma '],
+  [TokenType.preproHash, '#'],
   [TokenType.preproMacroFile, '__FILE__'],
   [TokenType.preproMacroLine, '__LINE__'],
   [TokenType.preproMacroDate, '__DATE__'],
   [TokenType.preproMacroTime, '__TIME__'],
   [TokenType.preproMacroTimestamp, '__TIMESTAMP__'],
-  [TokenType.preproOperatorConcat, '##'],
 
   // Keywords
   [TokenType.keywordAlignas, 'alignas '],
@@ -142,7 +130,6 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.commentSingleline, ''],
   [TokenType.commentMultiline, ''],
   [TokenType.newline, ''],
-  [TokenType.preproStandardHeader, ''],
 ]);
 
 export default tokenTypeToValueMap;

@@ -3,28 +3,13 @@ import TokenType from './TokenType';
 // For testing and debugging
 const tokenTypeToNameMap = new Map<TokenType, string>([
   //#region Preprocessor
-    // Directives
-      [TokenType.preproDirectiveInclude, 'preproDirectiveInclude'],
-      [TokenType.preproDirectiveDefine, 'preproDirectiveDefine'],
-      [TokenType.preproDirectiveUndef, 'preproDirectiveUndef'],
-      [TokenType.preproDirectiveIfdef, 'preproDirectiveIfdef'],
-      [TokenType.preproDirectiveIfndef, 'preproDirectiveIfndef'],
-      [TokenType.preproDirectiveIf, 'preproDirectiveIf'],
-      [TokenType.preproDirectiveElse, 'preproDirectiveElse'],
-      [TokenType.preproDirectiveElif, 'preproDirectiveElif'],
-      [TokenType.preproDirectiveEndif, 'preproDirectiveEndif'],
-      [TokenType.preproDirectiveError, 'preproDirectiveError'],
-      [TokenType.preproDirectivePragma, 'preproDirectivePragma'],
+    [TokenType.preproHash, 'preproHash'],
     // Macros
       [TokenType.preproMacroFile, 'preproMacroFile'],
       [TokenType.preproMacroLine, 'preproMacroLine'],
       [TokenType.preproMacroDate, 'preproMacroDate'],
       [TokenType.preproMacroTime, 'preproMacroTime'],
       [TokenType.preproMacroTimestamp, 'preproMacroTimestamp'],
-    // Other
-      [TokenType.preproStandardHeader, 'preproStandardHeader'],
-      [TokenType.preproOperatorConcat, 'preproOperatorConcat'],
-      [TokenType.preproLineContinuation, 'preproLineContinuation'],
   //#endregion Preprocessor
 
   //#region Keywords

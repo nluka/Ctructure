@@ -10,7 +10,7 @@ describe('indexOfUnescaped', () => {
     test(`return ${expectedIndex} when searchString=${JSON.stringify(
       searchString,
     )}, searchChar=${searchChar}, startIndex=${startIndex}`, () => {
-      expect(indexOfUnescaped(searchString, searchChar, startIndex)).toBe(
+      expect(indexOfUnescaped(searchString, searchChar, '\\', startIndex)).toBe(
         expectedIndex,
       );
     });

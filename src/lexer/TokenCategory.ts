@@ -4,8 +4,7 @@
 enum TokenCategory {
   newline,
   special,
-  prepro,
-  preproOrOperator,
+  preproHash,
   commentOrOperator,
   operator,
   constant,
@@ -17,8 +16,7 @@ export default TokenCategory;
 export const tokenCategoryToStringMap = new Map<TokenCategory, string>([
   [TokenCategory.newline, 'newline'],
   [TokenCategory.special, 'special'],
-  [TokenCategory.prepro, 'prepro'],
-  [TokenCategory.preproOrOperator, 'preproOrOperator'],
+  [TokenCategory.preproHash, 'preproHash'],
   [TokenCategory.commentOrOperator, 'commentOrOperator'],
   [TokenCategory.operator, 'operator'],
   [TokenCategory.constant, 'constant'],

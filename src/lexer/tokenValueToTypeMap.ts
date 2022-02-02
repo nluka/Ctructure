@@ -2,24 +2,12 @@ import TokenType from './TokenType';
 
 const tokenValueToTypeMap = new Map<string, TokenType>([
   // Preprocessor
-  ['#include', TokenType.preproDirectiveInclude],
-  ['#define', TokenType.preproDirectiveDefine],
-  ['\\', TokenType.preproLineContinuation],
-  ['#undef', TokenType.preproDirectiveUndef],
-  ['#ifdef', TokenType.preproDirectiveIfdef],
-  ['#ifndef', TokenType.preproDirectiveIfndef],
-  ['#if', TokenType.preproDirectiveIf],
-  ['#else', TokenType.preproDirectiveElse],
-  ['#elif', TokenType.preproDirectiveElif],
-  ['#endif', TokenType.preproDirectiveEndif],
-  ['#error', TokenType.preproDirectiveError],
-  ['#pragma', TokenType.preproDirectivePragma],
+  ['#', TokenType.preproHash],
   ['__FILE__', TokenType.preproMacroFile],
   ['__LINE__', TokenType.preproMacroLine],
   ['__DATE__', TokenType.preproMacroDate],
   ['__TIME__', TokenType.preproMacroTime],
   ['__TIMESTAMP__', TokenType.preproMacroTimestamp],
-  ['##', TokenType.preproOperatorConcat],
 
   // Keywords
   ['_Alignas', TokenType.keywordAlignas],

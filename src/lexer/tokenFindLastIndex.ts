@@ -1,8 +1,6 @@
-import indexOfRegex from '../utility/indexOfRegex';
 import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
 import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
-import TokenType from './TokenType';
 
 const multiLineCommentRegex = /\*/,
   singleCharOperatorRegex = /[?:~]/,
@@ -19,101 +17,43 @@ const multiLineCommentRegex = /\*/,
  * @param fileContents The contents of the file.
  * @param tokenStartIndex The index of the token's first character.
  * @param tokenCategory The category of the token.
- * @param prevTokenType THe type of the previous token.
  * @returns The index of the last character of the token.
  */
 export default function tokenFindLastIndex(
   fileContents: string,
   tokenStartIndex: number,
   tokenCategory: TokenCategory,
-  prevTokenType: TokenType | null,
 ): number {
   switch (tokenCategory) {
     case TokenCategory.newline:
-    case TokenCategory.special:
+    case TokenCategory.special: {
       return tokenStartIndex;
-
-    case TokenCategory.prepro: {
-      function createErrorNullPreproDirective() {
-        const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
-          fileContents,
-          tokenStartIndex,
-        );
-        return new Error(
-          `null preprocessor directives are not supported - found at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
-            tokenCategory,
-          )})`,
-        );
-      }
-      if (fileContents.charAt(tokenStartIndex) === '\\') {
-        // We have a line continuation
-        return tokenStartIndex;
-      }
-      if (fileContents.charAt(tokenStartIndex + 1) === '#') {
-        // We have concat operator
-        return tokenStartIndex + 1;
-      }
-      const searchStartIndex = tokenStartIndex + 1;
-      if (
-        searchStartIndex === fileContents.length ||
-        fileContents.charAt(tokenStartIndex + 1).match(spaceOrTabOrNewlineRegex)
-      ) {
-        throw createErrorNullPreproDirective();
-      }
-      const firstTerminatorIndex = indexOfRegex(
-        fileContents,
-        notAlphanumericOrUnderscoreRegex,
-        searchStartIndex,
-      );
-      if (firstTerminatorIndex === null) {
-        return fileContents.length - 1;
-      }
-      if (firstTerminatorIndex === searchStartIndex) {
-        throw createErrorNullPreproDirective();
-      }
-      return firstTerminatorIndex - 1;
     }
 
-    case TokenCategory.preproOrOperator: {
-      if (prevTokenType === TokenType.preproDirectiveInclude) {
-        // We have a standard header: e.g. <stdio.h>
-        const closingChevronIndex = fileContents.indexOf(
-          '>',
-          tokenStartIndex + 1,
-        );
-        return closingChevronIndex === -1
-          ? fileContents.length - 1
-          : closingChevronIndex;
+    case TokenCategory.preproHash: {
+      const firstUnescapedNewlineIndex = indexOfUnescaped(
+        fileContents,
+        '\n',
+        '\\',
+        tokenStartIndex + 1,
+      );
+      if (firstUnescapedNewlineIndex === -1) {
+        return fileContents.length - 1;
       }
-      // We have < or <= or << or <<=
-      const secondCharIndex = tokenStartIndex + 1;
-      const secondChar = fileContents.charAt(secondCharIndex);
-      if (secondChar === '=') {
-        // We have <=
-        return secondCharIndex;
-      }
-      if (secondChar === '<') {
-        // We have << or <<=
-        const thirdIndex = tokenStartIndex + 2;
-        const thirdChar = fileContents.charAt(thirdIndex);
-        if (thirdChar === '=') {
-          // We have <<=
-          return thirdIndex;
-        }
-        return secondCharIndex;
-      }
-      return tokenStartIndex;
+      return firstUnescapedNewlineIndex - 1;
     }
 
     case TokenCategory.commentOrOperator: {
       const secondCharIndex = tokenStartIndex + 1;
       const secondChar = fileContents.charAt(secondCharIndex);
+
       if (secondChar === '=') {
-        // We have /=
+        // /=
         return secondCharIndex;
       }
-      if (secondChar.match('/')) {
-        // We have a single line comment
+
+      if (secondChar === '/') {
+        // Single line comment
         const firstNewlineCharIndex = fileContents.indexOf(
           '\n',
           tokenStartIndex + 2,
@@ -122,8 +62,9 @@ export default function tokenFindLastIndex(
           ? fileContents.length - 1
           : firstNewlineCharIndex - 1;
       }
-      if (secondChar.match(multiLineCommentRegex)) {
-        // We have a multi line comment
+
+      if (secondChar === '*') {
+        // Multi line comment
         const closingSequenceStartIndex = fileContents.indexOf(
           '*/',
           tokenStartIndex + 2,
@@ -132,13 +73,14 @@ export default function tokenFindLastIndex(
           ? fileContents.length - 1
           : closingSequenceStartIndex + 1;
       }
+
       return tokenStartIndex;
     }
 
     case TokenCategory.operator: {
       const firstChar = fileContents.charAt(tokenStartIndex);
+
       if (firstChar.match(singleCharOperatorRegex)) {
-        // We have a single char operator
         return tokenStartIndex;
       }
 
@@ -147,7 +89,7 @@ export default function tokenFindLastIndex(
           const secondCharIndex = tokenStartIndex + 1;
           const secondChar = fileContents.charAt(secondCharIndex);
           if (secondChar.match(plusPlusOrPlusEqualRegex)) {
-            // We have ++ or +=
+            // ++ +=
             return secondCharIndex;
           }
           return tokenStartIndex;
@@ -156,13 +98,13 @@ export default function tokenFindLastIndex(
         case '-': {
           const secondChar = fileContents.charAt(tokenStartIndex + 1);
           if (secondChar.match(minusMinusOrMinusEqualOrArrowRegex)) {
-            // We have -- or -= or ->
+            // -- -= ->
             return tokenStartIndex + 1;
           }
           return tokenStartIndex;
         }
 
-        case '/': /* falls through */
+        // case '/': /* falls through */
         case '*': /* falls through */
         case '%': /* falls through */
         case '=': /* falls through */
@@ -173,23 +115,27 @@ export default function tokenFindLastIndex(
           return secondChar === '=' ? secondCharIndex : tokenStartIndex;
         }
 
+        case '<': /* falls through */
         case '>': {
           const secondCharIndex = tokenStartIndex + 1;
           const secondChar = fileContents.charAt(secondCharIndex);
+
           if (secondChar === '=') {
-            // We have >=
+            // >=
             return secondCharIndex;
           }
+
           if (secondChar === firstChar) {
-            // We have >> or <<
+            // >> <<
             const thirdIndex = tokenStartIndex + 2;
             const thirdChar = fileContents.charAt(thirdIndex);
             if (thirdChar === '=') {
-              // We have >>= or <<=
+              // >>= <<=
               return thirdIndex;
             }
             return secondCharIndex;
           }
+
           return tokenStartIndex;
         }
 
@@ -198,7 +144,7 @@ export default function tokenFindLastIndex(
           const secondCharIndex = tokenStartIndex + 1;
           const secondChar = fileContents.charAt(secondCharIndex);
           if (secondChar === firstChar || secondChar === '=') {
-            // We have && or &= or || or |=
+            // && &= || |=
             return secondCharIndex;
           }
           return tokenStartIndex;
@@ -209,10 +155,9 @@ export default function tokenFindLastIndex(
             tokenStartIndex,
             tokenStartIndex + 3,
           );
-          if (firstThreeChars === '...') {
-            return tokenStartIndex + 2;
-          }
-          return tokenStartIndex;
+          return firstThreeChars === '...'
+            ? tokenStartIndex + 2
+            : tokenStartIndex;
         }
       }
 
@@ -221,7 +166,7 @@ export default function tokenFindLastIndex(
         tokenStartIndex,
       );
       throw new Error(
-        `unable to find last index of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, category = ${tokenCategoryToStringMap.get(
+        `unable to find last index of token at line ${lineNum} indexOnLine ${indexOnLine} (category : ${tokenCategoryToStringMap.get(
           tokenCategory,
         )})`,
       );
@@ -229,50 +174,47 @@ export default function tokenFindLastIndex(
 
     case TokenCategory.constant: {
       const firstChar = fileContents.charAt(tokenStartIndex);
-      if (firstChar.match(singleOrDoubleQuoteRegex)) {
-        // We have a string or char constant
+
+      if (firstChar === `'` || firstChar === `"`) {
+        // String or character constant
         const closingCharIndex = indexOfUnescaped(
           fileContents,
           firstChar,
+          '\\',
           tokenStartIndex + 1,
         );
         return closingCharIndex === -1
           ? fileContents.length - 1
           : closingCharIndex;
       }
-      // We have a numeric constant
-      let i: number;
-      for (i = tokenStartIndex + 1; i < fileContents.length; ++i) {
-        const char = fileContents.charAt(i);
-        const isAlphanumericChar = char.match(alphanumericRegex);
-        if (isAlphanumericChar || char === '.') {
-          continue;
+
+      {
+        // Numeric constant
+        let i: number;
+        for (i = tokenStartIndex + 1; i < fileContents.length; ++i) {
+          const char = fileContents.charAt(i);
+          const isAlphanumericChar = char.match(alphanumericRegex);
+          if (isAlphanumericChar || char === '.') {
+            continue;
+          }
+          if (char !== '-') {
+            break;
+          }
+          const prevChar = fileContents.charAt(i - 1).toLowerCase();
+          if (prevChar !== 'e') {
+            break;
+          }
         }
-        if (char !== '-') {
-          break;
-        }
-        const prevChar = fileContents.charAt(i - 1).toLowerCase();
-        if (prevChar !== 'e') {
-          break;
-        }
+        return i - 1;
       }
-      return i - 1;
     }
 
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
       for (let i = tokenStartIndex; i < fileContents.length; ++i) {
         const char = fileContents.charAt(i);
-        if (char.match(alphanumericOrUnderscoreRegex)) {
-          continue;
+        if (!char.match(alphanumericOrUnderscoreRegex)) {
+          return i - 1;
         }
-        if (char === ':') {
-          if (fileContents.slice(tokenStartIndex, i) === 'default') {
-            return i - 1;
-          }
-          // We have a label
-          return i;
-        }
-        return i - 1;
       }
       return fileContents.length - 1;
     }

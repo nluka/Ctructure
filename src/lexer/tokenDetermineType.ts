@@ -3,8 +3,6 @@ import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
 import TokenType from './TokenType';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
-const standardHeaderRegex = /^<[a-zA-Z0-9_\-/\\]+(\.h)|(\.c)>$/;
-
 /**
  * Determines a token's type given its category, start position, and end position.
  * May return an ambiguous type.
@@ -25,10 +23,8 @@ export default function tokenDetermineType(
       return TokenType.newline;
     }
 
-    case TokenCategory.prepro: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      const type = tokenValueToTypeMap.get(rawToken);
-      return type !== undefined ? type : TokenType.identifier; // stringized
+    case TokenCategory.preproHash: {
+      return TokenType.preproHash;
     }
 
     case TokenCategory.commentOrOperator: {
@@ -89,17 +85,17 @@ export default function tokenDetermineType(
       return type;
     }
 
-    case TokenCategory.preproOrOperator: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      if (rawToken.match(standardHeaderRegex)) {
-        return TokenType.preproStandardHeader;
-      }
-      const type = tokenValueToTypeMap.get(rawToken);
-      if (type === undefined) {
-        throw createErr();
-      }
-      return type;
-    }
+    // case TokenCategory.preproOrOperator: {
+    //   const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
+    //   if (rawToken.match(standardHeaderRegex)) {
+    //     return TokenType.preproStandardHeader;
+    //   }
+    //   const type = tokenValueToTypeMap.get(rawToken);
+    //   if (type === undefined) {
+    //     throw createErr();
+    //   }
+    //   return type;
+    // }
 
     case TokenCategory.operator: {
       const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);

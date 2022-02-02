@@ -8,14 +8,14 @@ describe('tokenDisambiguate', () => {
     tokenTypes: TokenType[],
     ambiguousTokenIndex: number,
     expectedTokenType: TokenType,
-    tokensDescription: string,
+    fileContents: string,
   ) {
-    test(`return ${tokenTypeToNameMap.get(expectedTokenType)} when tokens=${JSON.stringify(tokensDescription)}`, () => {
+    test(`return ${tokenTypeToNameMap.get(expectedTokenType)} when tokens=${JSON.stringify(fileContents)}`, () => {
       const tokens = new TokenArray(tokenTypes.length);
       for (const tokenType of tokenTypes) {
         tokens.pushPacked([0, tokenType]);
       }
-      expect(tokenDisambiguate(ambiguousTokenIndex, tokens, tokensDescription)).toBe(expectedTokenType);
+      expect(tokenDisambiguate(ambiguousTokenIndex, tokens, fileContents)).toBe(expectedTokenType);
     });
   }
 

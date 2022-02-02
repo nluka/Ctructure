@@ -4,11 +4,11 @@ import tokenFindLastIndex from './tokenFindLastIndex';
 import TokenType, { isTokenAmbiguous } from './TokenType';
 
 /**
- * An object which can sequentially extract tokens from a string.
+ * An object for extracting tokens from a string.
  */
 export default class Tokenizer {
   private cursorPosition = 0;
-  private prevTokenType: TokenType | null = null;
+  // private prevTokenType: TokenType | null = null;
   private ambiguousTokenIndices: number[] = [];
   private tokensExtractedCount = 0;
 
@@ -29,7 +29,6 @@ export default class Tokenizer {
       this.fileContents,
       this.cursorPosition,
       tokenCategory,
-      this.prevTokenType,
     );
 
     const tokenType = tokenDetermineType(
@@ -44,7 +43,6 @@ export default class Tokenizer {
 
     const tokenStartIndex = this.cursorPosition;
 
-    this.prevTokenType = tokenType;
     this.cursorPosition = tokenLastIndex + 1;
     ++this.tokensExtractedCount;
 

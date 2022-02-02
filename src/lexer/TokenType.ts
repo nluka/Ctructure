@@ -1,27 +1,12 @@
 enum TokenType {
   //#region Preprocessor (https://www.tutorialspoint.com/cprogramming/c_preprocessors.htm)
-    // Directives
-      preproDirectiveInclude,
-      preproDirectiveDefine,
-      preproDirectiveUndef,
-      preproDirectiveIfdef,
-      preproDirectiveIfndef,
-      preproDirectiveIf,
-      preproDirectiveElse,
-      preproDirectiveElif,
-      preproDirectiveEndif,
-      preproDirectiveError,
-      preproDirectivePragma,
+    preproHash,
     // Macros
       preproMacroFile,
       preproMacroLine,
       preproMacroDate,
       preproMacroTime,
       preproMacroTimestamp,
-    // Other
-      preproStandardHeader, // e.g. <stdio.h>
-      preproOperatorConcat,
-      preproLineContinuation,
   //#endregion Preprocessor
 
   //#region Keywords (https://en.cppreference.com/w/c/keyword)
@@ -175,11 +160,6 @@ enum TokenType {
     ambiguousAmpersand, // (bitwise and | address of) ?
     ambiguousColon, // (switch case/default | ternary | bit field) ?
   //#endregion Ambiguous
-}
-
-export function isTokenPreprocessor(type: TokenType) {
-  return type >= TokenType.preproDirectiveInclude &&
-    type <= TokenType.preproLineContinuation;
 }
 
 export function isTokenTypeKeyword(type: TokenType) {

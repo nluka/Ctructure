@@ -2,12 +2,10 @@ import TokenCategory from './TokenCategory';
 import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
-const preproRegex = /^[#\\]$/,
-  preproOrOperatorRegex = /^[<]$/,
-  commentOrOperatorRegex = /^\/$/,
+const commentOrOperatorRegex = /^\/$/,
   preproMacroOrKeywordOrIdentifierOrLabelRegex = /^[a-zA-Z_]$/,
   constantRegex = /^[0-9'"]$/,
-  operatorRegex = /^[+\-~!*/%=>&|^.?:]$/;
+  operatorRegex = /^[+\-~!*/%=<>&|^.?:]$/;
 
 /**
  * Determines the category of a token based on its first character.
@@ -23,11 +21,8 @@ export default function tokenDetermineCategory(
   if (tokenFirstChar === '\n') {
     return TokenCategory.newline;
   }
-  if (tokenFirstChar.match(preproRegex)) {
-    return TokenCategory.prepro;
-  }
-  if (tokenFirstChar.match(preproOrOperatorRegex)) {
-    return TokenCategory.preproOrOperator;
+  if (tokenFirstChar === '#') {
+    return TokenCategory.preproHash;
   }
   if (tokenFirstChar.match(commentOrOperatorRegex)) {
     return TokenCategory.commentOrOperator;
@@ -50,7 +45,7 @@ export default function tokenDetermineCategory(
     tokenStartIndex,
   );
   throw new Error(
-    `unable to determine category of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, firstChar = ${JSON.stringify(
+    `unable to determine category of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex=${tokenStartIndex}, firstChar=${JSON.stringify(
       tokenFirstChar,
     )})`,
   );
