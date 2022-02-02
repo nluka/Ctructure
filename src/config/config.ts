@@ -1,20 +1,8 @@
 import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
+import defaultConfig from './defaultConfig';
+import IConfig from './IConfig';
 import path = require('path');
-
-export default interface IConfig {
-  lineEndings: 'unix' | 'windows';
-  indentationType: 'tabs' | 'spaces';
-  indentationSize: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-  multiVariableNewLine: boolean;
-}
-
-export const defaultConfig: IConfig = {
-  indentationSize: 2,
-  indentationType: 'spaces',
-  lineEndings: 'unix',
-  multiVariableNewLine: false,
-};
 
 export const defaultConfigString = `{
   "indentationSize": 2,

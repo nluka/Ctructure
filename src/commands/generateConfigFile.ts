@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import * as vscode from 'vscode';
-import { defaultConfigString as defaultConfigStr } from '../config';
+import { defaultConfigString as defaultConfigStr } from '../config/config';
 import path = require('path');
 
 export default async function generateConfigFile() {

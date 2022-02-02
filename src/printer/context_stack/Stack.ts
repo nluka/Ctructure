@@ -1,25 +1,25 @@
+import { Context } from '../printer';
 import Node from './Node';
-import { ContextTypes } from '../printer';
 
 export default class Stack {
   private head: Node<{
-    context: ContextTypes;
+    context: Context;
     overflow: boolean;
     blockLevel: number;
   }> | null = null;
 
   constructor() {}
 
-  push(data: { context: ContextTypes; overflow: boolean; blockLevel: number }) {
+  push(data: { context: Context; overflow: boolean; blockLevel: number }) {
     const newHead = new Node<{
-      context: ContextTypes;
+      context: Context;
       overflow: boolean;
       blockLevel: number;
     }>(data, this.head);
     this.head = newHead;
   }
 
-  peek(): { context: ContextTypes; overflow: boolean; blockLevel: number } {
+  peek(): { context: Context; overflow: boolean; blockLevel: number } {
     if (this.head) {
       const oldHead = this.head.data;
       if (oldHead) {
@@ -30,7 +30,7 @@ export default class Stack {
     return { context: null, overflow: false, blockLevel: 0 };
   }
 
-  pop(): { context: ContextTypes; overflow: boolean; blockLevel: number } {
+  pop(): { context: Context; overflow: boolean; blockLevel: number } {
     if (this.head) {
       const oldHead = this.head.data;
       this.head = this.head.next;

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { loadConfig } from '../config';
+import { loadConfig } from '../config/config';
 import tryToFormatFile from '../tryToFormatFile';
 
 export default async function handleFormatCurrentFile() {
