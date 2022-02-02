@@ -10,3 +10,7 @@ struct hostinfo {
   unsigned int hostname_lookup_done : 1;
   unsigned int saw_extended_args : 1;
 };
+
+struct dstr str = {
+  0
+};

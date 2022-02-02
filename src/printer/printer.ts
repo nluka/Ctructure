@@ -4,13 +4,13 @@ import tokenFindLastIndex from '../lexer/tokenFindLastIndex';
 import TokenType, {
   isTokenConstant,
   isTokenTypeKeyword,
-  isTokenTypeOrTypeQualifierKeyword,
+  isTokenTypeOrTypeQualifierKeyword
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
 import checkForLineOverflow from './checkForLineOverflow';
 import Stack from './context_stack/Stack';
 import getNextNonNewlineTokenType, {
-  getNextNonNewlineTokenTypeRaw,
+  getNextNonNewlineTokenTypeRaw
 } from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import getIndentAmount from './indentAmount';
@@ -27,20 +27,8 @@ export default function printer(
 ): string {
   const { startIndices: tokenStartIndices, types: tokenTypes } = tokenArray.getValues();
 
-  let config = {
-    indentationSize: 2,
-    indentationType: 'spaces',
-    lineEndings: 'unix',
-    multiVariableNewLine: false,
-  };
-
-  // Config settings
   if (!testing) {
-    const userConfig = require('../config').currentConfig;
-    config.indentationSize = userConfig.indentationSize;
-    config.indentationType = userConfig.indentationType;
-    config.lineEndings = userConfig.lineEndings;
-    config.multiVariableNewLine = userConfig.multiVariableNewLine;
+    var config = require('../config').currentConfig;
   }
 
   const indentationType = config.indentationType === 'spaces' ? ' ' : '\t';

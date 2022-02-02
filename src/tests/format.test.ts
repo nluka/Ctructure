@@ -29,11 +29,13 @@ describe('format', () => {
     return fileContents;
   }
 
-  assert('./ant_simulator_lite/ant.c');
-  assert('./ant_simulator_lite/command_line.c');
-  assert('./ant_simulator_lite/print.c');
-  assert('./ant_simulator_lite/print.h');
-  assert('./ant_simulator_lite/Timespan.c');
+  {
+    assert('./ant_simulator_lite/ant.c');
+    assert('./ant_simulator_lite/command_line.c');
+    assert('./ant_simulator_lite/print.c');
+    assert('./ant_simulator_lite/print.h');
+    assert('./ant_simulator_lite/Timespan.c');
+  }
 
   {
     const helloWorldFormatted =
@@ -42,8 +44,10 @@ describe('format', () => {
     assert('./hello_world/hello_world_expanded.c', helloWorldFormatted);
   }
 
-  assert('./string/String.c');
-  assert('./string/String.h');
+  {
+    assert('./string/String.c');
+    assert('./string/String.h');
+  }
 
   assert('./__attribute__.c');
   assert('./asterisks.c');

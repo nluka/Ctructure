@@ -143,7 +143,6 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.commentMultiline, ''],
   [TokenType.newline, ''],
   [TokenType.preproStandardHeader, ''],
-
 ]);
 
 export default tokenTypeToValueMap;

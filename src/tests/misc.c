@@ -17,8 +17,33 @@ void diff_set_mnemonic_prefix(
     options->b_prefix = b;
 }
 
-void bug2() {
-#if LIBCURL_VERSION_NUM >= 0x072400 // A lot of servers don't yet support ALPN
+static bool do_http_request(
+  struct update_info * info,
+  const char * url,
+  long * response_code
+) {
+  CURLcode code;
+  uint8_t null_terminator = 0;
+
+  da_resize(info->file_data, 0);
+  curl_easy_setopt(info->curl, CURLOPT_URL, url);
+  curl_easy_setopt(info->curl, CURLOPT_HTTPHEADER, info->header);
+  curl_easy_setopt(info->curl, CURLOPT_ERRORBUFFER, info->error);
+  curl_easy_setopt(info->curl, CURLOPT_WRITEFUNCTION, http_write);
+  curl_easy_setopt(info->curl, CURLOPT_WRITEDATA, info);
+  curl_easy_setopt(info->curl, CURLOPT_FAILONERROR, true);
+  curl_easy_setopt(info->curl, CURLOPT_NOSIGNAL, 1);
+  curl_easy_setopt(info->curl, CURLOPT_ACCEPT_ENCODING, "");
+  curl_obs_set_revoke_setting(info->curl);
+
+  if (!info->remote_url) {
+    // We only care about headers from the main package file
+    curl_easy_setopt(info->curl, CURLOPT_HEADERFUNCTION, http_header);
+    curl_easy_setopt(info->curl, CURLOPT_HEADERDATA, info);
+  }
+
+#if LIBCURL_VERSION_NUM >= 0x072400
+  // A lot of servers don't yet support ALPN
   curl_easy_setopt(info->curl, CURLOPT_SSL_ENABLE_ALPN, 0);
 #endif
 
@@ -27,6 +52,24 @@ void bug2() {
     warn("Remote update of URL \"%s\" failed: %s", url, info->error);
     return false;
   }
+
+  if (
+    curl_easy_getinfo(info->curl, CURLINFO_RESPONSE_CODE, response_code) != CURLE_OK
+  )
+    return false;
+
+  if (*response_code >= 400) {
+    warn(
+      "Remote update of URL \"%s\" failed: HTTP/%ld",
+      url,
+      *response_code
+    );
+    return false;
+  }
+
+  da_push_back(info->file_data, &null_terminator);
+
+  return true;
 }
 
 static bool update_files_to_local(void * param, obs_data_t * local_file) {
@@ -41,4 +84,11 @@ static bool update_files_to_local(void * param, obs_data_t * local_file) {
     copy_local_to_cache(info, data.name);
 
   return true;
+}
+
+static inline obs_data_t * get_package(const char * base_path, const char * file) {
+  char * full_path = get_path(base_path, file);
+  obs_data_t * package = obs_data_create_from_json_file(full_path);
+  bfree(full_path);
+  return package;
 }
