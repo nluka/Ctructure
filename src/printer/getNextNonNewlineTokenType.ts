@@ -1,40 +1,6 @@
-import TokenType, {
-  isTokenPreprocessor,
-  isTokenTypeKeyword,
-  isTokenTypeQualifierKeyword,
-} from '../lexer/TokenType';
-import PrinterCategory from './PrinterCategory';
+import TokenType from '../lexer/TokenType';
 
 export default function getNextNonNewlineTokenType(
-  tokenTypes: Uint8Array,
-  index: number,
-  tokensAhead?: number,
-): TokenType | PrinterCategory | null {
-  for (let i = index + 1; i < tokenTypes.length; ++i) {
-    const type = tokenTypes[i];
-    if (type === TokenType.newline) {
-      continue;
-    } else if (tokensAhead !== undefined && --tokensAhead >= 0) {
-      continue;
-    }
-    if (type === TokenType.preproLineContinuation) {
-      return type;
-    }
-    if (isTokenPreprocessor(type)) {
-      return PrinterCategory.prepro;
-    }
-    if (isTokenTypeKeyword(type) || type === TokenType.identifier) {
-      return PrinterCategory.typeOrIdentifier;
-    }
-    if (isTokenTypeQualifierKeyword(type)) {
-      return PrinterCategory.typeQualifier;
-    }
-    return type;
-  }
-  return null;
-}
-
-export function getNextNonNewlineTokenTypeRaw(
   tokenTypes: Uint8Array,
   index: number,
   tokensAhead?: number,

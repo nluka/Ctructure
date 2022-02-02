@@ -2,9 +2,14 @@ import TokenType, { isTokenBinaryOperator } from '../lexer/TokenType';
 import { ContextTypes } from './printer';
 import PrinterCategory from './PrinterCategory';
 
+export type OverflowTypes =
+  | ContextTypes
+  | TokenType.operatorBinaryAssignmentDirect
+  | TokenType.specialBracketOpening;
+
 export default function checkForLineOverflow(
   fileContents: string,
-  context: ContextTypes,
+  context: OverflowTypes,
   tokenStartIndices: Uint32Array,
   tokenTypes: Uint8Array,
   index: number,
