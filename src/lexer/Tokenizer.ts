@@ -8,7 +8,6 @@ import TokenType, { isTokenAmbiguous } from './TokenType';
  */
 export default class Tokenizer {
   private cursorPosition = 0;
-  // private prevTokenType: TokenType | null = null;
   private ambiguousTokenIndices: number[] = [];
   private tokensExtractedCount = 0;
 

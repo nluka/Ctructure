@@ -2,15 +2,11 @@ import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
 import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
 
-const multiLineCommentRegex = /\*/,
-  singleCharOperatorRegex = /[?:~]/,
+const singleCharOperatorRegex = /[?:~]/,
   plusPlusOrPlusEqualRegex = /[+=]/,
   minusMinusOrMinusEqualOrArrowRegex = /[\-=>]/,
-  singleOrDoubleQuoteRegex = /["']/,
   alphanumericRegex = /[0-9a-zA-Z]/,
-  alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/,
-  notAlphanumericOrUnderscoreRegex = /[^a-zA-Z0-9_]/,
-  spaceOrTabOrNewlineRegex = /[ \t\n]/;
+  alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
 
 /**
  * Finds the index of the last character of a token based on its category and what came before it.
