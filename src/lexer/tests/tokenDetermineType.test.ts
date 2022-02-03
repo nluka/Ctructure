@@ -160,25 +160,25 @@ describe('tokenDetermineType', () => {
         assert(constant, TokenType.constantNumber, '0X12CLU'); // hex unsigned
       });
       describe('long long', () => {
-        assert(constant, TokenType.constantNumber, '123ll'    );
-        assert(constant, TokenType.constantNumber, '123lL'    );
-        assert(constant, TokenType.constantNumber, '123LL'    );
-        assert(constant, TokenType.constantNumber, '123llu'   ); // unsigned
+        assert(constant, TokenType.constantNumber, '123ll'   );
+        assert(constant, TokenType.constantNumber, '123lL'   );
+        assert(constant, TokenType.constantNumber, '123LL'   );
+        assert(constant, TokenType.constantNumber, '123llu'  ); // unsigned
         assert(constant, TokenType.constantNumber, "123llU"  ); // unsigned
-        assert(constant, TokenType.constantNumber, '123LLu'   ); // unsigned
-        assert(constant, TokenType.constantNumber, '123LLU'   ); // unsigned
-        assert(constant, TokenType.constantNumber, '0123ll'   ); // octal
+        assert(constant, TokenType.constantNumber, '123LLu'  ); // unsigned
+        assert(constant, TokenType.constantNumber, '123LLU'  ); // unsigned
+        assert(constant, TokenType.constantNumber, '0123ll'  ); // octal
         assert(constant, TokenType.constantNumber, '0123llu' ); // octal unsigned
-        assert(constant, TokenType.constantNumber, '0123llU'  ); // octal unsigned
-        assert(constant, TokenType.constantNumber, '0123LL'   ); // octal unsigned
-        assert(constant, TokenType.constantNumber, '0123LLu'  ); // octal unsigned
-        assert(constant, TokenType.constantNumber, '0123LLU'  ); // octal unsigned
-        assert(constant, TokenType.constantNumber, '0x12cll'  ); // hex
-        assert(constant, TokenType.constantNumber, '0X12CLL'  ); // hex
-        assert(constant, TokenType.constantNumber, '0x12cllu' ); // hex unsigned
-        assert(constant, TokenType.constantNumber, '0x12cllU'  ); // hex unsigned
-        assert(constant, TokenType.constantNumber, '0X12CLLu'  ); // hex unsigned
-        assert(constant, TokenType.constantNumber, '0X12CLLU'  ); // hex unsigned
+        assert(constant, TokenType.constantNumber, '0123llU' ); // octal unsigned
+        assert(constant, TokenType.constantNumber, '0123LL'  ); // octal unsigned
+        assert(constant, TokenType.constantNumber, '0123LLu' ); // octal unsigned
+        assert(constant, TokenType.constantNumber, '0123LLU' ); // octal unsigned
+        assert(constant, TokenType.constantNumber, '0x12cll' ); // hex
+        assert(constant, TokenType.constantNumber, '0X12CLL' ); // hex
+        assert(constant, TokenType.constantNumber, '0x12cllu'); // hex unsigned
+        assert(constant, TokenType.constantNumber, '0x12cllU'); // hex unsigned
+        assert(constant, TokenType.constantNumber, '0X12CLLu'); // hex unsigned
+        assert(constant, TokenType.constantNumber, '0X12CLLU'); // hex unsigned
       });
       describe('long long unsigned', () => {
         assert(constant, TokenType.constantNumber, '123ll'   );
