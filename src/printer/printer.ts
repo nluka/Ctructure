@@ -100,14 +100,13 @@ export default function printer(
     return overflow;
   }
 
-  function extractStringFromFile(startIndex: number, prevTokenType: TokenType | null): string {
+  function extractStringFromFile(startIndex: number): string {
     return fileContents.slice(
       startIndex,
       tokenFindLastIndex(
         fileContents,
         startIndex,
         tokenDetermineCategory(fileContents, startIndex),
-        prevTokenType,
       ) + 1,
     );
   }
@@ -133,10 +132,7 @@ export default function printer(
 
   function getIndexOfNextNewline(index: number): number {
     for (let i = index + 1; i < fileContents.length; ++i) {
-      if (
-        tokenTypes[i] === TokenType.newline &&
-        tokenTypes[i - 1] !== TokenType.preproLineContinuation
-      ) {
+      if (tokenTypes[i] === TokenType.newline) {
         return i;
       }
     }
@@ -377,16 +373,7 @@ export default function printer(
         overflow = previousContext.overflow;
         break;
 
-      case TokenType.preproDirectiveInclude:
-      case TokenType.preproDirectiveDefine:
-      case TokenType.preproDirectiveUndef:
-      case TokenType.preproDirectiveIfdef:
-      case TokenType.preproDirectiveIf:
-      case TokenType.preproDirectiveIfndef:
-      case TokenType.preproDirectivePragma:
-      case TokenType.preproDirectiveElse:
-      case TokenType.preproDirectiveEndif:
-      case TokenType.preproDirectiveElif:
+      case TokenType.preproHash:
         const newlineIndex = getIndexOfNextNewline(i);
         currString = '';
         if (previousType !== null) {
@@ -629,7 +616,7 @@ export default function printer(
         break;
 
       case TokenType.label:
-        const extractedLabel = extractStringFromFile(currTokenStartIndex, previousType);
+        const extractedLabel = extractStringFromFile(currTokenStartIndex);
         if (
           contextStack.peek().context === TokenType.keywordSwitch &&
           extractedLabel === 'default:'
@@ -644,7 +631,7 @@ export default function printer(
         break;
 
       case TokenType.constantString:
-        currString += extractStringFromFile(currTokenStartIndex, previousType);
+        currString += extractStringFromFile(currTokenStartIndex);
         nextNonNewlineTokenType = getNextNonNewlineTokenType(tokenTypes, i);
         if (
           isTokenTypeKeyword(nextNonNewlineTokenType) ||
@@ -656,8 +643,7 @@ export default function printer(
 
       case TokenType.constantNumber:
       case TokenType.constantCharacter:
-      case TokenType.preproStandardHeader:
-        currString += extractStringFromFile(currTokenStartIndex, previousType);
+        currString += extractStringFromFile(currTokenStartIndex);
         break;
 
       case TokenType.commentSingleline:
@@ -667,7 +653,7 @@ export default function printer(
         ) {
           currString = ' ';
         }
-        currString += extractStringFromFile(currTokenStartIndex, previousType);
+        currString += extractStringFromFile(currTokenStartIndex);
         if (tokenTypes[i + 1] === TokenType.newline) {
           shouldAddNewline = true;
         }
@@ -685,14 +671,14 @@ export default function printer(
         if (currString === '') {
           currString = ' ';
         }
-        currString += extractStringFromFile(currTokenStartIndex, previousType);
+        currString += extractStringFromFile(currTokenStartIndex);
         if (tokenTypes[i + 1] === TokenType.newline) {
           shouldAddNewline = true;
         }
         break;
 
       case TokenType.identifier:
-        const extractedIdentifier = extractStringFromFile(currTokenStartIndex, previousType);
+        const extractedIdentifier = extractStringFromFile(currTokenStartIndex);
         currString += extractedIdentifier;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(tokenTypes, i);
         if (
