@@ -40,7 +40,7 @@ Lexing is the process of parsing the input file and extracting all of its tokens
 
 The steps for extracting a token:
 1. Find the position of the token's first character (`Tokenizer.moveCursorToBeginningOfNextToken`)
-2. Based on the token's first character and the type of token that preceeded it, determine the category of the token (`tokenDetermineCategory`)
+2. Based on the token's first character, determine the category of the token (`tokenDetermineCategory`)
 3. Based on the position of the token's first character and its category, determine the position of the last character (`tokenFindLastIndex`)
 4. Based on the positions of the token's first and last character and its category, determine the specific type (`TokenType`) of the token (`tokenDetermineType`)
   - Some token types cannot be determined on this first pass, so they are marked as ambiguous
