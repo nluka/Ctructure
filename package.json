@@ -11,6 +11,7 @@
   ],
   "activationEvents": [
     "onCommand:Ctructure.formatCurrentFile",
+    "onCommand:Ctructure.formatWorkspaceFiles",
     "onCommand:Ctructure.generateConfigFile"
   ],
   "main": "./dist/extension.js",
@@ -18,11 +19,15 @@
     "commands": [
       {
         "command": "Ctructure.formatCurrentFile",
-        "title": "Ctructure: Format Current File"
+        "title": "Ctructure: Format current file"
+      },
+      {
+        "command": "Ctructure.formatWorkspaceFiles",
+        "title": "Ctructure: Format files in workspace"
       },
       {
         "command": "Ctructure.generateConfigFile",
-        "title": "Ctructure: Generate Config File"
+        "title": "Ctructure: Generate config file"
       }
     ]
   },

@@ -56,7 +56,7 @@ enum TokenType {
       keywordTypedef,
       keywordUnion,
       keywordWhile,
-  //#endregion // Keywords
+  //#endregion Keywords
 
   //#region Constants
     constantNumber,

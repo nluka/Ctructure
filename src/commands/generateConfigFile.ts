@@ -6,7 +6,7 @@ import path = require('path');
 export default async function generateConfigFile() {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (workspaceFolders === undefined) {
-    return reportErr('workspaceFolders is undefined');
+    return reportErr('no workspace folders found');
   }
 
   const workspacePath = workspaceFolders[0].uri.fsPath;

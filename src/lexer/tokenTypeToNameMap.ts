@@ -59,7 +59,7 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
       [TokenType.keywordTypedef, 'keywordTypedef'],
       [TokenType.keywordUnion, 'keywordUnion'],
       [TokenType.keywordWhile, 'keywordWhile'],
-  //#endregion // Keywords
+  //#endregion Keywords
 
   //#region Constants
     [TokenType.constantNumber, 'constantNumber'],

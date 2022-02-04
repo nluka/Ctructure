@@ -11,6 +11,6 @@ struct hostinfo {
   unsigned int saw_extended_args : 1;
 };
 
-struct dstr str = {
+struct strbuf str = {
   0
 };

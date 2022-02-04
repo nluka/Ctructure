@@ -45,7 +45,7 @@ export default function printer(
   const indentationType = config.indentationType === 'spaces' ? ' ' : '\t';
   const indentationSize = config.indentationType === 'spaces' ? config.indentationSize : 1;
   const lineEndings = config.lineEndings === 'unix' ? '\n' : '\r\n';
-  const multiVarAlwaysNewLine = config.multiVariableNewLine;
+  const multiVarAlwaysNewline = config.multiVariableNewline;
   const indentation = indentationType.repeat(indentationSize);
 
   // If true (due to line overflow), the line will split where it's appropriate.
@@ -169,7 +169,7 @@ export default function printer(
         continue;
 
       case TokenType.specialComma:
-        if (context === PrinterCategory.multiVariableDecl && (multiVarAlwaysNewLine || overflow)) {
+        if (context === PrinterCategory.multiVariableDecl && (multiVarAlwaysNewline || overflow)) {
           checkForIndirectionAndAddIndentation(i);
         } else if (overflow) {
           shouldAddNewline = true;
@@ -179,7 +179,7 @@ export default function printer(
           context === PrinterCategory.doubleTypeOrIdentifier
         ) {
           context = PrinterCategory.multiVariableDecl;
-          if (multiVarAlwaysNewLine || isThereLineOverflow(i, TokenType.specialSemicolon)) {
+          if (multiVarAlwaysNewline || isThereLineOverflow(i, TokenType.specialSemicolon)) {
             contextStack.push({ context, overflow, indentationLevel: indentationDepth });
             indentAmount = getIndentAmount(formattedFileStr);
             indentationDepth =
@@ -205,7 +205,7 @@ export default function printer(
           context = null;
         } else if (context === PrinterCategory.multiVariableDecl) {
           context = null;
-          if (multiVarAlwaysNewLine || overflow) {
+          if (multiVarAlwaysNewline || overflow) {
             const oldContext = contextStack.pop();
             indentationDepth = oldContext.indentationLevel;
             overflow = false;

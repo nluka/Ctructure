@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { loadConfig } from '../config/config';
-import tryToFormatFile from '../tryToFormatFile';
+import tryToFormatFile, { logFormatResult } from '../tryToFormatFile';
+import path = require('path');
 
-export default async function handleFormatCurrentFile() {
+export default async function formatCurrentFile() {
   const currentFilePathname = vscode.window.activeTextEditor?.document.fileName;
 
   if (currentFilePathname === undefined) {
@@ -14,5 +15,7 @@ export default async function handleFormatCurrentFile() {
 
   loadConfig();
 
-  tryToFormatFile(currentFilePathname);
+  const res = await tryToFormatFile(currentFilePathname);
+
+  logFormatResult(res, true);
 }

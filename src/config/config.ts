@@ -8,7 +8,8 @@ export const defaultConfigString = `{
   "indentationSize": 2,
   "indentationType": "spaces",
   "lineEndings": "unix",
-  "multiVariableNewLine": false
+  "multiVariableNewline": false,
+  "logToFile": true
 }
 `;
 
@@ -63,11 +64,20 @@ export function loadConfig() {
   }
 
   {
-    const multiVariableNewLine = storedConfig.multiVariableNewLine;
-    if (typeof multiVariableNewLine === 'boolean') {
-      currentConfig.multiVariableNewLine = multiVariableNewLine;
+    const multiVariableNewline = storedConfig.multiVariableNewline;
+    if (typeof multiVariableNewline === 'boolean') {
+      currentConfig.multiVariableNewline = multiVariableNewline;
     } else {
-      warnInvalidPropValue('multiVariableNewLine');
+      warnInvalidPropValue('multiVariableNewline');
+    }
+  }
+
+  {
+    const logToFile = storedConfig.logToFile;
+    if (typeof logToFile === 'boolean') {
+      currentConfig.logToFile = logToFile;
+    } else {
+      warnInvalidPropValue('logToFile');
     }
   }
 
