@@ -711,12 +711,12 @@ describe('tokenDisambiguate', () => {
           TokenType.constantNumber,
           TokenType.specialParenthesisClosing,
           TokenType.ambiguousColon ],
-        6, TokenType.operatorSwitchColon, 'case (a + 1):'
+        6, TokenType.specialColonSwitchOrLabelOrBitField, 'case (a + 1):'
       );
       assert(
         [ TokenType.keywordDefault,
           TokenType.ambiguousColon ],
-        1, TokenType.operatorSwitchColon, 'default:'
+        1, TokenType.specialColonSwitchOrLabelOrBitField, 'default:'
       );
     });
     describe('Ternary', () => {
@@ -737,13 +737,34 @@ describe('tokenDisambiguate', () => {
         6, TokenType.operatorTernaryColon, '? (a + 1) :'
       );
     });
+    describe('Label', () => {
+      assert(
+        [ TokenType.specialSemicolon,
+          TokenType.identifier,
+          TokenType.ambiguousColon ],
+        2, TokenType.specialColonSwitchOrLabelOrBitField, '; label:'
+      );
+      assert(
+        [ TokenType.specialBraceOpening,
+          TokenType.identifier,
+          TokenType.ambiguousColon ],
+        2, TokenType.specialColonSwitchOrLabelOrBitField, '{ label:'
+      );
+    });
     describe('Bit Field', () => {
       assert(
         [ TokenType.specialBraceOpening,
           TokenType.keywordInt,
           TokenType.identifier,
           TokenType.ambiguousColon ],
-        3, TokenType.operatorBitFieldColon, '{ int a:1'
+        3, TokenType.specialColonSwitchOrLabelOrBitField, '{ int a: 1'
+      );
+      assert(
+        [ TokenType.specialSemicolon,
+          TokenType.keywordInt,
+          TokenType.identifier,
+          TokenType.ambiguousColon ],
+        3, TokenType.specialColonSwitchOrLabelOrBitField, '; int b: 1'
       );
     });
   });

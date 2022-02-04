@@ -123,14 +123,13 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
       [TokenType.operatorMemberSelectionIndirect, 'operatorMemberSelectionIndirect'],
       [TokenType.operatorTernaryQuestion, 'operatorTernaryQuestion'],
       [TokenType.operatorTernaryColon, 'operatorTernaryColon'],
-      [TokenType.operatorSwitchColon, 'operatorSwitchColon'],
-      [TokenType.operatorBitFieldColon, 'operatorBitFieldColon'],
       [TokenType.operatorEllipses, 'operatorEllipses'],
   //#endregion Operators
 
   //#region Special
     [TokenType.specialComma, 'specialComma'],
     [TokenType.specialSemicolon, 'specialSemicolon'],
+    [TokenType.specialColonSwitchOrLabelOrBitField, 'specialColonSwitchOrLabelOrBitField'],
     // Opening
       [TokenType.specialParenthesisOpening, 'specialParenthesisOpening'],
       [TokenType.specialBraceOpening, 'specialBraceOpening'],

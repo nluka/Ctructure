@@ -1,3 +1,58 @@
+/*
+  This file contains test cases that aren't easily categorized,
+  usually coming from bugs
+*/
+
+void misc1() {
+  if (sep == 1 && *p == '*') {
+    from = 0;
+    to = items->items.nr;
+  } else if (isdigit(*p)) {
+    char * endp;
+    /*
+     * A range can be specified like 5-7 or 5-.
+     *
+     * Note: `from` is 0-based while the user input
+     * is 1-based, hence we have to decrement by
+     * one. We do not have to decrement `to` even
+     * if it is 0-based because it is an exclusive
+     * boundary.
+     */
+    from = strtoul(p, &endp, 10) - 1;
+    if (endp == p + sep)
+      to = from + 1;
+    else if (*endp == '-') {
+      if (isdigit(*(++endp)))
+        to = strtoul(endp, &endp, 10);
+      else
+        to = items->items.nr;
+      /* extra characters after the range? */
+      if (endp != p + sep)
+        from = -1;
+    }
+  }
+}
+
+int misc2() {
+  ledRed = ledGreen = 1; // turn both off
+
+  for (; ; ) {
+    if (pushBtnLeft == 1) { // pressed
+      ledRed = 1; // off
+      wait_ms(500);
+      ledRed = 0; // on
+      wait_ms(500);
+    } else if (pushBtnRight == 1) { // pressed
+      ledGreen = 1; // off
+      wait_ms(500);
+      ledGreen = 0; // on
+      wait_ms(500);
+    } else {
+      ledRed = ledGreen = 1; // turn red and green leds off
+    }
+  }
+}
+
 static const struct userdiff_funcname * diff_funcname_pattern(
   struct diff_options * o,
   struct diff_filespec * one
@@ -87,36 +142,6 @@ static inline obs_data_t * get_package(const char * base_path, const char * file
   obs_data_t * package = obs_data_create_from_json_file(full_path);
   bfree(full_path);
   return package;
-}
-
-void misc() {
-  if (sep == 1 && *p == '*') {
-    from = 0;
-    to = items->items.nr;
-  } else if (isdigit(*p)) {
-    char * endp;
-    /*
-      * A range can be specified like 5-7 or 5-.
-      *
-      * Note: `from` is 0-based while the user input
-      * is 1-based, hence we have to decrement by
-      * one. We do not have to decrement `to` even
-      * if it is 0-based because it is an exclusive
-      * boundary.
-      */
-    from = strtoul(p, &endp, 10) - 1;
-    if (endp == p + sep)
-      to = from + 1;
-    else if (*endp == '-') {
-      if (isdigit(*(++endp)))
-        to = strtoul(endp, &endp, 10);
-      else
-        to = items->items.nr;
-      /* extra characters after the range? */
-      if (endp != p + sep)
-        from = -1;
-    }
-  }
 }
 
 struct option opts[] = {

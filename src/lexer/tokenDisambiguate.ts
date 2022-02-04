@@ -52,6 +52,7 @@ export default function tokenDisambiguate(
         TokenType.keywordCase,
         TokenType.keywordDefault,
         TokenType.operatorTernaryQuestion,
+        TokenType.specialSemicolon,
         TokenType.specialBraceOpening,
       ],
       true,
@@ -60,13 +61,14 @@ export default function tokenDisambiguate(
       throw createErr();
     }
     switch (firstMatchBehind[1]) {
+      case TokenType.operatorTernaryQuestion:
+      default:
+        return TokenType.operatorTernaryColon;
       case TokenType.keywordCase:
       case TokenType.keywordDefault:
-        return TokenType.operatorSwitchColon;
-      case TokenType.operatorTernaryQuestion:
-        return TokenType.operatorTernaryColon;
-      default:
-        return TokenType.operatorBitFieldColon;
+      case TokenType.specialBraceOpening:
+      case TokenType.specialSemicolon:
+        return TokenType.specialColonSwitchOrLabelOrBitField;
     }
   }
 

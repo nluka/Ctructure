@@ -120,14 +120,13 @@ enum TokenType {
       operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
       operatorTernaryQuestion,
       operatorTernaryColon,
-      operatorSwitchColon,
-      operatorBitFieldColon,
       operatorEllipses,
   //#endregion Operators
 
   //#region Special
     specialComma,
     specialSemicolon,
+    specialColonSwitchOrLabelOrBitField,
     // Opening
       specialParenthesisOpening,
       specialBraceOpening,
@@ -158,9 +157,11 @@ enum TokenType {
     ambiguousDecrement, // (prefix | postfix) ?
     ambiguousAsterisk, // (binary multiplication | indirection) ?
     ambiguousAmpersand, // (bitwise and | address of) ?
-    ambiguousColon, // (switch case/default | ternary | bit field) ?
+    ambiguousColon, // (switch case/default | ternary | label | bit field) ?
   //#endregion Ambiguous
 }
+
+export default TokenType;
 
 export function isTokenTypeKeyword(type: TokenType) {
   return type >= TokenType.keywordBool &&
@@ -225,5 +226,3 @@ export function isTokenSpecialNonClosing(type: TokenType) {
 export function isTokenAmbiguous(type: TokenType) {
   return type >= TokenType.ambiguousPlus;
 }
-
-export default TokenType;
