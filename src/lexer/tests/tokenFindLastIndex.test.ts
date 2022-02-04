@@ -43,6 +43,7 @@ describe('tokenFindLastIndex', () => {
   describe('special', () => {
     assert(special, 0, ',');
     assert(special, 0, ';');
+    assert(special, 0, '\\');
     {
       // Opening
       assert(special, 0, '( ');

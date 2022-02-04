@@ -39,6 +39,7 @@ describe('tokenDetermineCategory', () => {
   describe('special', () => {
     assert(special, ',');
     assert(special, ';');
+    assert(special, '\\');
     {
       // Opening
       assert(special, '(');

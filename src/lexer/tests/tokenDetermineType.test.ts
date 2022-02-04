@@ -51,48 +51,48 @@ describe('tokenDetermineType', () => {
   });
 
   describe('Keywords', () => {
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas,      '_Alignas');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignof,      '_Alignof');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAuto,         'auto');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAtomic,       '_Atomic');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordBool,         '_Bool');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordBreak,        'break');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordCase,         'case');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordChar,         'char');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordComplex,      '_Complex');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordConst,        'const');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordContinue,     'continue');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordDefault,      'default');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordDo,           'do');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordDouble,       'double');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordElse,         'else');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordEnum,         'enum');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordExtern,       'extern');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordFloat,        'float');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordFor,          'for');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordGeneric,      '_Generic');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordGoto,         'goto');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordIf,           'if');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordImaginary,    '_Imaginary');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordInt,          'int');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordLong,         'long');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordNoreturn,     '_Noreturn');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordRegister,     'register');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordReturn,       'return');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordShort,        'short');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSigned,       'signed');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSizeof,       'sizeof');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStatic,       'static');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStaticassert, '_Static_assert');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStruct,       'struct');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSwitch,       'switch');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordThreadlocal,  '_Thread_local');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordTypedef,      'typedef');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordUnion,        'union');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordUnsigned,     'unsigned');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordVoid,         'void');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordVolatile,     'volatile');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordWhile,        'while');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas,       '_Alignas');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignof,       '_Alignof');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAuto,          'auto');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAtomic,        '_Atomic');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordBool,          '_Bool');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordBreak,         'break');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordCase,          'case');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordChar,          'char');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordComplex,       '_Complex');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordConst,         'const');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordContinue,      'continue');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordDefault,       'default');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordDo,            'do');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordDouble,        'double');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordElse,          'else');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordEnum,          'enum');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordExtern,        'extern');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordFloat,         'float');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordFor,           'for');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordGeneric,       '_Generic');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordGoto,          'goto');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordIf,            'if');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordImaginary,     '_Imaginary');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordInt,           'int');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordLong,          'long');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordNoreturn,      '_Noreturn');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordRegister,      'register');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordReturn,        'return');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordShort,         'short');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSigned,        'signed');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSizeof,        'sizeof');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStatic,        'static');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStaticassert,  '_Static_assert');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStruct,        'struct');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSwitch,        'switch');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordThreadlocal,   '_Thread_local');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordTypedef,       'typedef');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordUnion,         'union');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordUnsigned,      'unsigned');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordVoid,          'void');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordVolatile,      'volatile');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordWhile,         'while');
   });
 
   describe('Constants', () => {
@@ -202,21 +202,21 @@ describe('tokenDetermineType', () => {
         assert(commentOrOperator, TokenType.operatorBinaryArithmeticDivision, '/');
       });
       describe('Logical', () => {
-        assert(operator, TokenType.operatorUnaryLogicalNegation, '!');
-        assert(operator, TokenType.operatorBinaryLogicalAnd,     '&&');
-        assert(operator, TokenType.operatorBinaryLogicalOr,      '||');
+        assert(operator, TokenType.operatorUnaryLogicalNegation,  '!');
+        assert(operator, TokenType.operatorBinaryLogicalAnd,      '&&');
+        assert(operator, TokenType.operatorBinaryLogicalOr,       '||');
       });
       describe('Comparison', () => {
-        assert(operator, TokenType.operatorBinaryComparisonEqualTo,              '==');
-        assert(operator, TokenType.operatorBinaryComparisonNotEqualTo,           '!=');
-        assert(operator, TokenType.operatorBinaryComparisonGreaterThan,          '>');
-        assert(operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo, '>=');
-        assert(operator, TokenType.operatorBinaryComparisonLessThan,             '<');
-        assert(operator, TokenType.operatorBinaryComparisonLessThanOrEqualTo,    '<=');
+        assert(operator, TokenType.operatorBinaryComparisonEqualTo,               '==');
+        assert(operator, TokenType.operatorBinaryComparisonNotEqualTo,            '!=');
+        assert(operator, TokenType.operatorBinaryComparisonGreaterThan,           '>');
+        assert(operator, TokenType.operatorBinaryComparisonGreaterThanOrEqualTo,  '>=');
+        assert(operator, TokenType.operatorBinaryComparisonLessThan,              '<');
+        assert(operator, TokenType.operatorBinaryComparisonLessThanOrEqualTo,     '<=');
       });
       describe('Bitwise', () => {
-        assert(operator, TokenType.operatorUnaryBitwiseOnesComplement, '~');
-        assert(operator, TokenType.operatorBinaryBitwiseOr,            '|');
+        assert(operator, TokenType.operatorUnaryBitwiseOnesComplement,  '~');
+        assert(operator, TokenType.operatorBinaryBitwiseOr,             '|');
       });
       describe('Assignment', () => {
         assert(operator, TokenType.operatorBinaryAssignmentDirect,            '=');
@@ -240,47 +240,49 @@ describe('tokenDetermineType', () => {
   });
 
   describe('Special', () => {
-    assert(special, TokenType.specialComma,              ',');
-    assert(special, TokenType.specialSemicolon,          ';');
-    assert(special, TokenType.specialParenthesisOpening, '(');
-    assert(special, TokenType.specialBraceOpening,       '{');
-    assert(special, TokenType.specialBracketOpening,     '[');
-    assert(special, TokenType.specialParenthesisClosing, ')');
-    assert(special, TokenType.specialBraceClosing,       '}');
-    assert(special, TokenType.specialBracketClosing,     ']');
+    assert(special, TokenType.specialComma,               ',');
+    assert(special, TokenType.specialSemicolon,           ';');
+    assert(special, TokenType.specialParenthesisOpening,  '(');
+    assert(special, TokenType.specialBraceOpening,        '{');
+    assert(special, TokenType.specialBracketOpening,      '[');
+    assert(special, TokenType.specialParenthesisClosing,  ')');
+    assert(special, TokenType.specialBraceClosing,        '}');
+    assert(special, TokenType.specialBracketClosing,      ']');
   });
 
   describe('Special', () => {
-    assert(special, TokenType.specialComma,     ',');
-    assert(special, TokenType.specialSemicolon, ';');
+    assert(special, TokenType.specialComma,             ',');
+    assert(special, TokenType.specialSemicolon,         ';');
+    assert(special, TokenType.speicalLineContinuation,  '\\');
     {
       // Opening
-      assert(special, TokenType.specialParenthesisOpening, '(');
-      assert(special, TokenType.specialBraceOpening,       '{');
-      assert(special, TokenType.specialBracketOpening,     '[');
+      assert(special, TokenType.specialParenthesisOpening,  '(');
+      assert(special, TokenType.specialBraceOpening,        '{');
+      assert(special, TokenType.specialBracketOpening,      '[');
     }
     {
       // Closing
-      assert(special, TokenType.specialParenthesisClosing, ')');
-      assert(special, TokenType.specialBraceClosing,       '}');
-      assert(special, TokenType.specialBracketClosing,     ']');
+      assert(special, TokenType.specialParenthesisClosing,  ')');
+      assert(special, TokenType.specialBraceClosing,        '}');
+      assert(special, TokenType.specialBracketClosing,      ']');
     }
   });
 
   describe('Other', () => {
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordInt, 'int');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas, '_Alignas');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier, 'indentifer');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier, 'Indentifer');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordInt,       'int');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas,   '_Alignas');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordRestrict,  'restrict');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier,       'indentifer');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier,       'Indentifer');
   });
 
   describe('Ambiguous', () => {
-    assert(operator, TokenType.ambiguousIncrement, '++');
-    assert(operator, TokenType.ambiguousDecrement, '--');
-    assert(operator, TokenType.ambiguousPlus,      '+');
-    assert(operator, TokenType.ambiguousMinus,     '-');
-    assert(operator, TokenType.ambiguousAsterisk,  '*');
-    assert(operator, TokenType.ambiguousAmpersand, '&');
-    assert(operator, TokenType.ambiguousColon,     ':');
+    assert(operator, TokenType.ambiguousIncrement,  '++');
+    assert(operator, TokenType.ambiguousDecrement,  '--');
+    assert(operator, TokenType.ambiguousPlus,       '+');
+    assert(operator, TokenType.ambiguousMinus,      '-');
+    assert(operator, TokenType.ambiguousAsterisk,   '*');
+    assert(operator, TokenType.ambiguousAmpersand,  '&');
+    assert(operator, TokenType.ambiguousColon,      ':');
   });
 });
