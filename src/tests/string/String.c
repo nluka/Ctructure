@@ -51,8 +51,12 @@ bool string_append_chars(String_t * const string, const char * const chars) {
     return false;
   }
 
-  const size_t writtenCount =
-    snprintf(string->data + string->length, charCount + 1, "%s", chars);
+  const size_t writtenCount = snprintf(
+    string->data + string->length,
+    charCount + 1,
+    "%s",
+    chars
+  );
 
   string->length += writtenCount;
   const bool wasAppendSuccessful = writtenCount == charCount;
@@ -74,8 +78,12 @@ bool string_append_int(String_t * const string, const int number) {
     return false;
   }
 
-  const size_t writtenCount =
-    snprintf(string->data + string->length, digitCount + 1, "%s", buffer);
+  const size_t writtenCount = snprintf(
+    string->data + string->length,
+    digitCount + 1,
+    "%s",
+    buffer
+  );
 
   string->length += writtenCount;
   const bool wasAppendSuccessful = writtenCount == digitCount;
@@ -88,7 +96,7 @@ bool string_append_int(String_t * const string, const int number) {
 */
 bool string_append_uint64(String_t * const string, const uint64_t number) {
   char buffer[21];
-  const size_t digitCount = snprintf(buffer, sizeof buffer, "%" PRIu64, number);
+  const size_t digitCount = snprintf(sizeof buffer, "%" PRIu64, number);
 
   const lli overflowCount =
     (string->length + digitCount) - (string->bytesAllocated - 1);
@@ -97,8 +105,12 @@ bool string_append_uint64(String_t * const string, const uint64_t number) {
     return false;
   }
 
-  const size_t writtenCount =
-    snprintf(string->data + string->length, digitCount + 1, "%s", buffer);
+  const size_t writtenCount = snprintf(
+    string->data + string->length,
+    digitCount + 1,
+    "%s",
+    buffer
+  );
 
   const size_t writtenCount = snprintf(
     string->data + string->length,

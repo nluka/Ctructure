@@ -32,11 +32,7 @@ void validate_next_arg(const char * argName, int argIndex, int argc);
 
 void process_command_line_args(const int argc, char ** const argv) {
   if (argc < 2) {
-    printfc(
-      TC_RED,
-      "%s\n",
-      "Missing simulation file pathname as first argument"
-    );
+    printfc(TC_RED, "%s\n", "Missing simulation file pathname as first argument");
     end(EC_MISSING_SIMULATION_FILE, NULL);
   }
 
@@ -73,7 +69,9 @@ void process_command_line_args(const int argc, char ** const argv) {
       string_append_chars(&g_comVars.imageFileOutputPath, argv[i + 1]);
       const char * fileSeparator =
         string_fix_file_separators(&g_comVars.imageFileOutputPath);
-      if (!string_is_last_char(&g_comVars.imageFileOutputPath, fileSeparator[0])) {
+      if (
+        !string_is_last_char(&g_comVars.imageFileOutputPath, fileSeparator[0])
+      ) {
         string_append_chars(&g_comVars.imageFileOutputPath, fileSeparator);
       }
       ++i; // skip next arg since it is a value rather than a name

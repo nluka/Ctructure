@@ -7,8 +7,10 @@ import path = require('path');
 export const defaultConfigString = `{
   "indentationSize": 2,
   "indentationType": "spaces",
+  "lineWidth": 80,
   "lineEndings": "unix",
-  "multiVariableNewline": false,
+  "multiVariableAlwaysNewline": false,
+  "multiVariableMatchIndent": true;
   "logToFile": true
 }
 `;
@@ -55,6 +57,15 @@ export function loadConfig() {
   }
 
   {
+    const lineWidth = storedConfig.lineWidth;
+    if (['unix', 'windows'].includes(lineWidth)) {
+      currentConfig.lineWidth = lineWidth;
+    } else {
+      warnInvalidPropValue('lineWidth');
+    }
+  }
+
+  {
     const lineEndings = storedConfig.lineEndings;
     if (['unix', 'windows'].includes(lineEndings)) {
       currentConfig.lineEndings = lineEndings;
@@ -64,11 +75,20 @@ export function loadConfig() {
   }
 
   {
-    const multiVariableNewline = storedConfig.multiVariableNewline;
-    if (typeof multiVariableNewline === 'boolean') {
-      currentConfig.multiVariableNewline = multiVariableNewline;
+    const multiVariableAlwaysNewline = storedConfig.multiVariableAlwaysNewline;
+    if (typeof multiVariableAlwaysNewline === 'boolean') {
+      currentConfig.multiVariableAlwaysNewline = multiVariableAlwaysNewline;
     } else {
-      warnInvalidPropValue('multiVariableNewline');
+      warnInvalidPropValue('multiVariableAlwaysNewline');
+    }
+  }
+
+  {
+    const multiVariableMatchIndent = storedConfig.multiVariableMatchIndent;
+    if (typeof multiVariableMatchIndent === 'boolean') {
+      currentConfig.multiVariableMatchIndent = multiVariableMatchIndent;
+    } else {
+      warnInvalidPropValue('multiVariableMatchIndent');
     }
   }
 

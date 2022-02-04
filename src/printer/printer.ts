@@ -10,7 +10,7 @@ import TokenType, {
   isTokenTypeQualifierKeyword,
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
-import checkForLineOverflow, { OverflowableContext } from './checkForLineOverflow';
+import assignmentToFunction from './checkForAssignmentToFunction';
 import Stack from './context_stack/Stack';
 import getNextNonNewlineTokenType from './getNextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
@@ -44,8 +44,10 @@ export default function printer(
 
   const indentationType = config.indentationType === 'spaces' ? ' ' : '\t';
   const indentationSize = config.indentationType === 'spaces' ? config.indentationSize : 1;
+  const lineWidth = config.lineWidth;
   const lineEndings = config.lineEndings === 'unix' ? '\n' : '\r\n';
-  const multiVarAlwaysNewline = config.multiVariableNewline;
+  const multiVarAlwaysNewline = config.multiVariableAlwaysNewline;
+  const multiVarMatchIndent = config.multiVariableMatchIndent;
   const indentation = indentationType.repeat(indentationSize);
 
   // If true (due to line overflow), the line will split where it's appropriate.
@@ -87,16 +89,106 @@ export default function printer(
 
   let indentAmount: number = 0;
 
+  type OverflowableContext =
+    | TokenType.specialSemicolon
+    | TokenType.specialBracketOpening
+    | TokenType.specialBraceOpening
+    | TokenType.specialParenthesisOpening;
+
   function isThereLineOverflow(i: number, overflowType: OverflowableContext): boolean {
-    overflow = checkForLineOverflow(
-      fileContents,
-      overflowType,
-      tokenStartIndices,
-      tokenTypes,
-      i,
-      startLineIndex,
-      getIndentation(indentationDepth).length,
-    );
+    function checkOverflowWithSemicolon(
+      tokenIndex: number,
+      indentationWhiteSpace: number,
+    ): boolean {
+      let lineLength;
+      let bracketCount = 0;
+      let whiteSpace = 2 + indentationWhiteSpace;
+
+      for (let i = tokenIndex; bracketCount >= 0 && i < tokenTypes.length; ++i) {
+        if (tokenTypes[i] === TokenType.specialSemicolon) {
+          lineLength =
+            fileContents.slice(startLineIndex, tokenStartIndices[i]).replace(/\s/g, '').length +
+            whiteSpace;
+          if (lineLength > lineWidth) {
+            return true;
+          }
+          return false;
+        }
+        if (doesTokenIncreaseWhiteSpace(tokenTypes[i])) {
+          whiteSpace += 2;
+        }
+      }
+      return false;
+    }
+
+    function checkOverflowWithEnclosure(
+      overflowMarkerOpening: OverflowableContext,
+      overflowMarkerClosing:
+        | TokenType.specialParenthesisClosing
+        | TokenType.specialBraceClosing
+        | TokenType.specialBracketClosing,
+      tokenIndex: number,
+      indentationWhiteSpace: number,
+    ): boolean {
+      let lineLength;
+      let overflowMarker = 0;
+      let whiteSpace = 2 + indentationWhiteSpace;
+
+      for (let i = tokenIndex; overflowMarker >= 0 && i < tokenTypes.length; ++i) {
+        const currTokenType = tokenTypes[i];
+        if (currTokenType === overflowMarkerOpening) {
+          ++overflowMarker;
+        } else if (currTokenType === overflowMarkerClosing) {
+          --overflowMarker;
+          if (overflowMarker === 0) {
+            lineLength =
+              fileContents.slice(startLineIndex, tokenStartIndices[i]).replace(/\s/g, '').length +
+              whiteSpace;
+            if (lineLength > lineWidth) {
+              return true;
+            }
+            return false;
+          }
+        } else if (currTokenType === TokenType.specialComma) {
+          ++whiteSpace;
+        } else if (doesTokenIncreaseWhiteSpace(currTokenType)) {
+          whiteSpace += 2;
+        }
+      }
+      return false;
+    }
+
+    function doesTokenIncreaseWhiteSpace(type: TokenType): boolean {
+      return (
+        type >= TokenType.operatorBinaryArithmeticAddition &&
+        type < TokenType.operatorBinaryMultiplicationOrIndirection
+      );
+    }
+
+    if (overflowType === TokenType.specialSemicolon) {
+      overflow = checkOverflowWithSemicolon(i, getIndentation(indentationDepth).length);
+    } else if (overflowType === TokenType.specialParenthesisOpening) {
+      overflow = checkOverflowWithEnclosure(
+        TokenType.specialParenthesisOpening,
+        TokenType.specialParenthesisClosing,
+        i,
+        getIndentation(indentationDepth).length,
+      );
+    } else if (overflowType === TokenType.specialBraceOpening) {
+      overflow = checkOverflowWithEnclosure(
+        TokenType.specialBraceOpening,
+        TokenType.specialBraceClosing,
+        i,
+        getIndentation(indentationDepth).length,
+      );
+    } else if (overflowType === TokenType.specialBracketOpening) {
+      overflow = checkOverflowWithEnclosure(
+        TokenType.specialBracketOpening,
+        TokenType.specialBracketClosing,
+        i,
+        getIndentation(indentationDepth).length,
+      );
+    }
     return overflow;
   }
 
@@ -122,8 +214,8 @@ export default function printer(
     currString += lineEndings + ' '.repeat(indentAmount - isThereIndirection);
   }
 
-  function getIndentation(blockLevel: number) {
-    return indentation.repeat(blockLevel);
+  function getIndentation(indentationDepth: number) {
+    return indentation.repeat(indentationDepth);
   }
 
   function decreaseBlockLevel() {
@@ -181,7 +273,11 @@ export default function printer(
           context = PrinterCategory.multiVariableDecl;
           if (multiVarAlwaysNewline || isThereLineOverflow(i, TokenType.specialSemicolon)) {
             contextStack.push({ context, overflow, indentationLevel: indentationDepth });
-            indentAmount = getIndentAmount(formattedFileStr);
+            if (multiVarMatchIndent) {
+              indentAmount = getIndentAmount(formattedFileStr);
+            } else {
+              indentAmount = getIndentation(1 + indentationDepth).length;
+            }
             indentationDepth =
               indentationType === '\t'
                 ? Math.ceil(indentAmount / 4)
@@ -203,6 +299,7 @@ export default function printer(
         if (context === PrinterCategory.assignmentOverflow) {
           decreaseBlockLevel();
           context = null;
+          overflow = false;
         } else if (context === PrinterCategory.multiVariableDecl) {
           context = null;
           if (multiVarAlwaysNewline || overflow) {
@@ -490,8 +587,9 @@ export default function printer(
         nextNonNewlineTokenType = getNextNonNewlineTokenType(tokenTypes, i);
         if (
           parenDepth === 0 &&
-          !isTokenTypeKeyword(nextNonNewlineTokenType) &&
           !areThereCommas(tokenTypes, i) &&
+          !assignmentToFunction(tokenTypes, i) &&
+          nextNonNewlineTokenType !== TokenType.specialBraceOpening &&
           !overflow &&
           isThereLineOverflow(i, TokenType.specialSemicolon)
         ) {
@@ -536,6 +634,7 @@ export default function printer(
           currString += ' ';
         } else if (nextNonNewlineTokenType !== TokenType.specialBraceOpening) {
           context = PrinterCategory.singleLineIf;
+          contextStack.push({ context, overflow, indentationLevel: indentationDepth });
           shouldAddNewline = true;
           noExtraNewline = true;
           ++indentationDepth;

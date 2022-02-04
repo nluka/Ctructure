@@ -3,5 +3,6 @@
   "indentationType": "spaces",
   "lineEndings": "windows",
   "multiVariableNewline": false,
+  "multiVariableMatchIndent": true,
   "logToFile": true
 }

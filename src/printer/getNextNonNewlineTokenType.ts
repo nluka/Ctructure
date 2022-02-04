@@ -8,7 +8,7 @@ export default function getNextNonNewlineTokenType(
   for (let i = index + 1; i < tokenTypes.length; ++i) {
     if (
       tokenTypes[i] === TokenType.newline ||
-      (tokensAhead !== undefined && --tokensAhead >= 0)
+      (tokensAhead !== undefined && --tokensAhead > 0)
     ) {
       continue;
     }

@@ -3,8 +3,10 @@ import IConfig from './IConfig';
 const defaultConfig: IConfig = {
   indentationSize: 2,
   indentationType: 'spaces',
+  lineWidth: 80,
   lineEndings: 'unix',
-  multiVariableNewline: false,
+  multiVariableAlwaysNewline: false,
+  multiVariableMatchIndent: true,
   logToFile: true,
 };
 

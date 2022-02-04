@@ -59,11 +59,7 @@ static bool do_http_request(
     return false;
 
   if (*response_code >= 400) {
-    warn(
-      "Remote update of URL \"%s\" failed: HTTP/%ld",
-      url,
-      *response_code
-    );
+    warn("Remote update of URL \"%s\" failed: HTTP/%ld", url, *response_code);
     return false;
   }
 
