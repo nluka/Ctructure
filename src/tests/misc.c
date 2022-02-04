@@ -138,8 +138,7 @@ struct option opts[] = {
     N_("add untracked file to archive"),
     0,
     add_file_cb,
-    (intptr_t) &
-    base
+    (intptr_t) & base
   },
   OPT_STRING(
     'o',

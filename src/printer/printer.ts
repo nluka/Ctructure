@@ -22,7 +22,6 @@ import whichOccursFirst from './whichOccursFirst';
 export type Context =
   | TokenType.keywordFor
   | TokenType.keywordIf
-  | TokenType.keywordStruct
   | TokenType.keywordEnum
   | TokenType.keywordDefault
   | TokenType.keywordCase
@@ -313,8 +312,8 @@ export default function printer(
           context = null;
         } else if (
           context === PrinterCategory.variableDecl ||
-          context === TokenType.keywordStruct ||
-          context === TokenType.keywordEnum
+          context === TokenType.keywordEnum ||
+          context === PrinterCategory.typeDefStruct
         ) {
           context = null;
         } else {
@@ -402,14 +401,10 @@ export default function printer(
             break;
           }
         } else if (previousType === TokenType.operatorBinaryAssignmentDirect) {
-          if (context === TokenType.keywordStruct) {
-            currString = '{';
-          } else {
-            context = PrinterCategory.array;
-            if (!isThereLineOverflow(i, TokenType.specialBraceOpening)) {
-              currString += ' ';
-              break;
-            }
+          context = PrinterCategory.array;
+          if (!isThereLineOverflow(i, TokenType.specialBraceOpening)) {
+            currString += ' ';
+            break;
           }
         } else if (
           previousType === TokenType.specialParenthesisOpening ||
@@ -446,24 +441,14 @@ export default function printer(
             currString = ' }';
           }
         } else if (
-          previousContext.context === TokenType.keywordStruct ||
-          previousContext.context === TokenType.keywordEnum
+          previousContext.context === TokenType.keywordEnum ||
+          previousContext.context === PrinterCategory.typeDefStruct
         ) {
-          if (
-            whichOccursFirst(
-              tokenTypes,
-              i + 1,
-              TokenType.specialSemicolon,
-              TokenType.specialParenthesisOpening,
-            ) === TokenType.specialSemicolon
-          ) {
-            if (nextNonNewlineTokenType !== TokenType.specialSemicolon) {
-              currString += ' ';
-            }
-          } else {
-            shouldAddNewline = true;
-          }
-        } else if (nextNonNewlineTokenType !== TokenType.specialParenthesisClosing) {
+          currString += ' ';
+        } else if (
+          nextNonNewlineTokenType !== TokenType.specialParenthesisClosing &&
+          nextNonNewlineTokenType !== TokenType.specialSemicolon
+        ) {
           shouldAddNewline = true;
         }
         context = previousContext.context;
@@ -550,7 +535,11 @@ export default function printer(
         if (context === PrinterCategory.typeOrIdentifier) {
           context = null;
         }
-        if (parenDepth === 0 && isThereLineOverflow(i, TokenType.specialSemicolon)) {
+        if (
+          parenDepth === 0 &&
+          context !== PrinterCategory.array &&
+          isThereLineOverflow(i, TokenType.specialSemicolon)
+        ) {
           currString = `${typeAsValue}`.trimEnd();
           context === PrinterCategory.assignmentOverflow;
           shouldAddNewline = true;
@@ -561,8 +550,6 @@ export default function printer(
       case TokenType.operatorMemberSelectionDirect:
         if (context === PrinterCategory.typeOrIdentifier) {
           context = null;
-        } else if (context === TokenType.keywordStruct) {
-          overflow = true;
         }
         break;
 
@@ -672,7 +659,6 @@ export default function printer(
         break;
 
       case TokenType.keywordDo:
-      case TokenType.keywordStruct:
       case TokenType.keywordSwitch:
       case TokenType.keywordUnion:
         if (parenDepth === 0) {
@@ -680,6 +666,12 @@ export default function printer(
         }
         if (previousType === TokenType.specialParenthesisClosing) {
           currString = ' ' + currString;
+        }
+        break;
+
+      case TokenType.keywordStruct:
+        if (previousType === TokenType.keywordTypedef) {
+          context = PrinterCategory.typeDefStruct;
         }
         break;
 

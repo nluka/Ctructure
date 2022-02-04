@@ -10,6 +10,7 @@ enum PrinterCategory {
   functionDecl,
   functionCall,
   assignmentOverflow,
+  typeDefStruct,
 }
 
 export default PrinterCategory;

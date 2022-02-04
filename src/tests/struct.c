@@ -11,9 +11,7 @@ struct hostinfo {
   unsigned int f : 1;
 };
 
-struct strbuf str = {
-  0
-};
+struct strbuf str = { 0 };
 
 union any_object {
   struct strbuf a;
