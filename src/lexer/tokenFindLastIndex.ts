@@ -9,7 +9,7 @@ const singleCharOperatorRegex = /[?:~]/,
   alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
 
 /**
- * Finds the index of the last character of a token based on its category and what came before it.
+ * Finds the index of the last character of a token based on its category.
  * @param fileContents The contents of the file.
  * @param tokenStartIndex The index of the token's first character.
  * @param tokenCategory The category of the token.
@@ -100,7 +100,6 @@ export default function tokenFindLastIndex(
           return tokenStartIndex;
         }
 
-        // case '/': /* falls through */
         case '*': /* falls through */
         case '%': /* falls through */
         case '=': /* falls through */

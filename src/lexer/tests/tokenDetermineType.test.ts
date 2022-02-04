@@ -24,8 +24,6 @@ const [
 describe('tokenDetermineType', () => {
   function assert(
     category: TokenCategory,
-    // startIndex: number,
-    // lastIndex: number,
     expectedType: TokenType,
     fileContents: string,
   ) {
@@ -54,19 +52,14 @@ describe('tokenDetermineType', () => {
 
   describe('Keywords', () => {
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas,      '_Alignas');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas,      'alignas');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignof,      '_Alignof');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignof,      'alignof');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAuto,         'auto');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAtomic,       '_Atomic');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAtomic,       'atomic');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordBool,         '_Bool');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordBool,         'bool');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordBreak,        'break');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordCase,         'case');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordChar,         'char');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordComplex,      '_Complex');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordComplex,      'complex');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordConst,        'const');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordContinue,     'continue');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordDefault,      'default');
@@ -78,15 +71,12 @@ describe('tokenDetermineType', () => {
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordFloat,        'float');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordFor,          'for');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordGeneric,      '_Generic');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordGeneric,      'generic');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordGoto,         'goto');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordIf,           'if');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordImaginary,    '_Imaginary');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordImaginary,    'imaginary');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordInt,          'int');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordLong,         'long');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordNoreturn,     '_Noreturn');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordNoreturn,     'noreturn');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordRegister,     'register');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordReturn,       'return');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordShort,        'short');
@@ -94,11 +84,9 @@ describe('tokenDetermineType', () => {
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSizeof,       'sizeof');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStatic,       'static');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStaticassert, '_Static_assert');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStaticassert, 'static_assert');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordStruct,       'struct');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordSwitch,       'switch');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordThreadlocal,  '_Thread_local');
-    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordThreadlocal,  'thread_local');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordTypedef,      'typedef');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordUnion,        'union');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordUnsigned,     'unsigned');
@@ -277,6 +265,13 @@ describe('tokenDetermineType', () => {
       assert(special, TokenType.specialBraceClosing,       '}');
       assert(special, TokenType.specialBracketClosing,     ']');
     }
+  });
+
+  describe('Other', () => {
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordInt, 'int');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas, '_Alignas');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier, 'indentifer');
+    assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier, 'Indentifer');
   });
 
   describe('Ambiguous', () => {

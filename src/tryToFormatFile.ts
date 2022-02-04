@@ -109,14 +109,14 @@ export function logFormatResult(
   if (!wasSuccessful && err !== null) {
     return log(
       LogType.error,
-      `[Ctructure.formatCurrentFile] failed to format "${filePathname}": ${err.message}`,
+      `[Ctructure] failed to format "${filePathname}": ${err.message}`,
     );
   }
 
   if (info === null) {
     return log(
       LogType.error,
-      `[Ctructure.formatCurrentFile] failed to format "${filePathname}" (internal error): wasSuccessful is true but info is null`,
+      `[Ctructure] failed to format "${filePathname}" (internal error): wasSuccessful is true but info is null`,
     );
   }
 

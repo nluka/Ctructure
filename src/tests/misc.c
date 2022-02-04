@@ -118,3 +118,74 @@ void misc() {
     }
   }
 }
+
+struct option opts[] = {
+  OPT_GROUP(""),
+  OPT_STRING(0, "format", &format, N_("fmt"), N_("archive format")),
+  OPT_STRING(
+    0,
+    "prefix",
+    &base,
+    N_("prefix"),
+    N_("prepend prefix to each pathname in the archive")
+  ),
+  {
+    OPTION_CALLBACK,
+    0,
+    "add-file",
+    args,
+    N_("file"),
+    N_("add untracked file to archive"),
+    0,
+    add_file_cb,
+    (intptr_t) &
+    base
+  },
+  OPT_STRING(
+    'o',
+    "output",
+    &output,
+    N_("file"),
+    N_("write the archive to this file")
+  ),
+  OPT_BOOL(
+    0,
+    "worktree-attributes",
+    &worktree_attributes,
+    N_("read .gitattributes in working directory")
+  ),
+  OPT__VERBOSE(&verbose, N_("report archived files on stderr")),
+  OPT_NUMBER_CALLBACK(
+    &compression_level,
+    N_("set compression level"),
+    number_callback
+  ),
+  OPT_GROUP(""),
+  OPT_BOOL('l', "list", &list, N_("list supported archive formats")),
+  OPT_GROUP(""),
+  OPT_STRING(
+    0,
+    "remote",
+    &remote,
+    N_("repo"),
+    N_("retrieve the archive from remote repository <repo>")
+  ),
+  OPT_STRING(
+    0,
+    "exec",
+    &exec,
+    N_("command"),
+    N_("path to the remote git-upload-archive command")
+  ),
+  OPT_END()
+};
+
+const struct git_attr * git_attr(const char * name) {
+  return git_attr_internal(name, strlen(name));
+}
+
+/* What does a matched pattern decide? */
+struct attr_state {
+  const struct git_attr * attr;
+  const char * setto;
+};

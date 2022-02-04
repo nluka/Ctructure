@@ -61,7 +61,7 @@ export default function tokenDetermineType(
     }
   }
 
-  function createErr() {
+  const createErr = () => {
     const { lineNum, tokenNum } = tokenDetermineLineAndPos(
       fileContents,
       tokenStartIndex,
@@ -73,7 +73,7 @@ export default function tokenDetermineType(
         fileContents.slice(tokenStartIndex, tokenLastIndex + 1),
       )})`,
     );
-  }
+  };
 
   switch (tokenCategory) {
     case TokenCategory.special: {
@@ -84,18 +84,6 @@ export default function tokenDetermineType(
       }
       return type;
     }
-
-    // case TokenCategory.preproOrOperator: {
-    //   const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-    //   if (rawToken.match(standardHeaderRegex)) {
-    //     return TokenType.preproStandardHeader;
-    //   }
-    //   const type = tokenValueToTypeMap.get(rawToken);
-    //   if (type === undefined) {
-    //     throw createErr();
-    //   }
-    //   return type;
-    // }
 
     case TokenCategory.operator: {
       const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
