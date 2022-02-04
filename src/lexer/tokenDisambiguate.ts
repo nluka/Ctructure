@@ -1,12 +1,13 @@
 import findFirstTokenTypeMatchAhead from './findFirstTokenTypeMatchAhead';
 import findFirstTokenTypeMatchBehind from './findFirstTokenTypeMatchBehind';
 import TokenArray from './TokenArray';
-import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
+import tokenDetermineLineAndPos from './tokenDetermineLineAndPos';
 import TokenType, {
   isTokenBinaryOperator,
   isTokenNonMultiplicationOrIndirectionBinaryOperator,
   isTokenSpecialNonClosing,
   isTokenTypeQualifierKeyword,
+  isTokenUnaryOperator,
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -32,14 +33,14 @@ export default function tokenDisambiguate(
   const currTokenType = tokens.getTokenType(currTokenIndex);
 
   function createErr() {
-    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+    const { lineNum, tokenNum } = tokenDetermineLineAndPos(
       fileContents,
       tokens.getTokenStartIndex(currTokenIndex),
     );
     return new Error(
       `unable to diambiguate ${tokenTypeToNameMap.get(
         currTokenType,
-      )} at line ${lineNum} indexOnLine ${indexOnLine}`,
+      )} at line ${lineNum} tokenNum ${tokenNum}`,
     );
   }
 
@@ -125,7 +126,8 @@ export default function tokenDisambiguate(
       }
       if (
         firstTokenTypeBehindCurr === TokenType.identifier ||
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketClosing
       ) {
         return TokenType.operatorUnaryArithmeticIncrementPostfix;
       }
@@ -142,7 +144,8 @@ export default function tokenDisambiguate(
       }
       if (
         firstTokenTypeBehindCurr === TokenType.identifier ||
-        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing
+        firstTokenTypeBehindCurr === TokenType.specialParenthesisClosing ||
+        firstTokenTypeBehindCurr === TokenType.specialBracketClosing
       ) {
         return TokenType.operatorUnaryArithmeticDecrementPostfix;
       }
@@ -168,7 +171,7 @@ export default function tokenDisambiguate(
       }
 
       if (
-        // for struct pointer decls/defs
+        // for derefence after scope closing and struct pointer decls/defs
         firstTokenTypeBehindCurr === TokenType.specialBraceClosing &&
         firstTokenTypeAfterCurr === TokenType.identifier
       ) {
@@ -179,16 +182,16 @@ export default function tokenDisambiguate(
             tokenTypesNewlineOrComment,
             false,
           );
-        if (
-          secondNonNewlineOrCommentTokenAfterCurr === null ||
-          (secondNonNewlineOrCommentTokenAfterCurr[1] !==
-            TokenType.specialSemicolon &&
-            secondNonNewlineOrCommentTokenAfterCurr[1] !==
-              TokenType.operatorBinaryAssignmentDirect)
-        ) {
+        if (secondNonNewlineOrCommentTokenAfterCurr === null) {
           throw createErr();
         }
-        return TokenType.operatorBinaryMultiplicationOrIndirection;
+        if (
+          secondNonNewlineOrCommentTokenAfterCurr[1] ===
+          TokenType.specialSemicolon
+        ) {
+          return TokenType.operatorBinaryMultiplicationOrIndirection;
+        }
+        return TokenType.operatorUnaryDereference;
       }
 
       if (
@@ -216,7 +219,7 @@ export default function tokenDisambiguate(
       }
 
       if (
-        // for dereference in func call or pointer in multvar decl/def
+        // for dereference in func call or pointer in multivar decl/def
         firstTokenTypeBehindCurr === TokenType.specialComma &&
         firstTokenTypeAfterCurr === TokenType.identifier
       ) {
@@ -241,6 +244,7 @@ export default function tokenDisambiguate(
 
       if (
         firstTokenTypeBehindCurr === TokenType.specialBraceClosing ||
+        isTokenUnaryOperator(firstTokenTypeBehindCurr) ||
         isTokenSpecialNonClosing(firstTokenTypeBehindCurr) ||
         isTokenNonMultiplicationOrIndirectionBinaryOperator(
           firstTokenTypeBehindCurr,

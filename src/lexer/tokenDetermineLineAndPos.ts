@@ -2,14 +2,14 @@ import Tokenizer from './Tokenizer';
 
 /**
  * Determines the line and index of a token within `fileContents`. For example, if the token
- * resides on the fourth line and is the third token on that line, [4, 2] would be returned.
+ * resides on the fourth line and is the third token on that line, [4, 3] would be returned.
  * @param fileContents The contents of the file the token exists in.
  * @param tokenStartIndex The index of the token's first character within `fileContents`.
  */
-export default function tokenDetermineLineAndIndex(
+export default function tokenDetermineLineAndPos(
   fileContents: string,
   tokenStartIndex: number,
-): { lineNum: number; indexOnLine: number } {
+): { lineNum: number; tokenNum: number } {
   let lineNum = 1;
   for (let i = 0; i < tokenStartIndex - 1; ++i) {
     if (fileContents.charAt(i) === '\n') {
@@ -30,10 +30,10 @@ export default function tokenDetermineLineAndIndex(
     tokenStartIndex,
   );
   const tokenizer = new Tokenizer(line);
-  let indexOnLine = 0;
+  let tokenNum = 1;
   while (tokenizer.extractNextToken() !== null) {
-    ++indexOnLine;
+    ++tokenNum;
   }
 
-  return { lineNum, indexOnLine };
+  return { lineNum, tokenNum };
 }

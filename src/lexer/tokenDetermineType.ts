@@ -1,5 +1,5 @@
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
-import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
+import tokenDetermineLineAndPos from './tokenDetermineLineAndPos';
 import TokenType from './TokenType';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
@@ -62,12 +62,12 @@ export default function tokenDetermineType(
   }
 
   function createErr() {
-    const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+    const { lineNum, tokenNum } = tokenDetermineLineAndPos(
       fileContents,
       tokenStartIndex,
     );
     return new Error(
-      `unable to determine type of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex = ${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
+      `unable to determine type of token at line ${lineNum} tokenNum ${tokenNum} (startIndex = ${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
         tokenCategory,
       )}, value = ${JSON.stringify(
         fileContents.slice(tokenStartIndex, tokenLastIndex + 1),

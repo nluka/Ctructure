@@ -75,4 +75,4 @@ export default class Tokenizer {
   }
 }
 
-const whitespaceRegex = /[ \t]/;
+const whitespaceRegex = /[ \t\f]/;

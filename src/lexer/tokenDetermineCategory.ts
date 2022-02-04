@@ -1,5 +1,5 @@
 import TokenCategory from './TokenCategory';
-import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
+import tokenDetermineLineAndPos from './tokenDetermineLineAndPos';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 const commentOrOperatorRegex = /^\/$/,
@@ -40,12 +40,12 @@ export default function tokenDetermineCategory(
     return TokenCategory.special;
   }
 
-  const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+  const { lineNum, tokenNum } = tokenDetermineLineAndPos(
     fileContents,
     tokenStartIndex,
   );
   throw new Error(
-    `unable to determine category of token at line ${lineNum} indexOnLine ${indexOnLine} (startIndex=${tokenStartIndex}, firstChar=${JSON.stringify(
+    `unable to determine category of token at line ${lineNum} tokenNum ${tokenNum} (startIndex=${tokenStartIndex}, firstChar=${JSON.stringify(
       tokenFirstChar,
     )})`,
   );

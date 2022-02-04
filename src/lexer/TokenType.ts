@@ -182,6 +182,11 @@ export function isTokenConstant(type: TokenType) {
     type <= TokenType.constantString;
 }
 
+export function isTokenUnaryOperator(type: TokenType) {
+  return type >= TokenType.operatorUnaryArithmeticIncrementPrefix &&
+    type <= TokenType.operatorUnaryDereference;
+}
+
 export function isTokenBinaryOperator(type: TokenType) {
   return type >= TokenType.operatorBinaryArithmeticAddition &&
     type <= TokenType.operatorBinaryMultiplicationOrIndirection;

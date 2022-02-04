@@ -20,18 +20,8 @@ export default async function formatWorkspaceFiles() {
 
   loadConfig();
 
-  const promises: Promise<IFormatResult>[] = [];
-  let rejectedCount = 0; // number of promises that were rejected
-  let failedCount = 0; // number of promises that were fulfilled but result indicated failure
-
-  // Launch all work concurrently
-  for (const file of workspaceFiles) {
-    const filePathname = file.fsPath;
-    promises.push(tryToFormatFile(filePathname));
-  }
-
-  // Wait for all work to be completed
-  const results = await Promise.allSettled(promises);
+  const tasks: Promise<IFormatResult>[] = [];
+  let tasksFailedCount = 0;
 
   const logFilePathname = path.resolve(
     workspaceFolders[0].uri.fsPath,
@@ -40,24 +30,40 @@ export default async function formatWorkspaceFiles() {
 
   writeFileSync(logFilePathname, ''); // Clear file
 
+  // await vscode.window.withProgress(
+  //   {
+  //     location: vscode.ProgressLocation.Notification,
+  //     title: '[Ctructure.formatWorkspaceFiles] formatting...',
+  //     cancellable: true,
+  //   },
+  //   async () => {
+  // Launch all work concurrently
+  for (const file of workspaceFiles) {
+    const filePathname = file.fsPath;
+    tasks.push(tryToFormatFile(filePathname));
+  }
+
+  // Wait for all work to be completed
+  const results = await Promise.allSettled(tasks);
+
   for (const res of results) {
     if (res.status === 'fulfilled') {
       logFormatResult(res.value, false, logFilePathname);
       if (!res.value.wasSuccessful) {
-        ++failedCount;
+        ++tasksFailedCount;
       }
-    } else {
-      ++rejectedCount;
     }
   }
+  //   },
+  // );
 
-  if (failedCount > 0) {
+  if (tasksFailedCount > 0) {
     reportErr(
-      `unable to format ${failedCount}/${promises.length} files, check "${logFilePathname}" for details`,
+      `unable to format ${tasksFailedCount}/${tasks.length} files, check "${logFilePathname}" for details`,
     );
   } else {
     vscode.window.showInformationMessage(
-      `[Ctructure.formatWorkspaceFiles] successfully formatted ${promises.length} files, check "${logFilePathname}" for details`,
+      `[Ctructure.formatWorkspaceFiles] successfully formatted ${tasks.length} files, check "${logFilePathname}" for details`,
     );
   }
 }

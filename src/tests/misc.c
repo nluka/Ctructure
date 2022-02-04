@@ -92,3 +92,33 @@ static inline obs_data_t * get_package(const char * base_path, const char * file
   bfree(full_path);
   return package;
 }
+
+void misc() {
+  if (sep == 1 && *p == '*') {
+    from = 0;
+    to = items->items.nr;
+  } else if (isdigit(*p)) {
+    char * endp;
+    /*
+      * A range can be specified like 5-7 or 5-.
+      *
+      * Note: `from` is 0-based while the user input
+      * is 1-based, hence we have to decrement by
+      * one. We do not have to decrement `to` even
+      * if it is 0-based because it is an exclusive
+      * boundary.
+      */
+    from = strtoul(p, &endp, 10) - 1;
+    if (endp == p + sep)
+      to = from + 1;
+    else if (*endp == '-') {
+      if (isdigit(*(++endp)))
+        to = strtoul(endp, &endp, 10);
+      else
+        to = items->items.nr;
+      /* extra characters after the range? */
+      if (endp != p + sep)
+        from = -1;
+    }
+  }
+}

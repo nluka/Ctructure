@@ -1,6 +1,6 @@
 import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
-import tokenDetermineLineAndIndex from './tokenDetermineLineAndIndex';
+import tokenDetermineLineAndPos from './tokenDetermineLineAndPos';
 
 const singleCharOperatorRegex = /[?:~]/,
   plusPlusOrPlusEqualRegex = /[+=]/,
@@ -157,12 +157,12 @@ export default function tokenFindLastIndex(
         }
       }
 
-      const { lineNum, indexOnLine } = tokenDetermineLineAndIndex(
+      const { lineNum, tokenNum } = tokenDetermineLineAndPos(
         fileContents,
         tokenStartIndex,
       );
       throw new Error(
-        `unable to find last index of token at line ${lineNum} indexOnLine ${indexOnLine} (category : ${tokenCategoryToStringMap.get(
+        `unable to find last index of token at line ${lineNum} tokenNum ${tokenNum} (category : ${tokenCategoryToStringMap.get(
           tokenCategory,
         )})`,
       );
