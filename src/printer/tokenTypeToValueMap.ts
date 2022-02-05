@@ -37,7 +37,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.keywordLong, 'long'],
   [TokenType.keywordNoreturn, 'noreturn'],
   [TokenType.keywordRegister, 'register'],
-  [TokenType.keywordRestrict, 'restrict'],
+  [TokenType.keywordRestrict, 'restrict '],
   [TokenType.keywordReturn, 'return'],
   [TokenType.keywordShort, 'short'],
   [TokenType.keywordSigned, 'signed'],
@@ -96,9 +96,8 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.operatorBinaryAssignmentBitwiseXor, ' ^= '],
   [TokenType.operatorTernaryQuestion, ' ? '],
   [TokenType.operatorEllipses, '...'],
-  [TokenType.operatorBitFieldColon, ' : '],
   [TokenType.operatorTernaryColon, ' : '],
-  [TokenType.operatorSwitchColon, ':'],
+  [TokenType.specialColonSwitchOrLabelOrBitField, ':'],
   [TokenType.ambiguousColon, ':'],
   [TokenType.operatorMemberSelectionDirect, '.'],
   [TokenType.operatorMemberSelectionIndirect, '->'],
@@ -112,6 +111,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.specialBracketClosing, ']'],
   [TokenType.specialComma, ','],
   [TokenType.specialSemicolon, ';'],
+  [TokenType.speicalLineContinuation, ' \\'],
 
   // Ambiguous
   [TokenType.ambiguousPlus, ' + '],

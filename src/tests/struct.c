@@ -7,8 +7,8 @@ struct hostinfo {
   struct strbuf b;
   struct strbuf c;
   struct strbuf d;
-  unsigned int e : 1;
-  unsigned int f : 1;
+  unsigned int e: 1;
+  unsigned int f: 1;
 };
 
 struct strbuf str = { 0 };

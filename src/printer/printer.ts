@@ -27,6 +27,7 @@ export type Context =
   | TokenType.keywordCase
   | TokenType.keywordElse
   | TokenType.keywordDo
+  | TokenType.keywordStruct
   | TokenType.keywordUnion
   | TokenType.keywordSwitch
   | PrinterCategory
@@ -588,11 +589,20 @@ export default function printer(
         }
         break;
 
-      case TokenType.operatorSwitchColon:
+      case TokenType.specialColonSwitchOrLabelOrBitField:
+        if (contextStack.peek().context === TokenType.keywordStruct) {
+          currString = ': ';
+          break;
+        }
         if (getNextNonNewlineTokenType(tokenTypes, i) === TokenType.specialBraceOpening) {
           decreaseBlockLevel();
           break;
         }
+        shouldAddNewline = true;
+        noExtraNewline = true;
+        break;
+
+      case TokenType.speicalLineContinuation:
         shouldAddNewline = true;
         noExtraNewline = true;
         break;
@@ -672,6 +682,8 @@ export default function printer(
       case TokenType.keywordStruct:
         if (previousType === TokenType.keywordTypedef) {
           context = PrinterCategory.typeDefStruct;
+        } else {
+          context = TokenType.keywordStruct;
         }
         break;
 
@@ -759,7 +771,7 @@ export default function printer(
         break;
 
       case TokenType.commentMultiline:
-        if (currString === '') {
+        if (currString === '' && previousType !== null) {
           currString = ' ';
         }
         currString += extractStringFromFile(currTokenStartIndex);

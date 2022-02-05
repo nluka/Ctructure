@@ -123,6 +123,11 @@ static bool do_http_request(
   return true;
 }
 
+static struct object_id uninitialized = {
+  "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff" \
+  "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+};
+
 static bool update_files_to_local(void * param, obs_data_t * local_file) {
   struct update_info * info = param;
   struct file_update_data data = {
