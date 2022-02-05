@@ -9,24 +9,24 @@ import TokenType from '../lexer/TokenType';
  * `searchTokenTypes`. If true, will find the first token whose type matches any one
  * of the types in `searchTokenTypes`. If false, will find the first token whose type
  * does not match any of the types in `searchTokenTypes`.
- * @returns The first token at or ahead of `firstSearchIndex` that matches one of or none of
- * `searchTokenTypes` depending on `equality`.
+ * @returns The first token type and its index in `tokens` at or ahead of `firstSearchIndex`
+ * that matches one of or none of `searchTokenTypes` depending on `equality`.
  */
 export default function findFirstTokenTypeMatchAhead(
   tokens: TokenArray,
   firstSearchIndex: number,
   searchTokenTypes: TokenType[],
   equality: boolean,
-): [number, TokenType] | null {
+): [TokenType, number] | [-1, -1] {
   if (!tokens.isIndexInBounds(firstSearchIndex)) {
-    return null;
+    return [-1, -1];
   }
 
   for (let i = firstSearchIndex; i < tokens.getCount(); ++i) {
-    const [tokenStartIndex, tokenType] = tokens.getToken(i);
+    const tokenType = tokens.getTokenType(i);
     if (searchTokenTypes.includes(tokenType) === equality) {
-      return [tokenStartIndex, tokenType];
+      return [tokenType, i];
     }
   }
-  return null;
+  return [-1, -1];
 }

@@ -278,10 +278,11 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [ TokenType.specialSemicolon,
+          TokenType.newline,
           TokenType.ambiguousIncrement,
           TokenType.ambiguousAsterisk,
           TokenType.identifier ],
-        1, TokenType.operatorUnaryArithmeticIncrementPrefix, ';++*a'
+        2, TokenType.operatorUnaryArithmeticIncrementPrefix, ';\n++*a'
       );
     });
     describe('Postfix', () => {
@@ -427,12 +428,13 @@ describe('tokenDisambiguate', () => {
       );
       assert(
         [ TokenType.identifier,
+          TokenType.newline,
           TokenType.specialParenthesisOpening,
           TokenType.identifier,
           TokenType.specialComma,
           TokenType.ambiguousAsterisk,
           TokenType.identifier ],
-        4, TokenType.operatorUnaryDereference, 'func(a, *b'
+        5, TokenType.operatorUnaryDereference, 'func\n(a, *b'
       );
       assert(
         [ TokenType.operatorBinaryAssignmentDirect,
@@ -458,7 +460,9 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier,
           TokenType.operatorBinaryComparisonGreaterThan,
           TokenType.identifier,
+          TokenType.newline,
           TokenType.operatorBinaryLogicalAnd,
+          TokenType.newline,
           TokenType.identifier,
           TokenType.operatorBinaryArithmeticAddition,
           TokenType.constantNumber,
@@ -467,7 +471,7 @@ describe('tokenDisambiguate', () => {
           TokenType.specialParenthesisClosing,
           TokenType.ambiguousAsterisk,
           TokenType.identifier ],
-        12, TokenType.operatorUnaryDereference, 'if (a > b && b + 1 != c) *a'
+        14, TokenType.operatorUnaryDereference, 'if (a > b \n && \n b + 1 != c) *a'
       );
       assert(
         [ TokenType.keywordSizeof,
@@ -542,12 +546,15 @@ describe('tokenDisambiguate', () => {
       assert(
         [ TokenType.specialBraceClosing,
           TokenType.ambiguousAsterisk,
+          TokenType.newline,
           TokenType.identifier,
+          TokenType.newline,
           TokenType.specialSemicolon ],
-        1, TokenType.operatorBinaryMultiplicationOrIndirection, '} * p;'
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, '} * \n p \n ;'
       );
       assert(
         [ TokenType.specialBraceOpening,
+          TokenType.newline,
           TokenType.keywordInt,
           TokenType.identifier,
           TokenType.operatorBinaryAssignmentDirect,
@@ -555,17 +562,19 @@ describe('tokenDisambiguate', () => {
           TokenType.specialComma,
           TokenType.ambiguousAsterisk,
           TokenType.identifier ],
-        6, TokenType.operatorBinaryMultiplicationOrIndirection, '{ int a = 1, * p1 = &a;'
+        7, TokenType.operatorBinaryMultiplicationOrIndirection, '{ \n int a = 1, * p1 = &a;'
       );
       assert(
         [ TokenType.specialSemicolon,
+          TokenType.newline,
+          TokenType.newline,
           TokenType.identifier,
           TokenType.operatorBinaryAssignmentDirect,
           TokenType.constantNumber,
           TokenType.specialComma,
           TokenType.ambiguousAsterisk,
           TokenType.identifier ],
-        5, TokenType.operatorBinaryMultiplicationOrIndirection, '; a = 1, * p1;'
+        7, TokenType.operatorBinaryMultiplicationOrIndirection, '; \n\n a = 1, * p1;'
       );
       assert(
         [ TokenType.specialParenthesisOpening,
