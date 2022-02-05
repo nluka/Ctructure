@@ -1,4 +1,6 @@
-export default function getIndentAmount(formattedFileStr: string): number {
+export default function getIndentAmountForMultiVar(
+  formattedFileStr: string,
+): number {
   let startIndex = 0;
   let assignmentFound = false;
   let i = formattedFileStr.length - 1;

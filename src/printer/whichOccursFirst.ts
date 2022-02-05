@@ -1,11 +1,11 @@
-import TokenType from '../lexer/TokenType';
+import { OverflowableContext } from './printer';
 
 export default function whichOccursFirst(
   tokenTypes: Uint8Array,
   index: number,
-  tokenTypeOne: TokenType,
-  tokenTypeTwo: TokenType,
-): TokenType {
+  tokenTypeOne: OverflowableContext,
+  tokenTypeTwo: OverflowableContext,
+): OverflowableContext {
   for (let i = index; i < tokenTypes.length; ++i) {
     if (tokenTypes[i] === tokenTypeOne) {
       return tokenTypeOne;
