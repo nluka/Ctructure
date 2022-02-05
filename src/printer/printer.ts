@@ -17,7 +17,6 @@ import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import getIndentAmount from './indentAmount';
 import PrinterCategory from './PrinterCategory';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
-import whichOccursFirst from './whichOccursFirst';
 
 export type Context =
   | TokenType.keywordFor
@@ -293,7 +292,15 @@ export default function printer(
 
       case TokenType.specialSemicolon:
         if (context === TokenType.keywordFor) {
-          currString = '; ';
+          nextNonNewlineTokenType = getNextNonNewlineTokenType(tokenTypes, i);
+          if (
+            nextNonNewlineTokenType === TokenType.specialSemicolon ||
+            nextNonNewlineTokenType === TokenType.specialParenthesisClosing
+          ) {
+            currString = ';';
+          } else {
+            currString = '; ';
+          }
           break;
         }
         if (context === PrinterCategory.assignmentOverflow) {

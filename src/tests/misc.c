@@ -36,7 +36,7 @@ void misc1() {
 int misc2() {
   ledRed = ledGreen = 1; // turn both off
 
-  for (; ; ) {
+  for (;;) {
     if (pushBtnLeft == 1) { // pressed
       ledRed = 1; // off
       wait_ms(500);
