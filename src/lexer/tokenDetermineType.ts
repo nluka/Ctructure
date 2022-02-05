@@ -34,6 +34,15 @@ export default function tokenDetermineType(
         return type;
       }
       // We have a comment
+
+      // No format comments
+      if (rawToken === '// @Ctructure no format') {
+        return TokenType.commentNoFormatSingleLine;
+      }
+      if (rawToken === '/* @Ctructure no format */') {
+        return TokenType.commentNoFormatMultiline;
+      }
+
       const commentFirstTwoChars = rawToken.slice(0, 2);
       return commentFirstTwoChars === '//'
         ? TokenType.commentSingleline

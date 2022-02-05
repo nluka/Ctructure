@@ -62,4 +62,5 @@ describe('format', () => {
   assert('./prepro.c');
   assert('./struct.c');
   assert('./switch.c');
+  assert('./noFormat.c');
 });

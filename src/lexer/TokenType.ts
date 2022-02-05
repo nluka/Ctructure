@@ -141,6 +141,8 @@ enum TokenType {
   //#region Other
     identifier,
     label,
+    commentNoFormatSingleLine,
+    commentNoFormatMultiline,
     commentSingleline,
     commentMultiline,
     newline,

@@ -127,6 +127,8 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
   [TokenType.constantCharacter, ''],
   [TokenType.constantNumber, ''],
   [TokenType.constantString, ''],
+  [TokenType.commentNoFormatSingleLine, '// @Ctructure no format'],
+  [TokenType.commentNoFormatMultiline, '/* @Ctructure no format */'],
   [TokenType.commentSingleline, ''],
   [TokenType.commentMultiline, ''],
   [TokenType.newline, ''],

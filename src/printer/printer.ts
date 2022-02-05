@@ -17,6 +17,7 @@ import getPrevNonNewlineTokenType from './getPrevNonNewlineTokenType';
 import getIndentAmountForMultiVar from './indentAmountForMultiVar';
 import PrinterCategory from './PrinterCategory';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
+import trackIndentationDepthDuringNoFormat from './trackDepthDuringNoFormat';
 import whichOccursFirst from './whichOccursFirst';
 
 export type Context =
@@ -850,6 +851,34 @@ export default function printer(
         if (context === null) {
           context = PrinterCategory.typeOrIdentifier;
         }
+        break;
+
+      case TokenType.commentNoFormatSingleLine:
+        const indexOfNextNewLine = getIndexOfNextNewline(i + 1);
+        const extractedString = fileContents.slice(
+          tokenStartIndices[i + 1],
+          tokenStartIndices[indexOfNextNewLine],
+        );
+        i = indexOfNextNewLine - 1;
+        currString += extractedString;
+        shouldAddNewline = true;
+        break;
+
+      case TokenType.commentNoFormatMultiline:
+        let j = i + 1;
+        for (; j < tokenTypes.length; ++j) {
+          if (tokenTypes[j] === TokenType.commentNoFormatMultiline) {
+            break;
+          }
+        }
+        indentationDepth = trackIndentationDepthDuringNoFormat(tokenTypes, i, indentationDepth);
+        const extractedBlock = fileContents.slice(
+          tokenStartIndices[i + 1],
+          tokenStartIndices[j + 1],
+        );
+        currString += extractedBlock;
+        shouldAddNewline = true;
+        i = j;
         break;
 
       default:
