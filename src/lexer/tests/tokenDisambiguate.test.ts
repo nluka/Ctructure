@@ -510,7 +510,7 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousAsterisk,
           TokenType.identifier,
           TokenType.operatorBinaryAssignmentDirect ],
-        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'custype * p ='
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'CusType * p ='
       );
       assert(
         [ TokenType.specialComma,
@@ -596,7 +596,7 @@ describe('tokenDisambiguate', () => {
         [ TokenType.identifier,
           TokenType.ambiguousAsterisk,
           TokenType.keywordVolatile ],
-        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'custype * volatile'
+        1, TokenType.operatorBinaryMultiplicationOrIndirection, 'CusType * volatile'
       );
       assert(
         [ TokenType.keywordVoid,

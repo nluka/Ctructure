@@ -142,11 +142,10 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
 
   //#region Other
     [TokenType.identifier, 'identifier'],
-    [TokenType.label, 'label'],
-    [TokenType.commentNoFormatSingleLine, 'commentNoFormatLine'],
-    [TokenType.commentNoFormatMultiline, 'commentNoFormatBlock'],
-    [TokenType.commentSingleline, 'commentSingleline'],
-    [TokenType.commentMultiline, 'commentMultiline'],
+    [TokenType.commentDirectiveNoFormatSingleLine, 'commentNoFormatLine'],
+    [TokenType.commentDirectiveNoFormatMultiLine, 'commentNoFormatBlock'],
+    [TokenType.commentSingleLine, 'commentSingleline'],
+    [TokenType.commentMultiLine, 'commentMultiline'],
     [TokenType.newline, 'newline'],
   //#endregion Other
 

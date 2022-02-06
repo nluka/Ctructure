@@ -2,7 +2,12 @@
 
 Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-inspired code formatter for the C programming language. Currently work in progress.
 
-- [Limitations/Caveats](#limitations-caveats)
+- [Usage](#usage)
+  - [Commands](#commands)
+    - [formatCurrentFile](#format-current-file)
+  - [Directives](#directives)
+    - [no-format](#no-format)
+  - [Limitations/Caveats](#limitations-caveats)
 - [Issues](#issues)
 - [Contributing](#contributing)
 - [Inner Workings](#inner-workings)
@@ -12,9 +17,41 @@ Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-in
 
 ## Usage
 
-Will be added once extension is released.
+### Commands
 
-## Limitations/Caveats
+#### formatCurrentFile
+
+Formats the currently active document. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.formatCurrentFile`.
+
+### Directives
+
+Directives modify formatting behavior. They are declared within a comment, begin with `@ct-` and are case insensitive.
+
+#### no-format
+
+The `@ct-no-format` directive marks a line or section of code to be ignored.
+Single-line comment directives (e.g. `// @ct-no-format`) ignore the next line,
+2 multi-line comment directives (e.g. `/* @ct-no-format */`) create a section of code to be ignored.
+
+```
+// @ct-no-format, ignore next line only
+int global=100;
+
+int func_with_ignored_code() {
+  int a = 1, b = 2;
+
+  /* @ct-no-format, ignore multiple lines */
+  a = (a + b) |
+      (a - b) &
+      (a * b) ^
+      (a / b);
+  /* @ct-no-format, end ignored section */
+
+  return a;
+}
+```
+
+### Limitations/Caveats
 
 - Max supported input file size is 512 MB
 

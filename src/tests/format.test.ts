@@ -50,17 +50,17 @@ describe('format', () => {
   }
 
   assert('./__attribute__.c');
-  assert('./asterisks.c');
-  assert('./comments.c');
-  assert('./empty_func_call.c');
+  assert('./asterisk.c');
+  assert('./comment.c');
   assert('./empty_header.h');
   assert('./for.c');
-  assert('./func_pointers.h');
+  assert('./func_pointer.h');
   assert('./if_else.c');
+  assert('./label.c');
   assert('./misc.c');
-  assert('./multivar_decls.c');
+  assert('./multivar_decl.c');
+  assert('./no_format.c');
   assert('./prepro.c');
   assert('./struct.c');
   assert('./switch.c');
-  assert('./noFormat.c');
 });

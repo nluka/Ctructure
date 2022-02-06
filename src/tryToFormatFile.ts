@@ -4,7 +4,6 @@ import { currentConfig } from './config/config';
 import TokenArray from './lexer/TokenArray';
 import { tokenizeFile } from './lexer/tokenizeFile';
 import printer from './printer/printer';
-import path = require('path');
 
 const BYTES_IN_512_MEGABYTES = 536_870_912;
 
@@ -45,7 +44,7 @@ export default async function tryToFormatFile(
   let lexTime: number;
   try {
     const startTime = Date.now();
-    [fileContents, tokens] = tokenizeFile(filePathname);
+    { fileContents, tokens } = tokenizeFile(filePathname);
     lexTime = (Date.now() - startTime) / 1000;
   } catch (err: any) {
     return { filePathname, wasSuccessful: false, info: null, err };

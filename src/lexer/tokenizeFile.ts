@@ -11,7 +11,10 @@ import Tokenizer from './Tokenizer';
  * @returns An array, the first element is normalized contents of the file, the second
  * is the array of tokens.
  */
-export function tokenizeFile(filePathname: string): [string, TokenArray] {
+export function tokenizeFile(filePathname: string): {
+  fileContents: string;
+  tokens: TokenArray;
+} {
   const fileBuffer = readFileSync(filePathname);
   const fileContents = removeCarriageReturns(fileBuffer.toString());
   const tokenizer = new Tokenizer(fileContents);
@@ -34,5 +37,5 @@ export function tokenizeFile(filePathname: string): [string, TokenArray] {
     tokens.setTokenType(ambigTokenIndex, disambiguatedTokenType);
   }
 
-  return [fileContents, tokens];
+  return { fileContents, tokens };
 }

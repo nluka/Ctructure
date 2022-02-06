@@ -12,9 +12,9 @@ import TokenType, {
 import areThereCommas from './areThereCommas';
 import checkForAssignmentToFunction from './checkForAssignmentToFunction';
 import Stack from './context_stack/Stack';
+import getIndentAmountForMultiVar from './indentAmountForMultiVar';
 import _nextNonNewlineTokenType from './nextNonNewlineTokenType';
 import getPrevNonNewlineTokenType from './prevNonNewlineTokenType';
-import getIndentAmountForMultiVar from './indentAmountForMultiVar';
 import PrinterCategory from './PrinterCategory';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 import trackIndentationDepthDuringNoFormat from './trackDepthDuringNoFormat';
@@ -248,8 +248,8 @@ export default function printer(
     currString += typeAsValue;
     if (
       shouldAddNewline &&
-      currTokenType !== TokenType.commentSingleline &&
-      currTokenType !== TokenType.commentMultiline
+      currTokenType !== TokenType.commentSingleLine &&
+      currTokenType !== TokenType.commentMultiLine
     ) {
       if (
         currTokenType === TokenType.newline &&
@@ -534,8 +534,6 @@ export default function printer(
       case TokenType.operatorBinaryAssignmentBitwiseOr:
       case TokenType.operatorBinaryAssignmentBitwiseXor:
       case TokenType.operatorMemberSelectionIndirect:
-      case TokenType.ambiguousPlus:
-      case TokenType.ambiguousMinus:
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (previousType === TokenType.specialComma) {
           if (nextNonNewlineTokenType === TokenType.specialComma) {
@@ -662,20 +660,6 @@ export default function printer(
         noExtraNewline = true;
         break;
 
-      case TokenType.ambiguousColon:
-        if (context === TokenType.keywordCase || context === TokenType.keywordDefault) {
-          context = null;
-          if (getNextNonNewlineTokenType(i) !== TokenType.specialBraceOpening) {
-            shouldAddNewline = true;
-            noExtraNewline = true;
-          } else {
-            decreaseBlockLevel();
-          }
-        } else {
-          currString = ' : ';
-        }
-        break;
-
       case TokenType.keywordBool:
       case TokenType.keywordChar:
       case TokenType.keywordDouble:
@@ -773,21 +757,6 @@ export default function printer(
         }
         break;
 
-      case TokenType.label:
-        const extractedLabel = extractStringFromFile(currTokenStartIndex);
-        if (
-          contextStack.peek().context === TokenType.keywordSwitch &&
-          extractedLabel === 'default:'
-        ) {
-          currString =
-            lineEndings + getIndentation(contextStack.peek().indentationLevel + 1) + extractedLabel;
-        } else {
-          currString += extractedLabel;
-        }
-        shouldAddNewline = true;
-        noExtraNewline = true;
-        break;
-
       case TokenType.constantString:
         currString += extractStringFromFile(currTokenStartIndex);
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
@@ -804,7 +773,7 @@ export default function printer(
         currString += extractStringFromFile(currTokenStartIndex);
         break;
 
-      case TokenType.commentSingleline:
+      case TokenType.commentSingleLine:
         if (
           previousType !== null &&
           (tokenTypes[i - 1] !== TokenType.newline || currString === '')
@@ -825,7 +794,7 @@ export default function printer(
         }
         break;
 
-      case TokenType.commentMultiline:
+      case TokenType.commentMultiLine:
         if (currString === '' && previousType !== null) {
           currString = ' ';
         }
@@ -835,7 +804,7 @@ export default function printer(
         }
         break;
 
-      case TokenType.identifier:
+      case TokenType.identifier: {
         const extractedIdentifier = extractStringFromFile(currTokenStartIndex);
         currString += extractedIdentifier;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
@@ -852,11 +821,12 @@ export default function printer(
           context = PrinterCategory.typeOrIdentifier;
         }
         break;
+      }
 
-      case TokenType.commentNoFormatSingleLine:
+      case TokenType.commentDirectiveNoFormatSingleLine: {
         const indexOfNextNewLine = getIndexOfNextNewline(i + 1);
         const extractedString = fileContents.slice(
-          tokenStartIndices[i + 1],
+          tokenStartIndices[i],
           tokenStartIndices[indexOfNextNewLine],
         );
 
@@ -871,7 +841,7 @@ export default function printer(
           previousType,
           overflow,
           parenDepth,
-          TokenType.commentNoFormatSingleLine,
+          TokenType.commentDirectiveNoFormatSingleLine,
         );
 
         indentationDepth = trackedContext.indentationDepth;
@@ -885,11 +855,12 @@ export default function printer(
         currString += extractedString;
         shouldAddNewline = true;
         break;
+      }
 
-      case TokenType.commentNoFormatMultiline:
+      case TokenType.commentDirectiveNoFormatMultiLine:
         let j = i + 1;
         for (; j < tokenTypes.length; ++j) {
-          if (tokenTypes[j] === TokenType.commentNoFormatMultiline) {
+          if (tokenTypes[j] === TokenType.commentDirectiveNoFormatMultiLine) {
             break;
           }
         }
@@ -905,7 +876,7 @@ export default function printer(
           previousType,
           overflow,
           parenDepth,
-          TokenType.commentNoFormatMultiline,
+          TokenType.commentDirectiveNoFormatMultiLine,
         );
 
         indentationDepth = trackedContext.indentationDepth;
@@ -915,10 +886,8 @@ export default function printer(
         overflow = trackedContext.overflow;
         parenDepth = trackedContext.parenDepth;
 
-        const extractedBlock = fileContents.slice(
-          tokenStartIndices[i + 1],
-          tokenStartIndices[j + 1],
-        );
+        const extractedBlock = fileContents.slice(tokenStartIndices[i], tokenStartIndices[j + 1]);
+
         currString += extractedBlock;
         shouldAddNewline = true;
         i = j;

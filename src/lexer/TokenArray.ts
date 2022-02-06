@@ -68,7 +68,7 @@ export default class TokenArray {
     ++this.count;
   }
 
-  public setTokenType(index: number, type: TokenType) {
+  public setTokenType(index: number, type: TokenType): void {
     this.checkIndexBounds(index);
     this.types[index] = type;
   }
@@ -77,7 +77,7 @@ export default class TokenArray {
     index: number,
     tokenStartIndex: number,
     tokenType: TokenType,
-  ) {
+  ): void {
     this.checkIndexBounds(index);
     this.startIndices[index] = tokenStartIndex;
     this.types[index] = tokenType;

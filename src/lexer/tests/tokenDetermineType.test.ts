@@ -1,5 +1,5 @@
 import TokenCategory, { tokenCategoryToStringMap } from '../TokenCategory';
-import tokenDetermineType from '../tokenDetermineType';
+import tokenDetermineType, { commentDirectiveNoFormatMultiLineRegex, commentDirectiveNoFormatSingleLineRegex } from '../tokenDetermineType';
 import TokenType from '../TokenType';
 import tokenTypeToNameMap from '../tokenTypeToNameMap';
 
@@ -20,6 +20,34 @@ const [
   TokenCategory.constant,
   TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
 ];
+
+describe('Regex', () => {
+  function assert(
+    regex: RegExp,
+    inputString: string,
+    expectMatch: boolean,
+  ) {
+    test(`${expectMatch} when regex=${JSON.stringify(regex)}, inputString=${
+      JSON.stringify(inputString)
+    }`, () => {
+      expect(!!inputString.match(regex)).toBe(expectMatch);
+    });
+  }
+
+  assert(commentDirectiveNoFormatSingleLineRegex, '//@ct-no-format  ...', true);
+  assert(commentDirectiveNoFormatSingleLineRegex, '// @ct-no-format    ', true);
+  assert(commentDirectiveNoFormatSingleLineRegex, '//  @ct-NO-FORMAT   ', true);
+  assert(commentDirectiveNoFormatSingleLineRegex, '// ... @ct-NO-format', true);
+
+  assert(commentDirectiveNoFormatMultiLineRegex, '/*@ct-no-format*/',        true);
+  assert(commentDirectiveNoFormatMultiLineRegex, '/* @ct-no-format */',      true);
+  assert(commentDirectiveNoFormatMultiLineRegex, '/*  @ct-NO-FORMAT ... */', true);
+  assert(commentDirectiveNoFormatMultiLineRegex, '/* ... @ct-NO-format*/',   true);
+
+  assert(commentDirectiveNoFormatMultiLineRegex, '/* ... @ct- */',       false);
+  assert(commentDirectiveNoFormatMultiLineRegex, '/* @ct-format-no */',  false);
+  assert(commentDirectiveNoFormatMultiLineRegex, '//no-format',          false);
+});
 
 describe('tokenDetermineType', () => {
   function assert(
@@ -240,17 +268,6 @@ describe('tokenDetermineType', () => {
   });
 
   describe('Special', () => {
-    assert(special, TokenType.specialComma,               ',');
-    assert(special, TokenType.specialSemicolon,           ';');
-    assert(special, TokenType.specialParenthesisOpening,  '(');
-    assert(special, TokenType.specialBraceOpening,        '{');
-    assert(special, TokenType.specialBracketOpening,      '[');
-    assert(special, TokenType.specialParenthesisClosing,  ')');
-    assert(special, TokenType.specialBraceClosing,        '}');
-    assert(special, TokenType.specialBracketClosing,      ']');
-  });
-
-  describe('Special', () => {
     assert(special, TokenType.specialComma,             ',');
     assert(special, TokenType.specialSemicolon,         ';');
     assert(special, TokenType.speicalLineContinuation,  '\\');
@@ -269,11 +286,23 @@ describe('tokenDetermineType', () => {
   });
 
   describe('Other', () => {
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatSingleLine, '//@ct-no-format  ...');
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatSingleLine, '// @ct-no-format    ');
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatSingleLine, '//  @ct-NO-FORMAT   ');
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatSingleLine, '// ... @ct-NO-format');
+
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatMultiLine, '/*@ct-no-format*/');
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatMultiLine, '/* @ct-no-format */');
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatMultiLine, '/*  @ct-NO-FORMAT ... */');
+    assert(commentOrOperator, TokenType.commentDirectiveNoFormatMultiLine, '/* ... @ct-NO-format*/');
+
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordInt,       'int');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordAlignas,   '_Alignas');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.keywordRestrict,  'restrict');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier,       'indentifer');
     assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.identifier,       'Indentifer');
+
+    assert(newline, TokenType.newline, '\n');
   });
 
   describe('Ambiguous', () => {

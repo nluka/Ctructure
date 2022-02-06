@@ -16,8 +16,8 @@ export default function trackIndentationDepthDuringNoFormat(
   overflow: boolean,
   parenDepth: number,
   noFormatType:
-    | TokenType.commentNoFormatMultiline
-    | TokenType.commentNoFormatSingleLine,
+    | TokenType.commentDirectiveNoFormatMultiLine
+    | TokenType.commentDirectiveNoFormatSingleLine,
 ): {
   indentationDepth: number;
   contextStack: Stack;
@@ -41,7 +41,7 @@ export default function trackIndentationDepthDuringNoFormat(
     const currTokenType = tokenTypes[i];
     switch (currTokenType) {
       case TokenType.newline:
-        if (noFormatType === TokenType.commentNoFormatSingleLine) {
+        if (noFormatType === TokenType.commentDirectiveNoFormatSingleLine) {
           if (++newLineCount === 2) {
             return {
               indentationDepth: indentationDepth,
@@ -362,7 +362,7 @@ export default function trackIndentationDepthDuringNoFormat(
         }
         break;
 
-      case TokenType.commentSingleline:
+      case TokenType.commentSingleLine:
         nextNonNewlineTokenType = getNextNonNewlineTokenType(
           tokenTypes,
           tokenCount,
@@ -386,7 +386,7 @@ export default function trackIndentationDepthDuringNoFormat(
         }
         break;
 
-      case TokenType.commentNoFormatMultiline:
+      case TokenType.commentDirectiveNoFormatMultiLine:
         return {
           indentationDepth: indentationDepth,
           contextStack: contextStack,

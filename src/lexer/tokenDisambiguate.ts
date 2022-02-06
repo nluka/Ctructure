@@ -13,8 +13,8 @@ import tokenTypeToNameMap from './tokenTypeToNameMap';
 
 const tokenTypesNewlineAndComments: TokenType[] = [
   TokenType.newline,
-  TokenType.commentSingleline,
-  TokenType.commentMultiline,
+  TokenType.commentSingleLine,
+  TokenType.commentMultiLine,
 ];
 
 /**
@@ -209,10 +209,8 @@ function disambiguateAsterisk(
   currTokenIndex: number,
   tokens: TokenArray,
   firstNonNewlineOrCommentTokenBehindType: TokenType,
-  // @ts-ignore
   firstNonNewlineOrCommentTokenBehindIndex: number,
   firstNonNewlineOrCommentTokenAheadType: TokenType,
-  // @ts-ignore
   firstNonNewlineOrCommentTokenAheadIndex: number,
   createErr: () => Error,
 ) {
