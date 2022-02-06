@@ -33,7 +33,7 @@ The `@ct-no-format` directive marks a line or section of code to be ignored.
 Single-line comment directives (e.g. `// @ct-no-format`) ignore the next line,
 2 multi-line comment directives (e.g. `/* @ct-no-format */`) create a section of code to be ignored.
 
-```
+```cpp
 // @ct-no-format, ignore next line only
 int global=100;
 
