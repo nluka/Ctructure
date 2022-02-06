@@ -14,8 +14,7 @@ void comments() {
     d = a / b; /* div */
   }
 
-  {
-    // section
+  { // section
     int e;
     e = a + b; /*add*/
     e = a - b; /*sub*/

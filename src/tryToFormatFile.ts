@@ -44,7 +44,7 @@ export default async function tryToFormatFile(
   let lexTime: number;
   try {
     const startTime = Date.now();
-    { fileContents, tokens } = tokenizeFile(filePathname);
+    [fileContents, tokens] = tokenizeFile(filePathname);
     lexTime = (Date.now() - startTime) / 1000;
   } catch (err: any) {
     return { filePathname, wasSuccessful: false, info: null, err };
