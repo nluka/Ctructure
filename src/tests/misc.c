@@ -169,10 +169,10 @@ struct option opts[] = {
     0,
     add_file_cb,
     (intptr_t) & base & something,
-    (intptr_tndpr) &
     baseDecimal &
     things &
     otherThings &
+    moreThings &
     someOtherThingsToHitOver80Chars
   },
   OPT_STRING(

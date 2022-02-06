@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
-import { debugLogFormatResult } from '../debugLog';
-import format from '../format';
+import tokenizeFile from '../lexer/tokenizeFile';
+import printer from '../printer/printer';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
 import path = require('path');
 
@@ -8,18 +8,17 @@ describe('format', () => {
   function assert(
     fileRelativePathname: string,
     expected?: string,
-    shouldConsoleLogFormatResult = false,
   ) {
     test(fileRelativePathname, () => {
       const resolvedFilePathname = path.resolve(__dirname, fileRelativePathname);
       const fileContents = removeCarriageReturns(readFileSync(resolvedFilePathname).toString());
-      const formatted = format(resolvedFilePathname, true);
+      const formatted = (function format() {
+        const [fileContents, tokens] = tokenizeFile(resolvedFilePathname);
+        const formatted = printer(fileContents, tokens, true);
+        return formatted;
+      })();
 
-      if (shouldConsoleLogFormatResult) {
-        debugLogFormatResult(formatted);
-      }
-
-      expect(formatted).toBe(expected !== undefined ? expected : fileContents);
+      expect(formatted).toBe(expected || fileContents);
     });
   }
 

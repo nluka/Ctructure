@@ -67,7 +67,11 @@ static BLAKE2_INLINE uint32_t load32(const void * src) {
 extern "C" {
 #endif
 
-  // stuff
+  void func1() {
+  }
+
+  void func2() {
+  }
 
 #if defined(__cplusplus)
 }

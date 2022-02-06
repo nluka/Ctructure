@@ -6,7 +6,7 @@ void comments() {
   c = a * b; // mult
   c = a / b; // div
 
-  { // section
+  { // section 1
     int d;
     d = a + b; /* add */
     d = a - b; /* sub */
@@ -14,7 +14,8 @@ void comments() {
     d = a / b; /* div */
   }
 
-  { // section
+  {
+    // section 2
     int e;
     e = a + b; /*add*/
     e = a - b; /*sub*/

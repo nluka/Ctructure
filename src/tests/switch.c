@@ -1,13 +1,21 @@
 #include <stdio.h>
 
 void switch_statement() {
-  int a = 1;
+  int a = 1, b = 2;
   switch (a) {
     case 0:
       return;
     case 1: {
       char buf[1024];
-      // some statements
+      switch (b) {
+        case 0:
+        case 1:
+          return;
+        default:
+        case 2: {
+          return;
+        }
+      }
       break;
     }
     case 2:

@@ -17,3 +17,10 @@ void func_with_ignored_code() {
 
 // @ct-NO-FORMAT
 void ignored_func(int *p) {}
+
+/* @ct-no-format */
+void   func_a();
+char * func_b();
+long   func_c();
+short  func_d();
+/* @ct-no-format */
