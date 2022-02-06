@@ -58,7 +58,7 @@ export function loadConfig() {
 
   {
     const lineWidth = storedConfig.lineWidth;
-    if (['unix', 'windows'].includes(lineWidth)) {
+    if (lineWidth > 0) {
       currentConfig.lineWidth = lineWidth;
     } else {
       warnInvalidPropValue('lineWidth');
@@ -67,8 +67,12 @@ export function loadConfig() {
 
   {
     const lineEndings = storedConfig.lineEndings;
-    if (['unix', 'windows'].includes(lineEndings)) {
-      currentConfig.lineEndings = lineEndings;
+    if (
+      typeof lineEndings === 'string' &&
+      lineEndings.match(/^(lf)|(crlf)$/i)
+    ) {
+      const firstChar = lineEndings.charAt(0).toLowerCase();
+      currentConfig.lineEndings = firstChar === 'l' ? 'LF' : 'CRLF';
     } else {
       warnInvalidPropValue('lineEndings');
     }

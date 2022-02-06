@@ -4,7 +4,7 @@ const defaultConfig: IConfig = {
   indentationSize: 2,
   indentationType: 'spaces',
   lineWidth: 80,
-  lineEndings: 'unix',
+  lineEndings: 'LF',
   multiVariableAlwaysNewline: false,
   multiVariableMatchIndent: true,
   logToFile: true,

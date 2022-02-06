@@ -225,7 +225,7 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousMinus,
           TokenType.newline,
           TokenType.constantCharacter ],
-        2, TokenType.operatorBinaryArithmeticSubtraction, "'a'\n-\n'b'"
+        2, TokenType.operatorBinaryArithmeticSubtraction, "'a' \n - \n 'b'"
       );
       assert(
       [ TokenType.specialParenthesisClosing,

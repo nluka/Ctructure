@@ -1,8 +1,0 @@
-{
-  "indentationSize": 2,
-  "indentationType": "spaces",
-  "lineEndings": "windows",
-  "multiVariableNewline": false,
-  "multiVariableMatchIndent": true,
-  "logToFile": true
-}
