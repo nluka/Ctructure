@@ -57,7 +57,6 @@ export default function printer(
   const indentationSize =
     config['printer.indentationType'] === 'spaces' ? config['printer.indentationSize'] : 1;
   const lineEndings = config['printer.lineEndings'] === 'lf' ? '\n' : '\r\n';
-  console.log(JSON.stringify(lineEndings));
   const indentation = indentationChar.repeat(indentationSize);
 
   const { startIndices: tokenStartIndices, types: tokenTypes } = tokenArray.getValues();
