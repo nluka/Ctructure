@@ -1,13 +1,24 @@
 import IConfig from './IConfig';
 
 const defaultConfig: IConfig = {
-  indentationSize: 2,
-  indentationType: 'spaces',
-  lineWidth: 80,
-  lineEndings: 'LF',
-  multiVariableAlwaysNewline: false,
-  multiVariableMatchIndent: true,
-  logToFile: true,
+  'formatWorkspaceFiles.showLogs': true,
+  'printer.indentationSize': 2,
+  'printer.indentationType': 'spaces',
+  'printer.lineEndings': 'lf',
+  'printer.lineWidth': 80,
+  'printer.multiVariableAlwaysNewline': false,
+  'printer.multiVariableMatchIndent': true,
 };
-
+Object.freeze(defaultConfig);
 export default defaultConfig;
+
+export const defaultConfigStringified = `{
+  "formatWorkspaceFiles.showLogs": true,
+  "printer.indentationSize": 2,
+  "printer.indentationType": "spaces",
+  "printer.lineEndings": "lf",
+  "printer.lineWidth": 80,
+  "printer.multiVariableAlwaysNewline": false,
+  "printer.multiVariableMatchIndent": true
+}
+`;

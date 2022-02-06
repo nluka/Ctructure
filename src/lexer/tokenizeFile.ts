@@ -11,7 +11,9 @@ import Tokenizer from './Tokenizer';
  * @returns An array, the first element is normalized contents of the file, the second
  * is the array of tokens.
  */
-export function tokenizeFile(filePathname: string): [string, TokenArray] {
+export default function tokenizeFile(
+  filePathname: string,
+): [string, TokenArray] {
   const fileBuffer = readFileSync(filePathname);
   const fileContents = removeCarriageReturns(fileBuffer.toString());
   const tokenizer = new Tokenizer(fileContents);

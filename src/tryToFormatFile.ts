@@ -1,8 +1,7 @@
-import { appendFileSync, statSync, writeFileSync } from 'fs';
+import { statSync, writeFileSync } from 'fs';
 import * as vscode from 'vscode';
-import { currentConfig } from './config/config';
 import TokenArray from './lexer/TokenArray';
-import { tokenizeFile } from './lexer/tokenizeFile';
+import tokenizeFile from './lexer/tokenizeFile';
 import printer from './printer/printer';
 
 const BYTES_IN_512_MEGABYTES = 536_870_912;
@@ -81,50 +80,44 @@ enum LogType {
   error,
 }
 
+/**
+ * Generates and logs a message based on `formatResult`.
+ * @param formatResult The result to log
+ * @param shouldShowErrMsgInWindow If true, will display errors in VSCode window.
+ * @returns The generated message.
+ */
 export function logFormatResult(
   formatResult: IFormatResult,
   shouldShowErrMsgInWindow: boolean,
-  logFilePathname?: string,
-) {
+): string {
   function log(logType: LogType, msg: string) {
     const logger = logType === LogType.error ? console.error : console.log;
-    logger(msg);
+    logger(`[Ctructure] ${msg}`);
 
-    if (shouldShowErrMsgInWindow) {
+    if (shouldShowErrMsgInWindow && logType === LogType.error) {
       vscode.window.showErrorMessage(msg);
-    }
-
-    if (currentConfig.logToFile && logFilePathname) {
-      try {
-        appendFileSync(logFilePathname, msg + '\n');
-      } catch (err) {
-        console.error(err);
-      }
     }
   }
 
   const { filePathname, wasSuccessful, info, err } = formatResult;
 
   if (!wasSuccessful && err !== null) {
-    return log(
-      LogType.error,
-      `[Ctructure] failed to format "${filePathname}": ${err.message}`,
-    );
+    const msg = `failed to format "${filePathname}": ${err.message}`;
+    log(LogType.error, msg);
+    return msg;
   }
 
   if (info === null) {
-    return log(
-      LogType.error,
-      `[Ctructure] failed to format "${filePathname}" (internal error): wasSuccessful is true but info is null`,
-    );
+    const msg = `failed to format "${filePathname}" (internal error): wasSuccessful is true but info is null`;
+    log(LogType.error, msg);
+    return msg;
   }
 
-  log(
-    LogType.success,
-    `[Ctructure] formatted (in ${(
-      info.lexTime +
-      info.printTime +
-      info.writeTime
-    ).toFixed(3)}s) "${filePathname}"`,
-  );
+  const msg = `formatted (in ${(
+    info.lexTime +
+    info.printTime +
+    info.writeTime
+  ).toFixed(3)}s) "${filePathname}"`;
+  log(LogType.success, msg);
+  return msg;
 }

@@ -4,5 +4,5 @@ node_modules
 .vscode-test/
 *.vsix
 *megs.c
-.ctructure
+ctructureconf.json
 .ctructure*

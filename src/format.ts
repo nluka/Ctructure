@@ -1,4 +1,4 @@
-import { tokenizeFile } from './lexer/tokenizeFile';
+import tokenizeFile from './lexer/tokenizeFile';
 import printer from './printer/printer';
 
 // For testing purposes

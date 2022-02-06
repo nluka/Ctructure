@@ -19,15 +19,15 @@
     "commands": [
       {
         "command": "Ctructure.formatCurrentFile",
-        "title": "Ctructure: Format current file"
+        "title": "Ctructure: Format Current File"
       },
       {
         "command": "Ctructure.formatWorkspaceFiles",
-        "title": "Ctructure: Format files in workspace"
+        "title": "Ctructure: Format Files in Workspace"
       },
       {
         "command": "Ctructure.generateConfigFile",
-        "title": "Ctructure: Generate config file"
+        "title": "Ctructure: Generate Config File"
       }
     ]
   },

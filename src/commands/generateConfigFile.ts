@@ -1,21 +1,23 @@
 import { writeFileSync } from 'fs';
 import * as vscode from 'vscode';
-import { defaultConfigString as defaultConfigStr } from '../config/config';
+import { defaultConfigStringified } from '../config/defaultConfig';
 import path = require('path');
 
-export default async function generateConfigFile() {
+export default async function generateConfigFile(): Promise<void> {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (workspaceFolders === undefined) {
-    return reportErr('no workspace folders found');
+    reportErr('no workspace folders found');
+    return;
   }
 
   const workspacePath = workspaceFolders[0].uri.fsPath;
   const filePathname = path.resolve(workspacePath, 'ctructureconf.json');
 
   try {
-    writeFileSync(filePathname, defaultConfigStr);
+    writeFileSync(filePathname, defaultConfigStringified);
   } catch (err: any) {
-    return reportErr(err.message);
+    reportErr(err.message);
+    return;
   }
 }
 
