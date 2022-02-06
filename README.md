@@ -34,11 +34,9 @@ Single-line comment directives (e.g. `// @ct-no-format`) ignore the next line,
 2 multi-line comment directives (e.g. `/* @ct-no-format */`) create a section of code to be ignored.
 
 ```cpp
-// @ct-no-format, ignore next line only
-int global=100;
-
 int func_with_ignored_code() {
-  int a = 1, b = 2;
+  // @ct-no-format, ignore next line only
+  int a=1, b=2;
 
   /* @ct-no-format, ignore multiple lines */
   a = (a + b) |
@@ -95,4 +93,4 @@ The printer formats each token based on:
 
 ### File-writing
 
-Once the formatter has created a formatted string, it is used to write over the input file, completing the formatting process.
+Once the printer has created a formatted string, it is used to write over the input file, completing the formatting process.
