@@ -50,7 +50,7 @@ export function loadConfig(workspaceFolder: vscode.WorkspaceFolder): void {
   {
     const prop = 'printer.indentationType';
     const value = storedConfig[prop];
-    updateProperty(prop, value, () => !['tabs', 'spaces'].includes(value));
+    updateProperty(prop, value, () => ['tabs', 'spaces'].includes(value));
   }
 
   {
