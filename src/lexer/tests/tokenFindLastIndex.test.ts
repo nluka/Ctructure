@@ -1,5 +1,5 @@
 import TokenCategory from '../TokenCategory';
-import tokenFindLastIndex from '../tokenFindLastIndex';
+import tokenFindEndPosition from '../tokenFindEndPosition';
 
 const [
   newline,
@@ -19,18 +19,18 @@ const [
   TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
 ];
 
-describe('tokenFindLastIndex', () => {
+describe('tokenFindEndPosition', () => {
   function assert(
     category: TokenCategory,
-    expectedLastIndex: number,
+    expectedEndPos: number,
     fileContents: string,
   ) {
-    test(`${expectedLastIndex} when fileContents=${JSON.stringify(
+    test(`${expectedEndPos} when fileContents=${JSON.stringify(
       fileContents,
     )}`, () => {
       expect(
-        tokenFindLastIndex(fileContents, 0, category),
-      ).toBe(expectedLastIndex);
+        tokenFindEndPosition(fileContents, 0, category),
+      ).toBe(expectedEndPos);
     });
   }
 

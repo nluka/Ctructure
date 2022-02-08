@@ -16,7 +16,7 @@ typedef enum TextColor {
 
 void print_banner();
 void print_horizontal_rule();
-void printfc(TextColor_t color, const char * format, ...);
+void printfc(TextColor_t color, const char *format, ...);
 void stdout_cursor_hide();
 void stdout_cursor_show();
 void stdout_cursor_move_up(size_t count);

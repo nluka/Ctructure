@@ -46,12 +46,12 @@ fprintf( \
   .tcp_port = STRBUF_INIT, \
 }
 
-static BLAKE2_INLINE uint32_t load32(const void * src) {
+static BLAKE2_INLINE uint32_t load32(const void *src) {
   uint32_t w;
 #if defined(NATIVE_LITTLE_ENDIAN)
   memcpy(&w, src, sizeof w);
 #else
-  const uint8_t * p = (const uint8_t *)src;
+  const uint8_t *p = (const uint8_t *)src;
   w = *p;
 #endif
   return w;

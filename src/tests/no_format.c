@@ -19,8 +19,8 @@ void func_with_ignored_code() {
 void ignored_func(int *p) {}
 
 /* @ct-no-format */
-void   func_a();
-char * func_b();
-long   func_c();
-short  func_d();
+void  func_a();
+char *func_b();
+long  func_c();
+short func_d();
 /* @ct-no-format */

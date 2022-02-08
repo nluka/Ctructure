@@ -1,4 +1,4 @@
-import TokenArray from './lexer/TokenArray';
+import TokenSet from './lexer/TokenSet';
 import tokenTypeToNameMap from './lexer/tokenTypeToNameMap';
 
 export function debugLogFileContents(fileContents: string) {
@@ -8,17 +8,17 @@ export function debugLogFileContents(fileContents: string) {
   console.log('--------------------\n');
 }
 
-export function debugLogTokens(tokens: TokenArray) {
+export function debugLogTokens(tokSet: TokenSet) {
   console.log('TOKENS:');
-  console.log('number - startIndex - type');
-  for (let i = 0; i < tokens.getCount(); ++i) {
-    const [startIndex, tokenType] = tokens.getToken(i);
+  console.log('number - startPos - type');
+  for (let i = 0; i < tokSet.getCount(); ++i) {
+    const [tokStartPos, tokType] = tokSet.getToken(i);
     console.log(
       `${i + 1}`.padStart(6),
       '-',
-      `${startIndex}`.padStart(10),
+      `${tokStartPos}`.padStart(8),
       '-',
-      tokenTypeToNameMap.get(tokenType),
+      tokenTypeToNameMap.get(tokType),
     );
   }
   console.log('');

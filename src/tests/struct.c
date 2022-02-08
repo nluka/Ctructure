@@ -1,5 +1,5 @@
 struct strbuf {
-  char * data;
+  char *data;
 };
 
 struct hostinfo {

@@ -1,12 +1,12 @@
 #include <stdio.h>
 
 static struct child {
-  struct child * next;
+  struct child *next;
   int address;
 };
 
 void for_loop() {
-  const struct child * blanket, * next;
+  const struct child *blanket, *next;
 
   for (; (next = blanket->next); blanket = next)
     if (!addrcmp(&blanket->address, &next->address)) {

@@ -14,12 +14,15 @@ enum TokenType {
       keywordBool,
       keywordChar,
       keywordDouble,
+      keywordEnum,
       keywordFloat,
       keywordInt,
       keywordLong,
       keywordShort,
       keywordSigned,
       keywordStatic,
+      keywordStruct,
+      keywordUnion,
       keywordUnsigned,
       keywordVoid,
       // Qualifiers
@@ -38,7 +41,6 @@ enum TokenType {
       keywordDefault,
       keywordDo,
       keywordElse,
-      keywordEnum,
       keywordExtern,
       keywordFor,
       keywordGeneric,
@@ -50,11 +52,9 @@ enum TokenType {
       keywordReturn,
       keywordSizeof,
       keywordStaticassert,
-      keywordStruct,
       keywordSwitch,
       keywordThreadlocal,
       keywordTypedef,
-      keywordUnion,
       keywordWhile,
   //#endregion Keywords
 
@@ -78,11 +78,13 @@ enum TokenType {
         operatorUnaryPlus,
         operatorUnaryMinus,
         operatorUnaryAddressOf,
-        operatorUnaryDereference,
+        // operatorUnaryDereference,
+        operatorUnaryIndirectionOrDereference,
     // Binary
       // Arithmetic
         operatorBinaryArithmeticAddition,
         operatorBinaryArithmeticSubtraction,
+        operatorBinaryArithmeticMultiplication,
         operatorBinaryArithmeticDivision,
         operatorBinaryArithmeticModulo,
       // Comparison
@@ -114,10 +116,10 @@ enum TokenType {
         operatorBinaryAssignmentBitwiseOr,
         operatorBinaryAssignmentBitwiseXor,
       // Misc
-        operatorBinaryMultiplicationOrIndirection,
+        operatorMemberSelectionDirect, // Dot (.)
+        operatorMemberSelectionIndirect, // Arrow (->)
+        // operatorBinaryMultiplicationOrIndirection,
     // Other
-      operatorMemberSelectionDirect, // Dot (.) https://www.geeksforgeeks.org/dot-operator-in-c-c/
-      operatorMemberSelectionIndirect, // Arrow (->) https://www.geeksforgeeks.org/arrow-operator-in-c-c-with-examples/
       operatorTernaryQuestion,
       operatorTernaryColon,
       operatorEllipses,
@@ -129,13 +131,13 @@ enum TokenType {
     specialColonSwitchOrLabelOrBitField,
     speicalLineContinuation,
     // Opening
-      specialParenthesisOpening,
-      specialBraceOpening,
-      specialBracketOpening,
+      specialParenthesisOpening,  // (
+      specialBraceOpening,        // {
+      specialBracketOpening,      // [
     // Closing
-      specialParenthesisClosing,
-      specialBraceClosing,
-      specialBracketClosing,
+      specialParenthesisClosing,  // )
+      specialBraceClosing,        // }
+      specialBracketClosing,      // ]
   //#endregion Special
 
   //#region Other
@@ -153,7 +155,7 @@ enum TokenType {
       During the inital tokenization, these overlapping operators are assigned
       one of the following types. They are disambiguated in a later pass.
     */
-    ambiguousPlus, // (binary addition | unary plus) ?
+    ambiguousPlus, // (binary addition | unary plus aka integer promotion) ?
     ambiguousMinus, // (binary subtraction | unary minus) ?
     ambiguousIncrement, // (prefix | postfix) ?
     ambiguousDecrement, // (prefix | postfix) ?
@@ -161,21 +163,17 @@ enum TokenType {
     ambiguousAmpersand, // (bitwise and | address of) ?
     ambiguousColon, // (switch case/default | ternary | label | bit field) ?
   //#endregion Ambiguous
-}
+} export default TokenType;
 
-export default TokenType;
-
-export function isTokenTypeKeyword(type: TokenType) {
+export function isTokenKeyword(type: TokenType) {
   return type >= TokenType.keywordBool &&
     type <= TokenType.keywordVoid;
 }
-
-export function isTokenTypeQualifierKeyword(type: TokenType) {
+export function isTokenKeywordTypeQualifier(type: TokenType) {
   return type >= TokenType.keywordAtomic &&
     type <= TokenType.keywordVolatile;
 }
-
-export function isTokenTypeOrTypeQualifierKeyword(type: TokenType) {
+export function isTokenTypeKeywordTypeOrTypeQualifier(type: TokenType) {
   return type >= TokenType.keywordBool &&
     type <= TokenType.keywordVolatile;
 }
@@ -187,39 +185,47 @@ export function isTokenConstant(type: TokenType) {
 
 export function isTokenUnaryOperator(type: TokenType) {
   return type >= TokenType.operatorUnaryArithmeticIncrementPrefix &&
-    type <= TokenType.operatorUnaryDereference;
+    type <= TokenType.operatorUnaryIndirectionOrDereference;
+}
+export function isTokenPostfixIncrOrDecrOperator(type: TokenType) {
+  return type === TokenType.operatorUnaryArithmeticIncrementPostfix ||
+    type <= TokenType.operatorUnaryArithmeticDecrementPostfix;
 }
 
 export function isTokenBinaryOperator(type: TokenType) {
   return type >= TokenType.operatorBinaryArithmeticAddition &&
-    type <= TokenType.operatorBinaryMultiplicationOrIndirection;
+    type <= TokenType.operatorMemberSelectionIndirect;
 }
-
-export function isTokenNonMultiplicationOrIndirectionBinaryOperator(type: TokenType) {
-  return type >= TokenType.operatorBinaryArithmeticAddition &&
-    type <= TokenType.operatorBinaryAssignmentBitwiseXor;
-}
-
-export function isTokenAssignmentOperator(type: TokenType) {
+export function isTokenBinaryOperatorAssignment(type: TokenType) {
   return type >= TokenType.operatorBinaryAssignmentDirect &&
     type <= TokenType.operatorBinaryAssignmentBitwiseXor;
 }
-
-export function isTokenMemberSelectionOperator(type: TokenType) {
+export function isTokenBinaryOperatorArithmetic(type: TokenType) {
+  return type >= TokenType.operatorBinaryArithmeticAddition &&
+    type <= TokenType.operatorMemberSelectionIndirect;
+}
+export function isTokenBinaryOperatorNonAssignment(type: TokenType) {
+  return type >= TokenType.operatorBinaryArithmeticAddition &&
+    type <= TokenType.operatorBinaryBitwiseShiftRight;
+}
+export function isTokenBinaryOperatorMemberSelection(type: TokenType) {
   return type >= TokenType.operatorMemberSelectionDirect &&
     type <= TokenType.operatorMemberSelectionIndirect;
 }
+// export function isTokenBinaryNonMultiplicationOrIndirectionOperator(type: TokenType) {
+//   return type >= TokenType.operatorBinaryArithmeticAddition &&
+//     type <= TokenType.operatorBinaryAssignmentBitwiseXor;
+// }
 
 export function isTokenTernaryOperatorComponent(type: TokenType) {
   return type === TokenType.operatorTernaryQuestion ||
-    type === TokenType.ambiguousColon;
+    type === TokenType.operatorTernaryColon;
 }
 
 export function isTokenSpecial(type: TokenType) {
   return type >= TokenType.specialParenthesisOpening &&
     type <= TokenType.specialSemicolon;
 }
-
 export function isTokenSpecialNonClosing(type: TokenType) {
   return type >= TokenType.specialComma &&
     type <= TokenType.specialBracketOpening;

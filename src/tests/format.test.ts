@@ -53,7 +53,6 @@ describe('format', () => {
   assert('./comment.c');
   assert('./empty_header.h');
   assert('./for.c');
-  assert('./func_pointer.h');
   assert('./if_else.c');
   assert('./label.c');
   assert('./misc.c');

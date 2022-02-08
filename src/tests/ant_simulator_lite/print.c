@@ -19,7 +19,7 @@ void print_banner() {
   print_horizontal_rule();
 }
 
-void printfc(const TextColor_t color, const char * const format, ...) {
+void printfc(const TextColor_t color, const char *const format, ...) {
   va_list args;
   va_start(args, format);
   stdout_set_text_color(color);

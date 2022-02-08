@@ -1,5 +1,3 @@
-const regex = /\r/g;
-
 export default function removeCarriageReturns(input: string) {
-  return input.replace(regex, '');
+  return input.replace(/\r/g, '');
 }

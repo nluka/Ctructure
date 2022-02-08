@@ -1,5 +1,5 @@
 import TokenCategory from './TokenCategory';
-import tokenDetermineLineAndPos from './tokenDetermineLineAndPos';
+import tokenDetermineLineAndNum from './tokenDetermineLineAndNum';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
 const commentOrOperatorRegex = /^\/$/,
@@ -10,43 +10,43 @@ const commentOrOperatorRegex = /^\/$/,
 /**
  * Determines the category of a token based on its first character.
  * @param fileContents The contents of the file the token exists in.
- * @param tokenStartIndex The index of the token's first character within `fileContents`.
+ * @param tokStartPos The index of the token's first character in `fileContents`.
  */
 export default function tokenDetermineCategory(
   fileContents: string,
-  tokenStartIndex: number,
+  tokStartPos: number,
 ): TokenCategory {
-  const tokenFirstChar = fileContents.charAt(tokenStartIndex);
+  const tokFirstChar = fileContents.charAt(tokStartPos);
 
-  if (tokenFirstChar === '\n') {
+  if (tokFirstChar === '\n') {
     return TokenCategory.newline;
   }
-  if (tokenFirstChar === '#') {
+  if (tokFirstChar === '#') {
     return TokenCategory.preproHash;
   }
-  if (tokenFirstChar.match(commentOrOperatorRegex)) {
+  if (tokFirstChar.match(commentOrOperatorRegex)) {
     return TokenCategory.commentOrOperator;
   }
-  if (tokenFirstChar.match(preproMacroOrKeywordOrIdentifierOrLabelRegex)) {
+  if (tokFirstChar.match(preproMacroOrKeywordOrIdentifierOrLabelRegex)) {
     return TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel;
   }
-  if (tokenFirstChar.match(constantRegex)) {
+  if (tokFirstChar.match(constantRegex)) {
     return TokenCategory.constant;
   }
-  if (tokenFirstChar.match(operatorRegex)) {
+  if (tokFirstChar.match(operatorRegex)) {
     return TokenCategory.operator;
   }
-  if (tokenValueToTypeMap.get(tokenFirstChar) !== undefined) {
+  if (tokenValueToTypeMap.get(tokFirstChar) !== undefined) {
     return TokenCategory.special;
   }
 
-  const { lineNum, tokenNum } = tokenDetermineLineAndPos(
+  const { lineNum, tokenNum } = tokenDetermineLineAndNum(
     fileContents,
-    tokenStartIndex,
+    tokStartPos,
   );
   throw new Error(
-    `unable to determine category of token at line ${lineNum} tokenNum ${tokenNum} (startIndex=${tokenStartIndex}, firstChar=${JSON.stringify(
-      tokenFirstChar,
+    `unable to determine category of token ${tokenNum} on line ${lineNum} (startPos=${tokStartPos}, firstChar=${JSON.stringify(
+      tokFirstChar,
     )})`,
   );
 }

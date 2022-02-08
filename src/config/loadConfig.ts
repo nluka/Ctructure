@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
+import { reportWarn } from '../commands/report';
 import currentConfig from './currentConfig';
 import path = require('path');
 
@@ -7,36 +8,54 @@ import path = require('path');
  * Attempts to load config (ctructureconf.json) from a workspace folder.
  * @param workspaceFolder The workspace folder to search.
  */
-export function loadConfig(workspaceFolder: vscode.WorkspaceFolder): void {
+export function loadConfig(
+  cmdName:
+    | 'formatCurrentDocument'
+    | 'formatWorkspaceFolder'
+    | 'formatAllWorkspaceFolders',
+  workspaceFolder: vscode.WorkspaceFolder,
+): void {
   const filePathname = path.resolve(
     workspaceFolder.uri.fsPath,
     'ctructureconf.json',
   );
-  let storedConfig: any;
   try {
-    storedConfig = JSON.parse(readFileSync(filePathname).toString());
+    var storedConfig = JSON.parse(readFileSync(filePathname).toString());
   } catch (err: any) {
-    console.warn(
-      `[Ctructure] unable to load config for workspace "${
-        workspaceFolder.name
-      }" -> ${
+    reportWarn(
+      cmdName,
+      `unable to load config for workspace "${workspaceFolder.name}" ${
         err.message.match(/^ENOENT/)
-          ? 'ctructureconf.json not found'
-          : err.message
+          ? '-> ctructureconf.json not found'
+          : `: ${err.message}`
       }`,
     );
     return;
   }
 
   if (typeof storedConfig !== 'object') {
-    console.warn(
-      `[Ctructure] unable to load config for workspace "${workspaceFolder.name}" -> file content not an object`,
+    reportWarn(
+      cmdName,
+      `unable to load config for workspace "${workspaceFolder.name}" -> file content not an object`,
     );
     return;
   }
 
+  function updateProperty(
+    prop: string,
+    value: any,
+    valueValidator: () => boolean,
+  ) {
+    if (valueValidator()) {
+      // @ts-ignore type checking done by `valueValidator`
+      currentConfig[property] = value;
+    } else {
+      reportWarn(cmdName, `invalid "${prop}" value in config`);
+    }
+  }
+
   {
-    const prop = 'formatWorkspaceFiles.showLogs';
+    const prop = 'formatAllWorkspaceFolders.showLogs';
     const value = storedConfig[prop];
     updateProperty(prop, value, () => typeof value === 'boolean');
   }
@@ -81,18 +100,5 @@ export function loadConfig(workspaceFolder: vscode.WorkspaceFolder): void {
     updateProperty(prop, value, () => typeof value === 'boolean');
   }
 
-  console.log('[Ctructure] loaded config:', currentConfig);
-}
-
-function updateProperty(
-  property: string,
-  value: any,
-  valueValidator: () => boolean,
-) {
-  if (valueValidator()) {
-    // @ts-ignore type checking done by `valueValidator`
-    currentConfig[property] = value;
-  } else {
-    console.warn(`[Ctructure] invalid "${property}" value in config`);
-  }
+  console.log(`[Ctructure.${cmdName}] loaded config:`, currentConfig);
 }

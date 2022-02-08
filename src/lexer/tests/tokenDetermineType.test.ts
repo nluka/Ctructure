@@ -21,7 +21,7 @@ const [
   TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
 ];
 
-describe('Regex', () => {
+describe('tokenDetermineType regex', () => {
   function assert(
     regex: RegExp,
     inputString: string,

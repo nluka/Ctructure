@@ -8,7 +8,7 @@ void misc1() {
     from = 0;
     to = items->items.nr;
   } else if (isdigit(*p)) {
-    char * endp;
+    char *endp;
     /*
      * A range can be specified like 5-7 or 5-.
      *
@@ -53,18 +53,18 @@ int misc2() {
   }
 }
 
-static const struct userdiff_funcname * diff_funcname_pattern(
-  struct diff_options * o,
-  struct diff_filespec * one
+static const struct userdiff_funcname *diff_funcname_pattern(
+  struct diff_options *o,
+  struct diff_filespec *one
 ) {
   diff_filespec_load_driver(one, o->repo->index);
   return one->driver->funcname.pattern ? &one->driver->funcname : NULL;
 }
 
 void diff_set_mnemonic_prefix(
-  struct diff_options * options,
-  const char * a,
-  const char * b
+  struct diff_options *options,
+  const char *a,
+  const char *b
 ) {
   if (!options->a_prefix)
     options->a_prefix = a;
@@ -73,9 +73,9 @@ void diff_set_mnemonic_prefix(
 }
 
 static bool do_http_request(
-  struct update_info * info,
-  const char * url,
-  long * response_code
+  struct update_info *info,
+  const char *url,
+  long *response_code
 ) {
   CURLcode code;
   uint8_t null_terminator = 0;
@@ -128,8 +128,8 @@ static struct object_id uninitialized = {
   "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
 };
 
-static bool update_files_to_local(void * param, obs_data_t * local_file) {
-  struct update_info * info = param;
+static bool update_files_to_local(void *param, obs_data_t *local_file) {
+  struct update_info *info = param;
   struct file_update_data data = {
     .name = obs_data_get_string(local_file, "name"),
     .version = (int)obs_data_get_int(local_file, "version")
@@ -142,9 +142,9 @@ static bool update_files_to_local(void * param, obs_data_t * local_file) {
   return true;
 }
 
-static inline obs_data_t * get_package(const char * base_path, const char * file) {
-  char * full_path = get_path(base_path, file);
-  obs_data_t * package = obs_data_create_from_json_file(full_path);
+static inline obs_data_t *get_package(const char *base_path, const char *file) {
+  char *full_path = get_path(base_path, file);
+  obs_data_t *package = obs_data_create_from_json_file(full_path);
   bfree(full_path);
   return package;
 }
@@ -168,7 +168,7 @@ struct option opts[] = {
     N_("add untracked file to archive"),
     0,
     add_file_cb,
-    (intptr_t) & base & something,
+    base & base & something,
     baseDecimal &
     things &
     otherThings &
@@ -214,16 +214,101 @@ struct option opts[] = {
   OPT_END()
 };
 
-const struct git_attr * git_attr(const char * name) {
+const struct git_attr *git_attr(const char *name) {
   return git_attr_internal(name, strlen(name));
 }
 
 /* What does a matched pattern decide? */
 struct attr_state {
-  const struct git_attr * attr;
-  const char * setto;
+  const struct git_attr *attr;
+  const char *setto;
 };
 
-const char * get_log_output_encoding(void) {
+const char *get_log_output_encoding(void) {
   return git_log_output_encoding ? git_log_output_encoding : get_commit_output_encoding();
+}
+
+static void kill_indent(struct strbuf *sb, const struct json_writer *jw) {
+  int k;
+  int eat_it = 0;
+
+  strbuf_reset(sb);
+  for (k = 0; k < jw->json.len; k++) {
+    char ch = jw->json.buf[k];
+    if (eat_it && ch == ' ')
+      continue;
+    if (ch == '\n') {
+      eat_it = 1;
+      continue;
+    }
+    eat_it = 0;
+    strbuf_addch(sb, ch);
+  }
+}
+
+static void append_sub_jw(struct json_writer *jw, const struct json_writer *value) {
+  /*
+   * If both are pretty, increase the indentation of the sub_jw
+   * to better fit under the super.
+   *
+   * If the super is pretty, but the sub_jw is compact, leave the
+   * sub_jw compact.  (We don't want to parse and rebuild the sub_jw
+   * for this debug-ish feature.)
+   *
+   * If the super is compact, and the sub_jw is pretty, convert
+   * the sub_jw to compact.
+   *
+   * If both are compact, keep the sub_jw compact.
+   */
+  if (jw->pretty && jw->open_stack.len && value->pretty) {
+    struct strbuf sb = STRBUF_INIT;
+    increase_indent(&sb, value, jw->open_stack.len * 2);
+    strbuf_addbuf(&jw->json, &sb);
+    strbuf_release(&sb);
+    return;
+  }
+  if (!jw->pretty && value->pretty) {
+    struct strbuf sb = STRBUF_INIT;
+    kill_indent(&sb, value);
+    strbuf_addbuf(&jw->json, &sb);
+    strbuf_release(&sb);
+    return;
+  }
+
+  strbuf_addbuf(&jw->json, &value->json);
+}
+
+static inline void obs_data_item_setdata(
+  struct obs_data_item **p_item,
+  const void *data,
+  size_t size,
+  enum obs_data_type type
+) {
+  if (!p_item || !*p_item)
+    return;
+
+  struct obs_data_item *item = *p_item;
+  ptrdiff_t old_default_data_pos =
+    (uint8_t *)get_default_data_ptr(item) - (uint8_t * )item;
+  item_data_release(item);
+
+  item->data_size = size;
+  item->type = type;
+  item->
+  data_len = (item->default_size || item->autoselect_size) ? get_align_size(size) : size;
+  item = obs_data_item_ensure_capacity(item);
+
+  if (item->default_size || item->autoselect_size)
+    memmove(
+      get_default_data_ptr(item),
+      (uint8_t * )item + old_default_data_pos,
+      item->default_len + item->autoselect_size
+    );
+
+  if (size) {
+    memcpy(get_item_data(item), data, size);
+    item_data_addref(item);
+  }
+
+  *p_item = item;
 }

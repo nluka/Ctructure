@@ -1,23 +1,32 @@
 export default function indexOfUnescaped(
-  string: string,
+  str: string,
   searchChar: string,
   escapeChar: string,
-  startIndex = 0,
+  startPos = 0,
 ) {
-  let searchCount = 0;
-  let index = startIndex;
+  for (let pos = startPos; pos < str.length; ++pos) {
+    if (str.charAt(pos) !== searchChar) {
+      continue;
+    }
 
-  while (true) {
-    index = string.indexOf(searchChar, searchCount === 0 ? index : index + 1);
-    if (index === -1) {
-      return -1;
+    let escapeCount = 0;
+    for (let i = pos - 1; i >= 0; --i) {
+      if (str.charAt(i) === escapeChar) {
+        ++escapeCount;
+      } else {
+        break;
+      }
     }
-    const isEscaped =
-      string.charAt(index - 1) === escapeChar &&
-      string.charAt(index - 2) !== escapeChar;
+
+    const isEscaped = !isEven(escapeCount);
     if (!isEscaped) {
-      return index;
+      return pos;
     }
-    ++searchCount;
   }
+
+  return -1;
+}
+
+function isEven(num: number) {
+  return num % 2 === 0;
 }

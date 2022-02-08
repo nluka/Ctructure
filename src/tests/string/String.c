@@ -23,10 +23,10 @@ String_t string_create(const size_t initialCount) {
   resizes `data` by `expansionAmount`,
   returns boolean indicating whether expansion was successful
 */
-bool string_expand(String_t * const string, const size_t expansionAmount) {
+bool string_expand(String_t *const string, const size_t expansionAmount) {
   const size_t bytesNeeded = string->bytesAllocated + expansionAmount;
 
-  char * newData = NULL;
+  char *newData = NULL;
   newData = realloc(string->data, bytesNeeded);
   if (newData == NULL) {
     return false;
@@ -42,7 +42,7 @@ bool string_expand(String_t * const string, const size_t expansionAmount) {
   attempts to append `chars` to `string`,
   returns boolean indicating whether append was successful
 */
-bool string_append_chars(String_t * const string, const char * const chars) {
+bool string_append_chars(String_t *const string, const char *const chars) {
   const size_t charCount = strlen(chars);
   const lli overflowCount =
     (string->length + charCount) - (string->bytesAllocated - 1);
@@ -67,7 +67,7 @@ bool string_append_chars(String_t * const string, const char * const chars) {
   attempts to append `number` to `string`,
   returns boolean indicating whether append was successful
 */
-bool string_append_int(String_t * const string, const int number) {
+bool string_append_int(String_t *const string, const int number) {
   char buffer[12];
   const size_t digitCount = snprintf(buffer, sizeof buffer, "%d", number);
 
@@ -94,7 +94,7 @@ bool string_append_int(String_t * const string, const int number) {
   attempts to append `number` to `string`,
   returns boolean indicating whether append was successful
 */
-bool string_append_uint64(String_t * const string, const uint64_t number) {
+bool string_append_uint64(String_t *const string, const uint64_t number) {
   char buffer[21];
   const size_t digitCount = snprintf(sizeof buffer, "%" PRIu64, number);
 
@@ -129,7 +129,7 @@ bool string_append_uint64(String_t * const string, const uint64_t number) {
 /*
   destroys `string`, freeing `string->data`
 */
-void string_destroy(String_t * const string) {
+void string_destroy(String_t *const string) {
   if (string->data != NULL) {
     free(string->data);
     string->data = NULL;

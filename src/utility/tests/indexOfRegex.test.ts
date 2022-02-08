@@ -4,13 +4,13 @@ describe('indexOfRegex', () => {
   function assert(
     searchString: string,
     regex: RegExp,
-    startIndex: number,
+    startPos: number,
     expectedIndex: number | null,
   ) {
     test(`return ${expectedIndex} when searchString=${JSON.stringify(
       searchString,
-    )}, regex=${regex}, startIndex=${startIndex}`, () => {
-      expect(indexOfRegex(searchString, regex, startIndex)).toBe(
+    )}, regex=${regex}, startPos=${startPos}`, () => {
+      expect(indexOfRegex(searchString, regex, startPos)).toBe(
         expectedIndex,
       );
     });

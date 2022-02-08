@@ -48,7 +48,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
       [TokenType.keywordIf, 'if '],
       [TokenType.keywordImaginary, 'imaginary'],
       [TokenType.keywordNoreturn, 'noreturn'],
-      [TokenType.keywordRegister, 'register'],
+      [TokenType.keywordRegister, 'register '],
       [TokenType.keywordReturn, 'return'],
       [TokenType.keywordSizeof, 'sizeof '],
       [TokenType.keywordStaticassert, 'static_assert'],
@@ -80,11 +80,12 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
         [TokenType.operatorUnaryPlus, '+'],
         [TokenType.operatorUnaryMinus, '-'],
         [TokenType.operatorUnaryAddressOf, '&'],
-        [TokenType.operatorUnaryDereference, '*'],
+        [TokenType.operatorUnaryIndirectionOrDereference, '*'],
     // Binary
       // Arithmetic
         [TokenType.operatorBinaryArithmeticAddition, ' + '],
         [TokenType.operatorBinaryArithmeticSubtraction, ' - '],
+        [TokenType.operatorBinaryArithmeticMultiplication, ' * '],
         [TokenType.operatorBinaryArithmeticDivision, ' / '],
         [TokenType.operatorBinaryArithmeticModulo, ' % '],
       // Comparison
@@ -114,10 +115,9 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
         [TokenType.operatorBinaryAssignmentBitwiseOr, ' |= '],
         [TokenType.operatorBinaryAssignmentBitwiseXor, ' ^= '],
       // Misc
-        [TokenType.operatorBinaryMultiplicationOrIndirection, '*'],
+         [TokenType.operatorMemberSelectionDirect, '.'],
+        [TokenType.operatorMemberSelectionIndirect, '->'],
     // Other
-      [TokenType.operatorMemberSelectionDirect, '.'],
-      [TokenType.operatorMemberSelectionIndirect, '->'],
       [TokenType.operatorTernaryQuestion, ' ? '],
       [TokenType.operatorTernaryColon, ' : '],
       [TokenType.operatorEllipses, '...'],

@@ -1,8 +1,8 @@
-import TokenArray from '../../TokenArray';
+import TokenSet from '../../TokenSet';
 
 describe('TokenArray.checkIndexBounds', () => {
   function assert(
-    tokenArray: TokenArray,
+    tokenArray: TokenSet,
     indexToCheck: number,
     shouldThrow: boolean,
   ) {
@@ -21,7 +21,7 @@ describe('TokenArray.checkIndexBounds', () => {
 
   {
     const count = 0;
-    const ta = new TokenArray(count);
+    const ta = new TokenSet(count);
     assert(ta, -10, true);
     assert(ta, -1, true);
     assert(ta, 0, true);
@@ -30,7 +30,7 @@ describe('TokenArray.checkIndexBounds', () => {
 
   {
     const count = 10;
-    const ta = new TokenArray(count);
+    const ta = new TokenSet(count);
     for (let i = 1; i <= count; ++i) {
       ta.pushUnpacked(0, 0);
     }
@@ -45,7 +45,7 @@ describe('TokenArray.checkIndexBounds', () => {
 
   {
     const count = 100;
-    const ta = new TokenArray(count);
+    const ta = new TokenSet(count);
     for (let i = 1; i <= count; ++i) {
       ta.pushUnpacked(0, 0);
     }

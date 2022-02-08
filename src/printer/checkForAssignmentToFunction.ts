@@ -1,12 +1,12 @@
 import TokenType from '../lexer/TokenType';
 
 export default function checkForAssignmentToFunction(
-  tokenTypes: Uint8Array,
-  tokenCount: number,
+  tokTypes: Uint8Array,
+  tokCount: number,
   index: number,
 ): boolean {
-  for (let i = index; i < tokenCount; ++i) {
-    const tokenType = tokenTypes[i];
+  for (let i = index; i < tokCount; ++i) {
+    const tokenType = tokTypes[i];
     if (tokenType === TokenType.newline) {
       continue;
     }
@@ -17,8 +17,8 @@ export default function checkForAssignmentToFunction(
     return false;
   }
 
-  for (let i = index; i < tokenCount; ++i) {
-    const tokenType = tokenTypes[i];
+  for (let i = index; i < tokCount; ++i) {
+    const tokenType = tokTypes[i];
     if (tokenType === TokenType.newline) {
       continue;
     }

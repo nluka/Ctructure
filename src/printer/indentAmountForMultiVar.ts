@@ -1,7 +1,7 @@
 export default function getIndentAmountForMultiVar(
   formattedFileStr: string,
 ): number {
-  let startIndex = 0;
+  let startPos = 0;
   let assignmentFound = false;
   let i = formattedFileStr.length - 1;
 
@@ -19,10 +19,10 @@ export default function getIndentAmountForMultiVar(
 
   for (; i >= 0; --i) {
     const char = formattedFileStr.charAt(i);
-    if (char === ' ' && startIndex === 0) {
-      startIndex = i;
+    if (char === ' ' && startPos === 0) {
+      startPos = i;
     } else if (char === '\n') {
-      return startIndex - i;
+      return startPos - i;
     }
   }
 

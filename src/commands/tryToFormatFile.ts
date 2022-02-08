@@ -1,8 +1,8 @@
 import { statSync, writeFileSync } from 'fs';
 import * as vscode from 'vscode';
-import TokenArray from './lexer/TokenArray';
-import tokenizeFile from './lexer/tokenizeFile';
-import printer from './printer/printer';
+import tokenizeFile from '../lexer/tokenizeFile';
+import TokenSet from '../lexer/TokenSet';
+import printer from '../printer/printer';
 
 const BYTES_IN_512_MEGABYTES = 536_870_912;
 
@@ -37,13 +37,13 @@ export default async function tryToFormatFile(
   }
 
   let fileContents: string;
-  let tokens: TokenArray;
-  let formatted: string;
+  let tokSet: TokenSet;
+  let formattedStr: string;
 
   let lexTime: number;
   try {
     const startTime = Date.now();
-    [fileContents, tokens] = tokenizeFile(filePathname);
+    [fileContents, tokSet] = tokenizeFile(filePathname);
     lexTime = (Date.now() - startTime) / 1000;
   } catch (err: any) {
     return { filePathname, wasSuccessful: false, info: null, err };
@@ -52,7 +52,7 @@ export default async function tryToFormatFile(
   let printTime: number;
   try {
     const startTime = Date.now();
-    formatted = printer(fileContents, tokens);
+    formattedStr = printer(fileContents, tokSet);
     printTime = (Date.now() - startTime) / 1000;
   } catch (err: any) {
     return { filePathname, wasSuccessful: false, info: null, err };
@@ -61,7 +61,7 @@ export default async function tryToFormatFile(
   let writeTime: number;
   try {
     const startTime = Date.now();
-    writeFileSync(filePathname, formatted);
+    writeFileSync(filePathname, formattedStr);
     writeTime = (Date.now() - startTime) / 1000;
   } catch (err: any) {
     return { filePathname, wasSuccessful: false, info: null, err };
@@ -81,7 +81,7 @@ enum LogType {
 }
 
 /**
- * Generates and logs a message based on `formatResult`.
+ * Generates a message based on `formatResult` and logs it to stdout.
  * @param formatResult The result to log
  * @param shouldShowErrMsgInWindow If true, will display errors in VSCode window.
  * @returns The generated message.
@@ -113,7 +113,7 @@ export function logFormatResult(
     return msg;
   }
 
-  const msg = `formatted (in ${(
+  const msg = `formatted (${(
     info.lexTime +
     info.printTime +
     info.writeTime

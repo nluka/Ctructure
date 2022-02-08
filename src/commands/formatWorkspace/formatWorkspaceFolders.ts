@@ -1,23 +1,27 @@
 import { readFileSync } from 'fs';
-import * as vscode from 'vscode';
-import currentConfig from '../config/currentConfig';
-import { loadConfig } from '../config/loadConfig';
+import {
+  ProgressLocation,
+  RelativePattern,
+  window,
+  workspace,
+  WorkspaceFolder,
+} from 'vscode';
+import currentConfig from '../../config/currentConfig';
+import { loadConfig } from '../../config/loadConfig';
+import removeCarriageReturns from '../../utility/removeCarriageReturns';
+import sleep from '../../utility/sleep';
+import { reportInfo, reportWarn } from '../report';
 import tryToFormatFile, {
   IFormatResult,
   logFormatResult,
 } from '../tryToFormatFile';
-import removeCarriageReturns from '../utility/removeCarriageReturns';
-import sleep from '../utility/sleep';
 import path = require('path');
 
-export default async function formatWorkspaceFiles(): Promise<void> {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (workspaceFolders === undefined) {
-    reportErr('no workspace folders found');
-    return;
-  }
-
-  console.log('[Ctructure.formatWorkspaceFiles] starting...');
+export default async function formatWorkspaceFolders(
+  cmdName: 'formatWorkspaceFolder' | 'formatAllWorkspaceFolders',
+  workspaceFolders: readonly WorkspaceFolder[],
+): Promise<void> {
+  console.log(`[Ctructure.${cmdName}] starting...`);
 
   const startTime = Date.now();
 
@@ -25,10 +29,14 @@ export default async function formatWorkspaceFiles(): Promise<void> {
   let totalFilesFailedCount = 0;
   let logs: string[] = [];
 
-  await vscode.window.withProgress(
+  await window.withProgress(
     {
-      location: vscode.ProgressLocation.Notification,
-      title: `[Ctructure.formatWorkspaceFiles] formatting workspace (${workspaceFolders.length} folders)...`,
+      location: ProgressLocation.Notification,
+      title: `[Ctructure.${cmdName}] formatting ${
+        cmdName === 'formatWorkspaceFolder'
+          ? `workspace "${workspaceFolders[0].name}"`
+          : `all (${workspaceFolders.length}) workspace folders...`
+      }`,
       cancellable: true,
     },
     async () => {
@@ -43,7 +51,7 @@ export default async function formatWorkspaceFiles(): Promise<void> {
 
       for (const wsFolder of workspaceFolders) {
         const { filesAttemptedCount, filesFailedCount } =
-          await formatWorkspaceFolder(wsFolder, logs);
+          await formatWorkspaceFolder(cmdName, wsFolder, logs);
         totalFilesAttemptedCount += filesAttemptedCount;
         totalFilesFailedCount += filesFailedCount;
       }
@@ -51,34 +59,32 @@ export default async function formatWorkspaceFiles(): Promise<void> {
   );
 
   if (totalFilesAttemptedCount === 0) {
-    reportWarn(`[Ctructure.formatWorkspaceFiles] no source files found`);
+    reportWarn(cmdName, 'no matching source files found');
     return;
   }
 
   const secondsElapsed = ((Date.now() - startTime) / 1000).toFixed(3);
 
-  if (currentConfig['formatWorkspaceFiles.showLogs']) {
-    await vscode.workspace.openTextDocument({
-      content: [
-        'Ctructure.formatWorkspaceFiles logs',
-        '-----------------------------------',
-        logs.join('\n'),
-      ].join('\n'),
+  if (currentConfig[`${cmdName}.showLogs`]) {
+    const header = `Ctructure.${cmdName} logs`;
+    await workspace.openTextDocument({
+      content: [header, '-'.repeat(header.length), logs.join('\n')].join('\n'),
     });
   }
 
-  let msg = `[Ctructure.formatWorkspaceFiles] formatted ${
+  let msg = `formatted ${
     totalFilesAttemptedCount - totalFilesFailedCount
   } file(s) in ${secondsElapsed}s (${totalFilesFailedCount} failed)`;
-  if (!currentConfig['formatWorkspaceFiles.showLogs']) {
-    msg += `, enable "formatWorkspaceFiles.showLogs" for details`;
+  if (!currentConfig[`${cmdName}.showLogs`]) {
+    msg += `, enable "${cmdName}.showLogs" for details`;
   }
   const reporter = totalFilesFailedCount === 0 ? reportInfo : reportWarn;
-  reporter(msg);
+  reporter(cmdName, msg);
 }
 
 async function formatWorkspaceFolder(
-  workspaceFolder: vscode.WorkspaceFolder,
+  cmdName: 'formatWorkspaceFolder' | 'formatAllWorkspaceFolders',
+  workspaceFolder: WorkspaceFolder,
   logs: string[],
 ): Promise<{
   filesAttemptedCount: number;
@@ -97,16 +103,13 @@ async function formatWorkspaceFolder(
     }
   } catch (err: any) {
     console.warn(
-      `[Ctructure] skipping ignores for workspace folder "${workspaceFolder.name}" -> ${err.message}`,
+      `[Ctructure.${cmdName}] skipping ignores for "${workspaceFolder.name}" -> ${err.message}`,
     );
   }
 
-  let files = await vscode.workspace.findFiles(
-    new vscode.RelativePattern(workspaceFolder, '{**/*.c,**/*.h}'),
-    new vscode.RelativePattern(
-      workspaceFolder,
-      `{${excludedGlobPatterns.join(',')}}`,
-    ),
+  let files = await workspace.findFiles(
+    new RelativePattern(workspaceFolder, '{**/*.c,**/*.h}'),
+    new RelativePattern(workspaceFolder, `{${excludedGlobPatterns.join(',')}}`),
   );
   if (files.length === 0) {
     return {
@@ -115,7 +118,7 @@ async function formatWorkspaceFolder(
     };
   }
 
-  loadConfig(workspaceFolder);
+  loadConfig(cmdName, workspaceFolder);
 
   const tasks: Promise<IFormatResult>[] = [];
   let filesFailedCount = 0;
@@ -144,20 +147,4 @@ async function formatWorkspaceFolder(
     filesAttemptedCount: files.length,
     filesFailedCount,
   };
-}
-
-function reportInfo(msg: string) {
-  console.log(msg);
-  vscode.window.showInformationMessage(msg);
-}
-
-function reportWarn(msg: string) {
-  console.warn(msg);
-  vscode.window.showWarningMessage(msg);
-}
-
-function reportErr(reason: string) {
-  const msg = `[Ctructure.formatWorkspaceFiles] failed: ${reason}`;
-  console.error(msg);
-  vscode.window.showErrorMessage(msg);
 }

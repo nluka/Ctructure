@@ -4,15 +4,15 @@
 #include "../util/util.hpp"
 
 void ant_validate(
-  Ant const * const ant,
-  Grid const * const grid,
-  char const * const simName
+  Ant const *const ant,
+  Grid const *const grid,
+  char const *const simName
 ) {
   if (
     !grid_is_col_in_bounds(grid, ant->col) ||
     !grid_is_row_in_bounds(grid, ant->row)
   ) {
-    char const * const format =
+    char const *const format =
       "Parsing of simulation '%s' failed: ant starting coords outside of grid bounds";
     log_event(ET_ERROR, format, simName);
     printfc(TC_RED, format, simName);
@@ -22,13 +22,13 @@ void ant_validate(
 }
 
 AntStepResult ant_take_step(
-  Ant * const ant,
-  Grid * const grid,
-  Ruleset const * const ruleset
+  Ant *const ant,
+  Grid *const grid,
+  Ruleset const *const ruleset
 ) {
   size_t const currCellIndex = grid_get_cell_index(grid, ant->col, ant->row);
   color_t const currCellColor = grid->cells[currCellIndex];
-  Rule const * const currCellRule = &ruleset->rules[currCellColor];
+  Rule const *const currCellRule = &ruleset->rules[currCellColor];
 
   { // turn
     ant->orientation = ant->orientation + currCellRule->turnDirection;

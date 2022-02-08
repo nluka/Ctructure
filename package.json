@@ -10,20 +10,25 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:Ctructure.formatCurrentFile",
-    "onCommand:Ctructure.formatWorkspaceFiles",
+    "onCommand:Ctructure.formatCurrentDocument",
+    "onCommand:Ctructure.formatWorkspaceFolder",
+    "onCommand:Ctructure.formatAllWorkspaceFolders",
     "onCommand:Ctructure.generateConfigFile"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "Ctructure.formatCurrentFile",
-        "title": "Ctructure: Format Current File"
+        "command": "Ctructure.formatCurrentDocument",
+        "title": "Ctructure: Format Current Document"
       },
       {
-        "command": "Ctructure.formatWorkspaceFiles",
-        "title": "Ctructure: Format Files in Workspace"
+        "command": "Ctructure.formatWorkspaceFolder",
+        "title": "Ctructure: Format Workspace Folder"
+      },
+      {
+        "command": "Ctructure.formatAllWorkspaceFolders",
+        "title": "Ctructure: Format All Workspace Folders"
       },
       {
         "command": "Ctructure.generateConfigFile",

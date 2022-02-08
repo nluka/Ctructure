@@ -1,14 +1,14 @@
-import tokenDetermineLineAndPos from "../tokenDetermineLineAndPos";
+import tokenDetermineLineAndNum from "../tokenDetermineLineAndNum";
 
-describe('tokenDetermineLineNumAndPos', () => {
+describe('tokenDetermineLineAndNum', () => {
   function assert(
-    tokenStartIndex: number,
+    tokStartPos: number,
     fileContents: string,
     expectedLineNum: number,
     expectedTokenNum: number,
   ) {
-    test(`return ${expectedLineNum},${expectedTokenNum} when fileContents=${JSON.stringify(fileContents)}, tokenStartIndex=${tokenStartIndex}`, () => {
-      expect(tokenDetermineLineAndPos(fileContents, tokenStartIndex)).toEqual(
+    test(`return ${expectedLineNum},${expectedTokenNum} when fileContents=${JSON.stringify(fileContents)}, tokStartPos=${tokStartPos}`, () => {
+      expect(tokenDetermineLineAndNum(fileContents, tokStartPos)).toEqual(
         { lineNum: expectedLineNum, tokenNum: expectedTokenNum }
       );
     });

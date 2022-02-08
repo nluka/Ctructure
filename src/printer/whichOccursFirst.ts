@@ -1,18 +1,18 @@
-import { OverflowableContext } from './printer';
+import { TokenTypeOverflowable } from './printer';
 
 export default function whichOccursFirst(
-  tokenTypes: Uint8Array,
+  tokTypes: Uint8Array,
   index: number,
-  tokenTypeOne: OverflowableContext,
-  tokenTypeTwo: OverflowableContext,
-): OverflowableContext {
-  for (let i = index; i < tokenTypes.length; ++i) {
-    if (tokenTypes[i] === tokenTypeOne) {
-      return tokenTypeOne;
+  tokTypeOne: TokenTypeOverflowable,
+  tokTypeTwo: TokenTypeOverflowable,
+): TokenTypeOverflowable {
+  for (let i = index; i < tokTypes.length; ++i) {
+    if (tokTypes[i] === tokTypeOne) {
+      return tokTypeOne;
     }
-    if (tokenTypes[i] === tokenTypeTwo) {
-      return tokenTypeTwo;
+    if (tokTypes[i] === tokTypeTwo) {
+      return tokTypeTwo;
     }
   }
-  return tokenTypeTwo;
+  return tokTypeTwo;
 }

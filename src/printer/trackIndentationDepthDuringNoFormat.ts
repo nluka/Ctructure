@@ -5,14 +5,14 @@ import { Context } from './printer';
 import PrinterCategory from './PrinterCategory';
 
 export default function trackIndentationDepthDuringNoFormat(
-  tokenTypes: Uint8Array,
-  tokenCount: number,
+  tokTypes: Uint8Array,
+  tokCount: number,
   index: number,
   indentationDepth: number,
   multiVarAlwaysNewline: boolean,
   contextStack: Stack,
   context: Context,
-  previousType: TokenType | null,
+  prevType: TokenType | null,
   overflow: boolean,
   parenDepth: number,
   noFormatType:
@@ -33,12 +33,13 @@ export default function trackIndentationDepthDuringNoFormat(
     overflow: boolean;
     indentationLevel: number;
   } | null = null;
+
   function decreaseBlockLevel() {
     indentationDepth > 0 ? --indentationDepth : 0;
   }
 
-  for (let i = index + 1; i < tokenCount; ++i) {
-    const currTokenType = tokenTypes[i];
+  for (let i = index + 1; i < tokCount; ++i) {
+    const currTokenType = tokTypes[i];
     switch (currTokenType) {
       case TokenType.newline:
         if (noFormatType === TokenType.commentDirectiveNoFormatSingleLine) {
@@ -47,7 +48,7 @@ export default function trackIndentationDepthDuringNoFormat(
               indentationDepth: indentationDepth,
               contextStack: contextStack,
               context: context,
-              previousType: previousType,
+              previousType: prevType,
               overflow: overflow,
               parenDepth: parenDepth,
             };
@@ -65,8 +66,6 @@ export default function trackIndentationDepthDuringNoFormat(
         break;
 
       case TokenType.specialSemicolon:
-        if (context === TokenType.keywordFor) {
-        }
         if (context === PrinterCategory.assignmentOverflow) {
           decreaseBlockLevel();
           context = null;
@@ -119,13 +118,13 @@ export default function trackIndentationDepthDuringNoFormat(
         });
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.functionDecl;
-        } else if (previousType === TokenType.identifier) {
+        } else if (prevType === TokenType.identifier) {
           context = PrinterCategory.functionCall;
         } else if (context !== TokenType.keywordFor) {
           context = null;
         }
         if (
-          getNextNonNewlineTokenType(tokenTypes, tokenCount, i) ===
+          getNextNonNewlineTokenType(tokTypes, tokCount, i) ===
           TokenType.specialParenthesisClosing
         ) {
           overflow = false;
@@ -141,8 +140,8 @@ export default function trackIndentationDepthDuringNoFormat(
         overflow = previousContext.overflow;
         indentationDepth = previousContext.indentationLevel;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokenTypes,
-          tokenCount,
+          tokTypes,
+          tokCount,
           i,
         );
         if (
@@ -171,10 +170,9 @@ export default function trackIndentationDepthDuringNoFormat(
           overflow,
           indentationLevel: indentationDepth,
         });
-        if (context === PrinterCategory.array) {
-        } else if (previousType === TokenType.operatorBinaryAssignmentDirect) {
+        if (prevType === TokenType.operatorBinaryAssignmentDirect) {
           context = PrinterCategory.array;
-        } else {
+        } else if (context !== PrinterCategory.array) {
           context = null;
         }
         ++indentationDepth;
@@ -184,8 +182,8 @@ export default function trackIndentationDepthDuringNoFormat(
         previousContext = contextStack.pop();
         indentationDepth = previousContext.indentationLevel;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokenTypes,
-          tokenCount,
+          tokTypes,
+          tokCount,
           i,
         );
         if (contextStack.peek().context === PrinterCategory.singleLineIf) {
@@ -194,16 +192,6 @@ export default function trackIndentationDepthDuringNoFormat(
           context = null;
           overflow = false;
           break;
-        }
-        if (context === PrinterCategory.array) {
-        } else if (
-          previousContext.context === TokenType.keywordEnum ||
-          previousContext.context === PrinterCategory.typeDefStruct
-        ) {
-        } else if (
-          nextNonNewlineTokenType !== TokenType.specialParenthesisClosing &&
-          nextNonNewlineTokenType !== TokenType.specialSemicolon
-        ) {
         }
         context = previousContext.context;
         overflow = previousContext.overflow;
@@ -258,7 +246,7 @@ export default function trackIndentationDepthDuringNoFormat(
           break;
         }
         if (
-          getNextNonNewlineTokenType(tokenTypes, tokenCount, i) ===
+          getNextNonNewlineTokenType(tokTypes, tokCount, i) ===
           TokenType.specialBraceOpening
         ) {
           decreaseBlockLevel();
@@ -272,7 +260,7 @@ export default function trackIndentationDepthDuringNoFormat(
         ) {
           context = null;
           if (
-            getNextNonNewlineTokenType(tokenTypes, tokenCount, i) ===
+            getNextNonNewlineTokenType(tokTypes, tokCount, i) ===
             TokenType.specialBraceOpening
           ) {
             decreaseBlockLevel();
@@ -296,8 +284,8 @@ export default function trackIndentationDepthDuringNoFormat(
       case TokenType.keywordElse:
         context = TokenType.keywordElse;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokenTypes,
-          tokenCount,
+          tokTypes,
+          tokCount,
           i,
         );
         if (nextNonNewlineTokenType !== TokenType.specialBraceOpening) {
@@ -327,7 +315,7 @@ export default function trackIndentationDepthDuringNoFormat(
         break;
 
       case TokenType.keywordStruct:
-        if (previousType === TokenType.keywordTypedef) {
+        if (prevType === TokenType.keywordTypedef) {
           context = PrinterCategory.typeDefStruct;
         } else {
           context = TokenType.keywordStruct;
@@ -339,14 +327,6 @@ export default function trackIndentationDepthDuringNoFormat(
         context = currTokenType;
         previousContext = contextStack.peek();
         indentationDepth = previousContext.indentationLevel + 2;
-        break;
-
-      case TokenType.keywordReturn:
-        if (
-          getNextNonNewlineTokenType(tokenTypes, tokenCount, i) !==
-          TokenType.specialSemicolon
-        ) {
-        }
         break;
 
       case TokenType.keywordWhile:
@@ -364,8 +344,8 @@ export default function trackIndentationDepthDuringNoFormat(
 
       case TokenType.commentSingleLine:
         nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokenTypes,
-          tokenCount,
+          tokTypes,
+          tokCount,
           i,
         );
         if (
@@ -391,7 +371,7 @@ export default function trackIndentationDepthDuringNoFormat(
           indentationDepth: indentationDepth,
           contextStack: contextStack,
           context: context,
-          previousType: previousType,
+          previousType: prevType,
           overflow: overflow,
           parenDepth: parenDepth,
         };
@@ -400,11 +380,12 @@ export default function trackIndentationDepthDuringNoFormat(
         break;
     }
   }
+
   return {
     indentationDepth: indentationDepth,
     contextStack: contextStack,
     context: context,
-    previousType: previousType,
+    previousType: prevType,
     overflow: overflow,
     parenDepth: parenDepth,
   };

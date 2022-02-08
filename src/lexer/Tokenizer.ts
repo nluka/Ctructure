@@ -1,10 +1,10 @@
 import tokenDetermineCategory from './tokenDetermineCategory';
 import tokenDetermineType from './tokenDetermineType';
-import tokenFindLastIndex from './tokenFindLastIndex';
+import tokenFindEndPosition from './tokenFindEndPosition';
 import TokenType, { isTokenAmbiguous } from './TokenType';
 
 /**
- * An object for extracting tokens from a string.
+ * An object for statefully extracting tokens from a string.
  */
 export default class Tokenizer {
   private cursorPosition = 0;
@@ -19,38 +19,38 @@ export default class Tokenizer {
       return null;
     }
 
-    const tokenCategory = tokenDetermineCategory(
+    const tokCategory = tokenDetermineCategory(
       this.fileContents,
       this.cursorPosition,
     );
 
-    const tokenLastIndex = tokenFindLastIndex(
+    const tokEndPos = tokenFindEndPosition(
       this.fileContents,
       this.cursorPosition,
-      tokenCategory,
+      tokCategory,
     );
 
-    const tokenType = tokenDetermineType(
+    const tokType = tokenDetermineType(
       this.fileContents,
       this.cursorPosition,
-      tokenLastIndex,
-      tokenCategory,
+      tokEndPos,
+      tokCategory,
     );
-    if (isTokenAmbiguous(tokenType)) {
+    if (isTokenAmbiguous(tokType)) {
       this.ambiguousTokenIndices.push(this.tokensExtractedCount);
     }
 
-    const tokenStartIndex = this.cursorPosition;
+    const tokStartPos = this.cursorPosition;
 
-    this.cursorPosition = tokenLastIndex + 1;
+    this.cursorPosition = tokEndPos + 1;
     ++this.tokensExtractedCount;
 
-    return [tokenStartIndex, tokenType];
+    return [tokStartPos, tokType];
   }
 
   /**
-   * Moves `this.cursorPosition` to the starting index of the next token (or
-   * the end of file if no more tokens exist).
+   * Moves `this.cursorPosition` to the starting index of the next token (or the
+   * end of file if no more tokens exist).
    * @returns True if a new token was found, false otherwise.
    */
   private moveCursorToBeginningOfNextToken(): boolean {

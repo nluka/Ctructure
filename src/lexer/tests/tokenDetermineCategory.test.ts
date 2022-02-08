@@ -23,10 +23,10 @@ describe('tokenDetermineCategory', () => {
   function assert(
     expectedCategory: TokenCategory,
     fileContents: string,
-    tokenStartIndex = 0,
+    tokStartPos = 0,
   ) {
-    test(`${tokenCategoryToStringMap.get(expectedCategory)} when firstChar=${JSON.stringify(fileContents.charAt(tokenStartIndex))}`, () => {
-      expect(tokenDetermineCategory(fileContents, tokenStartIndex)).toBe(
+    test(`${tokenCategoryToStringMap.get(expectedCategory)} when firstChar=${JSON.stringify(fileContents.charAt(tokStartPos))}`, () => {
+      expect(tokenDetermineCategory(fileContents, tokStartPos)).toBe(
         expectedCategory,
       );
     });

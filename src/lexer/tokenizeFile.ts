@@ -1,40 +1,38 @@
 import { readFileSync } from 'fs';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
-import TokenArray from './TokenArray';
 import tokenDisambiguate from './tokenDisambiguate';
 import Tokenizer from './Tokenizer';
+import TokenSet from './TokenSet';
 
 /**
- * Parses a file and extracts all tokens, storing them in a `TokenArra` in the order they
- * appear within the file.
+ * Parses a file and extracts all tokens, storing them in a `TokenSet` in the
+ * order they appear in the file.
  * @param filePathname The pathname of the file to tokenize.
- * @returns An array, the first element is normalized contents of the file, the second
- * is the array of tokens.
+ * @returns An array, first is the normalized contents of the file, second is
+ * the set of tokens.
  */
-export default function tokenizeFile(
-  filePathname: string,
-): [string, TokenArray] {
+export default function tokenizeFile(filePathname: string): [string, TokenSet] {
   const fileBuffer = readFileSync(filePathname);
   const fileContents = removeCarriageReturns(fileBuffer.toString());
   const tokenizer = new Tokenizer(fileContents);
-  const tokens = new TokenArray(fileContents.length / 3);
+  const tokSet = new TokenSet(fileContents.length / 3);
 
   while (true) {
-    const extractedToken = tokenizer.extractNextToken();
-    if (extractedToken === null) {
+    const extractedTok = tokenizer.extractNextToken();
+    if (extractedTok === null) {
       break;
     }
-    tokens.pushPacked(extractedToken);
+    tokSet.pushPacked(extractedTok);
   }
 
-  for (const ambigTokenIndex of tokenizer.getAmbiguousTokenIndices()) {
+  for (const ambigTokIndex of tokenizer.getAmbiguousTokenIndices()) {
     const disambiguatedTokenType = tokenDisambiguate(
-      ambigTokenIndex,
-      tokens,
+      ambigTokIndex,
+      tokSet,
       fileContents,
     );
-    tokens.setTokenType(ambigTokenIndex, disambiguatedTokenType);
+    tokSet.setTokenType(ambigTokIndex, disambiguatedTokenType);
   }
 
-  return [fileContents, tokens];
+  return [fileContents, tokSet];
 }

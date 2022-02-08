@@ -1,19 +1,19 @@
 import TokenType from '../lexer/TokenType';
 
 export default function nextNonNewlineTokenType(
-  tokenTypes: Uint8Array,
-  tokenCount: number,
+  tokTypes: Uint8Array,
+  tokCount: number,
   index: number,
-  tokensAhead?: number,
+  toksAhead?: number,
 ): TokenType {
-  for (let i = index + 1; i < tokenCount; ++i) {
+  for (let i = index + 1; i < tokCount; ++i) {
     if (
-      tokenTypes[i] === TokenType.newline ||
-      (tokensAhead !== undefined && --tokensAhead > 0)
+      tokTypes[i] === TokenType.newline ||
+      (toksAhead !== undefined && --toksAhead > 0)
     ) {
       continue;
     }
-    return tokenTypes[i];
+    return tokTypes[i];
   }
   return TokenType.newline;
 }

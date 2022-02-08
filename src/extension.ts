@@ -1,29 +1,28 @@
 import * as vscode from 'vscode';
-import formatCurrentFile from './commands/formatCurrentFile';
-import formatWorkspaceFiles from './commands/formatWorkspaceFiles';
-import generateConfigFile from './commands/generateConfigFile';
+import cmdFormatCurrentDocument from './commands/formatCurrentDocument';
+import cmdFormatAllWorkspaceFolders from './commands/formatWorkspace/cmdFormatAllWorkspaceFolders';
+import cmdFormatWorkspaceFolder from './commands/formatWorkspace/cmdFormatWorkspaceFolder';
+import cmdGenerateConfigFile from './commands/generateConfigFile/cmdGenerateConfigFile';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('[Ctructure] extension activated');
 
-  const item = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    1000,
-  );
-  item.command = 'Ctructure.formatWorkspaceFiles';
-
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'Ctructure.formatCurrentFile',
-      formatCurrentFile,
+      'Ctructure.formatCurrentDocument',
+      cmdFormatCurrentDocument,
     ),
     vscode.commands.registerCommand(
-      'Ctructure.formatWorkspaceFiles',
-      formatWorkspaceFiles,
+      'Ctructure.formatWorkspaceFolder',
+      cmdFormatWorkspaceFolder,
+    ),
+    vscode.commands.registerCommand(
+      'Ctructure.formatAllWorkspaceFolders',
+      cmdFormatAllWorkspaceFolders,
     ),
     vscode.commands.registerCommand(
       'Ctructure.generateConfigFile',
-      generateConfigFile,
+      cmdGenerateConfigFile,
     ),
   );
 }

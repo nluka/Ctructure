@@ -1,5 +1,5 @@
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
-import tokenDetermineLineAndPos from './tokenDetermineLineAndPos';
+import tokenDetermineLineAndNum from './tokenDetermineLineAndNum';
 import TokenType from './TokenType';
 import tokenValueToTypeMap from './tokenValueToTypeMap';
 
@@ -11,17 +11,17 @@ const commentSingleLineRegex = /^\/\//;
  * Determines a token's type by its category, start position, and end position.
  * May return an ambiguous type.
  * @param fileContents The contents of the file the token exists in.
- * @param tokenStartIndex The index of the token's first character within `fileContents`.
- * @param tokenLastIndex The index of the token's last character within `fileContents`.
- * @param tokenCategory The category of the token.
+ * @param tokStartPos The index of the token's first character in `fileContents`.
+ * @param tokEndPos The index of the token's last character in `fileContents`.
+ * @param tokCategory The category of the token.
  */
 export default function tokenDetermineType(
   fileContents: string,
-  tokenStartIndex: number,
-  tokenLastIndex: number,
-  tokenCategory: TokenCategory,
+  tokStartPos: number,
+  tokEndPos: number,
+  tokCategory: TokenCategory,
 ): TokenType {
-  switch (tokenCategory) {
+  switch (tokCategory) {
     case TokenCategory.newline: {
       return TokenType.newline;
     }
@@ -31,28 +31,28 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.commentOrOperator: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      const type = tokenValueToTypeMap.get(rawToken);
+      const rawTok = fileContents.slice(tokStartPos, tokEndPos + 1);
+      const type = tokenValueToTypeMap.get(rawTok);
       if (type !== undefined) {
         // operator
         return type;
       }
 
       // no-format directives
-      if (rawToken.match(commentDirectiveNoFormatSingleLineRegex)) {
+      if (rawTok.match(commentDirectiveNoFormatSingleLineRegex)) {
         return TokenType.commentDirectiveNoFormatSingleLine;
       }
-      if (rawToken.match(commentDirectiveNoFormatMultiLineRegex)) {
+      if (rawTok.match(commentDirectiveNoFormatMultiLineRegex)) {
         return TokenType.commentDirectiveNoFormatMultiLine;
       }
 
-      return rawToken.match(commentSingleLineRegex)
+      return rawTok.match(commentSingleLineRegex)
         ? TokenType.commentSingleLine
         : TokenType.commentMultiLine;
     }
 
     case TokenCategory.constant: {
-      const firstChar = fileContents.charAt(tokenStartIndex);
+      const firstChar = fileContents.charAt(tokStartPos);
       switch (firstChar) {
         case `"`:
           return TokenType.constantString;
@@ -64,29 +64,29 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      return tokenValueToTypeMap.get(rawToken) || TokenType.identifier;
+      const rawTok = fileContents.slice(tokStartPos, tokEndPos + 1);
+      return tokenValueToTypeMap.get(rawTok) || TokenType.identifier;
     }
   }
 
   const createErr = () => {
-    const { lineNum, tokenNum } = tokenDetermineLineAndPos(
+    const { lineNum, tokenNum } = tokenDetermineLineAndNum(
       fileContents,
-      tokenStartIndex,
+      tokStartPos,
     );
     return new Error(
-      `unable to determine type of token at line ${lineNum} tokenNum ${tokenNum} (startIndex=${tokenStartIndex}, lastIndex = ${tokenLastIndex}, category = ${tokenCategoryToStringMap.get(
-        tokenCategory,
+      `unable to determine type of token ${tokenNum} on line ${lineNum} (startPos=${tokStartPos}, endPos=${tokEndPos}, category=${tokenCategoryToStringMap.get(
+        tokCategory,
       )}, value=${JSON.stringify(
-        fileContents.slice(tokenStartIndex, tokenLastIndex + 1),
+        fileContents.slice(tokStartPos, tokEndPos + 1),
       )})`,
     );
   };
 
-  switch (tokenCategory) {
+  switch (tokCategory) {
     case TokenCategory.special: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      const type = tokenValueToTypeMap.get(rawToken);
+      const rawTok = fileContents.slice(tokStartPos, tokEndPos + 1);
+      const type = tokenValueToTypeMap.get(rawTok);
       if (type === undefined) {
         throw createErr();
       }
@@ -94,8 +94,8 @@ export default function tokenDetermineType(
     }
 
     case TokenCategory.operator: {
-      const rawToken = fileContents.slice(tokenStartIndex, tokenLastIndex + 1);
-      const type = tokenValueToTypeMap.get(rawToken);
+      const rawTok = fileContents.slice(tokStartPos, tokEndPos + 1);
+      const type = tokenValueToTypeMap.get(rawTok);
       if (type === undefined) {
         throw createErr();
       }

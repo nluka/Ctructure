@@ -1,6 +1,6 @@
 import TokenType from './TokenType';
 
-// For testing and debugging
+// For better test outputs
 const tokenTypeToNameMap = new Map<TokenType, string>([
   //#region Preprocessor
     [TokenType.preproHash, 'preproHash'],
@@ -81,11 +81,13 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
         [TokenType.operatorUnaryPlus, 'operatorUnaryPlus'],
         [TokenType.operatorUnaryMinus, 'operatorUnaryMinus'],
         [TokenType.operatorUnaryAddressOf, 'operatorUnaryAddressOf'],
-        [TokenType.operatorUnaryDereference, 'operatorUnaryDereference'],
+        // [TokenType.operatorUnaryDereference, 'operatorUnaryDereference'],
+        [TokenType.operatorUnaryIndirectionOrDereference, 'operatorUnaryIndirectionOrDereference'],
     // Binary
       // Arithmetic
         [TokenType.operatorBinaryArithmeticAddition, 'operatorBinaryArithmeticAddition'],
         [TokenType.operatorBinaryArithmeticSubtraction, 'operatorBinaryArithmeticSubtraction'],
+        [TokenType.operatorBinaryArithmeticMultiplication, 'operatorBinaryArithmeticMultiplication'],
         [TokenType.operatorBinaryArithmeticDivision, 'operatorBinaryArithmeticDivision'],
         [TokenType.operatorBinaryArithmeticModulo, 'operatorBinaryArithmeticModulo'],
       // Comparison
@@ -117,10 +119,9 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
         [TokenType.operatorBinaryAssignmentBitwiseOr, 'operatorBinaryAssignmentBitwiseOr'],
         [TokenType.operatorBinaryAssignmentBitwiseXor, 'operatorBinaryAssignmentBitwiseXor'],
       // Misc
-        [TokenType.operatorBinaryMultiplicationOrIndirection, 'operatorBinaryMultiplicationOrIndirection'],
+        [TokenType.operatorMemberSelectionDirect, 'operatorMemberSelectionDirect'],
+        [TokenType.operatorMemberSelectionIndirect, 'operatorMemberSelectionIndirect'],
     // Other
-      [TokenType.operatorMemberSelectionDirect, 'operatorMemberSelectionDirect'],
-      [TokenType.operatorMemberSelectionIndirect, 'operatorMemberSelectionIndirect'],
       [TokenType.operatorTernaryQuestion, 'operatorTernaryQuestion'],
       [TokenType.operatorTernaryColon, 'operatorTernaryColon'],
       [TokenType.operatorEllipses, 'operatorEllipses'],

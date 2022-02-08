@@ -1,5 +1,5 @@
 /**
- * The category of a token based on its first character.
+ * The category of a token based solely on the first character.
  */
 enum TokenCategory {
   newline,

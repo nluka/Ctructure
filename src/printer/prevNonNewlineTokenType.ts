@@ -1,15 +1,15 @@
 import TokenType from '../lexer/TokenType';
 
 export default function getPrevNonNewlineTokenType(
-  tokenTypes: Uint8Array,
-  tokenCount: number,
+  tokTypes: Uint8Array,
+  tokCount: number,
   index: number,
 ): TokenType {
-  for (let i = index - 1; i < tokenCount; --i) {
-    if (tokenTypes[i] === TokenType.newline) {
+  for (let i = index - 1; i < tokCount; --i) {
+    if (tokTypes[i] === TokenType.newline) {
       continue;
     }
-    return tokenTypes[i];
+    return tokTypes[i];
   }
   return TokenType.newline;
 }
