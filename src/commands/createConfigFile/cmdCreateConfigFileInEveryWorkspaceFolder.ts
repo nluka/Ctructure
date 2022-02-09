@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { reportErr } from '../report';
-import tryToGenerateConfigFile from './tryToGenerateConfig';
+import tryToCreateConfigFile from './tryToCreateConfigFile';
 
-export default async function cmdGenerateConfigFileInEveryWorkspaceFolder(): Promise<void> {
-  const command = 'generateConfigFileInEveryWorkspaceFolder';
+export default async function cmdCreateConfigFileInEveryWorkspaceFolder(): Promise<void> {
+  const command = 'createConfigFileInEveryWorkspaceFolder';
 
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (workspaceFolders === undefined || workspaceFolders.length === 0) {
@@ -13,6 +13,6 @@ export default async function cmdGenerateConfigFileInEveryWorkspaceFolder(): Pro
 
   for (const wsFolder of workspaceFolders) {
     const workspacePath = wsFolder.uri.fsPath;
-    tryToGenerateConfigFile(command, workspacePath, false);
+    tryToCreateConfigFile(command, workspacePath, false);
   }
 }

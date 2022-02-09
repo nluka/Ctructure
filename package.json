@@ -13,7 +13,8 @@
     "onCommand:Ctructure.formatCurrentDocument",
     "onCommand:Ctructure.formatWorkspaceFolder",
     "onCommand:Ctructure.formatAllWorkspaceFolders",
-    "onCommand:Ctructure.generateConfigFile"
+    "onCommand:Ctructure.createConfigFile",
+    "onCommand:Ctructure.createConfigFileInEveryWorkspaceFolder"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -31,8 +32,12 @@
         "title": "Ctructure: Format All Workspace Folders"
       },
       {
-        "command": "Ctructure.generateConfigFile",
-        "title": "Ctructure: Generate Config File"
+        "command": "Ctructure.createConfigFile",
+        "title": "Ctructure: Create Configuration File"
+      },
+      {
+        "command": "Ctructure.createConfigFileInEveryWorkspaceFolder",
+        "title": "Ctructure: Create Configuration File In Every Workspace Folder"
       }
     ]
   },

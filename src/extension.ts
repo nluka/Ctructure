@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import cmdFormatCurrentDocument from './commands/cmdFormatCurrentDocument';
+import cmdCreateConfigFile from './commands/createConfigFile/cmdCreateConfigFile';
+import cmdCreateConfigFileInEveryWorkspaceFolder from './commands/createConfigFile/cmdCreateConfigFileInEveryWorkspaceFolder';
 import cmdFormatAllWorkspaceFolders from './commands/formatWorkspace/cmdFormatAllWorkspaceFolders';
 import cmdFormatWorkspaceFolder from './commands/formatWorkspace/cmdFormatWorkspaceFolder';
-import cmdGenerateConfigFile from './commands/generateConfigFile/cmdGenerateConfigFile';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('[Ctructure] extension activated');
@@ -21,8 +22,12 @@ export function activate(context: vscode.ExtensionContext) {
       cmdFormatAllWorkspaceFolders,
     ),
     vscode.commands.registerCommand(
-      'Ctructure.generateConfigFile',
-      cmdGenerateConfigFile,
+      'Ctructure.createConfigFile',
+      cmdCreateConfigFile,
+    ),
+    vscode.commands.registerCommand(
+      'Ctructure.createConfigFileInEveryWorkspaceFolder',
+      cmdCreateConfigFileInEveryWorkspaceFolder,
     ),
   );
 }

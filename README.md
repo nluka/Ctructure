@@ -7,7 +7,8 @@ Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-in
     - [formatCurrentDocument](#formatcurrentdocument)
     - [formatWorkspaceFolder](#formatworkspacefolder)
     - [formatAllWorkspaceFolders](#formatallworkspacefolders)
-    - [generateConfigFile](#generateconfigfile)
+    - [createConfigFile](#createconfigfile)
+    - [createConfigFileInEveryWorkspaceFolder](#createconfigfileineveryworkspacefolder)
   - [Directives](#directives)
     - [no-format](#no-format)
   - [Limitations](#limitations)
@@ -34,9 +35,13 @@ Formats all matching files in a workspace folder. If there are multiple workspac
 
 Formats all matching files in all workspace folders. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.formatAllWorkspaceFolders`.
 
-#### generateConfigFile
+#### createConfigFile
 
-Generates a configuration file (ctructureconf.json) in the root directory of a workspace folder. If there are multiple workspace folders, a selection must be made. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.generateConfigFile`.
+Creates a configuration file (ctructureconf.json) in the root directory of a workspace folder. If there are multiple workspace folders, a selection must be made. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.createConfigFile`.
+
+#### createConfigFileInEveryWorkspaceFolder
+
+Creates a configuration file (ctructureconf.json) in every workspace folder. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.createConfigFileInEveryWorkspaceFolder`.
 
 ### Directives
 

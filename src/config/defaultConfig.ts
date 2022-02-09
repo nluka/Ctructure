@@ -8,7 +8,7 @@ const defaultConfig: IConfig = {
   'printer.lineEndings': 'lf',
   'printer.lineWidth': 80,
   'printer.multiVariableAlwaysNewline': false,
-  'printer.multiVariableMatchIndent': true,
+  'printer.multiVariableMatchIndent': false,
 };
 Object.freeze(defaultConfig);
 export default defaultConfig;
@@ -21,6 +21,6 @@ export const defaultConfigStringified = `{
   "printer.lineEndings": "lf",
   "printer.lineWidth": 80,
   "printer.multiVariableAlwaysNewline": false,
-  "printer.multiVariableMatchIndent": true
+  "printer.multiVariableMatchIndent": false
 }
 `;

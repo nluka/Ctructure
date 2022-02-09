@@ -4,7 +4,7 @@ import { defaultConfigStringified } from '../../config/defaultConfig';
 import { reportErr } from '../report';
 import path = require('path');
 
-export default function tryToGenerateConfigFile(
+export default function tryToCreateConfigFile(
   cmdName: string,
   workspacePath: string,
   show: boolean,
@@ -17,9 +17,7 @@ export default function tryToGenerateConfigFile(
         window.showTextDocument(document);
       });
     }
-    console.log(
-      `[Ctructure.${cmdName}] generated config file "${filePathname}"`,
-    );
+    console.log(`[Ctructure.${cmdName}] created config file "${filePathname}"`);
   } catch (err: any) {
     reportErr(cmdName, err.message);
   }

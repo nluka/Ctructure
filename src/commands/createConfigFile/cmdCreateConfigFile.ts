@@ -1,9 +1,9 @@
 import { window, workspace } from 'vscode';
 import { reportErr } from '../report';
-import tryToGenerateConfigFile from './tryToGenerateConfig';
+import tryToCreateConfigFile from './tryToCreateConfigFile';
 
-export default async function cmdGenerateConfigFile(): Promise<void> {
-  const command = 'generateConfigFile';
+export default async function cmdCreateConfigFile(): Promise<void> {
+  const command = 'createConfigFile';
 
   const workspaceFolders = workspace.workspaceFolders;
   if (workspaceFolders === undefined || workspaceFolders.length === 0) {
@@ -28,6 +28,6 @@ export default async function cmdGenerateConfigFile(): Promise<void> {
 
   if (workspacePath !== undefined) {
     // User made a selection
-    tryToGenerateConfigFile(command, workspacePath, true);
+    tryToCreateConfigFile(command, workspacePath, true);
   }
 }
