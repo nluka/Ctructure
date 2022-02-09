@@ -1,5 +1,5 @@
-import TokenSet from './lexer/TokenSet';
-import tokenTypeToNameMap from './lexer/tokenTypeToNameMap';
+import TokenSet from '../lexer/TokenSet';
+import tokenTypeToNameMap from '../lexer/tokenTypeToNameMap';
 
 export function debugLogFileContents(fileContents: string) {
   console.log('FILE CONTENTS:');
