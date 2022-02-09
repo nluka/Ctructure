@@ -13,6 +13,6 @@ export default async function cmdGenerateConfigFileInEveryWorkspaceFolder(): Pro
 
   for (const wsFolder of workspaceFolders) {
     const workspacePath = wsFolder.uri.fsPath;
-    tryToGenerateConfigFile(command, workspacePath);
+    tryToGenerateConfigFile(command, workspacePath, false);
   }
 }

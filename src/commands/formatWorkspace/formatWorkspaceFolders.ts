@@ -12,8 +12,8 @@ import removeCarriageReturns from '../../utility/removeCarriageReturns';
 import sleep from '../../utility/sleep';
 import { reportInfo, reportWarn } from '../report';
 import tryToFormatFile, {
+  createLogFormatResult as createLogFormatResult,
   IFormatResult,
-  logFormatResult,
 } from '../tryToFormatFile';
 import path = require('path');
 
@@ -25,7 +25,7 @@ export default async function formatWorkspaceFolders(
 
   const startTime = Date.now();
 
-  let totalFilesAttemptedCount = 0;
+  let totalFilesMatchedCount = 0;
   let totalFilesFailedCount = 0;
   let logs: string[] = [];
 
@@ -34,7 +34,7 @@ export default async function formatWorkspaceFolders(
       location: ProgressLocation.Notification,
       title: `[Ctructure.${cmdName}] formatting ${
         cmdName === 'formatWorkspaceFolder'
-          ? `workspace "${workspaceFolders[0].name}"`
+          ? `workspace folder "${workspaceFolders[0].name}"`
           : `all (${workspaceFolders.length}) workspace folders...`
       }`,
       cancellable: true,
@@ -50,31 +50,40 @@ export default async function formatWorkspaceFolders(
       await sleep(5);
 
       for (const wsFolder of workspaceFolders) {
-        const { filesAttemptedCount, filesFailedCount } =
-          await formatWorkspaceFolder(cmdName, wsFolder, logs);
-        totalFilesAttemptedCount += filesAttemptedCount;
-        totalFilesFailedCount += filesFailedCount;
+        try {
+          const { filesMatchedCount, filesFailedCount } = await formatFolder(
+            cmdName,
+            wsFolder,
+            logs,
+          );
+          totalFilesMatchedCount += filesMatchedCount;
+          totalFilesFailedCount += filesFailedCount;
+        } catch (err) {
+          console.error(err);
+        }
       }
     },
   );
 
-  if (totalFilesAttemptedCount === 0) {
+  if (totalFilesMatchedCount === 0) {
     reportWarn(cmdName, 'no matching source files found');
     return;
   }
 
   const secondsElapsed = ((Date.now() - startTime) / 1000).toFixed(3);
+  const succeededCount = totalFilesMatchedCount - totalFilesFailedCount;
+  const currDate = new Date();
 
   if (currentConfig[`${cmdName}.showLogs`]) {
-    const header = `Ctructure.${cmdName} logs`;
-    await workspace.openTextDocument({
+    const header = `Ctructure.${cmdName} logs (${currDate.toDateString()} ${currDate.toLocaleTimeString()}) ${succeededCount} succeeded, ${totalFilesFailedCount} failed`;
+    const document = await workspace.openTextDocument({
       content: [header, '-'.repeat(header.length), logs.join('\n')].join('\n'),
+      language: 'log',
     });
+    await window.showTextDocument(document);
   }
 
-  let msg = `formatted ${
-    totalFilesAttemptedCount - totalFilesFailedCount
-  } file(s) in ${secondsElapsed}s (${totalFilesFailedCount} failed)`;
+  let msg = `formatted ${succeededCount} file(s) in ${secondsElapsed}s (${totalFilesFailedCount} failed)`;
   if (!currentConfig[`${cmdName}.showLogs`]) {
     msg += `, enable "${cmdName}.showLogs" for details`;
   }
@@ -82,15 +91,15 @@ export default async function formatWorkspaceFolders(
   reporter(cmdName, msg);
 }
 
-async function formatWorkspaceFolder(
+async function formatFolder(
   cmdName: 'formatWorkspaceFolder' | 'formatAllWorkspaceFolders',
   workspaceFolder: WorkspaceFolder,
   logs: string[],
 ): Promise<{
-  filesAttemptedCount: number;
+  filesMatchedCount: number;
   filesFailedCount: number;
 }> {
-  let excludedGlobPatterns: string[] = [];
+  const excludedGlobPatterns: string[] = [];
   try {
     const ignoreFileContents = removeCarriageReturns(
       readFileSync(
@@ -107,18 +116,25 @@ async function formatWorkspaceFolder(
     );
   }
 
-  let files = await workspace.findFiles(
+  const files = await workspace.findFiles(
     new RelativePattern(workspaceFolder, '{**/*.c,**/*.h}'),
     new RelativePattern(workspaceFolder, `{${excludedGlobPatterns.join(',')}}`),
   );
   if (files.length === 0) {
     return {
-      filesAttemptedCount: 0,
+      filesMatchedCount: 0,
       filesFailedCount: 0,
     };
   }
 
-  loadConfig(cmdName, workspaceFolder);
+  // Load config
+  {
+    const wasSuccessful = loadConfig(cmdName, workspaceFolder);
+    if (!wasSuccessful) {
+      // to ensure notification from `loadConfig` has time to appear
+      await sleep(10);
+    }
+  }
 
   const tasks: Promise<IFormatResult>[] = [];
   let filesFailedCount = 0;
@@ -132,9 +148,17 @@ async function formatWorkspaceFolder(
   // Wait for all work to be completed
   const results = await Promise.allSettled(tasks);
 
+  const successLogs: string[] = [];
+
   for (const res of results) {
     if (res.status === 'fulfilled') {
-      logs.push(logFormatResult(res.value, false));
+      const log = createLogFormatResult(res.value, true);
+      if (!log.startsWith('[F')) {
+        successLogs.push(log);
+      } else {
+        // [FAIL]
+        logs.push(log); // This way all fails come first
+      }
       if (!res.value.wasSuccessful) {
         ++filesFailedCount;
       }
@@ -143,8 +167,12 @@ async function formatWorkspaceFolder(
     }
   }
 
+  for (const log of successLogs) {
+    logs.push(log);
+  }
+
   return {
-    filesAttemptedCount: files.length,
+    filesMatchedCount: files.length,
     filesFailedCount,
   };
 }

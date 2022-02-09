@@ -19,13 +19,15 @@ export default async function cmdFormatWorkspaceFolder(): Promise<void> {
     // Let user select which workspace folder to format
     const choice = await window.showQuickPick(
       workspaceFolders.map(
+        // Embed folder index for easy retrieval later
         (wsFolder) => `${wsFolder.index + 1}: ${wsFolder.uri.fsPath}`,
       ),
     );
 
     return choice === undefined
       ? -1
-      : parseInt(choice.substring(0, choice?.indexOf(':'))) - 1;
+      : // Extract embedded index
+        parseInt(choice.substring(0, choice?.indexOf(':'))) - 1;
   })();
 
   if (folderIndex !== -1) {

@@ -45,7 +45,7 @@ export default function tokenDetermineCategory(
     tokStartPos,
   );
   throw new Error(
-    `unable to determine category of token ${tokenNum} on line ${lineNum} (startPos=${tokStartPos}, firstChar=${JSON.stringify(
+    `cannot determine category of token ${tokenNum} on line ${lineNum} (firstChar=${JSON.stringify(
       tokFirstChar,
     )})`,
   );

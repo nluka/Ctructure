@@ -429,12 +429,33 @@ describe('tokenDisambiguate', () => {
           TokenType.specialSemicolon ],
         TokenType.operatorUnaryIndirectionOrDereference, 'struct CusType *p;');
       assert(
+        [ TokenType.keywordInline,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialSemicolon ],
+        TokenType.operatorUnaryIndirectionOrDereference, 'inline CusType *p;');
+      assert(
+        [ TokenType.keywordTypedef,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialSemicolon ],
+        TokenType.operatorUnaryIndirectionOrDereference, 'typedef CusType *CusTypePtr;');
+      assert(
         [ TokenType.specialBraceOpening,
           TokenType.identifier,
           TokenType.ambiguousAsterisk,
           TokenType.identifier,
           TokenType.specialSemicolon ],
         TokenType.operatorUnaryIndirectionOrDereference, '{ CusType *p;');
+      assert(
+        [ TokenType.specialBraceClosing,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialSemicolon ],
+        TokenType.operatorUnaryIndirectionOrDereference, '} CusType *p;');
       assert(
         [ TokenType.specialBraceOpening,
           TokenType.identifier,
@@ -607,6 +628,16 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousAsterisk,
           TokenType.constantCharacter ],
         TokenType.operatorBinaryArithmeticMultiplication, `a * 'c'`);
+      assert(
+        [ TokenType.specialBracketClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier ],
+        TokenType.operatorBinaryArithmeticMultiplication, '] * a');
+      assert(
+        [ TokenType.specialBracketClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.constantNumber ],
+        TokenType.operatorBinaryArithmeticMultiplication, '] * 1');
       assert(
         [ TokenType.operatorBinaryAssignmentDirect,
           TokenType.identifier,

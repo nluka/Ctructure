@@ -14,6 +14,7 @@ import TokenSet from './TokenSet';
 export default function tokenizeFile(filePathname: string): [string, TokenSet] {
   const fileBuffer = readFileSync(filePathname);
   const fileContents = removeCarriageReturns(fileBuffer.toString());
+
   const tokenizer = new Tokenizer(fileContents);
   const tokSet = new TokenSet(fileContents.length / 3);
 

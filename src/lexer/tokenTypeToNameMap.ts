@@ -47,6 +47,7 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
       [TokenType.keywordGeneric, 'keywordGeneric'],
       [TokenType.keywordGoto, 'keywordGoto'],
       [TokenType.keywordIf, 'keywordIf'],
+      [TokenType.keywordInline, 'keywordInline'],
       [TokenType.keywordImaginary, 'keywordImaginary'],
       [TokenType.keywordNoreturn, 'keywordNoreturn'],
       [TokenType.keywordRegister, 'keywordRegister'],
@@ -81,7 +82,6 @@ const tokenTypeToNameMap = new Map<TokenType, string>([
         [TokenType.operatorUnaryPlus, 'operatorUnaryPlus'],
         [TokenType.operatorUnaryMinus, 'operatorUnaryMinus'],
         [TokenType.operatorUnaryAddressOf, 'operatorUnaryAddressOf'],
-        // [TokenType.operatorUnaryDereference, 'operatorUnaryDereference'],
         [TokenType.operatorUnaryIndirectionOrDereference, 'operatorUnaryIndirectionOrDereference'],
     // Binary
       // Arithmetic

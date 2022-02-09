@@ -75,7 +75,7 @@ export default function tokenDetermineType(
       tokStartPos,
     );
     return new Error(
-      `unable to determine type of token ${tokenNum} on line ${lineNum} (startPos=${tokStartPos}, endPos=${tokEndPos}, category=${tokenCategoryToStringMap.get(
+      `cannot determine token type ${tokenNum} on line ${lineNum} (category=${tokenCategoryToStringMap.get(
         tokCategory,
       )}, value=${JSON.stringify(
         fileContents.slice(tokStartPos, tokEndPos + 1),

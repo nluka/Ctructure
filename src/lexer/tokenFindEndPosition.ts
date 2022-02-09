@@ -159,7 +159,7 @@ export default function tokenFindEndPosition(
         tokStartPos,
       );
       throw new Error(
-        `unable to find last index of token ${tokenNum} on line ${lineNum} (category=${tokenCategoryToStringMap.get(
+        `cannot find token end pos ${tokenNum} on line ${lineNum} (category=${tokenCategoryToStringMap.get(
           tokCategory,
         )})`,
       );

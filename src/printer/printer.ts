@@ -7,8 +7,8 @@ import TokenType, {
   isTokenBinaryOperator,
   isTokenConstant,
   isTokenKeyword,
+  isTokenKeywordTypeOrTypeQualifier,
   isTokenKeywordTypeQualifier,
-  isTokenTypeKeywordTypeOrTypeQualifier
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
 import checkForAssignmentToFunction from './checkForAssignmentToFunction';
@@ -408,7 +408,7 @@ export default function printer(
           }
           break;
         }
-        if (isTokenTypeKeywordTypeOrTypeQualifier(nextNonNewlineTokenType)) {
+        if (isTokenKeywordTypeOrTypeQualifier(nextNonNewlineTokenType)) {
           currString += ' ';
         }
         context = previousContext.context;
@@ -832,7 +832,7 @@ export default function printer(
         currString += extractedIdentifier;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (
-          isTokenTypeKeywordTypeOrTypeQualifier(nextNonNewlineTokenType) ||
+          isTokenKeywordTypeOrTypeQualifier(nextNonNewlineTokenType) ||
           nextNonNewlineTokenType === TokenType.identifier ||
           isTokenConstant(nextNonNewlineTokenType)
         ) {

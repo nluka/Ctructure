@@ -45,6 +45,7 @@ const tokenValueToTypeMap = new Map<string, TokenType>([
       ['_Generic', TokenType.keywordGeneric],
       ['goto', TokenType.keywordGoto],
       ['if', TokenType.keywordIf],
+      ['inline', TokenType.keywordInline],
       ['_Imaginary', TokenType.keywordImaginary],
       ['_Noreturn', TokenType.keywordNoreturn],
       ['register', TokenType.keywordRegister],

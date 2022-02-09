@@ -13,8 +13,8 @@ describe('format', () => {
       const resolvedFilePathname = path.resolve(__dirname, fileRelativePathname);
       const fileContents = removeCarriageReturns(readFileSync(resolvedFilePathname).toString());
       const formatted = (function format() {
-        const [fileContents, tokens] = tokenizeFile(resolvedFilePathname);
-        const formatted = printer(fileContents, tokens, true);
+        const [fileContents, tokSet] = tokenizeFile(resolvedFilePathname);
+        const formatted = printer(fileContents, tokSet, true);
         return formatted;
       })();
 

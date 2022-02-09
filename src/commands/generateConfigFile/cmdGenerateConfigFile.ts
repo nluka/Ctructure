@@ -28,6 +28,6 @@ export default async function cmdGenerateConfigFile(): Promise<void> {
 
   if (workspacePath !== undefined) {
     // User made a selection
-    tryToGenerateConfigFile(command, workspacePath);
+    tryToGenerateConfigFile(command, workspacePath, true);
   }
 }

@@ -1,5 +1,4 @@
 import { statSync, writeFileSync } from 'fs';
-import * as vscode from 'vscode';
 import tokenizeFile from '../lexer/tokenizeFile';
 import TokenSet from '../lexer/TokenSet';
 import printer from '../printer/printer';
@@ -9,8 +8,8 @@ const BYTES_IN_512_MEGABYTES = 536_870_912;
 export interface IFormatResult {
   filePathname: string;
   wasSuccessful: boolean;
-  info: IFormatResultInfo | null;
-  err: Error | null;
+  info?: IFormatResultInfo;
+  err?: Error;
 }
 
 export interface IFormatResultInfo {
@@ -19,15 +18,23 @@ export interface IFormatResultInfo {
   writeTime: number;
 }
 
-export default async function tryToFormatFile(
-  filePathname: string,
-): Promise<IFormatResult> {
+export default async function tryToFormatFile(filePathname: string): Promise<
+  | {
+      filePathname: string;
+      wasSuccessful: true;
+      info: IFormatResultInfo;
+    }
+  | {
+      filePathname: string;
+      wasSuccessful: false;
+      err: Error;
+    }
+> {
   const fileSize = statSync(filePathname).size;
   if (fileSize > BYTES_IN_512_MEGABYTES) {
     return {
       filePathname,
       wasSuccessful: false,
-      info: null,
       err: new Error(
         `files larger than 512 MB (is ${(fileSize / (1024 * 1024)).toFixed(
           6,
@@ -37,87 +44,79 @@ export default async function tryToFormatFile(
   }
 
   let fileContents: string;
-  let tokSet: TokenSet;
+  let tokSet: TokenSet | null;
   let formattedStr: string;
 
   let lexTime: number;
   try {
     const startTime = Date.now();
     [fileContents, tokSet] = tokenizeFile(filePathname);
-    lexTime = (Date.now() - startTime) / 1000;
+    lexTime = Date.now() - startTime;
   } catch (err: any) {
-    return { filePathname, wasSuccessful: false, info: null, err };
+    return {
+      filePathname,
+      wasSuccessful: false,
+      err,
+    };
   }
 
   let printTime: number;
   try {
     const startTime = Date.now();
     formattedStr = printer(fileContents, tokSet);
-    printTime = (Date.now() - startTime) / 1000;
+    printTime = Date.now() - startTime;
   } catch (err: any) {
-    return { filePathname, wasSuccessful: false, info: null, err };
+    return {
+      filePathname,
+      wasSuccessful: false,
+      err,
+    };
   }
 
   let writeTime: number;
   try {
     const startTime = Date.now();
     writeFileSync(filePathname, formattedStr);
-    writeTime = (Date.now() - startTime) / 1000;
+    writeTime = Date.now() - startTime;
   } catch (err: any) {
-    return { filePathname, wasSuccessful: false, info: null, err };
+    return {
+      filePathname,
+      wasSuccessful: false,
+      err,
+    };
   }
 
   return {
     filePathname,
     wasSuccessful: true,
     info: { lexTime, printTime, writeTime },
-    err: null,
   };
 }
 
-enum LogType {
-  success,
-  error,
-}
-
 /**
- * Generates a message based on `formatResult` and logs it to stdout.
- * @param formatResult The result to log
- * @param shouldShowErrMsgInWindow If true, will display errors in VSCode window.
+ * Generates a log message based on `formatResult`.
+ * @param formatResult The result to log.
  * @returns The generated message.
  */
-export function logFormatResult(
+export function createLogFormatResult(
   formatResult: IFormatResult,
-  shouldShowErrMsgInWindow: boolean,
+  addTypePrefx: boolean,
 ): string {
-  function log(logType: LogType, msg: string) {
-    const logger = logType === LogType.error ? console.error : console.log;
-    logger(`[Ctructure] ${msg}`);
-
-    if (shouldShowErrMsgInWindow && logType === LogType.error) {
-      vscode.window.showErrorMessage(msg);
-    }
-  }
-
   const { filePathname, wasSuccessful, info, err } = formatResult;
 
-  if (!wasSuccessful && err !== null) {
-    const msg = `failed to format "${filePathname}": ${err.message}`;
-    log(LogType.error, msg);
-    return msg;
+  if (wasSuccessful && info !== undefined) {
+    return `${addTypePrefx ? '[info] ' : ''}formatted in ${(
+      info.lexTime +
+      info.printTime +
+      info.writeTime
+    ).toFixed(0)} ms "${filePathname}"`;
   }
 
-  if (info === null) {
-    const msg = `failed to format "${filePathname}" (internal error): wasSuccessful is true but info is null`;
-    log(LogType.error, msg);
-    return msg;
+  if (!wasSuccessful && err !== undefined) {
+    return `${addTypePrefx ? '[FAIL] ' : ''}${
+      err.message
+    } in "${filePathname}"`;
   }
 
-  const msg = `formatted (${(
-    info.lexTime +
-    info.printTime +
-    info.writeTime
-  ).toFixed(3)}s) "${filePathname}"`;
-  log(LogType.success, msg);
-  return msg;
+  throw new Error('bad formatResult');
 }

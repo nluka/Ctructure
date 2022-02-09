@@ -46,6 +46,7 @@ enum TokenType {
       keywordGeneric,
       keywordGoto,
       keywordIf,
+      keywordInline,
       keywordImaginary,
       keywordNoreturn,
       keywordRegister,
@@ -78,7 +79,6 @@ enum TokenType {
         operatorUnaryPlus,
         operatorUnaryMinus,
         operatorUnaryAddressOf,
-        // operatorUnaryDereference,
         operatorUnaryIndirectionOrDereference,
     // Binary
       // Arithmetic
@@ -173,7 +173,7 @@ export function isTokenKeywordTypeQualifier(type: TokenType) {
   return type >= TokenType.keywordAtomic &&
     type <= TokenType.keywordVolatile;
 }
-export function isTokenTypeKeywordTypeOrTypeQualifier(type: TokenType) {
+export function isTokenKeywordTypeOrTypeQualifier(type: TokenType) {
   return type >= TokenType.keywordBool &&
     type <= TokenType.keywordVolatile;
 }

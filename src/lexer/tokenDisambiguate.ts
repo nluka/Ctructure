@@ -5,11 +5,11 @@ import TokenType, {
   isTokenBinaryOperatorAssignment,
   isTokenBinaryOperatorNonAssignment,
   isTokenKeyword,
+  isTokenKeywordTypeOrTypeQualifier,
   isTokenKeywordTypeQualifier,
   isTokenPostfixIncrOrDecrOperator,
   isTokenSpecialNonClosing,
   isTokenTernaryOperatorComponent,
-  isTokenTypeKeywordTypeOrTypeQualifier as isTokenKeywordTypeOrTypeQualifier,
   isTokenUnaryOperator,
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
@@ -40,7 +40,7 @@ export default function tokenDisambiguate(
       tokSet.getTokenStartPosition(ambigTokIndex),
     );
     return new Error(
-      `unable to diambiguate ${tokenTypeToNameMap.get(
+      `${tokenTypeToNameMap.get(
         tokSet.getTokenType(ambigTokIndex),
       )} at line ${lineNum} tokenNum ${tokenNum}`,
     );
@@ -214,11 +214,13 @@ function disambiguateAsterisk(
   firstNonNewlineOrCommentTokAheadIndex: number,
   createErr: () => Error,
 ) {
-  // Mult with number|character operands
+  // Mult with number|character operands or offset as left operand
   if (
-    [TokenType.constantNumber, TokenType.constantCharacter].includes(
-      firstNonNewlineOrCommentTokBehindType,
-    ) ||
+    [
+      TokenType.constantNumber,
+      TokenType.constantCharacter,
+      TokenType.specialBracketClosing,
+    ].includes(firstNonNewlineOrCommentTokBehindType) ||
     [TokenType.constantNumber, TokenType.constantCharacter].includes(
       firstNonNewlineOrCommentTokAheadType,
     )
@@ -240,6 +242,9 @@ function disambiguateAsterisk(
       TokenType.specialBraceClosing,
       TokenType.keywordSizeof,
       TokenType.keywordReturn,
+      TokenType.keywordTypedef,
+      TokenType.keywordInline,
+      TokenType.keywordStatic,
     ].includes(firstNonNewlineOrCommentTokBehindType) ||
     // Right side
     isTokenKeywordTypeQualifier(firstNonNewlineOrCommentTokAheadType) ||
@@ -296,9 +301,15 @@ function disambiguateAsterisk(
     throw createErr();
   }
 
-  // Pointer to struct|union or type with qualifier
+  // Pointer to struct|union or type with qualifier|modifier
   if (
     isTokenKeywordTypeOrTypeQualifier(secondNonNewlineOrCommentTokBehindType) ||
+    [
+      TokenType.keywordTypedef,
+      TokenType.keywordExtern,
+      TokenType.keywordInline,
+      TokenType.keywordRegister,
+    ].includes(secondNonNewlineOrCommentTokBehindType) ||
     secondNonNewlineOrCommentTokBehindType === TokenType.preproHash
   ) {
     return TokenType.operatorUnaryIndirectionOrDereference;
@@ -326,9 +337,11 @@ function disambiguateAsterisk(
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
-  // Pointer inside struct|union|scope braces
+  // Pointer inside struct|union|scope braces or right after scope ending
   if (
-    (secondNonNewlineOrCommentTokBehindType === TokenType.specialSemicolon &&
+    ([TokenType.specialSemicolon, TokenType.specialBraceClosing].includes(
+      secondNonNewlineOrCommentTokBehindType,
+    ) &&
       [TokenType.specialSemicolon, TokenType.specialComma].includes(
         secondNonNewlineOrCommentTokAheadType,
       )) ||

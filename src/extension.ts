@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import cmdFormatCurrentDocument from './commands/formatCurrentDocument';
+import cmdFormatCurrentDocument from './commands/cmdFormatCurrentDocument';
 import cmdFormatAllWorkspaceFolders from './commands/formatWorkspace/cmdFormatAllWorkspaceFolders';
 import cmdFormatWorkspaceFolder from './commands/formatWorkspace/cmdFormatWorkspaceFolder';
 import cmdGenerateConfigFile from './commands/generateConfigFile/cmdGenerateConfigFile';

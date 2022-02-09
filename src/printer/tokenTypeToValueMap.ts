@@ -46,6 +46,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
       [TokenType.keywordGeneric, 'generic '],
       [TokenType.keywordGoto, 'goto '],
       [TokenType.keywordIf, 'if '],
+      [TokenType.keywordInline, 'inline '],
       [TokenType.keywordImaginary, 'imaginary'],
       [TokenType.keywordNoreturn, 'noreturn'],
       [TokenType.keywordRegister, 'register '],
@@ -146,15 +147,6 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
     [TokenType.commentMultiLine, ''],
     [TokenType.newline, ''],
   //#endregion Other
-
-  //#region Ambiguous
-    [TokenType.ambiguousPlus, ' + '],
-    [TokenType.ambiguousMinus, ' - '],
-    [TokenType.ambiguousIncrement, '++'],
-    [TokenType.ambiguousDecrement, '--'],
-    [TokenType.ambiguousAsterisk, '*'],
-    [TokenType.ambiguousAmpersand, '&'],
-  //#endregion Ambiguous
 ]);
 
 export default tokenTypeToValueMap;
