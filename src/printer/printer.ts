@@ -535,8 +535,7 @@ export default function printer(
       case TokenType.operatorBinaryAssignmentBitwiseShiftRight:
       case TokenType.operatorBinaryAssignmentBitwiseAnd:
       case TokenType.operatorBinaryAssignmentBitwiseOr:
-      case TokenType.operatorBinaryAssignmentBitwiseXor:
-      case TokenType.operatorMemberSelectionIndirect: {
+      case TokenType.operatorBinaryAssignmentBitwiseXor: {
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (previousTokenType === TokenType.specialComma) {
           if (nextNonNewlineTokenType === TokenType.specialComma) {

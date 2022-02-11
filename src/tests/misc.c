@@ -294,8 +294,8 @@ static inline void obs_data_item_setdata(
 
   item->data_size = size;
   item->type = type;
-  item->
-  data_len = (item->default_size || item->autoselect_size) ? get_align_size(size) : size;
+  item->data_len =
+    (item->default_size || item->autoselect_size) ? get_align_size(size) : size;
   item = obs_data_item_ensure_capacity(item);
 
   if (item->default_size || item->autoselect_size)
@@ -336,8 +336,8 @@ CURLcode Curl_socket(
 
   addr->family = ai->ai_family;
   addr->socktype = conn->socktype;
-  addr->
-  protocol = conn->socktype == SOCK_DGRAM ? IPPROTO_UDP : ai->ai_protocol;
+  addr->protocol =
+    conn->socktype == SOCK_DGRAM ? IPPROTO_UDP : ai->ai_protocol;
   addr->addrlen = ai->ai_addrlen;
 
   if (addr->addrlen > sizeof (struct Curl_sockaddr_storage))
@@ -346,16 +346,15 @@ CURLcode Curl_socket(
 
   if (data->set.fopensocket)
     /*
-      * If the opensocket callback is set, all the destination address
-      * information is passed to the callback. Depending on this information the
-      * callback may opt to abort the connection, this is indicated returning
-      * CURL_SOCKET_BAD; otherwise it will return a not-connected socket. When
-      * the callback returns a valid socket the destination address information
-      * might have been changed and this 'new' address will actually be used
-      * here to connect.
-      */
-    *sockfd = data->
-    set.fopensocket(
+     * If the opensocket callback is set, all the destination address
+     * information is passed to the callback. Depending on this information the
+     * callback may opt to abort the connection, this is indicated returning
+     * CURL_SOCKET_BAD; otherwise it will return a not-connected socket. When
+     * the callback returns a valid socket the destination address information
+     * might have been changed and this 'new' address will actually be used
+     * here to connect.
+     */
+    *sockfd = data->set.fopensocket(
       data->set.opensocket_client,
       CURLSOCKTYPE_IPCXN,
       (struct curl_sockaddr *)addr
