@@ -14,7 +14,8 @@
     "onCommand:Ctructure.formatWorkspaceFolder",
     "onCommand:Ctructure.formatAllWorkspaceFolders",
     "onCommand:Ctructure.createConfigFile",
-    "onCommand:Ctructure.createConfigFileInEveryWorkspaceFolder"
+    "onCommand:Ctructure.createConfigFileInEveryWorkspaceFolder",
+    "onCommand:Ctructure.convertWorkspaceFolderLineEndings"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -38,6 +39,10 @@
       {
         "command": "Ctructure.createConfigFileInEveryWorkspaceFolder",
         "title": "Ctructure: Create Configuration File In Every Workspace Folder"
+      },
+      {
+        "command": "Ctructure.convertWorkspaceFolderLineEndings",
+        "title": "Ctructure: Convert Workspace Folder Line Endings"
       }
     ]
   },

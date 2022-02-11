@@ -37,11 +37,15 @@ Formats all matching files in all workspace folders. To use, [open the command p
 
 #### createConfigFile
 
-Creates a configuration file (ctructureconf.json) in the root directory of a workspace folder. If there are multiple workspace folders, a selection must be made. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.createConfigFile`.
+Creates a configuration file (ctructureconf.json) in the root of a workspace folder. If there are multiple workspace folders, a selection must be made. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.createConfigFile`.
 
 #### createConfigFileInEveryWorkspaceFolder
 
 Creates a configuration file (ctructureconf.json) in every workspace folder. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.createConfigFileInEveryWorkspaceFolder`.
+
+#### convertWorkspaceFolderLineEndings
+
+Converts line endings for all files in a workspace. If there are multiple workspace folders, a selection must be made. To use, [open the command palette](https://www.alphr.com/open-command-vs-code/) and run `Ctructure.convertWorkspaceFolderLineEndings`.
 
 ### Directives
 
@@ -97,8 +101,7 @@ The steps for extracting a token:
 1. Find the position of the token's first character (`Tokenizer.moveCursorToBeginningOfNextToken`)
 2. Based on the token's first character, determine the category of the token (`tokenDetermineCategory`)
 3. Based on the position of the token's first character and its category, determine the position of the last character (`tokenFindEndPosition`)
-4. Based on the positions of the token's first and last character and its category, determine the specific type (`TokenType`) of the token (`tokenDetermineType`)
-  - Some token types cannot be determined on this first pass, so they are marked as ambiguous
+4. Based on the positions of the token's first and last character and its category, determine the specific type (`TokenType`) of the token (`tokenDetermineType`) (token types which cannot be concretely determined on this first pass are given an ambiguous type)
 
 Tokens are disambiguated (`tokenDisambiguate`) by looking at the tokens behind and or ahead. Lookaround complexity varies depending on the token.
 

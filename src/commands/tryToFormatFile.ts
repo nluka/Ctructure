@@ -100,12 +100,12 @@ export default async function tryToFormatFile(filePathname: string): Promise<
  */
 export function createLogFormatResult(
   formatResult: IFormatResult,
-  addTypePrefx: boolean,
+  addEventTypePrefx: boolean,
 ): string {
   const { filePathname, wasSuccessful, info, err } = formatResult;
 
   if (wasSuccessful && info !== undefined) {
-    return `${addTypePrefx ? '[info] ' : ''}formatted in ${(
+    return `${addEventTypePrefx ? '[info] ' : ''}formatted in ${(
       info.lexTime +
       info.printTime +
       info.writeTime
@@ -113,7 +113,7 @@ export function createLogFormatResult(
   }
 
   if (!wasSuccessful && err !== undefined) {
-    return `${addTypePrefx ? '[FAIL] ' : ''}${
+    return `${addEventTypePrefx ? '[FAIL] ' : ''}${
       err.message
     } in "${filePathname}"`;
   }

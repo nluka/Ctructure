@@ -1,4 +1,5 @@
-import { window, workspace } from 'vscode';
+import { workspace } from 'vscode';
+import getUserSelectionWorkspaceFolder from '../getUserSelectionWorkspaceFolder';
 import { reportErr } from '../report';
 import formatWorkspaceFolders from './formatWorkspaceFolders';
 
@@ -11,26 +12,12 @@ export default async function cmdFormatWorkspaceFolder(): Promise<void> {
     return;
   }
 
-  const folderIndex = await (async function getWorkspaceFolderIndex() {
-    if (workspaceFolders.length === 1) {
-      return 0;
-    }
+  const wsFolderIndex =
+    workspaceFolders.length === 1
+      ? 0
+      : await getUserSelectionWorkspaceFolder(workspaceFolders);
 
-    // Let user select which workspace folder to format
-    const choice = await window.showQuickPick(
-      workspaceFolders.map(
-        // Embed folder index for easy retrieval later
-        (wsFolder) => `${wsFolder.index + 1}: ${wsFolder.uri.fsPath}`,
-      ),
-    );
-
-    return choice === undefined
-      ? -1
-      : // Extract embedded index
-        parseInt(choice.substring(0, choice?.indexOf(':'))) - 1;
-  })();
-
-  if (folderIndex !== -1) {
-    await formatWorkspaceFolders(cmdName, [workspaceFolders[folderIndex]]);
+  if (wsFolderIndex !== -1) {
+    await formatWorkspaceFolders(cmdName, [workspaceFolders[wsFolderIndex]]);
   }
 }

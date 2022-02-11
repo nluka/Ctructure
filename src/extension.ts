@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import cmdConvertWorkspaceFolderLineEndings from './commands/cmdConvertWorkspaceFolderLineEndings';
 import cmdFormatCurrentDocument from './commands/cmdFormatCurrentDocument';
 import cmdCreateConfigFile from './commands/createConfigFile/cmdCreateConfigFile';
 import cmdCreateConfigFileInEveryWorkspaceFolder from './commands/createConfigFile/cmdCreateConfigFileInEveryWorkspaceFolder';
@@ -13,21 +14,30 @@ export function activate(context: vscode.ExtensionContext) {
       'Ctructure.formatCurrentDocument',
       cmdFormatCurrentDocument,
     ),
+
     vscode.commands.registerCommand(
       'Ctructure.formatWorkspaceFolder',
       cmdFormatWorkspaceFolder,
     ),
+
     vscode.commands.registerCommand(
       'Ctructure.formatAllWorkspaceFolders',
       cmdFormatAllWorkspaceFolders,
     ),
+
     vscode.commands.registerCommand(
       'Ctructure.createConfigFile',
       cmdCreateConfigFile,
     ),
+
     vscode.commands.registerCommand(
       'Ctructure.createConfigFileInEveryWorkspaceFolder',
       cmdCreateConfigFileInEveryWorkspaceFolder,
+    ),
+
+    vscode.commands.registerCommand(
+      'Ctructure.convertWorkspaceFolderLineEndings',
+      cmdConvertWorkspaceFolderLineEndings,
     ),
   );
 }

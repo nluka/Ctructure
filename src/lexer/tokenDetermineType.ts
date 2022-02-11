@@ -34,7 +34,7 @@ export default function tokenDetermineType(
       const rawTok = fileContents.slice(tokStartPos, tokEndPos + 1);
       const type = tokenValueToTypeMap.get(rawTok);
       if (type !== undefined) {
-        // operator
+        // Is an operator
         return type;
       }
 

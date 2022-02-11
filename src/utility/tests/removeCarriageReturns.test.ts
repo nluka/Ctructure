@@ -5,8 +5,8 @@ describe('removeCarriageReturns', () => {
     input: string,
     expected: string
   ) {
-    test(`remove ${JSON.stringify('\r')} when input=${JSON.stringify(
-      input,
+    test(`transform ${JSON.stringify(input)} into ${JSON.stringify(
+      expected,
     )}`, () => {
       expect(removeCarriageReturns(input)).toBe(expected);
     });

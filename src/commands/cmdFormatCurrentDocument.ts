@@ -1,6 +1,6 @@
 import { window, workspace } from 'vscode';
 import { loadConfig } from '../config/loadConfig';
-import { reportErr, reportWarn } from './report';
+import { reportErr, reportInfo, reportWarn } from './report';
 import tryToFormatFile, { createLogFormatResult } from './tryToFormatFile';
 
 export default async function cmdFormatCurrentDocument(): Promise<void> {
@@ -14,19 +14,20 @@ export default async function cmdFormatCurrentDocument(): Promise<void> {
 
   const workspaceFolder = workspace.getWorkspaceFolder(currentFileUri);
   if (workspaceFolder === undefined) {
-    reportWarn(cmdName, 'no config found in active document workspace');
+    reportWarn(
+      cmdName,
+      'unable to load config: current document does not belong to a workspace folder',
+    );
   } else {
     loadConfig(cmdName, workspaceFolder);
   }
 
   const res = await tryToFormatFile(currentFileUri.fsPath);
 
-  const msg = `[Ctructure.${cmdName}] ${createLogFormatResult(res, false)}`;
+  const msg = createLogFormatResult(res, false);
   if (res.wasSuccessful) {
-    console.log(msg);
-    window.showInformationMessage(msg);
+    reportInfo(cmdName, msg);
   } else {
-    console.error(msg);
-    window.showErrorMessage(msg);
+    reportErr(cmdName, msg);
   }
 }

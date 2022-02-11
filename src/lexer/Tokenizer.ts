@@ -3,7 +3,7 @@ import tokenDetermineType from './tokenDetermineType';
 import tokenFindEndPosition from './tokenFindEndPosition';
 import TokenType, { isTokenAmbiguous } from './TokenType';
 
-const whitespaceRegex = /[ \t\f]/;
+const whitespaceRegex = /^[ \t\f]$/;
 
 /**
  * An object for statefully extracting tokens from a string.
