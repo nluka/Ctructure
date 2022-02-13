@@ -22,7 +22,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
       [TokenType.keywordShort, 'short'],
       [TokenType.keywordSigned, 'signed'],
       [TokenType.keywordStatic, 'static '],
-      [TokenType.keywordUnsigned, 'unsigned '],
+      [TokenType.keywordUnsigned, 'unsigned'],
       [TokenType.keywordVoid, 'void'],
       // Qualifiers
         [TokenType.keywordAtomic, '_Atomic '],

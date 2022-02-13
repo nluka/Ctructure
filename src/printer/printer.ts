@@ -24,6 +24,7 @@ import whichOccursFirst from './whichOccursFirst';
 export type Context =
   | TokenType.keywordFor
   | TokenType.keywordIf
+  | TokenType.keywordWhile
   | TokenType.keywordDefault
   | TokenType.keywordCase
   | TokenType.keywordElse
@@ -312,6 +313,16 @@ export default function printer(
           }
           break;
         }
+        if (contextStack.peek().context === PrinterCategory.singleLineIf) {
+          do {
+            previousContext = contextStack.pop();
+          } while (contextStack.peek().context === PrinterCategory.singleLineIf);
+          indentationDepth = previousContext.indentationLevel;
+          overflow = false;
+          shouldAddNewline = true;
+          context = null;
+          break;
+        }
         if (context === PrinterCategory.assignmentOverflow) {
           decreaseBlockLevel();
           context = null;
@@ -322,10 +333,6 @@ export default function printer(
             indentationDepth = contextStack.pop().indentationLevel;
             overflow = false;
           }
-        } else if (context === PrinterCategory.singleLineIf) {
-          contextStack.pop();
-          decreaseBlockLevel();
-          context = null;
         } else if (
           context === PrinterCategory.variableDecl ||
           context === PrinterCategory.typeDefStruct
@@ -393,17 +400,20 @@ export default function printer(
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (
           previousContext.context === TokenType.keywordIf ||
-          (previousContext.context === TokenType.keywordFor && parenDepth === 0)
+          (previousContext.context === TokenType.keywordFor && parenDepth === 0) ||
+          previousContext.context === TokenType.keywordWhile
         ) {
           if (nextNonNewlineTokenType !== TokenType.specialBraceOpening) {
-            context = PrinterCategory.singleLineIf;
-            contextStack.push({ context, overflow, indentationLevel: indentationDepth });
+            contextStack.push({
+              context: PrinterCategory.singleLineIf,
+              overflow,
+              indentationLevel: indentationDepth,
+            });
             ++indentationDepth;
             shouldAddNewline = true;
             noExtraNewline = true;
-          } else {
-            context = null;
           }
+          context = null;
           break;
         }
         if (isTokenKeywordTypeOrTypeQualifier(nextNonNewlineTokenType)) {
@@ -695,6 +705,13 @@ export default function printer(
         break;
       }
 
+      case TokenType.keywordUnsigned: {
+        if (getNextNonNewlineTokenType(i) !== TokenType.specialParenthesisClosing) {
+          currString += ' ';
+        }
+        break;
+      }
+
       case TokenType.keywordElse: {
         context = TokenType.keywordElse;
         if (previousTokenType === TokenType.specialBraceClosing) {
@@ -704,8 +721,11 @@ export default function printer(
         if (nextNonNewlineTokenType === TokenType.keywordIf) {
           currString += ' ';
         } else if (nextNonNewlineTokenType !== TokenType.specialBraceOpening) {
-          context = PrinterCategory.singleLineIf;
-          contextStack.push({ context, overflow, indentationLevel: indentationDepth });
+          contextStack.push({
+            context: PrinterCategory.singleLineIf,
+            overflow,
+            indentationLevel: indentationDepth,
+          });
           shouldAddNewline = true;
           noExtraNewline = true;
           ++indentationDepth;
@@ -713,6 +733,13 @@ export default function printer(
         break;
       }
 
+      // @ts-ignore
+      case TokenType.keywordWhile:
+        if (context === TokenType.keywordDo) {
+          currString = ' while ';
+          context = null;
+          break;
+        }
       case TokenType.keywordFor:
       case TokenType.keywordIf: {
         if (parenDepth === 0) {
@@ -748,14 +775,6 @@ export default function printer(
       case TokenType.keywordReturn: {
         if (getNextNonNewlineTokenType(i) !== TokenType.specialSemicolon) {
           currString += ' ';
-        }
-        break;
-      }
-
-      case TokenType.keywordWhile: {
-        if (context === TokenType.keywordDo) {
-          currString = ' while ';
-          context = null;
         }
         break;
       }
