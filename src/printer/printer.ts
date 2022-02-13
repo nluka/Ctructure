@@ -459,7 +459,14 @@ export default function printer(
         }
         if (context === PrinterCategory.array) {
           if (!overflow) {
-            currString = ' }';
+            if (
+              previousTokenType === TokenType.specialComma ||
+              previousTokenType === TokenType.specialBraceOpening
+            ) {
+              currString = '}';
+            } else {
+              currString = ' }';
+            }
           }
         } else if (previousContext.context === PrinterCategory.typeDefStruct) {
           currString += ' ';
