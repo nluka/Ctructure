@@ -24,7 +24,6 @@ import whichOccursFirst from './whichOccursFirst';
 export type Context =
   | TokenType.keywordFor
   | TokenType.keywordIf
-  | TokenType.keywordEnum
   | TokenType.keywordDefault
   | TokenType.keywordCase
   | TokenType.keywordElse
@@ -329,7 +328,6 @@ export default function printer(
           context = null;
         } else if (
           context === PrinterCategory.variableDecl ||
-          context === TokenType.keywordEnum ||
           context === PrinterCategory.typeDefStruct
         ) {
           context = null;
@@ -463,10 +461,7 @@ export default function printer(
           if (!overflow) {
             currString = ' }';
           }
-        } else if (
-          previousContext.context === TokenType.keywordEnum ||
-          previousContext.context === PrinterCategory.typeDefStruct
-        ) {
+        } else if (previousContext.context === PrinterCategory.typeDefStruct) {
           currString += ' ';
         } else if (
           nextNonNewlineTokenType !== TokenType.specialParenthesisClosing &&
@@ -731,15 +726,6 @@ export default function printer(
         break;
       }
 
-      case TokenType.keywordStruct: {
-        if (previousTokenType === TokenType.keywordTypedef) {
-          context = PrinterCategory.typeDefStruct;
-        } else {
-          context = TokenType.keywordStruct;
-        }
-        break;
-      }
-
       case TokenType.keywordCase:
       case TokenType.keywordDefault: {
         context = currTokType;
@@ -767,11 +753,24 @@ export default function printer(
         break;
       }
 
-      case TokenType.keywordEnum: {
-        if (parenDepth === 0) {
-          context = TokenType.keywordEnum;
-          overflow = true;
+      case TokenType.keywordStruct: {
+        if (previousTokenType === TokenType.keywordTypedef) {
+          context = PrinterCategory.typeDefStruct;
+        } else if (parenDepth === 0) {
+          context = TokenType.keywordStruct;
         }
+        break;
+      }
+
+      case TokenType.keywordEnum: {
+        if (previousTokenType === TokenType.keywordTypedef) {
+          context = PrinterCategory.typeDefStruct;
+          overflow = true;
+        } else if (parenDepth === 0) {
+          overflow = true;
+          break;
+        }
+        currString += ' ';
         break;
       }
 

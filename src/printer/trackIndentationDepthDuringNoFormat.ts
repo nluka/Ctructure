@@ -82,7 +82,6 @@ export default function trackIndentationDepthDuringNoFormat(
           context = null;
         } else if (
           context === PrinterCategory.variableDecl ||
-          context === TokenType.keywordEnum ||
           context === PrinterCategory.typeDefStruct
         ) {
           context = null;
@@ -314,14 +313,6 @@ export default function trackIndentationDepthDuringNoFormat(
         }
         break;
 
-      case TokenType.keywordStruct:
-        if (prevType === TokenType.keywordTypedef) {
-          context = PrinterCategory.typeDefStruct;
-        } else {
-          context = TokenType.keywordStruct;
-        }
-        break;
-
       case TokenType.keywordCase:
       case TokenType.keywordDefault:
         context = currTokenType;
@@ -335,9 +326,21 @@ export default function trackIndentationDepthDuringNoFormat(
         }
         break;
 
-      case TokenType.keywordEnum:
+      case TokenType.keywordStruct:
+        if (prevType === TokenType.keywordTypedef) {
+          context = PrinterCategory.typeDefStruct;
+        }
         if (parenDepth === 0) {
-          context = TokenType.keywordEnum;
+          context = TokenType.keywordStruct;
+        }
+        break;
+
+      case TokenType.keywordEnum:
+        if (prevType === TokenType.keywordTypedef) {
+          context = PrinterCategory.typeDefStruct;
+          overflow = true;
+        }
+        if (parenDepth === 0) {
           overflow = true;
         }
         break;

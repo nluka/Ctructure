@@ -40,7 +40,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
       [TokenType.keywordDefault, 'default'],
       [TokenType.keywordDo, 'do'],
       [TokenType.keywordElse, 'else'],
-      [TokenType.keywordEnum, 'enum '],
+      [TokenType.keywordEnum, 'enum'],
       [TokenType.keywordExtern, 'extern '],
       [TokenType.keywordFor, 'for '],
       [TokenType.keywordGeneric, 'generic '],
