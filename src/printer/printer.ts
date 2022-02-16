@@ -234,8 +234,8 @@ export default function printer(
     return tokenTypes.length - 1;
   }
 
-  function getNextNonNewlineTokenType(i: number): TokenType {
-    return _nextNonNewlineTokenType(tokenTypes, tokenCount, i);
+  function getNextNonNewlineTokenType(i: number, toksAhead?: number): TokenType {
+    return _nextNonNewlineTokenType(tokenTypes, tokenCount, i, toksAhead);
   }
 
   for (let i = 0; i < tokenCount; ++i) {
@@ -370,12 +370,13 @@ export default function printer(
 
       case TokenType.specialParenthesisOpening: {
         ++parenDepth;
-        contextStack.push({ context, overflow, indentationLevel: indentationDepth });
-        if (context === PrinterCategory.doubleTypeOrIdentifier) {
-          context = PrinterCategory.functionDecl;
-        } else if (previousTokenType === TokenType.identifier) {
+        if (context === PrinterCategory.typeOrIdentifier) {
           context = PrinterCategory.functionCall;
-        } else if (context !== TokenType.keywordFor) {
+        } else if (context === PrinterCategory.doubleTypeOrIdentifier) {
+          context = PrinterCategory.functionDecl;
+        }
+        contextStack.push({ context, overflow, indentationLevel: indentationDepth });
+        if (context !== TokenType.keywordFor) {
           context = null;
         }
         if (getNextNonNewlineTokenType(i) === TokenType.specialParenthesisClosing) {
@@ -398,6 +399,7 @@ export default function printer(
         overflow = previousContext.overflow;
         indentationDepth = previousContext.indentationLevel;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
+
         if (
           previousContext.context === TokenType.keywordIf ||
           (previousContext.context === TokenType.keywordFor && parenDepth === 0) ||
@@ -414,6 +416,15 @@ export default function printer(
             noExtraNewline = true;
           }
           context = null;
+          break;
+        }
+        if (
+          previousContext.context === PrinterCategory.functionCall &&
+          getNextNonNewlineTokenType(i) === TokenType.identifier &&
+          getNextNonNewlineTokenType(i, 2) === TokenType.specialParenthesisOpening
+        ) {
+          context = null;
+          shouldAddNewline = true;
           break;
         }
         if (isTokenKeywordTypeOrTypeQualifier(nextNonNewlineTokenType)) {
@@ -486,7 +497,11 @@ export default function printer(
         ) {
           shouldAddNewline = true;
         }
-        context = previousContext.context;
+        if (previousContext.indentationLevel === 0) {
+          context = null;
+        } else {
+          context = previousContext.context;
+        }
         overflow = previousContext.overflow;
         break;
       }
@@ -681,6 +696,13 @@ export default function printer(
         break;
       }
 
+      case TokenType.keywordVolatile:
+      case TokenType.keywordConst:
+        if (getNextNonNewlineTokenType(i) !== TokenType.specialParenthesisClosing) {
+          currString += ' ';
+        }
+        break;
+
       case TokenType.keywordBool:
       case TokenType.keywordChar:
       case TokenType.keywordDouble:
@@ -747,10 +769,13 @@ export default function printer(
         }
         break;
       }
-
+      // @ts-ignore
+      case TokenType.keywordUnion:
+        if (getNextNonNewlineTokenType(i) !== TokenType.specialBraceOpening) {
+          currString += ' ';
+        }
       case TokenType.keywordDo:
-      case TokenType.keywordSwitch:
-      case TokenType.keywordUnion: {
+      case TokenType.keywordSwitch: {
         if (parenDepth === 0) {
           context = currTokType;
         }
@@ -780,6 +805,9 @@ export default function printer(
       }
 
       case TokenType.keywordStruct: {
+        if (getNextNonNewlineTokenType(i) !== TokenType.specialBraceOpening) {
+          currString += ' ';
+        }
         if (previousTokenType === TokenType.keywordTypedef) {
           context = PrinterCategory.typeDefStruct;
         } else if (parenDepth === 0) {

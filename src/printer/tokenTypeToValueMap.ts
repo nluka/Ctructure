@@ -26,9 +26,9 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
       [TokenType.keywordVoid, 'void'],
       // Qualifiers
         [TokenType.keywordAtomic, '_Atomic '],
-        [TokenType.keywordConst, 'const '],
+        [TokenType.keywordConst, 'const'],
         [TokenType.keywordRestrict, 'restrict '],
-        [TokenType.keywordVolatile, 'volatile '],
+        [TokenType.keywordVolatile, 'volatile'],
     // Other
       [TokenType.keywordAlignas, 'alignas '],
       [TokenType.keywordAlignof, 'alignof '],
@@ -53,11 +53,11 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
       [TokenType.keywordReturn, 'return'],
       [TokenType.keywordSizeof, 'sizeof '],
       [TokenType.keywordStaticassert, 'static_assert'],
-      [TokenType.keywordStruct, 'struct '],
+      [TokenType.keywordStruct, 'struct'],
       [TokenType.keywordSwitch, 'switch '],
       [TokenType.keywordThreadlocal, 'thread_local'],
       [TokenType.keywordTypedef, 'typedef '],
-      [TokenType.keywordUnion, 'union '],
+      [TokenType.keywordUnion, 'union'],
       [TokenType.keywordWhile, 'while '],
   //#endregion Keywords
 
