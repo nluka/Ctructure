@@ -493,9 +493,17 @@ export default function printer(
           currString += ' ';
         } else if (
           nextNonNewlineTokenType !== TokenType.specialParenthesisClosing &&
-          nextNonNewlineTokenType !== TokenType.specialSemicolon
+          nextNonNewlineTokenType !== TokenType.specialSemicolon &&
+          !(
+            (previousContext.context === TokenType.keywordStruct ||
+              previousContext.context === TokenType.keywordUnion) &&
+            nextNonNewlineTokenType === TokenType.identifier &&
+            getNextNonNewlineTokenType(i, 2) === TokenType.specialSemicolon
+          )
         ) {
           shouldAddNewline = true;
+        } else {
+          currString += ' ';
         }
         if (previousContext.indentationLevel === 0) {
           context = null;
