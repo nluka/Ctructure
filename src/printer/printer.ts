@@ -906,11 +906,26 @@ export default function printer(
       }
 
       case TokenType.commentDirectiveNoFormatSingleLine: {
-        const indexOfNextNewLine = getIndexOfNextNewline(i + 1);
-        const extractedString = fileContents.slice(
-          tokenStartIndices[i],
-          tokenStartIndices[indexOfNextNewLine],
-        );
+        let j = i;
+        for (let count = 0; j < tokenCount - 1; ++j) {
+          if (tokenTypes[j] === TokenType.newline) {
+            if (++count === 2) {
+              break;
+            }
+          }
+        }
+
+        if (j === tokenCount - 1) {
+          currString += fileContents.slice(tokenStartIndices[i], fileContents.length);
+          i = tokenCount;
+          break;
+        }
+
+        currString += fileContents.slice(tokenStartIndices[i], tokenStartIndices[j]);
+
+        if (currString.charAt(0) !== '\n' && previousTokenType !== null) {
+          currString = ' ' + currString;
+        }
 
         var trackedContext = trackIndentationDepthDuringNoFormat(
           tokenTypes,
@@ -933,18 +948,31 @@ export default function printer(
         overflow = trackedContext.overflow;
         parenDepth = trackedContext.parenDepth;
 
-        i = indexOfNextNewLine - 1;
-        currString += extractedString;
         shouldAddNewline = true;
+        i = j - 1;
         break;
       }
 
       case TokenType.commentDirectiveNoFormatMultiLine: {
-        let j = i + 1;
-        for (; j < tokenTypes.length; ++j) {
+        let j = i;
+        for (let count = 0; j < tokenCount - 1; ++j) {
           if (tokenTypes[j] === TokenType.commentDirectiveNoFormatMultiLine) {
-            break;
+            if (++count === 2) {
+              break;
+            }
           }
+        }
+
+        if (j === tokenCount - 1) {
+          currString += fileContents.slice(tokenStartIndices[i], fileContents.length);
+          i = tokenCount;
+          break;
+        }
+
+        currString += fileContents.slice(tokenStartIndices[i], tokenStartIndices[j + 1]);
+
+        if (currString.charAt(0) !== '\n' && previousTokenType !== null) {
+          currString = ' ' + currString;
         }
 
         var trackedContext = trackIndentationDepthDuringNoFormat(
@@ -968,9 +996,6 @@ export default function printer(
         overflow = trackedContext.overflow;
         parenDepth = trackedContext.parenDepth;
 
-        const extractedBlock = fileContents.slice(tokenStartIndices[i], tokenStartIndices[j + 1]);
-
-        currString += extractedBlock;
         shouldAddNewline = true;
         i = j;
         break;

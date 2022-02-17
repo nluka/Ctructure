@@ -391,18 +391,22 @@ if (type & SPECIAL) {
   }
 }
 
-REMAP1(unsigned int, ioread8, const)
-REMAP1(unsigned int, ioread16, const)
-REMAP1(unsigned int, ioread32, const)
-REMAP1(u8, readb, const volatile)
-REMAP1(u16, readw, const volatile)
-REMAP1(u32, readl, const volatile)
-REMAP1(u64, readq, const volatile)
+{
+  REMAP1(unsigned int, ioread8, const)
+  REMAP1(unsigned int, ioread16, const)
+  REMAP1(unsigned int, ioread32, const)
+  REMAP1(u8, readb, const volatile)
+  REMAP1(u16, readw, const volatile)
+  REMAP1(u32, readl, const volatile)
+  REMAP1(u64, readq, const volatile)
 
-REMAP2(u8, iowrite8)
-REMAP2(u16, iowrite16)
-REMAP2(u32, iowrite32)
-REMAP2(u8, writeb, volatile)
-REMAP2(u16, writew, volatile)
-REMAP2(u32, writel, volatile)
-REMAP2(u64, writeq, volatile)
+  REMAP2(u8, iowrite8)
+  REMAP2(u16, iowrite16)
+  REMAP2(u32, iowrite32)
+  REMAP2(u8, writeb, volatile)
+  REMAP2(u16, writew, volatile)
+  REMAP2(u32, writel, volatile)
+  REMAP2(u64, writeq, volatile)
+}
+
+.cg_item = { .ci_namebuf = "most_sound", .ci_type = &most_sound_type, };
