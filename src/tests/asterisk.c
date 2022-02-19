@@ -12,13 +12,15 @@ void indirection(CusType_t *inp1, CusType_t *inp2, CusType_t *inp3) {
 void dereference() {
   int arr[] = { (*pa), *pb, *pc * d + e };
 
-  if ((a == 1) && (b == 2)) *pa = 1;
+  if ((a == 1) && (b == 2))
+    *pa = 1;
   else if (c == 3) {
     *pc = 3;
   } else
     *pd += 1;
 
-  while ((1) + (2)) *pe -= 1;
+  while ((1) + (2))
+    *pe -= 1;
 
   do {
     *pf *= 1;

@@ -542,7 +542,8 @@ export default function printer(
         if (
           isTokenKeyword(previousTokenType) ||
           previousTokenType === TokenType.identifier ||
-          previousTokenType === TokenType.specialParenthesisClosing
+          (previousTokenType === TokenType.specialParenthesisClosing &&
+            currString.charAt(0) !== '\n')
         ) {
           currString = ' *';
         }
