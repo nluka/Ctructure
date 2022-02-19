@@ -606,6 +606,18 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier,
           TokenType.operatorUnaryArithmeticIncrementPostfix ],
         TokenType.operatorUnaryIndirectionOrDereference, ') *p++');
+      assert(
+        [ TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.specialParenthesisClosing ],
+        TokenType.operatorUnaryIndirectionOrDereference, 'uint8_t *)');
+      assert(
+        [ TokenType.identifier,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.ambiguousIncrement ],
+        TokenType.operatorUnaryIndirectionOrDereference, 'b) *a++');
     });
     describe('Multiplication', () => {
       assert(

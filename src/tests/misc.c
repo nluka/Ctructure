@@ -3,6 +3,24 @@
   usually coming from bugs
 */
 
+/* @ct-no-format */
+REMAP1(unsigned int, ioread8, const)
+REMAP1(unsigned int, ioread16, const)
+REMAP1(unsigned int, ioread32, const)
+REMAP1(u8, readb, const volatile)
+REMAP1(u16, readw, const volatile)
+REMAP1(u32, readl, const volatile)
+REMAP1(u64, readq, const volatile)
+
+REMAP2(u8, iowrite8)
+REMAP2(u16, iowrite16)
+REMAP2(u32, iowrite32)
+REMAP2(u8, writeb, volatile)
+REMAP2(u16, writew, volatile)
+REMAP2(u32, writel, volatile)
+REMAP2(u64, writeq, volatile)
+/* @ct-no-format */
+
 void misc1() {
   if (sep == 1 && *p == '*') {
     from = 0;
@@ -49,6 +67,22 @@ int misc2() {
       wait_ms(500);
     } else {
       ledRed = ledGreen = 1; // turn red and green leds off
+    }
+  }
+}
+
+void misc3() {
+  if (!(type & (ZEROPAD + LEFT)))
+    while (size-- > 0)
+      *str++ = ' ';
+  if (sign)
+    *str++ = sign;
+  if (type & SPECIAL) {
+    if (base == 8)
+      *str++ = '0';
+    else if (base == 16) {
+      *str++ = '0';
+      *str++ = digits[33];
     }
   }
 }
@@ -289,7 +323,7 @@ static inline void obs_data_item_setdata(
 
   struct obs_data_item *item = *p_item;
   ptrdiff_t old_default_data_pos =
-    (uint8_t *)get_default_data_ptr(item) - (uint8_t * )item;
+    (uint8_t *)get_default_data_ptr(item) - (uint8_t *)item;
   item_data_release(item);
 
   item->data_size = size;
@@ -301,7 +335,7 @@ static inline void obs_data_item_setdata(
   if (item->default_size || item->autoselect_size)
     memmove(
       get_default_data_ptr(item),
-      (uint8_t * )item + old_default_data_pos,
+      (uint8_t *)item + old_default_data_pos,
       item->default_len + item->autoselect_size
     );
 
@@ -376,37 +410,3 @@ CURLcode Curl_socket(
 
   return CURLE_OK;
 }
-
-if (!(type & (ZEROPAD + LEFT)))
-  while (size-- > 0)
-    *str++ = ' ';
-if (sign)
-  *str++ = sign;
-if (type & SPECIAL) {
-  if (base == 8)
-    *str++ = '0';
-  else if (base == 16) {
-    *str++ = '0';
-    *str++ = digits[33];
-  }
-}
-
-{
-  REMAP1(unsigned int, ioread8, const)
-  REMAP1(unsigned int, ioread16, const)
-  REMAP1(unsigned int, ioread32, const)
-  REMAP1(u8, readb, const volatile)
-  REMAP1(u16, readw, const volatile)
-  REMAP1(u32, readl, const volatile)
-  REMAP1(u64, readq, const volatile)
-
-  REMAP2(u8, iowrite8)
-  REMAP2(u16, iowrite16)
-  REMAP2(u32, iowrite32)
-  REMAP2(u8, writeb, volatile)
-  REMAP2(u16, writew, volatile)
-  REMAP2(u32, writel, volatile)
-  REMAP2(u64, writeq, volatile)
-}
-
-.cg_item = { .ci_namebuf = "most_sound", .ci_type = &most_sound_type, };

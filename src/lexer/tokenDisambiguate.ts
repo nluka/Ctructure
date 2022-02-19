@@ -10,7 +10,7 @@ import TokenType, {
   isTokenPostfixIncrOrDecrOperator,
   isTokenSpecialNonClosing,
   isTokenTernaryOperatorComponent,
-  isTokenUnaryOperator,
+  isTokenUnaryOperator
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -214,7 +214,7 @@ function disambiguateAsterisk(
   firstNonNewlineOrCommentTokAheadIndex: number,
   createErr: () => Error,
 ) {
-  // Mult with number|character operands or offset as left operand
+  // mult with number|character operands or offset as left operand
   if (
     [
       TokenType.constantNumber,
@@ -228,7 +228,7 @@ function disambiguateAsterisk(
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
-  // Other cases where immediate surroundings (1st layer)
+  // other cases where immediate surroundings (1st layer)
   // determine what the asterisk is (mult|deref|indir)
   if (
     // Left side
@@ -248,12 +248,14 @@ function disambiguateAsterisk(
     ].includes(firstNonNewlineOrCommentTokBehindType) ||
     // Right side
     isTokenKeywordTypeQualifier(firstNonNewlineOrCommentTokAheadType) ||
-    firstNonNewlineOrCommentTokAheadType === TokenType.ambiguousAsterisk
+    [TokenType.ambiguousAsterisk, TokenType.specialParenthesisClosing].includes(
+      firstNonNewlineOrCommentTokAheadType,
+    )
   ) {
     return TokenType.operatorUnaryIndirectionOrDereference;
   }
 
-  // Second layer right side
+  // second layer right side
   const [
     secondNonNewlineOrCommentTokAheadType,
     // secondNonNewlineOrCommentTokenAheadIndex,
@@ -267,7 +269,7 @@ function disambiguateAsterisk(
     throw createErr();
   }
 
-  // Assigning to dereferenced ptr value,
+  // (in|de)crementing or assigning to dereferenced ptr,
   // postfix (inc|dec)rementing derefernced ptr,
   // func with ptr return type
   // ptr to array
@@ -283,11 +285,11 @@ function disambiguateAsterisk(
   }
 
   /*
-    By this point, it cannot be dereferencing,
+    by this point, it cannot be dereferencing,
     it must be indirection or multiplication.
   */
 
-  // Second layer left side
+  // second layer left side
   const [
     secondNonNewlineOrCommentTokBehindType,
     secondNonNewlineOrCommentTokBehindIndex,
@@ -301,7 +303,7 @@ function disambiguateAsterisk(
     throw createErr();
   }
 
-  // Pointer to struct|union or type with qualifier|modifier
+  // ptr to struct|union or type with qualifier|modifier
   if (
     isTokenKeywordTypeOrTypeQualifier(secondNonNewlineOrCommentTokBehindType) ||
     [
@@ -315,20 +317,20 @@ function disambiguateAsterisk(
     return TokenType.operatorUnaryIndirectionOrDereference;
   }
 
-  // Assignment to mult expression,
+  // assignment to mult expression,
   // mult inside compound expression,
   // comparison with mult expression
   if (
-    // Left side
+    // left side
     isTokenUnaryOperator(secondNonNewlineOrCommentTokBehindType) ||
     isTokenBinaryOperator(secondNonNewlineOrCommentTokBehindType) ||
-    // Right side
+    // right side
     isTokenBinaryOperatorNonAssignment(secondNonNewlineOrCommentTokAheadType)
   ) {
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
-  // Mult inside offset operator
+  // mult inside offset operator
   if (
     secondNonNewlineOrCommentTokBehindType ===
       TokenType.specialBracketOpening ||
@@ -337,8 +339,12 @@ function disambiguateAsterisk(
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
-  // Pointer inside struct|union|scope braces or right after scope ending
+  // (in|de)crementing dereferenced ptr
+  // ptr inside struct|union|scope braces or right after scope ending
   if (
+    [TokenType.ambiguousIncrement, TokenType.ambiguousDecrement].includes(
+      secondNonNewlineOrCommentTokAheadType,
+    ) ||
     ([TokenType.specialSemicolon, TokenType.specialBraceClosing].includes(
       secondNonNewlineOrCommentTokBehindType,
     ) &&
@@ -354,7 +360,7 @@ function disambiguateAsterisk(
   }
 
   /*
-    By this point immediate 2 layer surroundings must be ,ident*ident,
+    by this point immediate 2 layer surroundings must be ,ident*ident,
     so there are 3 possibilities:
       - pointer inside func signature
       - mult inside func-call
@@ -362,7 +368,7 @@ function disambiguateAsterisk(
   */
 
   enum EnclosureType {
-    unknown, // For when it cannot be determined (syntax error)
+    unknown, // for when it cannot be determined (syntax error)
     functionSignature,
     functionCall,
     initializerList,
