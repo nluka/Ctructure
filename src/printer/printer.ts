@@ -15,7 +15,6 @@ import checkForAssignmentToFunction from './checkForAssignmentToFunction';
 import Stack from './context_stack/Stack';
 import getIndentAmountForMultiVar from './indentAmountForMultiVar';
 import _nextNonNewlineTokenType from './nextNonNewlineTokenType';
-import getPrevNonNewlineTokenType from './prevNonNewlineTokenType';
 import PrinterCategory from './PrinterCategory';
 import tokenTypeToValueMap from './tokenTypeToValueMap';
 import trackIndentationDepthDuringNoFormat from './trackIndentationDepthDuringNoFormat';
@@ -109,10 +108,9 @@ export default function printer(
       indentationWhiteSpace: number,
     ): boolean {
       let lineLength;
-      let bracketCount = 0;
       let whiteSpace = 2 + indentationWhiteSpace;
 
-      for (let i = tokenIndex; bracketCount >= 0 && i < tokenCount; ++i) {
+      for (let i = tokenIndex; i < tokenCount; ++i) {
         if (tokenTypes[i] === marker) {
           lineLength =
             fileContents.slice(startLineIndex, tokenStartIndices[i]).replace(/\s/g, '').length +
@@ -142,7 +140,7 @@ export default function printer(
       let overflowMarker = 0;
       let whiteSpace = 2 + indentationWhiteSpace;
 
-      for (let i = tokenIndex; overflowMarker >= 0 && i < tokenCount; ++i) {
+      for (let i = tokenIndex; i < tokenCount; ++i) {
         const currTokenType = tokenTypes[i];
         if (currTokenType === overflowMarkerOpening) {
           ++overflowMarker;
@@ -167,7 +165,7 @@ export default function printer(
     }
 
     function doesTokenIncreaseWhiteSpace(type: TokenType): boolean {
-      return isTokenBinaryOperator(type);
+      return isTokenBinaryOperator(type) || type === TokenType.specialComma;
     }
 
     if (overflowType === TokenType.specialParenthesisOpening) {
@@ -207,14 +205,6 @@ export default function printer(
       tokenFindEndPosition(fileContents, startPos, tokenDetermineCategory(fileContents, startPos)) +
         1,
     );
-  }
-
-  function checkForIndirectionAndAddIndentation(i: number) {
-    let isThereIndirection = 0;
-    if (getNextNonNewlineTokenType(i) === TokenType.operatorUnaryIndirectionOrDereference) {
-      isThereIndirection = 2;
-    }
-    currString += lineEndings + ' '.repeat(indentAmountForMultiVar - isThereIndirection);
   }
 
   function getIndentation(indentationDepth: number) {
@@ -270,7 +260,7 @@ export default function printer(
 
       case TokenType.specialComma: {
         if (context === PrinterCategory.multiVariableDecl && (multiVarAlwaysNewline || overflow)) {
-          checkForIndirectionAndAddIndentation(i);
+          shouldAddNewline = true;
         } else if (overflow) {
           shouldAddNewline = true;
           noExtraNewline = true;
@@ -290,7 +280,7 @@ export default function printer(
               indentationChar === '\t'
                 ? Math.ceil(indentAmountForMultiVar / 4)
                 : Math.ceil(indentAmountForMultiVar / indentationSize);
-            checkForIndirectionAndAddIndentation(i);
+            shouldAddNewline = true;
           } else {
             currString = ', ';
           }
@@ -537,10 +527,8 @@ export default function printer(
       }
 
       case TokenType.operatorUnaryIndirectionOrDereference: {
-        nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
-        previousTokenType = getPrevNonNewlineTokenType(tokenTypes, tokenCount, i);
         if (
-          isTokenKeyword(previousTokenType) ||
+          (previousTokenType && isTokenKeyword(previousTokenType)) ||
           previousTokenType === TokenType.identifier ||
           (previousTokenType === TokenType.specialParenthesisClosing &&
             currString.charAt(0) !== '\n')

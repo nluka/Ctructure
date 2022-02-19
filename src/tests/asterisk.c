@@ -6,7 +6,11 @@ int a = 1, b = 2, c = 3, d = 4, e = 5, f = 6, g = 7, h = 8;
 int *pa = &a, *pb = &b, *pc = &c, *pd = &d, *pe = &e, *pf = &f;
 
 void indirection(CusType_t *inp1, CusType_t *inp2, CusType_t *inp3) {
-  CusType_t *p = inp1, **pp = &p, ***ppp = &pp, ****pppp = &ppp, *****ppppp = &pppp;
+  CusType_t *p = inp1,
+    **pp = &p,
+    ***ppp = &pp,
+    ****pppp = &ppp,
+    *****ppppp = &pppp;
 }
 
 void dereference() {
