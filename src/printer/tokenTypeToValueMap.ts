@@ -148,5 +148,4 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
     [TokenType.newline, ''],
   //#endregion Other
 ]);
-
 export default tokenTypeToValueMap;

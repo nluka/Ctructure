@@ -1,0 +1,42 @@
+import path = require('path');
+import assert from '../assert';
+import extractAndCleanFileContents from '../extractAndCleanFileContents';
+
+describe('formatBasic', () => {
+  const _assert = (filePathname: string, expected?: string): void =>
+    assert(`./format_basic/${filePathname}`, expected);
+
+  {
+    _assert('ant_simulator_lite/ant.c');
+    _assert('ant_simulator_lite/command_line.c');
+    _assert('ant_simulator_lite/print.c');
+    _assert('ant_simulator_lite/print.h');
+    _assert('ant_simulator_lite/Timespan.c');
+  }
+
+  {
+    const helloWorldFormatted =
+      extractAndCleanFileContents(path.resolve(__dirname, './hello_world/hello_world_formatted.c'));
+    _assert('hello_world/hello_world_minified.c', helloWorldFormatted);
+    _assert('hello_world/hello_world_expanded.c', helloWorldFormatted);
+  }
+
+  {
+    _assert('string/String.c');
+    _assert('string/String.h');
+  }
+
+  _assert('__attribute__.c');
+  _assert('asterisk.c');
+  _assert('comment.c');
+  _assert('empty_header.h');
+  _assert('for.c');
+  _assert('if_else.c');
+  _assert('label.c');
+  _assert('misc.c');
+  _assert('multivar_decl.c');
+  _assert('no_format.c');
+  _assert('prepro.c');
+  _assert('struct.c');
+  _assert('switch.c');
+});
