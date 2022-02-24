@@ -2,7 +2,7 @@ import defaultConfig from '../config/defaultConfig';
 import IConfig from '../config/IConfig';
 import tokenDetermineCategory from '../lexer/tokenDetermineCategory';
 import tokenFindEndPosition from '../lexer/tokenFindEndPosition';
-import TokenSet from '../lexer/TokenSet';
+import _TokenSet from '../lexer/TokenSet';
 import TokenType, {
   isTokenBinaryOperator,
   isTokenConstant,
@@ -44,7 +44,7 @@ export type TokenTypeOverflowable =
 
 export default function printer(
   fileContents: string,
-  tokenArray: TokenSet,
+  tokenArray: _TokenSet,
   testing: boolean = false,
 ): string {
   const config: IConfig = testing ? defaultConfig : require('../config/currentConfig').default;
@@ -90,7 +90,7 @@ export default function printer(
   let previousContext: {
     context: Context;
     overflow: boolean;
-    indentationLevel: number;
+    indentationDepth: number;
   } | null = null;
 
   // Used in determining if there is line overflow
@@ -165,7 +165,11 @@ export default function printer(
     }
 
     function doesTokenIncreaseWhiteSpace(type: TokenType): boolean {
-      return isTokenBinaryOperator(type) || type === TokenType.specialComma;
+      return (
+        isTokenBinaryOperator(type) ||
+        type === TokenType.specialComma ||
+        isTokenKeywordTypeOrTypeQualifier(type)
+      );
     }
 
     if (overflowType === TokenType.specialParenthesisOpening) {
@@ -211,7 +215,7 @@ export default function printer(
     return indentation.repeat(indentationDepth);
   }
 
-  function decreaseBlockLevel() {
+  function decreaseIndentationDepth() {
     indentationDepth = indentationDepth > 0 ? --indentationDepth : 0;
   }
 
@@ -270,7 +274,7 @@ export default function printer(
         ) {
           context = PrinterCategory.multiVariableDecl;
           if (multiVarAlwaysNewline || isThereLineOverflow(i, TokenType.specialSemicolon)) {
-            contextStack.push({ context, overflow, indentationLevel: indentationDepth });
+            contextStack.push({ context, overflow, indentationDepth });
             if (multiVarMatchIndent) {
               indentAmountForMultiVar = getIndentAmountForMultiVar(formattedStr);
             } else {
@@ -307,20 +311,20 @@ export default function printer(
           do {
             previousContext = contextStack.pop();
           } while (contextStack.peek().context === PrinterCategory.singleLineIf);
-          indentationDepth = previousContext.indentationLevel;
+          indentationDepth = previousContext.indentationDepth;
           overflow = false;
           shouldAddNewline = true;
           context = null;
           break;
         }
         if (context === PrinterCategory.assignmentOverflow) {
-          decreaseBlockLevel();
+          decreaseIndentationDepth();
           context = null;
           overflow = false;
         } else if (context === PrinterCategory.multiVariableDecl) {
           context = null;
           if (multiVarAlwaysNewline || overflow) {
-            indentationDepth = contextStack.pop().indentationLevel;
+            indentationDepth = contextStack.pop().indentationDepth;
             overflow = false;
           }
         } else if (
@@ -336,7 +340,7 @@ export default function printer(
       }
 
       case TokenType.specialBracketOpening: {
-        contextStack.push({ context, overflow, indentationLevel: indentationDepth });
+        contextStack.push({ context, overflow, indentationDepth });
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.variableDecl;
         }
@@ -349,7 +353,7 @@ export default function printer(
 
       case TokenType.specialBracketClosing: {
         previousContext = contextStack.pop();
-        indentationDepth = previousContext.indentationLevel;
+        indentationDepth = previousContext.indentationDepth;
         if (overflow) {
           currString = lineEndings + getIndentation(indentationDepth) + currString;
         }
@@ -365,7 +369,7 @@ export default function printer(
         } else if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.functionDecl;
         }
-        contextStack.push({ context, overflow, indentationLevel: indentationDepth });
+        contextStack.push({ context, overflow, indentationDepth });
         if (context !== TokenType.keywordFor) {
           context = null;
         }
@@ -380,14 +384,14 @@ export default function printer(
 
       case TokenType.specialParenthesisClosing: {
         if (overflow) {
-          decreaseBlockLevel();
+          decreaseIndentationDepth();
           currString = lineEndings + getIndentation(indentationDepth) + ')';
           startLineIndex = currTokStartPos;
         }
         --parenDepth;
         previousContext = contextStack.pop();
         overflow = previousContext.overflow;
-        indentationDepth = previousContext.indentationLevel;
+        indentationDepth = previousContext.indentationDepth;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
 
         if (
@@ -399,7 +403,7 @@ export default function printer(
             contextStack.push({
               context: PrinterCategory.singleLineIf,
               overflow,
-              indentationLevel: indentationDepth,
+              indentationDepth,
             });
             ++indentationDepth;
             shouldAddNewline = true;
@@ -425,7 +429,7 @@ export default function printer(
       }
 
       case TokenType.specialBraceOpening: {
-        contextStack.push({ context, overflow, indentationLevel: indentationDepth });
+        contextStack.push({ context, overflow, indentationDepth });
         if (context === PrinterCategory.array) {
           if (!isThereLineOverflow(i, TokenType.specialBraceOpening)) {
             currString += ' ';
@@ -456,13 +460,13 @@ export default function printer(
 
       case TokenType.specialBraceClosing: {
         previousContext = contextStack.pop();
-        indentationDepth = previousContext.indentationLevel;
+        indentationDepth = previousContext.indentationDepth;
         currString = lineEndings + getIndentation(indentationDepth) + '}';
         startLineIndex = currTokStartPos;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (contextStack.peek().context === PrinterCategory.singleLineIf) {
           previousContext = contextStack.pop();
-          indentationDepth = previousContext.indentationLevel;
+          indentationDepth = previousContext.indentationDepth;
           context = null;
           overflow = false;
           shouldAddNewline = true;
@@ -494,7 +498,7 @@ export default function printer(
         ) {
           shouldAddNewline = true;
         }
-        if (previousContext.indentationLevel === 0) {
+        if (previousContext.indentationDepth === 0) {
           context = null;
         } else {
           context = previousContext.context;
@@ -575,7 +579,7 @@ export default function printer(
           context !== PrinterCategory.array &&
           isThereLineOverflow(i, TokenType.specialSemicolon)
         ) {
-          currString = `${typeAsValue}`;
+          currString = currString.trimEnd();
           context = PrinterCategory.assignmentOverflow;
           shouldAddNewline = true;
           noExtraNewline = true;
@@ -585,9 +589,7 @@ export default function printer(
 
       case TokenType.operatorBinaryBitwiseAnd:
       case TokenType.operatorBinaryBitwiseOr:
-      case TokenType.operatorBinaryBitwiseXor:
-      case TokenType.operatorBinaryBitwiseShiftLeft:
-      case TokenType.operatorBinaryBitwiseShiftRight: {
+      case TokenType.operatorBinaryBitwiseXor: {
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (previousTokenType === TokenType.specialComma) {
           if (nextNonNewlineTokenType === TokenType.specialComma) {
@@ -678,7 +680,7 @@ export default function printer(
           break;
         }
         if (getNextNonNewlineTokenType(i) === TokenType.specialBraceOpening) {
-          decreaseBlockLevel();
+          decreaseIndentationDepth();
           break;
         }
         shouldAddNewline = true;
@@ -742,7 +744,7 @@ export default function printer(
           contextStack.push({
             context: PrinterCategory.singleLineIf,
             overflow,
-            indentationLevel: indentationDepth,
+            indentationDepth,
           });
           shouldAddNewline = true;
           noExtraNewline = true;
@@ -787,9 +789,9 @@ export default function printer(
         previousContext = contextStack.peek();
         currString =
           lineEndings +
-          getIndentation(previousContext.indentationLevel + 1) +
+          getIndentation(previousContext.indentationDepth + 1) +
           tokenTypeToValueMap.get(currTokType);
-        indentationDepth = previousContext.indentationLevel + 2;
+        indentationDepth = previousContext.indentationDepth + 2;
         break;
       }
 
@@ -832,6 +834,8 @@ export default function printer(
           nextNonNewlineTokenType === TokenType.identifier
         ) {
           currString += ' ';
+        } else if (nextNonNewlineTokenType === currTokType) {
+          shouldAddNewline = true;
         }
         break;
       }
@@ -859,7 +863,7 @@ export default function printer(
           nextNonNewlineTokenType === TokenType.keywordCase ||
           nextNonNewlineTokenType === TokenType.keywordDefault
         ) {
-          decreaseBlockLevel();
+          decreaseIndentationDepth();
         }
         break;
       }

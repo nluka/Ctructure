@@ -31,7 +31,7 @@ export default function trackIndentationDepthDuringNoFormat(
   let previousContext: {
     context: Context;
     overflow: boolean;
-    indentationLevel: number;
+    indentationDepth: number;
   } | null = null;
 
   function decreaseBlockLevel() {
@@ -73,7 +73,7 @@ export default function trackIndentationDepthDuringNoFormat(
         } else if (context === PrinterCategory.multiVariableDecl) {
           context = null;
           if (multiVarAlwaysNewline || overflow) {
-            indentationDepth = contextStack.pop().indentationLevel;
+            indentationDepth = contextStack.pop().indentationDepth;
             overflow = false;
           }
         } else if (context === PrinterCategory.singleLineIf) {
@@ -94,7 +94,7 @@ export default function trackIndentationDepthDuringNoFormat(
         contextStack.push({
           context,
           overflow,
-          indentationLevel: indentationDepth,
+          indentationDepth,
         });
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.variableDecl;
@@ -103,7 +103,7 @@ export default function trackIndentationDepthDuringNoFormat(
 
       case TokenType.specialBracketClosing:
         previousContext = contextStack.pop();
-        indentationDepth = previousContext.indentationLevel;
+        indentationDepth = previousContext.indentationDepth;
         context = previousContext.context;
         overflow = previousContext.overflow;
         break;
@@ -113,7 +113,7 @@ export default function trackIndentationDepthDuringNoFormat(
         contextStack.push({
           context,
           overflow,
-          indentationLevel: indentationDepth,
+          indentationDepth,
         });
         if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.functionDecl;
@@ -137,7 +137,7 @@ export default function trackIndentationDepthDuringNoFormat(
         --parenDepth;
         previousContext = contextStack.pop();
         overflow = previousContext.overflow;
-        indentationDepth = previousContext.indentationLevel;
+        indentationDepth = previousContext.indentationDepth;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(
           tokTypes,
           tokCount,
@@ -152,7 +152,7 @@ export default function trackIndentationDepthDuringNoFormat(
             contextStack.push({
               context,
               overflow,
-              indentationLevel: indentationDepth,
+              indentationDepth,
             });
             ++indentationDepth;
           } else {
@@ -167,7 +167,7 @@ export default function trackIndentationDepthDuringNoFormat(
         contextStack.push({
           context,
           overflow,
-          indentationLevel: indentationDepth,
+          indentationDepth,
         });
         if (prevType === TokenType.operatorBinaryAssignmentDirect) {
           context = PrinterCategory.array;
@@ -179,7 +179,7 @@ export default function trackIndentationDepthDuringNoFormat(
 
       case TokenType.specialBraceClosing:
         previousContext = contextStack.pop();
-        indentationDepth = previousContext.indentationLevel;
+        indentationDepth = previousContext.indentationDepth;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(
           tokTypes,
           tokCount,
@@ -187,7 +187,7 @@ export default function trackIndentationDepthDuringNoFormat(
         );
         if (contextStack.peek().context === PrinterCategory.singleLineIf) {
           previousContext = contextStack.pop();
-          indentationDepth = previousContext.indentationLevel;
+          indentationDepth = previousContext.indentationDepth;
           context = null;
           overflow = false;
           break;
@@ -292,7 +292,7 @@ export default function trackIndentationDepthDuringNoFormat(
           contextStack.push({
             context,
             overflow,
-            indentationLevel: indentationDepth,
+            indentationDepth,
           });
           ++indentationDepth;
         }
@@ -317,7 +317,7 @@ export default function trackIndentationDepthDuringNoFormat(
       case TokenType.keywordDefault:
         context = currTokenType;
         previousContext = contextStack.peek();
-        indentationDepth = previousContext.indentationLevel + 2;
+        indentationDepth = previousContext.indentationDepth + 2;
         break;
 
       case TokenType.keywordWhile:

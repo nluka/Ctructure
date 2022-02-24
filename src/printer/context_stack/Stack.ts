@@ -5,7 +5,7 @@ export default class Stack {
   private head: Node<{
     context: Context;
     overflow: boolean;
-    indentationLevel: number;
+    indentationDepth: number;
   }> | null = null;
 
   constructor() {}
@@ -13,36 +13,34 @@ export default class Stack {
   push(data: {
     context: Context;
     overflow: boolean;
-    indentationLevel: number;
+    indentationDepth: number;
   }) {
     const newHead = new Node<{
       context: Context;
       overflow: boolean;
-      indentationLevel: number;
+      indentationDepth: number;
     }>(data, this.head);
     this.head = newHead;
   }
 
-  peek(): { context: Context; overflow: boolean; indentationLevel: number } {
+  peek(): { context: Context; overflow: boolean; indentationDepth: number } {
     if (this.head) {
       const oldHead = this.head.data;
       if (oldHead) {
         return oldHead;
       }
-      return { context: null, overflow: false, indentationLevel: 0 };
     }
-    return { context: null, overflow: false, indentationLevel: 0 };
+    return { context: null, overflow: false, indentationDepth: 0 };
   }
 
-  pop(): { context: Context; overflow: boolean; indentationLevel: number } {
+  pop(): { context: Context; overflow: boolean; indentationDepth: number } {
     if (this.head) {
       const oldHead = this.head.data;
       this.head = this.head.next;
       if (oldHead) {
         return oldHead;
       }
-      return { context: null, overflow: false, indentationLevel: 0 };
     }
-    return { context: null, overflow: false, indentationLevel: 0 };
+    return { context: null, overflow: false, indentationDepth: 0 };
   }
 }

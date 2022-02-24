@@ -280,7 +280,10 @@ static void kill_indent(struct strbuf *sb, const struct json_writer *jw) {
   }
 }
 
-static void append_sub_jw(struct json_writer *jw, const struct json_writer *value) {
+static void append_sub_jw(
+  struct json_writer *jw,
+  const struct json_writer *value
+) {
   /*
    * If both are pretty, increase the indentation of the sub_jw
    * to better fit under the super.
