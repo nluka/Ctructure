@@ -6,4 +6,5 @@ describe('formatDoom', () => {
 
   _assert('am_map.c');
   _assert('d_items.c');
+  _assert('d_main.c');
 });
