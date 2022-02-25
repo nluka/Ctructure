@@ -5,4 +5,5 @@ describe('formatDoom', () => {
     assert(`./format_doom/${filePathname}`, expected);
 
   _assert('am_map.c');
+  _assert('d_items.c');
 });
