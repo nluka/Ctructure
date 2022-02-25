@@ -971,8 +971,8 @@ void AM_drawGrid(int color) {
   start = m_x;
   if ((start - bmaporgx) % (MAPBLOCKUNITS << FRACBITS))
     start +=
-    (MAPBLOCKUNITS << FRACBITS) -
-    ((start - bmaporgx) % (MAPBLOCKUNITS << FRACBITS));
+      (MAPBLOCKUNITS << FRACBITS) -
+      ((start - bmaporgx) % (MAPBLOCKUNITS << FRACBITS));
   end = m_x + m_w;
 
   // draw vertical gridlines
@@ -988,8 +988,8 @@ void AM_drawGrid(int color) {
   start = m_y;
   if ((start - bmaporgy) % (MAPBLOCKUNITS << FRACBITS))
     start +=
-    (MAPBLOCKUNITS << FRACBITS) -
-    ((start - bmaporgy) % (MAPBLOCKUNITS << FRACBITS));
+      (MAPBLOCKUNITS << FRACBITS) -
+      ((start - bmaporgy) % (MAPBLOCKUNITS << FRACBITS));
   end = m_y + m_h;
 
   // draw horizontal gridlines

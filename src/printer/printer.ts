@@ -8,7 +8,7 @@ import TokenType, {
   isTokenConstant,
   isTokenKeyword,
   isTokenKeywordTypeOrTypeQualifier,
-  isTokenKeywordTypeQualifier
+  isTokenKeywordTypeQualifier,
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
 import checkForAssignmentToFunction from './checkForAssignmentToFunction';
@@ -399,7 +399,10 @@ export default function printer(
           (previousContext.context === TokenType.keywordFor && parenDepth === 0) ||
           previousContext.context === TokenType.keywordWhile
         ) {
-          if (nextNonNewlineTokenType !== TokenType.specialBraceOpening) {
+          if (
+            nextNonNewlineTokenType !== TokenType.specialBraceOpening &&
+            nextNonNewlineTokenType !== TokenType.specialSemicolon
+          ) {
             contextStack.push({
               context: PrinterCategory.singleLineIf,
               overflow,
@@ -563,26 +566,32 @@ export default function printer(
       case TokenType.operatorBinaryAssignmentBitwiseAnd:
       case TokenType.operatorBinaryAssignmentBitwiseOr:
       case TokenType.operatorBinaryAssignmentBitwiseXor: {
-        nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (previousTokenType === TokenType.specialComma) {
-          if (nextNonNewlineTokenType === TokenType.specialComma) {
+          if (getNextNonNewlineTokenType(i) === TokenType.specialComma) {
             currString = currString.trimStart().trimEnd();
           } else {
             currString = currString.trimStart();
           }
         }
-        if (context === PrinterCategory.typeOrIdentifier) {
-          context = null;
-        }
         if (
+          context === PrinterCategory.assignmentOverflow &&
+          isThereLineOverflow(i, TokenType.specialSemicolon)
+        ) {
+          currString = currString.trimEnd();
+          shouldAddNewline = true;
+          noExtraNewline = true;
+        } else if (
           parenDepth === 0 &&
           context !== PrinterCategory.array &&
           isThereLineOverflow(i, TokenType.specialSemicolon)
         ) {
           currString = currString.trimEnd();
           context = PrinterCategory.assignmentOverflow;
+          ++indentationDepth;
           shouldAddNewline = true;
           noExtraNewline = true;
+        } else if (context === PrinterCategory.typeOrIdentifier) {
+          context = null;
         }
         break;
       }
@@ -726,7 +735,11 @@ export default function printer(
       }
 
       case TokenType.keywordUnsigned: {
-        if (getNextNonNewlineTokenType(i) !== TokenType.specialParenthesisClosing) {
+        nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
+        if (
+          nextNonNewlineTokenType !== TokenType.specialParenthesisClosing &&
+          nextNonNewlineTokenType !== TokenType.operatorUnaryIndirectionOrDereference
+        ) {
           currString += ' ';
         }
         break;
