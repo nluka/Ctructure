@@ -2,7 +2,7 @@ import TokenType from '../lexer/TokenType';
 
 const tokenTypeToValueMap = new Map<TokenType, string>([
   //#region Preprocessor
-    [TokenType.preproHash, '#'],
+    [TokenType.preproDirective, '#'],
       // Macros
       [TokenType.preproMacroFile, '__FILE__'],
       [TokenType.preproMacroLine, '__LINE__'],

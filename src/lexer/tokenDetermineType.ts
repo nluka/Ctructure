@@ -26,23 +26,22 @@ export default function tokenDetermineType(
       return TokenType.newline;
     }
 
-    case TokenCategory.preproHash: {
-      return TokenType.preproHash;
+    case TokenCategory.preproDirective: {
+      return TokenType.preproDirective;
     }
 
     case TokenCategory.commentOrOperator: {
       const rawTok = fileContents.slice(tokStartPos, tokEndPos + 1);
       const type = tokenValueToTypeMap.get(rawTok);
       if (type !== undefined) {
-        // Is an operator
+        // an operator
         return type;
       }
 
       // no-format directives
       if (rawTok.match(commentDirectiveNoFormatSingleLineRegex)) {
         return TokenType.commentDirectiveNoFormatSingleLine;
-      }
-      if (rawTok.match(commentDirectiveNoFormatMultiLineRegex)) {
+      } else if (rawTok.match(commentDirectiveNoFormatMultiLineRegex)) {
         return TokenType.commentDirectiveNoFormatMultiLine;
       }
 
@@ -89,8 +88,9 @@ export default function tokenDetermineType(
       const type = tokenValueToTypeMap.get(rawTok);
       if (type === undefined) {
         throw createErr();
+      } else {
+        return type;
       }
-      return type;
     }
 
     case TokenCategory.operator: {
@@ -98,8 +98,20 @@ export default function tokenDetermineType(
       const type = tokenValueToTypeMap.get(rawTok);
       if (type === undefined) {
         throw createErr();
+      } else {
+        return type;
       }
-      return type;
+    }
+
+    case TokenCategory.operatorOrConstant: {
+      const rawTok = fileContents.slice(tokStartPos, tokEndPos + 1);
+      if (rawTok === '.') {
+        return TokenType.operatorMemberSelectionDirect;
+      } else if (rawTok === '...') {
+        return TokenType.operatorEllipses;
+      } else {
+        return TokenType.constantNumber;
+      }
     }
   }
 }

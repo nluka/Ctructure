@@ -312,7 +312,7 @@ function disambiguateAsterisk(
       TokenType.keywordInline,
       TokenType.keywordRegister,
     ].includes(secondNonNewlineOrCommentTokBehindType) ||
-    secondNonNewlineOrCommentTokBehindType === TokenType.preproHash
+    secondNonNewlineOrCommentTokBehindType === TokenType.preproDirective
   ) {
     return TokenType.operatorUnaryIndirectionOrDereference;
   }

@@ -1,23 +1,122 @@
 import TokenCategory from '../TokenCategory';
-import tokenFindEndPosition from '../tokenFindEndPosition';
+import tokenFindEndPosition, { findEndPositionNumericConstant } from '../tokenFindEndPosition';
 
 const [
   newline,
   special,
-  preproHash,
+  preproDirective,
   commentOrOperator,
   operator,
   constant,
+  operatorOrConstant,
   preproMacroOrKeywordOrIdentifierOrLabel,
 ] = [
   TokenCategory.newline,
   TokenCategory.special,
-  TokenCategory.preproHash,
+  TokenCategory.preproDirective,
   TokenCategory.commentOrOperator,
   TokenCategory.operator,
   TokenCategory.constant,
+  TokenCategory.operatorOrConstant,
   TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
 ];
+
+describe('findEndPositionNumericConstant', () => {
+  function assert(
+    expectedEndPos: number,
+    fileContents: string,
+  ) {
+    test(`${expectedEndPos} when fileContents=${JSON.stringify(
+      fileContents,
+    )}`, () => {
+      expect(
+        findEndPositionNumericConstant(0, fileContents),
+      ).toBe(expectedEndPos);
+    });
+  }
+
+  describe('decimal', () => {
+    assert(0, '1');
+    assert(1, '12');
+    assert(2, '123');
+    assert(3, '123U');
+    assert(3, '123L');
+    assert(4, '123UL');
+    assert(4, '123LL');
+    assert(5, '123ULL');
+    assert(5, '123LLU');
+  });
+  describe('octal', () => {
+    assert(1, '01');
+    assert(2, '012');
+    assert(3, '0123');
+    assert(4, '0123U');
+    assert(4, '0123L');
+    assert(5, '0123UL');
+    assert(5, '0123LL');
+    assert(6, '0123ULL');
+    assert(6, '0123LLU');
+  });
+  describe('hexadecimal', () => {
+    assert(2, '0x1');
+    assert(3, '0x12');
+    assert(4, '0x123');
+    assert(4, '0x1e2');
+    assert(7, '0xABCDEF');
+    assert(8, '0xABCDEFu');
+    assert(8, '0xABCDEFl');
+    assert(9, '0xABCDEFlu');
+    assert(9, '0xABCDEFll');
+    assert(10, '0xABCDEFllu');
+    assert(10, '0x123ABCDEF');
+    assert(11, '0x123ABCDEFu');
+    assert(11, '0x123ABCDEFl');
+    assert(12, '0x123ABCDEFlu');
+    assert(12, '0x123ABCDEFll');
+    assert(13, '0x123ABCDEFllu');
+    assert(10, '0xABCDEF123');
+    assert(11, '0xABCDEF123u');
+    assert(11, '0xABCDEF123l');
+    assert(12, '0xABCDEF123lu');
+    assert(12, '0xABCDEF123ll');
+    assert(13, '0xABCDEF123llu');
+  });
+  describe('binary', () => {
+    assert(2, '0b1');
+    assert(3, '0b10');
+    assert(4, '0b101');
+    assert(5, '0b101U');
+    assert(5, '0b101L');
+    assert(6, '0b101LU');
+    assert(6, '0b101LL');
+    assert(7, '0b101LLU');
+  });
+  describe('floating', () => {
+    assert(3, '0.0f');
+    assert(3, '1.0f');
+    assert(7, '1.0e+123');
+    assert(8, '1.0e+123f');
+    assert(7, '1.0e-123');
+    assert(8, '1.0e-123f');
+    assert(3, '.123');
+    assert(4, '.123f');
+    assert(8, '.123e+123');
+    assert(8, '.123e-123');
+    assert(9, '.123e+123f');
+    assert(9, '.123e-123f');
+  });
+  describe('bogus', () => {
+    /*
+      even though these are not valid numeric literals,
+      we still consider them as one token
+    */
+    assert(5, '123abc');
+    assert(5, '0x1.0f');
+    assert(6, '0123abc');
+    assert(4, '0b123');
+    assert(4, '0bAbc');
+  });
+});
 
 describe('tokenFindEndPosition', () => {
   function assert(
@@ -58,16 +157,16 @@ describe('tokenFindEndPosition', () => {
     }
   });
 
-  describe('preproHash', () => {
-    assert(preproHash,  0, '#');
-    assert(preproHash,  0, '#\n');
-    assert(preproHash,  2, '#\\\n\n');
-    assert(preproHash, 18, '# include <stdio.h>');
-    assert(preproHash, 18, '# include <stdio.h>\n');
-    assert(preproHash, 10, '#define A 1');
-    assert(preproHash, 10, '#define A 1\n');
-    assert(preproHash, 26, '#define A \\\n \\\n 1 \\\n + \\\n 2');
-    assert(preproHash, 26, '#define A \\\n \\\n 1 \\\n + \\\n 2\n');
+  describe('preproDirective', () => {
+    assert(preproDirective,  0, '#');
+    assert(preproDirective,  0, '#\n');
+    assert(preproDirective,  2, '#\\\n\n');
+    assert(preproDirective, 18, '# include <stdio.h>');
+    assert(preproDirective, 18, '# include <stdio.h>\n');
+    assert(preproDirective, 10, '#define A 1');
+    assert(preproDirective, 10, '#define A 1\n');
+    assert(preproDirective, 26, '#define A \\\n \\\n 1 \\\n + \\\n 2');
+    assert(preproDirective, 26, '#define A \\\n \\\n 1 \\\n + \\\n 2\n');
   });
 
   describe('commentOrOperator', () => {
@@ -309,15 +408,14 @@ describe('tokenFindEndPosition', () => {
     });
     describe('Other', () => {
       describe('MemberSelectionDirect', () => {
-        assert(operator, 0, '.');
-        assert(operator, 0, '. ');
-        assert(operator, 0, '.\n');
-        assert(operator, 0, '.A');
-        assert(operator, 0, '.1');
-        assert(operator, 0, '.,');
-        assert(operator, 0, '..');
-        assert(operator, 0, '.. ');
-        assert(operator, 0, '..\n');
+        assert(operatorOrConstant, 0, '.');
+        assert(operatorOrConstant, 0, '. ');
+        assert(operatorOrConstant, 0, '.\n');
+        assert(operatorOrConstant, 0, '.A');
+        assert(operatorOrConstant, 0, '.,');
+        assert(operatorOrConstant, 0, '..');
+        assert(operatorOrConstant, 0, '.. ');
+        assert(operatorOrConstant, 0, '..\n');
       });
       describe('MemberSelectionIndirect', () => {
         assert(operator, 1, '->');
@@ -339,13 +437,13 @@ describe('tokenFindEndPosition', () => {
         assert(operator, 0, '??');
       });
       describe('Ellipses', () => {
-        assert(operator, 2, '...');
-        assert(operator, 2, '... ');
-        assert(operator, 2, '...\n');
-        assert(operator, 2, '...A');
-        assert(operator, 2, '...1');
-        assert(operator, 2, '...,');
-        assert(operator, 2, '....');
+        assert(operatorOrConstant, 2, '...');
+        assert(operatorOrConstant, 2, '... ');
+        assert(operatorOrConstant, 2, '...\n');
+        assert(operatorOrConstant, 2, '...A');
+        assert(operatorOrConstant, 2, '...1');
+        assert(operatorOrConstant, 2, '...,');
+        assert(operatorOrConstant, 2, '....');
       });
     });
     describe('Ambiguous', () => {
@@ -422,6 +520,7 @@ describe('tokenFindEndPosition', () => {
       assert(constant, 3, `'\\t'`);
       assert(constant, 3, `'\\n'`);
       assert(constant, 3, `'\\r'`);
+      assert(constant, 4, `'0x3'`);
     });
     describe('String', () => {
       assert(constant, 1, `""`);
@@ -448,7 +547,7 @@ describe('tokenFindEndPosition', () => {
         assert(constant, 3, '123l`'   );
         assert(constant, 3, '123L~'   );
         assert(constant, 4, '123lu!'  ); // unsigned
-        assert(constant, 4, "123lU@"  ); // unsigned
+        assert(constant, 4, '123lU@'  ); // unsigned
         assert(constant, 4, '123Lu#'  ); // unsigned
         assert(constant, 4, '123LU$'  ); // unsigned
         assert(constant, 4, '0123l%'  ); // octal
@@ -469,7 +568,7 @@ describe('tokenFindEndPosition', () => {
         assert(constant, 4, '123lL{'    );
         assert(constant, 4, '123LL]'    );
         assert(constant, 5, '123llu}'   ); // unsigned
-        assert(constant, 5, "123llU\\"  ); // unsigned
+        assert(constant, 5, '123llU\\'  ); // unsigned
         assert(constant, 5, '123LLu|'   ); // unsigned
         assert(constant, 5, '123LLU;'   ); // unsigned
         assert(constant, 5, '0123ll:'   ); // octal

@@ -8,7 +8,7 @@ import TokenType, {
   isTokenConstant,
   isTokenKeyword,
   isTokenKeywordTypeOrTypeQualifier,
-  isTokenKeywordTypeQualifier,
+  isTokenKeywordTypeQualifier
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
 import checkForAssignmentToFunction from './checkForAssignmentToFunction';
@@ -507,7 +507,7 @@ export default function printer(
         break;
       }
 
-      case TokenType.preproHash: {
+      case TokenType.preproDirective: {
         const newlineIndex = getIndexOfNextNewline(i);
         currString = '';
         if (previousTokenType !== null) {

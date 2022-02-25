@@ -1,6 +1,6 @@
 enum TokenType {
   //#region Preprocessor (https://www.tutorialspoint.com/cprogramming/c_preprocessors.htm)
-    preproHash,
+    preproDirective,
     // Macros
       preproMacroFile,
       preproMacroLine,

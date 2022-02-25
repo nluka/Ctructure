@@ -6,7 +6,7 @@ import tokenTypeToNameMap from '../tokenTypeToNameMap';
 const [
   newline,
   special,
-  preproHash,
+  preproDirective,
   commentOrOperator,
   operator,
   constant,
@@ -14,7 +14,7 @@ const [
 ] = [
   TokenCategory.newline,
   TokenCategory.special,
-  TokenCategory.preproHash,
+  TokenCategory.preproDirective,
   TokenCategory.commentOrOperator,
   TokenCategory.operator,
   TokenCategory.constant,
@@ -66,8 +66,8 @@ describe('tokenDetermineType', () => {
 
   describe('Preprocessor', () => {
     describe('Hash', () => {
-      assert(preproHash, TokenType.preproHash, '#include <stdio.h>');
-      assert(preproHash, TokenType.preproHash, '# define A \\\n 1');
+      assert(preproDirective, TokenType.preproDirective, '#include <stdio.h>');
+      assert(preproDirective, TokenType.preproDirective, '# define A \\\n 1');
     });
     describe('Macros', () => {
       assert(preproMacroOrKeywordOrIdentifierOrLabel, TokenType.preproMacroFile,      '__FILE__');

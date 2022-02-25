@@ -3,7 +3,7 @@ import TokenType from './TokenType';
 // For better test outputs
 const tokenTypeToNameMap = new Map<TokenType, string>([
   //#region Preprocessor
-    [TokenType.preproHash, 'preproHash'],
+    [TokenType.preproDirective, 'preproDirective'],
     // Macros
       [TokenType.preproMacroFile, 'preproMacroFile'],
       [TokenType.preproMacroLine, 'preproMacroLine'],

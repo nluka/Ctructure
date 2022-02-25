@@ -2,7 +2,7 @@ import TokenType from './TokenType';
 
 const tokenValueToTypeMap = new Map<string, TokenType>([
   //#region Preprocessor
-    ['#', TokenType.preproHash],
+    ['#', TokenType.preproDirective],
     // Macros
       ['__FILE__', TokenType.preproMacroFile],
       ['__LINE__', TokenType.preproMacroLine],

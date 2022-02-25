@@ -5,7 +5,7 @@ import tokenValueToTypeMap from './tokenValueToTypeMap';
 const commentOrOperatorRegex = /^\/$/,
   preproMacroOrKeywordOrIdentifierOrLabelRegex = /^[a-zA-Z_]$/,
   constantRegex = /^[0-9'"]$/,
-  operatorRegex = /^[+\-~!*/%=<>&|^.?:]$/;
+  operatorRegex = /^[+\-~!*/%=<>&|^?:]$/;
 
 /**
  * Determines the category of a token based on its first character.
@@ -22,7 +22,10 @@ export default function tokenDetermineCategory(
     return TokenCategory.newline;
   }
   if (tokFirstChar === '#') {
-    return TokenCategory.preproHash;
+    return TokenCategory.preproDirective;
+  }
+  if (tokFirstChar === '.') {
+    return TokenCategory.operatorOrConstant;
   }
   if (tokFirstChar.match(commentOrOperatorRegex)) {
     return TokenCategory.commentOrOperator;

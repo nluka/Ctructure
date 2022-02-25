@@ -4,18 +4,20 @@ import tokenDetermineCategory from '../tokenDetermineCategory';
 const [
   newline,
   special,
-  preproHash,
+  preproDirective,
   commentOrOperator,
   operator,
   constant,
+  operatorOrConstant,
   preproMacroOrKeywordOrIdentifierOrLabel,
 ] = [
   TokenCategory.newline,
   TokenCategory.special,
-  TokenCategory.preproHash,
+  TokenCategory.preproDirective,
   TokenCategory.commentOrOperator,
   TokenCategory.operator,
   TokenCategory.constant,
+  TokenCategory.operatorOrConstant,
   TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel,
 ];
 
@@ -54,8 +56,8 @@ describe('tokenDetermineCategory', () => {
     }
   });
 
-  describe('preproHash', () => {
-    assert(preproHash, '#');
+  describe('preproDirective', () => {
+    assert(preproDirective, '#');
   });
 
   describe('commentOrOperator', () => {
@@ -101,11 +103,9 @@ describe('tokenDetermineCategory', () => {
     });
     describe('Other', () => {
       assert(operator, '*');
-      assert(operator, '.');
       assert(operator, '->');
       assert(operator, '?');
       assert(operator, ':');
-      assert(operator, '...');
     });
   });
 
@@ -113,6 +113,12 @@ describe('tokenDetermineCategory', () => {
     assert(constant, `'`);
     assert(constant, `"`);
     assert(constant, '123');
+  });
+
+  describe('operatorOrConstant', () => {
+    assert(operatorOrConstant, `.`);
+    assert(operatorOrConstant, `...`);
+    assert(operatorOrConstant, `.123`);
   });
 
   describe('preproMacroOrKeywordOrIdentifierOrLabel', () => {

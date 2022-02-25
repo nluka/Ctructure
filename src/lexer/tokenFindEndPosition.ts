@@ -2,11 +2,11 @@ import indexOfUnescaped from '../utility/indexOfUnescaped';
 import TokenCategory, { tokenCategoryToStringMap } from './TokenCategory';
 import tokenDetermineLineAndNum from './tokenDetermineLineAndNum';
 
-const singleCharOperatorRegex = /[?:~]/,
-  plusPlusOrPlusEqualRegex = /[+=]/,
-  minusMinusOrMinusEqualOrArrowRegex = /[\-=>]/,
-  alphanumericRegex = /[0-9a-zA-Z]/,
-  alphanumericOrUnderscoreRegex = /[a-zA-Z0-9_]/;
+const singleCharOperatorRegex = /^[?:~]$/,
+  plusPlusOrPlusEqualRegex = /^[+=]$/,
+  minusMinusOrMinusEqualOrArrowRegex = /^[\-=>]$/,
+  alphanumericRegex = /^[a-zA-Z0-9]$/,
+  alphanumericOrUnderscoreRegex = /^[a-zA-Z0-9_]$/;
 
 /**
  * Finds the index of the last character of a token based on its category.
@@ -26,51 +26,48 @@ export default function tokenFindEndPosition(
       return tokStartPos;
     }
 
-    case TokenCategory.preproHash: {
-      const firstUnescapedNewlineIndex = indexOfUnescaped(
+    case TokenCategory.preproDirective: {
+      const firstUnescapedNewlinePos = indexOfUnescaped(
         fileContents,
         '\n',
         '\\',
         tokStartPos + 1,
       );
-      if (firstUnescapedNewlineIndex === -1) {
-        return fileContents.length - 1;
-      }
-      return firstUnescapedNewlineIndex - 1;
+      return firstUnescapedNewlinePos === -1
+        ? fileContents.length - 1
+        : firstUnescapedNewlinePos - 1;
     }
 
     case TokenCategory.commentOrOperator: {
-      const secondCharIndex = tokStartPos + 1;
-      const secondChar = fileContents.charAt(secondCharIndex);
+      const secondCharPos = tokStartPos + 1;
+      const secondChar = fileContents.charAt(secondCharPos);
 
-      if (secondChar === '=') {
-        // /=
-        return secondCharIndex;
+      switch (secondChar) {
+        case '=':
+          return secondCharPos; // /=
+        case '/': {
+          // single line comment
+          const firstNewlineCharIndex = fileContents.indexOf(
+            '\n',
+            tokStartPos + 2,
+          );
+          return firstNewlineCharIndex === -1
+            ? fileContents.length - 1
+            : firstNewlineCharIndex - 1;
+        }
+        case '*': {
+          // multi line comment
+          const closingSequenceStartPos = fileContents.indexOf(
+            '*/',
+            tokStartPos + 2,
+          );
+          return closingSequenceStartPos === -1
+            ? fileContents.length - 1
+            : closingSequenceStartPos + 1;
+        }
+        default:
+          return tokStartPos;
       }
-
-      if (secondChar === '/') {
-        // Single line comment
-        const firstNewlineCharIndex = fileContents.indexOf(
-          '\n',
-          tokStartPos + 2,
-        );
-        return firstNewlineCharIndex === -1
-          ? fileContents.length - 1
-          : firstNewlineCharIndex - 1;
-      }
-
-      if (secondChar === '*') {
-        // Multi line comment
-        const closingSequenceStartPos = fileContents.indexOf(
-          '*/',
-          tokStartPos + 2,
-        );
-        return closingSequenceStartPos === -1
-          ? fileContents.length - 1
-          : closingSequenceStartPos + 1;
-      }
-
-      return tokStartPos;
     }
 
     case TokenCategory.operator: {
@@ -87,8 +84,9 @@ export default function tokenFindEndPosition(
           if (secondChar.match(plusPlusOrPlusEqualRegex)) {
             // ++ +=
             return secondCharIndex;
+          } else {
+            return tokStartPos;
           }
-          return tokStartPos;
         }
 
         case '-': {
@@ -96,61 +94,53 @@ export default function tokenFindEndPosition(
           if (secondChar.match(minusMinusOrMinusEqualOrArrowRegex)) {
             // -- -= ->
             return tokStartPos + 1;
+          } else {
+            return tokStartPos;
           }
-          return tokStartPos;
         }
 
-        case '*': /* falls through */
-        case '%': /* falls through */
-        case '=': /* falls through */
-        case '!': /* falls through */
+        case '*':
+        case '%':
+        case '=':
+        case '!':
         case '^': {
           const secondCharIndex = tokStartPos + 1;
           const secondChar = fileContents.charAt(secondCharIndex);
           return secondChar === '=' ? secondCharIndex : tokStartPos;
         }
 
-        case '<': /* falls through */
+        case '<':
         case '>': {
-          const secondCharIndex = tokStartPos + 1;
-          const secondChar = fileContents.charAt(secondCharIndex);
-
+          const secondCharPos = tokStartPos + 1;
+          const secondChar = fileContents.charAt(secondCharPos);
           if (secondChar === '=') {
             // >=
-            return secondCharIndex;
-          }
-
-          if (secondChar === firstChar) {
+            return secondCharPos;
+          } else if (secondChar === firstChar) {
             // >> <<
-            const thirdIndex = tokStartPos + 2;
-            const thirdChar = fileContents.charAt(thirdIndex);
+            const thirdCharPos = tokStartPos + 2;
+            const thirdChar = fileContents.charAt(thirdCharPos);
             if (thirdChar === '=') {
               // >>= <<=
-              return thirdIndex;
+              return thirdCharPos;
+            } else {
+              return secondCharPos;
             }
-            return secondCharIndex;
+          } else {
+            return tokStartPos;
           }
-
-          return tokStartPos;
         }
 
-        case '&': /* falls through */
+        case '&':
         case '|': {
           const secondCharIndex = tokStartPos + 1;
           const secondChar = fileContents.charAt(secondCharIndex);
           if (secondChar === firstChar || secondChar === '=') {
             // && &= || |=
             return secondCharIndex;
+          } else {
+            return tokStartPos;
           }
-          return tokStartPos;
-        }
-
-        case '.': {
-          const firstThreeChars = fileContents.slice(
-            tokStartPos,
-            tokStartPos + 3,
-          );
-          return firstThreeChars === '...' ? tokStartPos + 2 : tokStartPos;
         }
       }
 
@@ -159,7 +149,7 @@ export default function tokenFindEndPosition(
         tokStartPos,
       );
       throw new Error(
-        `cannot find token end pos ${tokenNum} on line ${lineNum} (category=${tokenCategoryToStringMap.get(
+        `cannot find end position of token ${tokenNum} on line ${lineNum} (category=${tokenCategoryToStringMap.get(
           tokCategory,
         )})`,
       );
@@ -167,7 +157,6 @@ export default function tokenFindEndPosition(
 
     case TokenCategory.constant: {
       const firstChar = fileContents.charAt(tokStartPos);
-
       if (firstChar === `'` || firstChar === `"`) {
         // String or character constant
         const closingCharIndex = indexOfUnescaped(
@@ -179,35 +168,63 @@ export default function tokenFindEndPosition(
         return closingCharIndex === -1
           ? fileContents.length - 1
           : closingCharIndex;
+      } else {
+        return findEndPositionNumericConstant(tokStartPos, fileContents);
       }
+    }
 
-      // Numeric constant
-      let i: number;
-      for (i = tokStartPos + 1; i < fileContents.length; ++i) {
-        const char = fileContents.charAt(i);
-        const isAlphanumericChar = char.match(alphanumericRegex);
-        if (isAlphanumericChar || char === '.') {
-          continue;
+    case TokenCategory.operatorOrConstant: {
+      const secondChar = fileContents.charAt(tokStartPos + 1);
+      if (secondChar === '.') {
+        const thirdChar = fileContents.charAt(tokStartPos + 2);
+        if (thirdChar === '.') {
+          // ellipses
+          return tokStartPos + 2;
+        } else {
+          // direct member selection
+          return tokStartPos;
         }
-        if (char !== '-') {
-          break;
-        }
-        const prevChar = fileContents.charAt(i - 1).toLowerCase();
-        if (prevChar !== 'e') {
-          break;
-        }
+      } else if (!secondChar.match(/^[0-9]/)) {
+        // direct member selection
+        return tokStartPos;
+      } else {
+        return findEndPositionNumericConstant(tokStartPos, fileContents);
       }
-      return i - 1;
     }
 
     case TokenCategory.preproMacroOrKeywordOrIdentifierOrLabel: {
-      for (let i = tokStartPos; i < fileContents.length; ++i) {
-        const char = fileContents.charAt(i);
+      for (let pos = tokStartPos + 1; pos < fileContents.length; ++pos) {
+        const char = fileContents.charAt(pos);
         if (!char.match(alphanumericOrUnderscoreRegex)) {
-          return i - 1;
+          return pos - 1;
         }
       }
       return fileContents.length - 1;
     }
   }
+}
+
+export function findEndPositionNumericConstant(
+  tokStartPos: number,
+  fileContents: string,
+): number {
+  let hasExponentSignBeenSeen = false;
+  for (let pos = tokStartPos + 1; pos < fileContents.length; ++pos) {
+    const char = fileContents.charAt(pos);
+    if (char === '+' || char === '-') {
+      if (hasExponentSignBeenSeen) {
+        return pos - 1;
+      }
+      const prevChar = fileContents.charAt(pos - 1);
+      if (prevChar === 'e' || prevChar === 'E') {
+        hasExponentSignBeenSeen = true;
+        continue;
+      } else {
+        return pos - 1;
+      }
+    } else if (!char.match(alphanumericRegex) && char !== '.') {
+      return pos - 1;
+    }
+  }
+  return fileContents.length - 1;
 }
