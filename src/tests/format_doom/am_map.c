@@ -291,11 +291,11 @@ void AM_getIslope(mline_t *ml, islope_t *is) {
   dy = ml->a.y - ml->b.y;
   dx = ml->b.x - ml->a.x;
   if (!dy)
-    is->islp = (dx < 0 ?  - MAXINT : MAXINT);
+    is->islp = (dx < 0 ? -MAXINT : MAXINT);
   else
     is->islp = FixedDiv(dx, dy);
   if (!dx)
-    is->slp = (dy < 0 ?  - MAXINT : MAXINT);
+    is->slp = (dy < 0 ? -MAXINT : MAXINT);
   else
     is->slp = FixedDiv(dy, dx);
 }

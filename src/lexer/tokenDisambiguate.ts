@@ -186,22 +186,26 @@ function disambiguateIncrementDecrement(
 }
 
 function disambiguatePlusMinus(
-  which: TokenType,
+  ambigType: TokenType,
   firstNonNewlineOrCommentTokTypeBehind: TokenType,
 ) {
   if (
+    isTokenUnaryOperator(firstNonNewlineOrCommentTokTypeBehind) ||
     isTokenBinaryOperator(firstNonNewlineOrCommentTokTypeBehind) ||
+    isTokenTernaryOperatorComponent(firstNonNewlineOrCommentTokTypeBehind) ||
     [
-      TokenType.specialBracketOpening,
-      TokenType.specialParenthesisOpening,
       TokenType.keywordReturn,
+      TokenType.specialComma,
+      TokenType.specialParenthesisOpening,
+      TokenType.specialBraceOpening,
+      TokenType.specialBracketOpening,
     ].includes(firstNonNewlineOrCommentTokTypeBehind)
   ) {
-    return which === TokenType.ambiguousPlus
+    return ambigType === TokenType.ambiguousPlus
       ? TokenType.operatorUnaryPlus
       : TokenType.operatorUnaryMinus;
   }
-  return which === TokenType.ambiguousPlus
+  return ambigType === TokenType.ambiguousPlus
     ? TokenType.operatorBinaryArithmeticAddition
     : TokenType.operatorBinaryArithmeticSubtraction;
 }
@@ -214,7 +218,7 @@ function disambiguateAsterisk(
   firstNonNewlineOrCommentTokAheadIndex: number,
   createErr: () => Error,
 ) {
-  // mult with number|character operands or offset as left operand
+  // mult with num|char operands, offset as left operand, parenthesis on right
   if (
     [
       TokenType.constantNumber,
@@ -228,10 +232,17 @@ function disambiguateAsterisk(
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
+  if (
+    firstNonNewlineOrCommentTokBehindType === TokenType.identifier &&
+    firstNonNewlineOrCommentTokAheadType === TokenType.specialParenthesisOpening
+  ) {
+    return TokenType.operatorBinaryArithmeticMultiplication;
+  }
+
   // other cases where immediate surroundings (1st layer)
   // determine what the asterisk is (mult|deref|indir)
   if (
-    // Left side
+    // left side
     isTokenKeyword(firstNonNewlineOrCommentTokBehindType) ||
     isTokenKeywordTypeQualifier(firstNonNewlineOrCommentTokBehindType) ||
     isTokenUnaryOperator(firstNonNewlineOrCommentTokBehindType) ||
@@ -246,7 +257,7 @@ function disambiguateAsterisk(
       TokenType.keywordInline,
       TokenType.keywordStatic,
     ].includes(firstNonNewlineOrCommentTokBehindType) ||
-    // Right side
+    // right side
     isTokenKeywordTypeQualifier(firstNonNewlineOrCommentTokAheadType) ||
     [TokenType.ambiguousAsterisk, TokenType.specialParenthesisClosing].includes(
       firstNonNewlineOrCommentTokAheadType,
@@ -256,15 +267,13 @@ function disambiguateAsterisk(
   }
 
   // second layer right side
-  const [
-    secondNonNewlineOrCommentTokAheadType,
-    // secondNonNewlineOrCommentTokenAheadIndex,
-  ] = TokenSet.findFirstTypeMatchAhead(
-    tokSet,
-    firstNonNewlineOrCommentTokAheadIndex + 1,
-    tokTypesNewlineAndComments,
-    false,
-  );
+  const [secondNonNewlineOrCommentTokAheadType] =
+    TokenSet.findFirstTypeMatchAhead(
+      tokSet,
+      firstNonNewlineOrCommentTokAheadIndex + 1,
+      tokTypesNewlineAndComments,
+      false,
+    );
   if (secondNonNewlineOrCommentTokAheadType === -1) {
     throw createErr();
   }
