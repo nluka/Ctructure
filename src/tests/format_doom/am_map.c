@@ -50,7 +50,7 @@ static const char rcsid[] = "$Id: am_map.c,v 1.4 1997/02/03 21:24:33 b1 Exp $";
 #define REDS (256 - 5 * 16)
 #define REDRANGE 16
 #define BLUES (256 - 4 * 16 + 8)
-#define BLUERANGE	8
+#define BLUERANGE 8
 #define GREENS (7 * 16)
 #define GREENRANGE 16
 #define GRAYS (6 * 16)
@@ -60,40 +60,40 @@ static const char rcsid[] = "$Id: am_map.c,v 1.4 1997/02/03 21:24:33 b1 Exp $";
 #define YELLOWS (256 - 32 + 7)
 #define YELLOWRANGE 1
 #define BLACK 0
-#define WHITE	(256 - 47)
+#define WHITE (256 - 47)
 
 // Automap colors
 #define BACKGROUND BLACK
 #define YOURCOLORS WHITE
-#define YOURRANGE	0
+#define YOURRANGE 0
 #define WALLCOLORS REDS
-#define WALLRANGE	REDRANGE
+#define WALLRANGE REDRANGE
 #define TSWALLCOLORS GRAYS
-#define TSWALLRANGE	GRAYSRANGE
+#define TSWALLRANGE GRAYSRANGE
 #define FDWALLCOLORS BROWNS
 #define FDWALLRANGE BROWNRANGE
 #define CDWALLCOLORS YELLOWS
-#define CDWALLRANGE	YELLOWRANGE
-#define THINGCOLORS	GREENS
+#define CDWALLRANGE YELLOWRANGE
+#define THINGCOLORS GREENS
 #define THINGRANGE GREENRANGE
 #define SECRETWALLCOLORS WALLCOLORS
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS (GRAYS + GRAYSRANGE / 2)
-#define GRIDRANGE	0
-#define XHAIRCOLORS	GRAYS
+#define GRIDRANGE 0
+#define XHAIRCOLORS GRAYS
 
 // drawing stuff
-#define	FB 0
+#define FB 0
 
-#define AM_PANDOWNKEY	KEY_DOWNARROW
-#define AM_PANUPKEY	KEY_UPARROW
+#define AM_PANDOWNKEY KEY_DOWNARROW
+#define AM_PANUPKEY KEY_UPARROW
 #define AM_PANRIGHTKEY KEY_RIGHTARROW
-#define AM_PANLEFTKEY	KEY_LEFTARROW
+#define AM_PANLEFTKEY KEY_LEFTARROW
 #define AM_ZOOMINKEY '='
-#define AM_ZOOMOUTKEY	'-'
-#define AM_STARTKEY	KEY_TAB
-#define AM_ENDKEY	KEY_TAB
-#define AM_GOBIGKEY	'0'
+#define AM_ZOOMOUTKEY '-'
+#define AM_STARTKEY KEY_TAB
+#define AM_ENDKEY KEY_TAB
+#define AM_GOBIGKEY '0'
 #define AM_FOLLOWKEY 'f'
 #define AM_GRIDKEY 'g'
 #define AM_MARKKEY 'm'

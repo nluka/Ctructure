@@ -17,8 +17,8 @@
 // $Log:$
 //
 // DESCRIPTION:
-//	DOOM Network game communication and protocol,
-//	all OS independend parts.
+// DOOM Network game communication and protocol,
+// all OS independend parts.
 //
 //-----------------------------------------------------------------------------
 
@@ -32,11 +32,11 @@ static const char rcsid[] = "$Id: d_net.c,v 1.3 1997/02/03 22:01:47 b1 Exp $";
 #include "doomdef.h"
 #include "doomstat.h"
 
-#define	NCMD_EXIT 0x80000000
-#define	NCMD_RETRANSMIT 0x40000000
-#define	NCMD_SETUP 0x20000000
-#define	NCMD_KILL 0x10000000	// kill game
-#define	NCMD_CHECKSUM 0x0fffffff
+#define NCMD_EXIT 0x80000000
+#define NCMD_RETRANSMIT 0x40000000
+#define NCMD_SETUP 0x20000000
+#define NCMD_KILL 0x10000000 // kill game
+#define NCMD_CHECKSUM 0x0fffffff
 
 doomcom_t *doomcom;
 doomdata_t *netbuffer; // points inside doomcom
@@ -50,8 +50,8 @@ doomdata_t *netbuffer; // points inside doomcom
 //
 // a gametic cannot be run until nettics[] > gametic for all players
 //
-#define	RESENDCOUNT	10
-#define	PL_DRONE	0x80	// bit flag in doomdata->player
+#define RESENDCOUNT 10
+#define PL_DRONE 0x80 // bit flag in doomdata->player
 
 ticcmd_t localcmds[BACKUPTICS];
 
