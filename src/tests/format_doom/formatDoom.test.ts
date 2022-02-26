@@ -23,4 +23,5 @@ describe('formatDoom', () => {
   _assert('doomdef.h');
   _assert('doomstat.c');
   _assert('doomstat.h');
+  _assert('doomtype.h');
 });
