@@ -109,8 +109,9 @@ export default function printer(
     ): boolean {
       let lineLength;
       let whiteSpace = 2 + indentationWhiteSpace;
+      const tokenLimit = (lineWidth * 2) / 3 + tokenIndex;
 
-      for (let i = tokenIndex; i < tokenCount; ++i) {
+      for (let i = tokenIndex; i < tokenCount && i < tokenLimit; ++i) {
         if (tokenTypes[i] === marker) {
           lineLength =
             fileContents.slice(startLineIndex, tokenStartIndices[i]).replace(/\s/g, '').length +
@@ -124,7 +125,7 @@ export default function printer(
           whiteSpace += 2;
         }
       }
-      return false;
+      return true;
     }
 
     function checkOverflowWithEnclosure(
@@ -139,8 +140,9 @@ export default function printer(
       let lineLength;
       let overflowMarker = 0;
       let whiteSpace = 2 + indentationWhiteSpace;
+      const tokenLimit = (lineWidth * 2) / 3 + tokenIndex;
 
-      for (let i = tokenIndex; i < tokenCount; ++i) {
+      for (let i = tokenIndex; i < tokenCount && i < tokenLimit; ++i) {
         const currTokenType = tokenTypes[i];
         if (currTokenType === overflowMarkerOpening) {
           ++overflowMarker;
@@ -161,7 +163,7 @@ export default function printer(
           whiteSpace += 2;
         }
       }
-      return false;
+      return true;
     }
 
     function doesTokenIncreaseWhiteSpace(type: TokenType): boolean {
@@ -816,8 +818,8 @@ export default function printer(
       }
 
       case TokenType.keywordStruct: {
-        if (getNextNonNewlineTokenType(i) !== TokenType.specialBraceOpening) {
-          currString += ' ';
+        if (getNextNonNewlineTokenType(i) === TokenType.specialBraceOpening) {
+          currString = currString.trimEnd();
         }
         if (previousTokenType === TokenType.keywordTypedef) {
           context = PrinterCategory.typeDefStruct;
@@ -828,14 +830,15 @@ export default function printer(
       }
 
       case TokenType.keywordEnum: {
+        if (getNextNonNewlineTokenType(i) === TokenType.specialBraceOpening) {
+          currString = currString.trimEnd();
+        }
         if (previousTokenType === TokenType.keywordTypedef) {
           context = PrinterCategory.typeDefStruct;
           overflow = true;
         } else if (parenDepth === 0) {
           overflow = true;
-          break;
         }
-        currString += ' ';
         break;
       }
 

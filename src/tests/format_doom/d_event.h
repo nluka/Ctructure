@@ -29,7 +29,7 @@
 //
 
 // Input event types.
-typedef enum  {
+typedef enum {
   ev_keydown,
   ev_keyup,
   ev_mouse,
@@ -44,7 +44,7 @@ typedef struct {
   int data3; // mouse/joystick y move
 } event_t;
 
-typedef enum  {
+typedef enum {
   ga_nothing,
   ga_loadlevel,
   ga_newgame,
@@ -60,7 +60,7 @@ typedef enum  {
 //
 // Button/action code definitions.
 //
-typedef enum  {
+typedef enum {
   // Press "Fire".
   BT_ATTACK = 1,
   // Use button, to open doors, activate switches.

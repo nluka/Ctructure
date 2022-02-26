@@ -36,7 +36,7 @@ enum {
 
 // Game mode handling - identify IWAD version
 //  to handle IWAD dependend animations etc.
-typedef enum  {
+typedef enum {
   shareware, // DOOM 1 shareware, E1, M9
   registered, // DOOM 1 registered, E3, M27
   commercial, // DOOM 2 retail, E1 M34
@@ -46,7 +46,7 @@ typedef enum  {
 } GameMode_t;
 
 // Mission packs - might be useful for TC stuff?
-typedef enum  {
+typedef enum {
   doom, // DOOM 1
   doom2, // DOOM 2
   pack_tnt, // TNT mission pack
@@ -55,7 +55,7 @@ typedef enum  {
 } GameMission_t;
 
 // Identify language to use, software localization.
-typedef enum  {
+typedef enum {
   english,
   french,
   german,
@@ -111,7 +111,7 @@ typedef enum  {
 // The current state of the game: whether we are
 // playing, gazing at the intermission screen,
 // the game final animation, or a demo.
-typedef enum  {
+typedef enum {
   GS_LEVEL,
   GS_INTERMISSION,
   GS_FINALE,
@@ -130,7 +130,7 @@ typedef enum  {
 // Deaf monsters/do not react to sound.
 #define MTF_AMBUSH 8
 
-typedef enum  {
+typedef enum {
   sk_baby,
   sk_easy,
   sk_medium,
@@ -141,7 +141,7 @@ typedef enum  {
 //
 // Key cards.
 //
-typedef enum  {
+typedef enum {
   it_bluecard,
   it_yellowcard,
   it_redcard,
@@ -154,7 +154,7 @@ typedef enum  {
 // The defined weapons,
 //  including a marker indicating
 //  user has not changed weapon.
-typedef enum  {
+typedef enum {
   wp_fist,
   wp_pistol,
   wp_shotgun,
@@ -170,7 +170,7 @@ typedef enum  {
 } weapontype_t;
 
 // Ammunition types defined.
-typedef enum  {
+typedef enum {
   am_clip, // Pistol / chaingun ammo.
   am_shell, // Shotgun / double barreled shotgun.
   am_cell, // Plasma rifle, BFG.
@@ -180,7 +180,7 @@ typedef enum  {
 } ammotype_t;
 
 // Power up artifacts.
-typedef enum  {
+typedef enum {
   pw_invulnerability,
   pw_strength,
   pw_invisibility,
@@ -195,7 +195,7 @@ typedef enum  {
 //  how many seconds till expiration,
 //  assuming TICRATE is 35 ticks/second.
 //
-typedef enum  {
+typedef enum {
   INVULNTICS = (30 * TICRATE),
   INVISTICS = (60 * TICRATE),
   INFRATICS = (120 * TICRATE),

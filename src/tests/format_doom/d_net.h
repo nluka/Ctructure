@@ -44,7 +44,7 @@
 // Networking and tick handling related.
 #define BACKUPTICS 12
 
-typedef enum  {
+typedef enum {
   CMD_SEND = 1,
   CMD_GET = 2
 } command_t;
