@@ -13,4 +13,5 @@ describe('formatDoom', () => {
   _assert('d_net.c');
   _assert('d_net.h');
   _assert('d_player.h');
+  _assert('d_textur.h');
 });
