@@ -9,5 +9,6 @@ describe('formatDoom', () => {
   _assert('d_items.c');
   _assert('d_items.h');
   _assert('d_main.c');
+  _assert('d_main.h');
   _assert('d_net.c');
 });
