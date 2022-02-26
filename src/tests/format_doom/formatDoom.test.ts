@@ -18,4 +18,5 @@ describe('formatDoom', () => {
   _assert('d_textur.h');
   _assert('d_think.h');
   _assert('d_ticcmd.h');
+  _assert('doomdata.h');
 });
