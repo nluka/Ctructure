@@ -30,4 +30,6 @@ describe('formatDoom', () => {
   _assert('f_wipe.c');
   _assert('f_wipe.h');
   _assert('g_game.c');
+  // g_game.h skipped
+  _assert('hu_lib.c');
 });
