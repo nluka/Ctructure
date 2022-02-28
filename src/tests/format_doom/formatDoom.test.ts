@@ -26,4 +26,6 @@ describe('formatDoom', () => {
   // dstrings.c skipped
   // dstrings.h skipped
   _assert('f_finale.c');
+  // f_finale.h skipped
+  _assert('f_wipe.c');
 });
