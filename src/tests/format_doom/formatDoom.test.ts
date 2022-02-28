@@ -29,4 +29,5 @@ describe('formatDoom', () => {
   // f_finale.h skipped
   _assert('f_wipe.c');
   _assert('f_wipe.h');
+  _assert('g_game.c');
 });
