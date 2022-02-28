@@ -23,5 +23,7 @@ describe('formatDoom', () => {
   _assert('doomdef.h');
   _assert('doomstat.c');
   _assert('doomstat.h');
-  _assert('doomtype.h');
+  // dstrings.c skipped
+  // dstrings.h skipped
+  _assert('f_finale.c');
 });
