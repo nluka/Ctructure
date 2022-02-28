@@ -7,10 +7,9 @@ import TokenType, {
   isTokenKeyword,
   isTokenKeywordTypeOrTypeQualifier,
   isTokenKeywordTypeQualifier,
-  isTokenPostfixIncrOrDecrOperator,
   isTokenSpecialNonClosing,
   isTokenTernaryOperatorComponent,
-  isTokenUnaryOperator
+  isTokenUnaryOperator,
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -220,11 +219,13 @@ function disambiguateAsterisk(
 ) {
   // mult with num|char operands, offset as left operand, parenthesis on right
   if (
+    // left side
     [
       TokenType.constantNumber,
       TokenType.constantCharacter,
       TokenType.specialBracketClosing,
     ].includes(firstNonNewlineOrCommentTokBehindType) ||
+    // right side
     [TokenType.constantNumber, TokenType.constantCharacter].includes(
       firstNonNewlineOrCommentTokAheadType,
     )
@@ -283,9 +284,12 @@ function disambiguateAsterisk(
   // func with ptr return type
   // ptr to array
   if (
+    // right side
     isTokenBinaryOperatorAssignment(secondNonNewlineOrCommentTokAheadType) ||
-    isTokenPostfixIncrOrDecrOperator(secondNonNewlineOrCommentTokAheadType) ||
+    // isTokenPostfixIncrOrDecrOperator(secondNonNewlineOrCommentTokAheadType) ||
     [
+      TokenType.ambiguousIncrement,
+      TokenType.ambiguousDecrement,
       TokenType.specialParenthesisOpening,
       TokenType.specialBracketOpening,
     ].includes(secondNonNewlineOrCommentTokAheadType)

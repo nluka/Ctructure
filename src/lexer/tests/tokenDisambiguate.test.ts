@@ -648,7 +648,7 @@ describe('tokenDisambiguate', () => {
         [ TokenType.specialParenthesisClosing,
           TokenType.ambiguousAsterisk,
           TokenType.identifier,
-          TokenType.operatorUnaryArithmeticIncrementPostfix ],
+          TokenType.ambiguousIncrement ],
         TokenType.operatorUnaryIndirectionOrDereference, ') *p++');
       assert(
         [ TokenType.identifier,
@@ -662,6 +662,25 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier,
           TokenType.ambiguousIncrement ],
         TokenType.operatorUnaryIndirectionOrDereference, 'A) *p++');
+      assert(
+        [ TokenType.keywordFor,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.operatorBinaryAssignmentDirect,
+          TokenType.constantNumber,
+          TokenType.specialSemicolon,
+          TokenType.identifier,
+          TokenType.operatorBinaryComparisonLessThan,
+          TokenType.constantNumber,
+          TokenType.specialSemicolon,
+          TokenType.identifier,
+          TokenType.operatorUnaryArithmeticIncrementPostfix,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.ambiguousIncrement,
+          TokenType.operatorBinaryAssignmentDirect ],
+        TokenType.operatorUnaryIndirectionOrDereference, 'for (i = 0; i < 1; i++) *p++ =');
     });
     describe('Multiplication', () => {
       assert(

@@ -971,7 +971,7 @@ void G_DoCompleted(void) {
         break;
     }
 
-  //#if 0  Hmmm - why?
+  //#if 0 Hmmm - why?
   if ((gamemap == 8) && (gamemode != commercial)) {
     // victory
     gameaction = ga_victory;
@@ -999,7 +999,8 @@ void G_DoCompleted(void) {
         case 31:
           wminfo.next = 31;
           break;
-      } else
+      }
+    else
       switch (gamemap) {
         case 31:
         case 32:
