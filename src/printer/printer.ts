@@ -267,7 +267,7 @@ export default function printer(
       case TokenType.specialComma: {
         if (context === PrinterCategory.multiVariableDecl && (multiVarAlwaysNewline || overflow)) {
           shouldAddNewline = true;
-        } else if (overflow) {
+        } else if (overflow && context !== TokenType.keywordFor) {
           shouldAddNewline = true;
           noExtraNewline = true;
         } else if (
@@ -299,7 +299,14 @@ export default function printer(
       case TokenType.specialSemicolon: {
         if (context === TokenType.keywordFor) {
           nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
-          if (
+          if (overflow) {
+            currString = ';';
+            if (nextNonNewlineTokenType === TokenType.specialSemicolon) {
+              break;
+            }
+            shouldAddNewline = true;
+            noExtraNewline = true;
+          } else if (
             nextNonNewlineTokenType === TokenType.specialSemicolon ||
             nextNonNewlineTokenType === TokenType.specialParenthesisClosing
           ) {
@@ -472,9 +479,13 @@ export default function printer(
         if (contextStack.peek().context === PrinterCategory.singleLineIf) {
           previousContext = contextStack.pop();
           indentationDepth = previousContext.indentationDepth;
-          context = null;
           overflow = false;
           shouldAddNewline = true;
+          if (nextNonNewlineTokenType === TokenType.keywordElse) {
+            context = previousContext.context;
+          } else {
+            context = null;
+          }
           break;
         }
         if (context === PrinterCategory.array) {
@@ -748,10 +759,13 @@ export default function printer(
       }
 
       case TokenType.keywordElse: {
-        context = TokenType.keywordElse;
-        if (previousTokenType === TokenType.specialBraceClosing) {
+        if (
+          previousTokenType === TokenType.specialBraceClosing &&
+          context !== PrinterCategory.singleLineIf
+        ) {
           currString = ' else';
         }
+        context = TokenType.keywordElse;
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (nextNonNewlineTokenType === TokenType.keywordIf) {
           currString += ' ';
@@ -791,9 +805,6 @@ export default function printer(
       case TokenType.keywordSwitch: {
         if (parenDepth === 0) {
           context = currTokType;
-        }
-        if (previousTokenType === TokenType.specialParenthesisClosing) {
-          currString = ' ' + currString;
         }
         break;
       }
