@@ -129,7 +129,6 @@ export default class TokenSet {
   }
 
   /**
-   * @param tokenSet The set tokens to search.
    * @param firstSearchIndex The first index to search.
    * @param searchTypes The types of tokens to match with `equality`.
    * @param equality The kind of equality to check for when comparing a token
@@ -141,18 +140,17 @@ export default class TokenSet {
    * `firstSearchIndex` that matches one of or none of `searchTokenTypes`
    * depending on `equality`.
    */
-  static findFirstTypeMatchAhead(
-    tokenSet: TokenSet,
+  findFirstTypeMatchAhead(
     firstSearchIndex: number,
     searchTypes: TokenType[],
     equality: boolean,
   ): [TokenType, number] | [-1, -1] {
-    if (!tokenSet.isIndexInBounds(firstSearchIndex)) {
+    if (!this.isIndexInBounds(firstSearchIndex)) {
       return [-1, -1];
     }
 
-    for (let i = firstSearchIndex; i < tokenSet.getCount(); ++i) {
-      const tokenType = tokenSet.getTokenType(i);
+    for (let i = firstSearchIndex; i < this.getCount(); ++i) {
+      const tokenType = this.getTokenType(i);
       if (searchTypes.includes(tokenType) === equality) {
         return [tokenType, i];
       }
@@ -161,7 +159,6 @@ export default class TokenSet {
   }
 
   /**
-   * @param tokens The set of tokens to search.
    * @param firstSearchIndex The first index to search.
    * @param searchTokenTypes The types of tokens to match with `equality`.
    * @param equality The kind of equality to check for when comparing a token
@@ -173,18 +170,17 @@ export default class TokenSet {
    * `firstSearchIndex` that matches one of or none of `searchTokenTypes`
    * depending on `equality`.
    */
-  static findFirstTypeMatchBehind(
-    tokens: TokenSet,
+  findFirstTypeMatchBehind(
     firstSearchIndex: number,
     searchTokenTypes: TokenType[],
     equality: boolean,
   ): [TokenType, number] | [-1, -1] {
-    if (!tokens.isIndexInBounds(firstSearchIndex)) {
+    if (!this.isIndexInBounds(firstSearchIndex)) {
       return [-1, -1];
     }
 
     for (let i = firstSearchIndex; i >= 0; --i) {
-      const tokenType = tokens.getTokenType(i);
+      const tokenType = this.getTokenType(i);
       if (searchTokenTypes.includes(tokenType) === equality) {
         return [tokenType, i];
       }

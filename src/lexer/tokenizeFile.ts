@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
+import cleanTokenSet from './cleanTokenSet';
 import tokenDisambiguate from './tokenDisambiguate';
 import Tokenizer from './Tokenizer';
 import TokenSet from './TokenSet';
@@ -34,6 +35,8 @@ export default function tokenizeFile(filePathname: string): [string, TokenSet] {
     );
     tokSet.setTokenType(ambigTokIndex, disambiguatedTokenType);
   }
+
+  cleanTokenSet(tokSet);
 
   return [fileContents, tokSet];
 }

@@ -52,8 +52,7 @@ export default function tokenDisambiguate(
   const [
     firstNonNewlineOrCommentTokBehindType,
     firstNonNewlineOrCommentTokBehindIndex,
-  ] = TokenSet.findFirstTypeMatchBehind(
-    tokSet,
+  ] = tokSet.findFirstTypeMatchBehind(
     ambigTokIndex - 1,
     tokTypesNewlineAndComments,
     false,
@@ -75,8 +74,7 @@ export default function tokenDisambiguate(
   const [
     firstNonNewlineOrCommentTokAheadType,
     firstNonNewlineOrCommentTokAheadIndex,
-  ] = TokenSet.findFirstTypeMatchAhead(
-    tokSet,
+  ] = tokSet.findFirstTypeMatchAhead(
     ambigTokIndex + 1,
     tokTypesNewlineAndComments,
     false,
@@ -122,8 +120,7 @@ function disambiguateColon(
   tokSet: TokenSet,
   createErr: () => Error,
 ) {
-  const [firstMatchBehindType] = TokenSet.findFirstTypeMatchBehind(
-    tokSet,
+  const [firstMatchBehindType] = tokSet.findFirstTypeMatchBehind(
     ambigTokIndex - 1,
     [
       TokenType.keywordCase,
@@ -269,8 +266,7 @@ function disambiguateAsterisk(
 
   // second layer right side
   const [secondNonNewlineOrCommentTokAheadType] =
-    TokenSet.findFirstTypeMatchAhead(
-      tokSet,
+    tokSet.findFirstTypeMatchAhead(
       firstNonNewlineOrCommentTokAheadIndex + 1,
       tokTypesNewlineAndComments,
       false,
@@ -306,8 +302,7 @@ function disambiguateAsterisk(
   const [
     secondNonNewlineOrCommentTokBehindType,
     secondNonNewlineOrCommentTokBehindIndex,
-  ] = TokenSet.findFirstTypeMatchBehind(
-    tokSet,
+  ] = tokSet.findFirstTypeMatchBehind(
     firstNonNewlineOrCommentTokBehindIndex - 1,
     tokTypesNewlineAndComments,
     false,
@@ -405,8 +400,7 @@ function disambiguateAsterisk(
     }
 
     if (foundBraceOpening) {
-      const [firstMatchBehindType] = TokenSet.findFirstTypeMatchBehind(
-        tokSet,
+      const [firstMatchBehindType] = tokSet.findFirstTypeMatchBehind(
         i - 1,
         tokTypesNewlineAndComments,
         false,
@@ -418,8 +412,7 @@ function disambiguateAsterisk(
 
     if (foundParenOpening) {
       const [firstMatchBehindType, firstMatchBehindIndex] =
-        TokenSet.findFirstTypeMatchBehind(
-          tokSet,
+        tokSet.findFirstTypeMatchBehind(
           i - 1,
           tokTypesNewlineAndComments,
           false,
@@ -427,8 +420,7 @@ function disambiguateAsterisk(
       if (firstMatchBehindType === -1) {
         return EnclosureType.unknown;
       }
-      const [secondMatchBehindType] = TokenSet.findFirstTypeMatchBehind(
-        tokSet,
+      const [secondMatchBehindType] = tokSet.findFirstTypeMatchBehind(
         firstMatchBehindIndex - 1,
         tokTypesNewlineAndComments,
         false,

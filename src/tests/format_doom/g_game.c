@@ -1368,8 +1368,8 @@ void G_ReadDemoTiccmd(ticcmd_t *cmd) {
     G_CheckDemoStatus();
     return;
   }
-  cmd->forwardmove = ((signedchar) *demo_p++);
-  cmd->sidemove = ((signedchar) *demo_p++);
+  cmd->forwardmove = ((signed char) *demo_p++);
+  cmd->sidemove = ((signed char) *demo_p++);
   cmd->angleturn = ((unsigned char) *demo_p++) << 8;
   cmd->buttons = (unsigned char) *demo_p++;
 }

@@ -26,6 +26,12 @@ describe('formatBasic', () => {
     _assert('string/String.h');
   }
 
+  {
+    const cleanedTokens =
+      extractAndCleanFileContents(path.resolve(__dirname, './token_cleaning/cleaned_tokens.c'));
+    _assert('token_cleaning/uncleaned_tokens.c', cleanedTokens);
+  }
+
   _assert('__attribute__.c');
   _assert('asterisk.c');
   _assert('comment.c');
