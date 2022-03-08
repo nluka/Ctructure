@@ -269,7 +269,6 @@ export default function printer(
           shouldAddNewline = true;
         } else if (overflow && context !== TokenType.keywordFor) {
           shouldAddNewline = true;
-          noExtraNewline = true;
         } else if (
           context === PrinterCategory.variableDecl ||
           context === PrinterCategory.doubleTypeOrIdentifier
@@ -549,9 +548,7 @@ export default function printer(
       case TokenType.operatorUnaryIndirectionOrDereference: {
         if (
           (previousTokenType && isTokenKeyword(previousTokenType)) ||
-          previousTokenType === TokenType.identifier ||
-          (previousTokenType === TokenType.specialParenthesisClosing &&
-            currString.charAt(0) !== '\n')
+          previousTokenType === TokenType.identifier
         ) {
           currString = ' *';
         }
@@ -747,6 +744,7 @@ export default function printer(
         break;
       }
 
+      case TokenType.keywordSigned:
       case TokenType.keywordUnsigned: {
         nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (
