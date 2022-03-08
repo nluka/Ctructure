@@ -33,4 +33,5 @@ describe('formatDoom', () => {
   // g_game.h skipped
   _assert('hu_lib.c');
   _assert('hu_lib.h');
+  _assert('hu_stuff.c');
 });
