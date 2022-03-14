@@ -49,4 +49,6 @@ describe('formatDoom', () => {
   // m_argv.c skipped
   // m_argv.h skipped
   _assert('m_bbox.c');
+  // m_bbox.h skipped
+  _assert('m_cheat.c');
 });
