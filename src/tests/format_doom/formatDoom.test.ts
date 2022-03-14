@@ -53,4 +53,6 @@ describe('formatDoom', () => {
   _assert('m_cheat.c');
   // m_cheat.h skipped
   _assert('m_fixed.c');
+  // m_fixed.h skipped
+  _assert('m_menu.c');
 });
