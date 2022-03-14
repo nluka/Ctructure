@@ -46,4 +46,7 @@ describe('formatDoom', () => {
   // i_video.h skipped
   _assert('info.c');
   _assert('info.h');
+  // m_argv.c skipped
+  // m_argv.h skipped
+  _assert('m_bbox.c');
 });
