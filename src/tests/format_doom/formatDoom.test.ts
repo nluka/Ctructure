@@ -39,4 +39,6 @@ describe('formatDoom', () => {
   _assert('i_net.c');
   // i_net.h skipped
   _assert('i_sound.c');
+  // i_sound.h skipped
+  _assert('i_system.c');
 });
