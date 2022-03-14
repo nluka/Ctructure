@@ -570,7 +570,7 @@ void HU_Ticker(void) {
   }
 }
 
-#define QUEUESIZE  128
+#define QUEUESIZE 128
 
 static char chatchars[QUEUESIZE];
 static int head = 0;

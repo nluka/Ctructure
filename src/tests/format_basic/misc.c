@@ -131,10 +131,10 @@ static bool do_http_request(
     curl_easy_setopt(info->curl, CURLOPT_HEADERDATA, info);
   }
 
-#if LIBCURL_VERSION_NUM >= 0x072400
+  #if LIBCURL_VERSION_NUM >= 0x072400
   // A lot of servers don't yet support ALPN
   curl_easy_setopt(info->curl, CURLOPT_SSL_ENABLE_ALPN, 0);
-#endif
+  #endif
 
   code = curl_easy_perform(info->curl);
   if (code != CURLE_OK) {
@@ -404,12 +404,12 @@ CURLcode Curl_socket(
     /* no socket, no connection */
     return CURLE_COULDNT_CONNECT;
 
-#if defined(ENABLE_IPV6) && defined(HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID)
+  #if defined(ENABLE_IPV6) && defined(HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID)
   if (conn->scope_id && (addr->family == AF_INET6)) {
     struct sockaddr_in6 *const sa6 = (void *) & addr->sa_addr;
     sa6->sin6_scope_id = conn->scope_id;
   }
-#endif
+  #endif
 
   return CURLE_OK;
 }
