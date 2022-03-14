@@ -34,4 +34,7 @@ describe('formatDoom', () => {
   _assert('hu_lib.c');
   _assert('hu_lib.h');
   _assert('hu_stuff.c');
+  // hu_stuff.h skipped
+  // i_main.c skipped
+  _assert('i_net.c');
 });
