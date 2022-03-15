@@ -9,7 +9,7 @@ import TokenType, {
   isTokenKeywordTypeQualifier,
   isTokenSpecialNonClosing,
   isTokenTernaryOperatorComponent,
-  isTokenUnaryOperator,
+  isTokenUnaryOperator
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -238,7 +238,7 @@ function disambiguateAsterisk(
   }
 
   // other cases where immediate surroundings (1st layer)
-  // determine what the asterisk is (mult|deref|indir)
+  // determine what the asterisk is
   if (
     // left side
     isTokenKeyword(firstNonNewlineOrCommentTokBehindType) ||
@@ -277,7 +277,7 @@ function disambiguateAsterisk(
 
   // (in|de)crementing or assigning to dereferenced ptr,
   // postfix (inc|dec)rementing derefernced ptr,
-  // func with ptr return type
+  // func with ptr return type,
   // ptr to array
   if (
     // right side
@@ -367,10 +367,22 @@ function disambiguateAsterisk(
     return TokenType.operatorUnaryIndirectionOrDereference;
   }
 
+  if (
+    firstNonNewlineOrCommentTokBehindType ===
+      TokenType.specialParenthesisClosing &&
+    firstNonNewlineOrCommentTokAheadType === TokenType.specialParenthesisOpening
+  ) {
+    /*
+      In this case we don't bother disambiguating because it's much easier
+      for the printer to do it, since it tracks context.
+    */
+    return TokenType.ambiguousAsterisk;
+  }
+
   /*
     by this point immediate 2 layer surroundings must be ,ident*ident,
     so there are 3 possibilities:
-      - pointer inside func signature
+      - ptr inside func signature
       - mult inside func-call
       - mult inside init-list
   */

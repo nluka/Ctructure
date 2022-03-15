@@ -854,6 +854,19 @@ describe('tokenDisambiguate', () => {
           TokenType.specialComma ],
         TokenType.operatorBinaryArithmeticMultiplication, '[func(--a, b * c,');
     });
+    describe('Keep Ambiguous', () => {
+      /*
+        These asterisks are kept ambiguous because it's easier for the printer
+        to disambiguate them since it keeps track of context.
+      */
+      assert(
+        [ TokenType.identifier,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier],
+        TokenType.ambiguousAsterisk, 'a) *(ptr');
+    });
   });
 
   describe('ambiguousAmpersand', () => {
