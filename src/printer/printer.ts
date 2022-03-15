@@ -337,7 +337,8 @@ export default function printer(
           }
         } else if (
           context === PrinterCategory.variableDecl ||
-          context === PrinterCategory.typeDefStruct
+          context === PrinterCategory.typeDefStruct ||
+          context === PrinterCategory.functionCall
         ) {
           context = null;
         } else {
@@ -349,9 +350,6 @@ export default function printer(
 
       case TokenType.specialBracketOpening: {
         contextStack.push({ context, overflow, indentationDepth });
-        if (context === PrinterCategory.doubleTypeOrIdentifier) {
-          context = PrinterCategory.variableDecl;
-        }
         if (isThereLineOverflow(i, TokenType.specialBracketOpening)) {
           ++indentationDepth;
           shouldAddNewline = true;
@@ -376,6 +374,8 @@ export default function printer(
           context = PrinterCategory.functionCall;
         } else if (context === PrinterCategory.doubleTypeOrIdentifier) {
           context = PrinterCategory.functionDecl;
+        } else if (context === TokenType.keywordStruct) {
+          context = null;
         }
         contextStack.push({ context, overflow, indentationDepth });
         if (context !== TokenType.keywordFor) {
@@ -425,7 +425,7 @@ export default function printer(
         }
         if (
           previousContext.context === PrinterCategory.functionCall &&
-          getNextNonNewlineTokenType(i) === TokenType.identifier &&
+          nextNonNewlineTokenType === TokenType.identifier &&
           getNextNonNewlineTokenType(i, 2) === TokenType.specialParenthesisOpening
         ) {
           context = null;
@@ -442,12 +442,14 @@ export default function printer(
       case TokenType.specialBraceOpening: {
         contextStack.push({ context, overflow, indentationDepth });
         if (context === PrinterCategory.array) {
-          if (!isThereLineOverflow(i, TokenType.specialBraceOpening)) {
+          if (!overflow || !isThereLineOverflow(i, TokenType.specialBraceOpening)) {
             currString += ' ';
             break;
           }
         } else if (previousTokenType === TokenType.operatorBinaryAssignmentDirect) {
           context = PrinterCategory.array;
+          contextStack.pop();
+          contextStack.push({ context, overflow, indentationDepth });
           if (!isThereLineOverflow(i, TokenType.specialBraceOpening)) {
             currString += ' ';
             break;
@@ -487,7 +489,10 @@ export default function printer(
           }
           break;
         }
-        if (context === PrinterCategory.array) {
+        if (
+          previousContext.context === PrinterCategory.array &&
+          context !== PrinterCategory.arrayWithComment
+        ) {
           if (!overflow) {
             if (
               previousTokenType === TokenType.specialComma ||
@@ -498,13 +503,11 @@ export default function printer(
               currString = ' }';
             }
           }
-        } else if (previousContext.context === PrinterCategory.typeDefStruct) {
-          currString += ' ';
         } else if (
-          (previousContext.context === TokenType.keywordStruct ||
+          (previousContext.context === PrinterCategory.typeDefStruct ||
+            previousContext.context === TokenType.keywordStruct ||
             previousContext.context === TokenType.keywordUnion) &&
-          nextNonNewlineTokenType === TokenType.identifier &&
-          getNextNonNewlineTokenType(i, 2) === TokenType.specialSemicolon
+          nextNonNewlineTokenType !== TokenType.specialSemicolon
         ) {
           currString += ' ';
         } else if (
@@ -593,6 +596,7 @@ export default function printer(
         } else if (
           parenDepth === 0 &&
           context !== PrinterCategory.array &&
+          context !== PrinterCategory.arrayWithComment &&
           isThereLineOverflow(i, TokenType.specialSemicolon)
         ) {
           currString = currString.trimEnd();
@@ -621,7 +625,7 @@ export default function printer(
           context = null;
         }
         if (parenDepth === 0) {
-          if (context !== PrinterCategory.array) {
+          if (context !== PrinterCategory.array && context !== PrinterCategory.arrayWithComment) {
             if (isThereLineOverflow(i, TokenType.specialSemicolon)) {
               currString = `${typeAsValue}`.trimEnd();
               context = PrinterCategory.assignmentOverflow;
@@ -830,9 +834,7 @@ export default function printer(
         if (getNextNonNewlineTokenType(i) === TokenType.specialBraceOpening) {
           currString = currString.trimEnd();
         }
-        if (previousTokenType === TokenType.keywordTypedef) {
-          context = PrinterCategory.typeDefStruct;
-        } else if (parenDepth === 0) {
+        if (parenDepth === 0) {
           context = TokenType.keywordStruct;
         }
         break;
@@ -842,10 +844,8 @@ export default function printer(
         if (getNextNonNewlineTokenType(i) === TokenType.specialBraceOpening) {
           currString = currString.trimEnd();
         }
-        if (previousTokenType === TokenType.keywordTypedef) {
-          context = PrinterCategory.typeDefStruct;
-          overflow = true;
-        } else if (parenDepth === 0) {
+        if (parenDepth === 0) {
+          context = TokenType.keywordStruct;
           overflow = true;
         }
         break;
@@ -874,7 +874,8 @@ export default function printer(
       case TokenType.commentSingleLine: {
         if (
           previousTokenType !== null &&
-          (tokenTypes[i - 1] !== TokenType.newline || currString === '')
+          (tokenTypes[i - 1] !== TokenType.newline || currString === '') &&
+          formattedStr.charAt(formattedStr.length - 1) !== ' '
         ) {
           currString = ' ';
         }
@@ -882,24 +883,41 @@ export default function printer(
         if (tokenTypes[i + 1] === TokenType.newline) {
           shouldAddNewline = true;
         }
-        nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (
-          nextNonNewlineTokenType === TokenType.specialBraceClosing ||
-          nextNonNewlineTokenType === TokenType.keywordCase ||
-          nextNonNewlineTokenType === TokenType.keywordDefault
+          context === PrinterCategory.array &&
+          previousTokenType === TokenType.specialBraceOpening &&
+          !overflow
         ) {
-          decreaseIndentationDepth();
+          shouldAddNewline = true;
+          noExtraNewline = true;
+          ++indentationDepth;
+          context = PrinterCategory.arrayWithComment;
         }
         break;
       }
 
       case TokenType.commentMultiLine: {
-        if (currString === '' && previousTokenType !== null) {
+        if (
+          currString === '' &&
+          previousTokenType !== null &&
+          previousTokenType !== TokenType.specialBracketOpening &&
+          previousTokenType !== TokenType.specialParenthesisOpening &&
+          formattedStr.charAt(formattedStr.length - 1) !== ' '
+        ) {
           currString = ' ';
         }
         currString += extractStringFromFile(currTokStartPos);
         if (tokenTypes[i + 1] === TokenType.newline) {
           shouldAddNewline = true;
+          break;
+        }
+        nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
+        if (
+          nextNonNewlineTokenType !== TokenType.specialParenthesisClosing &&
+          nextNonNewlineTokenType !== TokenType.specialComma &&
+          nextNonNewlineTokenType !== TokenType.specialSemicolon
+        ) {
+          currString += ' ';
         }
         break;
       }

@@ -524,7 +524,7 @@ void IdentifyVersion(void) {
 
   // Bug, dear Shawn.
   // Insufficient malloc, caused spurious realloc errors.
-  plutoniawad = malloc(strlen(doomwaddir) + 1 +  /*9*/12 + 1);
+  plutoniawad = malloc(strlen(doomwaddir) + 1 + /*9*/ 12 + 1);
   sprintf(plutoniawad, "%s/plutonia.wad", doomwaddir);
 
   tntwad = malloc(strlen(doomwaddir) + 1 + 9 + 1);
@@ -975,7 +975,7 @@ void D_DoomMain(void) {
 
   // If additonal PWAD files are used, print modified banner
   if (modifiedgame) {
-    /*m*/printf(
+    /*m*/ printf(
       "===========================================================================\n"
       "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
       "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"

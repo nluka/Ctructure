@@ -331,7 +331,7 @@ export default function trackIndentationDepthDuringNoFormat(
           context = PrinterCategory.typeDefStruct;
         }
         if (parenDepth === 0) {
-          context = TokenType.keywordStruct;
+          context = PrinterCategory.typeOrIdentifier;
         }
         break;
 
@@ -341,6 +341,7 @@ export default function trackIndentationDepthDuringNoFormat(
           overflow = true;
         }
         if (parenDepth === 0) {
+          context = TokenType.keywordStruct;
           overflow = true;
         }
         break;

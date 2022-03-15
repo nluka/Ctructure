@@ -154,7 +154,7 @@ short whichSkull; // which skull to draw
 
 // graphic name of skulls
 // warning: initializer-string for array of chars is too long
-char skullName[2][ /*8*/9] = { "M_SKULL1", "M_SKULL2" };
+char skullName[2][/*8*/ 9] = { "M_SKULL1", "M_SKULL2" };
 
 // current menudef
 menu_t *currentMenu;
@@ -223,8 +223,7 @@ enum {
   readthis,
   quitdoom,
   main_end
-}
-main_e;
+} main_e;
 
 menuitem_t MainMenu[] = {
   { 1, "M_NGAME", M_NewGame, 'n' },
