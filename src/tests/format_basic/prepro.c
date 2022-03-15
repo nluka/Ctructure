@@ -57,6 +57,17 @@ static BLAKE2_INLINE uint32_t load32(const void *src) {
   return w;
 }
 
+static BLAKE2_INLINE uint32_t load32_v2(const void *src) {
+  uint32_t w;
+  #if defined(NATIVE_LITTLE_ENDIAN)
+  memcpy(&w, src, sizeof w);
+  #else
+  const uint8_t *p = (const uint8_t *)src;
+  w = *p;
+  #endif
+  return w;
+}
+
 #if defined(_MSC_VER)
   #define BLAKE2_PACKED(x) __pragma(pack(push, 1)) x __pragma(pack(pop))
 #else
