@@ -309,7 +309,7 @@ export default function trackIndentationDepthDuringNoFormat(
       case TokenType.keywordSwitch:
       case TokenType.keywordUnion:
         if (parenDepth === 0) {
-          context = currTokenType;
+          context = TokenType.keywordStruct;
         }
         break;
 

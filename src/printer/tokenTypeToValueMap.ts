@@ -146,6 +146,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
     [TokenType.commentSingleLine, ''],
     [TokenType.commentMultiLine, ''],
     [TokenType.newline, ''],
+    [TokenType.ambiguousAsterisk, '*']
   //#endregion Other
 ]);
 export default tokenTypeToValueMap;

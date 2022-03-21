@@ -29,7 +29,6 @@ export type Context =
   | TokenType.keywordElse
   | TokenType.keywordDo
   | TokenType.keywordStruct
-  | TokenType.keywordUnion
   | TokenType.keywordSwitch
   | PrinterCategory
   | null;
@@ -505,8 +504,7 @@ export default function printer(
           }
         } else if (
           (previousContext.context === PrinterCategory.typeDefStruct ||
-            previousContext.context === TokenType.keywordStruct ||
-            previousContext.context === TokenType.keywordUnion) &&
+            previousContext.context === TokenType.keywordStruct) &&
           nextNonNewlineTokenType !== TokenType.specialSemicolon
         ) {
           currString += ' ';
@@ -554,6 +552,13 @@ export default function printer(
           previousTokenType === TokenType.identifier
         ) {
           currString = ' *';
+        }
+        break;
+      }
+
+      case TokenType.ambiguousAsterisk: {
+        if (currString.charAt(0) !== '\n') {
+          currString = ' * ';
         }
         break;
       }
@@ -803,10 +808,9 @@ export default function printer(
         if (getNextNonNewlineTokenType(i) !== TokenType.specialBraceOpening) {
           currString += ' ';
         }
-      case TokenType.keywordDo:
-      case TokenType.keywordSwitch: {
+      case TokenType.keywordDo: {
         if (parenDepth === 0) {
-          context = currTokType;
+          context = TokenType.keywordStruct;
         }
         break;
       }
@@ -819,6 +823,9 @@ export default function printer(
           lineEndings +
           getIndentation(previousContext.indentationDepth + 1) +
           tokenTypeToValueMap.get(currTokType);
+        if (tokenTypes[i - 1] === TokenType.newline && tokenTypes[i - 2] === TokenType.newline) {
+          currString = lineEndings + currString;
+        }
         indentationDepth = previousContext.indentationDepth + 2;
         break;
       }
