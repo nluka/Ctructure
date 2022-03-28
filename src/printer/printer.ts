@@ -11,7 +11,7 @@ import TokenType, {
   isTokenKeywordTypeQualifier,
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
-import checkForAssignmentToFunction from './checkForAssignmentToFunction';
+import checkForAssignmentToFuncReturn from './checkForAssignmentToFunction';
 import Stack from './context_stack/Stack';
 import getIndentAmountForMultiVar from './indentAmountForMultiVar';
 import _nextNonNewlineTokenType from './nextNonNewlineTokenType';
@@ -688,7 +688,7 @@ export default function printer(
         if (
           parenDepth === 0 &&
           !areThereCommas(tokenTypes, i) &&
-          !checkForAssignmentToFunction(tokenTypes, tokenCount, i) &&
+          !checkForAssignmentToFuncReturn(tokenTypes, tokenCount, i) &&
           nextNonNewlineTokenType !== TokenType.specialBraceOpening &&
           !overflow &&
           isThereLineOverflow(i, TokenType.specialSemicolon)

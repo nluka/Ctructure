@@ -1,6 +1,6 @@
 import TokenType from '../lexer/TokenType';
 
-export default function checkForAssignmentToFunction(
+export default function checkForAssignmentToFuncReturn(
   tokTypes: Uint8Array,
   tokCount: number,
   index: number,
