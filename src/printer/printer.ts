@@ -11,7 +11,7 @@ import TokenType, {
   isTokenKeywordTypeQualifier,
 } from '../lexer/TokenType';
 import areThereCommas from './areThereCommas';
-import checkForAssignmentToFuncReturn from './checkForAssignmentToFunction';
+import checkForAssignmentToFuncReturn from './checkForAssignmentToFuncReturn';
 import Stack from './context_stack/Stack';
 import getIndentAmountForMultiVar from './indentAmountForMultiVar';
 import _nextNonNewlineTokenType from './nextNonNewlineTokenType';
