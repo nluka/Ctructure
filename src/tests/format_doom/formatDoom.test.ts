@@ -59,4 +59,6 @@ describe('formatDoom', () => {
   _assert('m_misc.c');
   // m_misc.h skipped
   _assert('m_random.c');
+  // m_random.h skipped
+  _assert('m_swap.c');
 });
