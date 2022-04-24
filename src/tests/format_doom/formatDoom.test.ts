@@ -55,4 +55,6 @@ describe('formatDoom', () => {
   _assert('m_fixed.c');
   // m_fixed.h skipped
   _assert('m_menu.c');
+  // m_menu.h skipped
+  _assert('m_misc.c');
 });
