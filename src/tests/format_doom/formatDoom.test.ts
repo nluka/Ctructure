@@ -64,4 +64,5 @@ describe('formatDoom', () => {
   // m_swap.h skipped
   _assert('p_ceilng.c');
   _assert('p_doors.c');
+  _assert('p_enemy.c');
 });
