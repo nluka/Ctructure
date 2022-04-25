@@ -1,12 +1,12 @@
 export default function indexOfRegex(
-  string: string,
+  str: string,
   regex: RegExp,
   startPos: number,
-) {
-  for (let i = startPos; i < string.length; ++i) {
-    if (string.charAt(i).match(regex)) {
+): number | -1 {
+  for (let i = startPos; i < str.length; ++i) {
+    if (str.charAt(i).match(regex)) {
       return i;
     }
   }
-  return null;
+  return -1;
 }

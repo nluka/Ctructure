@@ -2,15 +2,15 @@ import indexOfRegex from '../indexOfRegex';
 
 describe('indexOfRegex', () => {
   function assert(
-    searchString: string,
+    str: string,
     regex: RegExp,
     startPos: number,
-    expectedIndex: number | null,
+    expectedIndex: number,
   ) {
     test(`return ${expectedIndex} when searchString=${JSON.stringify(
-      searchString,
+      str,
     )}, regex=${regex}, startPos=${startPos}`, () => {
-      expect(indexOfRegex(searchString, regex, startPos)).toBe(
+      expect(indexOfRegex(str, regex, startPos)).toBe(
         expectedIndex,
       );
     });
@@ -18,5 +18,5 @@ describe('indexOfRegex', () => {
 
   assert('0123\n ', /\n/, 0, 4);
   assert('0123 \n', / /, 1, 4);
-  assert('0123', / /, 0, null);
+  assert('0123', / /, 0, -1);
 });
