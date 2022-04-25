@@ -24,6 +24,7 @@ describe('tokenDisambiguate', () => {
     });
   }
 
+  // also encompasses ambiguousMinus - they share the same logic
   describe('ambiguousPlus', () => {
     describe('Unary', () => {
       assert(
@@ -53,11 +54,6 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousPlus,
           TokenType.identifier ],
         TokenType.operatorUnaryPlus, '[+A');
-      assert(
-        [ TokenType.keywordReturn,
-          TokenType.ambiguousPlus,
-          TokenType.constantNumber ],
-        TokenType.operatorUnaryPlus, 'return +1');
       assert(
         [ TokenType.operatorBinaryAssignmentDirect,
           TokenType.ambiguousPlus,
@@ -93,6 +89,16 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousPlus,
           TokenType.identifier ],
         TokenType.operatorUnaryPlus, "!+A");
+      assert(
+        [ TokenType.keywordCase,
+          TokenType.ambiguousPlus,
+          TokenType.constantNumber ],
+        TokenType.operatorUnaryPlus, 'case +1');
+        assert(
+        [ TokenType.keywordReturn,
+          TokenType.ambiguousPlus,
+          TokenType.constantNumber ],
+        TokenType.operatorUnaryPlus, 'return +1');
     });
     describe('Binary', () => {
       assert(
@@ -151,122 +157,7 @@ describe('tokenDisambiguate', () => {
     });
   });
 
-  describe('ambiguousMinus', () => {
-    describe('Unary', () => {
-      assert(
-        [ TokenType.operatorBinaryAssignmentDirect,
-          TokenType.newline,
-          TokenType.newline,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorUnaryMinus, '= \n\n -A');
-      assert(
-        [ TokenType.operatorBinaryArithmeticModulo,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorUnaryMinus, '% -A');
-      assert(
-        [ TokenType.specialParenthesisOpening,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorUnaryMinus, '(-A');
-      assert(
-        [ TokenType.specialBracketOpening,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorUnaryMinus, '[-A');
-      assert(
-        [ TokenType.keywordReturn,
-          TokenType.ambiguousMinus,
-          TokenType.constantNumber ],
-        TokenType.operatorUnaryMinus, 'return -1');
-      assert(
-        [ TokenType.specialBraceOpening,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorUnaryMinus, "{ -A");
-      assert(
-        [ TokenType.specialComma,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorUnaryMinus, ", -A");
-    });
-    describe('Binary', () => {
-      assert(
-        [ TokenType.identifier,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorBinaryArithmeticSubtraction, 'A - B');
-      assert(
-        [ TokenType.identifier,
-          TokenType.ambiguousMinus,
-          TokenType.specialParenthesisOpening ],
-        TokenType.operatorBinaryArithmeticSubtraction, 'A - (');
-      assert(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorBinaryArithmeticSubtraction, ') - B');
-      assert(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousMinus,
-          TokenType.specialParenthesisOpening ],
-        TokenType.operatorBinaryArithmeticSubtraction, ') - (');
-      assert(
-        [ TokenType.specialBracketClosing,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorBinaryArithmeticSubtraction, '] - B');
-      assert(
-        [ TokenType.specialBracketClosing,
-          TokenType.ambiguousMinus,
-          TokenType.specialParenthesisOpening ],
-        TokenType.operatorBinaryArithmeticSubtraction, '] - (');
-      assert(
-        [ TokenType.identifier,
-          TokenType.ambiguousMinus,
-          TokenType.constantNumber ],
-        TokenType.operatorBinaryArithmeticSubtraction, 'A - 1');
-      assert(
-        [ TokenType.constantNumber,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorBinaryArithmeticSubtraction, '1 - b');
-      assert(
-        [ TokenType.constantNumber,
-          TokenType.ambiguousMinus,
-          TokenType.constantNumber ],
-        TokenType.operatorBinaryArithmeticSubtraction, '1 - 1');
-      assert(
-        [ TokenType.constantCharacter,
-          TokenType.newline,
-          TokenType.ambiguousMinus,
-          TokenType.newline,
-          TokenType.constantCharacter ],
-        TokenType.operatorBinaryArithmeticSubtraction, "'c' \n - \n 'c'");
-      assert(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousMinus,
-          TokenType.identifier ],
-        TokenType.operatorBinaryArithmeticSubtraction, ") - A");
-      assert(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousMinus,
-          TokenType.specialParenthesisOpening ],
-        TokenType.operatorBinaryArithmeticSubtraction, ") - (");
-      assert(
-        [ TokenType.specialBracketClosing,
-          TokenType.ambiguousMinus,
-          TokenType.specialParenthesisOpening ],
-        TokenType.operatorBinaryArithmeticSubtraction, "] - (");
-      assert(
-        [ TokenType.operatorBinaryAssignmentDirect,
-          TokenType.ambiguousMinus,
-          TokenType.specialParenthesisOpening ],
-        TokenType.operatorUnaryMinus, "= +(");
-    });
-  });
-
+  // also encompasses ambiguousDecrement - they share the same logic
   describe('ambiguousIncrement', () => {
     describe('Prefix', () => {
       assert(
@@ -327,68 +218,6 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousIncrement,
           TokenType.specialSemicolon ],
         TokenType.operatorUnaryArithmeticIncrementPostfix, 'A \n\n ++;');
-    });
-  });
-
-  describe('ambiguousDecrement', () => {
-    describe('Prefix', () => {
-      assert(
-        [ TokenType.specialSemicolon,
-          TokenType.newline,
-          TokenType.ambiguousDecrement,
-          TokenType.identifier ],
-        TokenType.operatorUnaryArithmeticDecrementPrefix, ';\n--A');
-      assert(
-        [ TokenType.operatorBinaryArithmeticAddition,
-          TokenType.newline,
-          TokenType.ambiguousDecrement,
-          TokenType.identifier ],
-        TokenType.operatorUnaryArithmeticDecrementPrefix, '+\n--A');
-      assert(
-        [ TokenType.operatorBinaryAssignmentDirect,
-          TokenType.ambiguousDecrement,
-          TokenType.identifier ],
-        TokenType.operatorUnaryArithmeticDecrementPrefix, '= --A');
-      assert(
-        [ TokenType.specialSemicolon,
-          TokenType.ambiguousDecrement,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier ],
-        TokenType.operatorUnaryArithmeticDecrementPrefix, ';--*A');
-    });
-    describe('Postfix', () => {
-      assert(
-        [ TokenType.identifier,
-          TokenType.ambiguousDecrement,
-          TokenType.specialSemicolon ],
-        TokenType.operatorUnaryArithmeticDecrementPostfix, 'A--;');
-      assert(
-        [ TokenType.identifier,
-          TokenType.ambiguousDecrement,
-          TokenType.specialParenthesisClosing ],
-        TokenType.operatorUnaryArithmeticDecrementPostfix, 'A--)');
-      assert(
-        [ TokenType.identifier,
-          TokenType.ambiguousDecrement,
-          TokenType.specialBracketClosing ],
-        TokenType.operatorUnaryArithmeticDecrementPostfix, 'A--]');
-      assert(
-        [ TokenType.specialBracketClosing,
-          TokenType.ambiguousDecrement,
-          TokenType.specialSemicolon /* irrelevant */ ],
-        TokenType.operatorUnaryArithmeticDecrementPostfix, ']--;');
-      assert(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousDecrement,
-          TokenType.specialParenthesisClosing ],
-        TokenType.operatorUnaryArithmeticDecrementPostfix, ')--)');
-      assert(
-        [ TokenType.newline,
-          TokenType.newline,
-          TokenType.identifier,
-          TokenType.ambiguousDecrement,
-          TokenType.specialSemicolon ],
-        TokenType.operatorUnaryArithmeticDecrementPostfix, 'A\n\n--;');
     });
   });
 

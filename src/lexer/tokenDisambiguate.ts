@@ -190,6 +190,7 @@ function disambiguatePlusMinus(
     isTokenBinaryOperator(firstNonNewlineOrCommentTokTypeBehind) ||
     isTokenTernaryOperatorComponent(firstNonNewlineOrCommentTokTypeBehind) ||
     [
+      TokenType.keywordCase,
       TokenType.keywordReturn,
       TokenType.specialComma,
       TokenType.specialParenthesisOpening,
