@@ -19,6 +19,8 @@ Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-in
   - [printer.lineWidth](#printerlinewidth)
   - [printer.multiVariableAlwaysNewline](#printermultivariablealwaysnewline)
   - [printer.multiVariableMatchIndent](#printermultivariablematchindent)
+- [Unsupported Syntax](#unsupported-syntax)
+  - [Unsupported Syntax](#unsupported-syntax)
 - [Limitations](#limitations)
 - [Issues](#issues)
 - [Contributing](#contributing)
@@ -55,7 +57,7 @@ The `@ct-no-format` directive marks a line or section of code to be ignored.
 Single-line comment directives (e.g. `// @ct-no-format`) ignore the following line,
 2 multi-line comment directives (e.g. `/* @ct-no-format */`) create a section of code to be ignored.
 
-```cpp
+```c
 int func_with_ignored_code() {
   // @ct-no-format, ignore next line only
   int a=1, b=2;
@@ -114,7 +116,7 @@ Controls the amount of spaces inserted per indentation level when [printer.inden
 Controls the type of character used for indentation used by the printer. `tabs` will insert 1 tab (`\t`) per indentation level, `spaces` will insert [printer.indentationSize](#printerindentationsize) real spaces per indentation level.
 
 ## printer.lineEndings
-Controls the end-of-line character sequence used by the printer. `lf` will insert a linefeed (`\n`), `crlf` will insert a carriage-return + linefeed (`\r\n`).
+Controls the end-of-line character sequence used by the printer: `lf` will insert a linefeed (`\n`), `crlf` will insert a carriage-return + linefeed (`\r\n`).
 
 ## printer.lineWidth
 Controls the maximum ideal number of columns per line. This does not guarantee that all line lengths will fall within this maximum. This setting currently has a margin of error of approx. ±5 characters, so a value of 80 may result in some lines having a width of up to 85 characters (or more if it is not possible to break the line, such as when there are long [string literals](https://docs.microsoft.com/en-us/cpp/c-language/c-string-literals?view=msvc-170) present).
@@ -122,7 +124,7 @@ Controls the maximum ideal number of columns per line. This does not guarantee t
 ## printer.multiVariableAlwaysNewline
 Controls whether variables in a multi-variable declaration/definition will be put on separate lines.
 
-```cpp
+```c
 // printer.multiVariableAlwaysNewline OFF (false)
 int var1 = 1, var2 = 2, var3;
 
@@ -135,7 +137,7 @@ int var1 = 1,
 ## printer.multiVariableMatchIndent
 Controls whether indentation is matched for all line-separated variables in a multi-variable declaration/definition.
 
-```cpp
+```c
 // printer.multiVariableMatchIndent OFF (false)
 int var1 = 1,
   var2 = 2,
@@ -146,9 +148,23 @@ int var1 = 1,
     var2 = 2,
     var3;
 
-/* has no effect on one-liners
-  (i.e. when printer.multiVariableAlwaysNewline is false) */
+// has no effect on one-liners
+// (i.e. when printer.multiVariableAlwaysNewline is false)
 int x = 1, y = 2, z;
+```
+
+# Unsupported Syntax
+
+## Multiline comment start in preprocessor macro
+
+```c
+// NOT SUPPORTED:
+#define MACRO_NAME MACRO_VALUE /* <- multiline comment start
+more comment content
+comment end -> */
+
+// THIS IS OK:
+#define MACRO_NAME MACRO_VALUE // singleline comment
 ```
 
 # Limitations
