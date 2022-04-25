@@ -96,7 +96,7 @@ export default function printer(
   let startLineIndex = tokenStartIndices[0];
 
   // Final string to be written to file
-  let formattedStr = '';
+  let formattedStr = [];
 
   let indentAmountForMultiVar = 0;
 
@@ -276,7 +276,7 @@ export default function printer(
           if (multiVarAlwaysNewline || isThereLineOverflow(i, TokenType.specialSemicolon)) {
             contextStack.push({ context, overflow, indentationDepth });
             if (multiVarMatchIndent) {
-              indentAmountForMultiVar = getIndentAmountForMultiVar(formattedStr);
+              indentAmountForMultiVar = getIndentAmountForMultiVar(formattedStr.join(''));
             } else {
               indentAmountForMultiVar = getIndentation(1 + indentationDepth).length;
             }
@@ -882,7 +882,9 @@ export default function printer(
         if (
           previousTokenType !== null &&
           (tokenTypes[i - 1] !== TokenType.newline || currString === '') &&
-          formattedStr.charAt(formattedStr.length - 1) !== ' '
+          formattedStr[formattedStr.length - 1].charAt(
+            formattedStr[formattedStr.length - 1].length - 1,
+          ) !== ' '
         ) {
           currString = ' ';
         }
@@ -909,7 +911,9 @@ export default function printer(
           previousTokenType !== null &&
           previousTokenType !== TokenType.specialBracketOpening &&
           previousTokenType !== TokenType.specialParenthesisOpening &&
-          formattedStr.charAt(formattedStr.length - 1) !== ' '
+          formattedStr[formattedStr.length - 1].charAt(
+            formattedStr[formattedStr.length - 1].length - 1,
+          ) !== ' '
         ) {
           currString = ' ';
         }
@@ -1049,14 +1053,14 @@ export default function printer(
       }
     }
 
-    formattedStr += currString;
+    formattedStr[i] = currString;
     previousTokenType = currTokType;
     currString = '';
   }
 
-  if (tokenTypes[tokenCount - 1] === TokenType.newline && formattedStr !== '') {
-    formattedStr += lineEndings;
+  if (tokenTypes[tokenCount - 1] === TokenType.newline && formattedStr.join('') !== '') {
+    formattedStr.push(lineEndings);
   }
 
-  return formattedStr;
+  return formattedStr.join('');
 }

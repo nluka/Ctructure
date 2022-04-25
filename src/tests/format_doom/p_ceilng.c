@@ -132,19 +132,19 @@ void T_MoveCeiling(ceiling_t *ceiling) {
             break;
         }
       } else { // ( res != pastdest )
-          if (res == crushed) {
-            switch (ceiling->type) {
-              case silentCrushAndRaise:
-              case crushAndRaise:
-              case lowerAndCrush:
-                ceiling->speed = CEILSPEED / 8;
-                break;
+        if (res == crushed) {
+          switch (ceiling->type) {
+            case silentCrushAndRaise:
+            case crushAndRaise:
+            case lowerAndCrush:
+              ceiling->speed = CEILSPEED / 8;
+              break;
 
-              default:
-                break;
-            }
+            default:
+              break;
           }
         }
+      }
       break;
   }
 }
