@@ -183,7 +183,7 @@ void us2() {
   //            not supported
 
   // do this instead:
-  int a = (b - c) * (d / e);
+  int a = (b - c) * (d) / e;
 
   // EXAMPLE 2:
   int *p = &a;
