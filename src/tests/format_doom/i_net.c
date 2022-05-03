@@ -102,7 +102,7 @@ void BindToLocalPort(int s, int port) {
   address.sin_addr.s_addr = INADDR_ANY;
   address.sin_port = port;
 
-  v = bind(s, (void *) & address, sizeof (address));
+  v = bind(s, (void *)(&address), sizeof (address));
   if (v == -1)
     I_Error("BindToPort: bind: %s", strerror(errno));
 }
@@ -135,7 +135,7 @@ void PacketSend(void) {
     &sw,
     doomcom->datalength,
     0,
-    (void *) & sendaddress[doomcom->remotenode],
+    (void *)(&sendaddress[doomcom->remotenode]),
     sizeof (sendaddress[doomcom->remotenode])
   );
 
@@ -159,7 +159,7 @@ void PacketGet(void) {
     &sw,
     sizeof (sw),
     0,
-    (struct sockaddr *) & fromaddress,
+    (struct sockaddr *)(&fromaddress),
     &fromlen
   );
   if (c == -1) {
@@ -172,7 +172,7 @@ void PacketGet(void) {
   {
     static int first = 1;
     if (first)
-      printf("len=%d:p=[0x%x 0x%x] \n", c, *(int *) & sw, *((int *) & sw + 1));
+      printf("len=%d:p=[0x%x 0x%x] \n", c, *(int *)(&sw), *((int *)(&sw) + 1));
     first = 0;
   }
 

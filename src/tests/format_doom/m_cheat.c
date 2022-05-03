@@ -77,6 +77,7 @@ void cht_GetParam(cheatseq_t *cht, char *buffer) {
     *(p++) = 0;
   } while (c && *p != 0xff);
 
-  if (*p == 0xff)
+  if (*p == 0xff) {
     *buffer = 0;
+  }
 }

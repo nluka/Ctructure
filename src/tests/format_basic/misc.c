@@ -73,14 +73,16 @@ int misc2() {
 
 void misc3() {
   if (!(type & (ZEROPAD + LEFT)))
-    while (size-- > 0)
+    while (size-- > 0) {
       *str++ = ' ';
-  if (sign)
+    }
+  if (sign) {
     *str++ = sign;
+  }
   if (type & SPECIAL) {
-    if (base == 8)
+    if (base == 8) {
       *str++ = '0';
-    else if (base == 16) {
+    } else if (base == 16) {
       *str++ = '0';
       *str++ = digits[33];
     }
@@ -381,7 +383,7 @@ CURLcode Curl_socket(
     addr->addrlen = sizeof (struct Curl_sockaddr_storage);
   memcpy(&addr->sa_addr, ai->ai_addr, addr->addrlen);
 
-  if (data->set.fopensocket)
+  if (data->set.fopensocket) {
     /*
      * If the opensocket callback is set, all the destination address
      * information is passed to the callback. Depending on this information the
@@ -396,7 +398,7 @@ CURLcode Curl_socket(
       CURLSOCKTYPE_IPCXN,
       (struct curl_sockaddr *)addr
     );
-  else
+  } else
     /* opensocket callback not set, so simply create the socket now */
     *sockfd = socket(addr->family, addr->socktype, addr->protocol);
 
@@ -406,7 +408,7 @@ CURLcode Curl_socket(
 
   #if defined(ENABLE_IPV6) && defined(HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID)
   if (conn->scope_id && (addr->family == AF_INET6)) {
-    struct sockaddr_in6 *const sa6 = (void *) & addr->sa_addr;
+    struct sockaddr_in6 *const sa6 = (void *)(&addr->sa_addr);
     sa6->sin6_scope_id = conn->scope_id;
   }
   #endif

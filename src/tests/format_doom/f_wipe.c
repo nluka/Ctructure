@@ -77,16 +77,16 @@ int wipe_doColorXForm(int width, int height, int ticks) {
     if (*w != *e) {
       if (*w > *e) {
         newval = *w - ticks;
-        if (newval < *e)
+        if (newval < *e) {
           *w = *e;
-        else
+        } else
           *w = newval;
         changed = true;
       } else if (*w < *e) {
         newval = *w + ticks;
-        if (newval > *e)
+        if (newval > *e) {
           *w = *e;
-        else
+        } else
           *w = newval;
         changed = true;
       }

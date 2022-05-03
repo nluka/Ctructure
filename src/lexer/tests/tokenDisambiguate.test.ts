@@ -23,6 +23,24 @@ describe('tokenDisambiguate', () => {
       expect(tokenDisambiguate(ambiguousTokIndex, tokSet, fileContents)).toBe(expectedTokenType);
     });
   }
+  function assertThrows(
+    tokTypes: TokenType[],
+    fileContents: string,
+  ) {
+    test(`throws <- ${JSON.stringify(fileContents)}`, () => {
+      const tokSet = new TokenSet(tokTypes.length);
+      for (const tokType of tokTypes) {
+        tokSet.pushPacked([0, tokType]);
+      }
+      let ambiguousTokIndex = 0;
+      for (; ambiguousTokIndex < tokTypes.length; ++ambiguousTokIndex) {
+        if (isTokenAmbiguous(tokTypes[ambiguousTokIndex])) {
+          break;
+        }
+      }
+      expect(() => tokenDisambiguate(ambiguousTokIndex, tokSet, fileContents)).toThrow();
+    });
+  }
 
   // also encompasses ambiguousMinus - they share the same logic
   describe('ambiguousPlus', () => {
@@ -468,48 +486,10 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier ],
         TokenType.operatorUnaryIndirectionOrDereference, 'labelOrSwitch: *p');
       assert(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-          TokenType.operatorBinaryAssignmentDirect ],
-        TokenType.operatorUnaryIndirectionOrDereference, ') *p =');
-      assert(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-          TokenType.ambiguousIncrement ],
-        TokenType.operatorUnaryIndirectionOrDereference, ') *p++');
-      assert(
         [ TokenType.identifier,
           TokenType.ambiguousAsterisk,
           TokenType.specialParenthesisClosing ],
         TokenType.operatorUnaryIndirectionOrDereference, 'uint8_t *)');
-      assert(
-        [ TokenType.identifier,
-          TokenType.specialParenthesisClosing,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-          TokenType.ambiguousIncrement ],
-        TokenType.operatorUnaryIndirectionOrDereference, 'A) *p++');
-      assert(
-        [ TokenType.keywordFor,
-          TokenType.specialParenthesisOpening,
-          TokenType.identifier,
-          TokenType.operatorBinaryAssignmentDirect,
-          TokenType.constantNumber,
-          TokenType.specialSemicolon,
-          TokenType.identifier,
-          TokenType.operatorBinaryComparisonLessThan,
-          TokenType.constantNumber,
-          TokenType.specialSemicolon,
-          TokenType.identifier,
-          TokenType.operatorUnaryArithmeticIncrementPostfix,
-          TokenType.specialParenthesisClosing,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier,
-          TokenType.ambiguousIncrement,
-          TokenType.operatorBinaryAssignmentDirect ],
-        TokenType.operatorUnaryIndirectionOrDereference, 'for (i = 0; i < 1; i++) *p++ =');
     });
     describe('Multiplication', () => {
       assert(
@@ -589,6 +569,13 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier,
           TokenType.specialBracketClosing ],
         TokenType.operatorBinaryArithmeticMultiplication, ': A * B');
+      assert(
+        [ TokenType.operatorMemberSelectionIndirect,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialBracketOpening ],
+        TokenType.operatorBinaryArithmeticMultiplication, '->A * B[');
       assert(
         [ TokenType.operatorBinaryAssignmentDirect,
           TokenType.identifier,
@@ -696,6 +683,13 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier],
         TokenType.ambiguousAsterisk, 'a) *(ptr');
     });
+    describe('Unsupported Syntax', () => {
+      assertThrows(
+        [ TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier],
+        ') * A');
+    });
   });
 
   describe('ambiguousAmpersand', () => {
@@ -770,6 +764,13 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousAmpersand,
           TokenType.specialParenthesisOpening ],
         TokenType.operatorUnaryAddressOf, '= &(');
+    });
+    describe('Unsupported Syntax', () => {
+      assertThrows(
+        [ TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAmpersand,
+          TokenType.identifier],
+        ') & A');
     });
   });
 

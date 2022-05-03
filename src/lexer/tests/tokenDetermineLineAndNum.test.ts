@@ -21,4 +21,5 @@ describe('tokenDetermineLineAndNum', () => {
   assert(2, '  token\n\n',         1, 1);
   assert(4, '  1 token\n\n',       1, 2);
   assert(6, '  1 2 token\n\n',     1, 3);
+  assert(6, '  1 2\ntoken\n\n',    2, 1);
 });

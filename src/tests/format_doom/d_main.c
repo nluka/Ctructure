@@ -669,8 +669,8 @@ void FindResponseFile(void) {
         moreargs[index++] = myargv[k];
 
       firstargv = myargv[0];
-      myargv = malloc(sizeof (char *) * MAXARGVS);
-      memset(myargv, 0, sizeof (char *) * MAXARGVS);
+      myargv = malloc(sizeof (char *) * (MAXARGVS));
+      memset(myargv, 0, sizeof (char *) * (MAXARGVS));
       myargv[0] = firstargv;
 
       infile = file;

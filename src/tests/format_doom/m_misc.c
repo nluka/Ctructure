@@ -1,4 +1,3 @@
-// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -224,15 +223,15 @@ default_t defaults[] = {
 
   // UNIX hack, to be removed.
 #ifdef SNDSERV
-  { "sndserver", (int *) & sndserver_filename, (int)"sndserver" },
+  { "sndserver", (int *)(&sndserver_filename), (int)"sndserver" },
   { "mb_used", &mb_used, 2 },
 #endif
 
 #endif
 
 #ifdef LINUX
-  { "mousedev", (int *)&mousedev, (int)"/dev/ttyS0" },
-  { "mousetype", (int *)&mousetype, (int)"microsoft" },
+  { "mousedev", (int *)(&mousedev), (int)"/dev/ttyS0" },
+  { "mousetype", (int *)(&mousetype), (int)"microsoft" },
 #endif
 
   { "use_mouse", &usemouse, 1 },
@@ -253,16 +252,16 @@ default_t defaults[] = {
 
   { "usegamma", &usegamma, 0 },
 
-  { "chatmacro0", (int *)&chat_macros[0], (int)HUSTR_CHATMACRO0 },
-  { "chatmacro1", (int *)&chat_macros[1], (int)HUSTR_CHATMACRO1 },
-  { "chatmacro2", (int *)&chat_macros[2], (int)HUSTR_CHATMACRO2 },
-  { "chatmacro3", (int *)&chat_macros[3], (int)HUSTR_CHATMACRO3 },
-  { "chatmacro4", (int *)&chat_macros[4], (int)HUSTR_CHATMACRO4 },
-  { "chatmacro5", (int *)&chat_macros[5], (int)HUSTR_CHATMACRO5 },
-  { "chatmacro6", (int *)&chat_macros[6], (int)HUSTR_CHATMACRO6 },
-  { "chatmacro7", (int *)&chat_macros[7], (int)HUSTR_CHATMACRO7 },
-  { "chatmacro8", (int *)&chat_macros[8], (int)HUSTR_CHATMACRO8 },
-  { "chatmacro9", (int *)&chat_macros[9], (int)HUSTR_CHATMACRO9 }
+  { "chatmacro0", (int *)(&chat_macros[0]), (int)HUSTR_CHATMACRO0 },
+  { "chatmacro1", (int *)(&chat_macros[1]), (int)HUSTR_CHATMACRO1 },
+  { "chatmacro2", (int *)(&chat_macros[2]), (int)HUSTR_CHATMACRO2 },
+  { "chatmacro3", (int *)(&chat_macros[3]), (int)HUSTR_CHATMACRO3 },
+  { "chatmacro4", (int *)(&chat_macros[4]), (int)HUSTR_CHATMACRO4 },
+  { "chatmacro5", (int *)(&chat_macros[5]), (int)HUSTR_CHATMACRO5 },
+  { "chatmacro6", (int *)(&chat_macros[6]), (int)HUSTR_CHATMACRO6 },
+  { "chatmacro7", (int *)(&chat_macros[7]), (int)HUSTR_CHATMACRO7 },
+  { "chatmacro8", (int *)(&chat_macros[8]), (int)HUSTR_CHATMACRO8 },
+  { "chatmacro9", (int *)(&chat_macros[9]), (int)HUSTR_CHATMACRO9 }
 };
 
 int numdefaults;
@@ -317,8 +316,9 @@ void M_LoadDefaults(void) {
 
   // set everything to base values
   numdefaults = sizeof (defaults) / sizeof (defaults[0]);
-  for (i = 0; i < numdefaults; i++)
+  for (i = 0; i < numdefaults; i++) {
     *defaults[i].location = defaults[i].defaultvalue;
+  }
 
   // check for a custom default file
   i = M_CheckParm("-config");
@@ -347,9 +347,9 @@ void M_LoadDefaults(void) {
           sscanf(strparm, "%i", &parm);
         for (i = 0; i < numdefaults; i++)
           if (!strcmp(def, defaults[i].name)) {
-            if (!isstring)
+            if (!isstring) {
               *defaults[i].location = parm;
-            else
+            } else
               *defaults[i].location = (int)newstring;
             break;
           }
@@ -426,9 +426,9 @@ void WritePCXfile(
   pack = &pcx->data;
 
   for (i = 0; i < width * height; i++) {
-    if ((*data & 0xc0) != 0xc0)
+    if ((*data & 0xc0) != 0xc0) {
       *pack++ = *data++;
-    else {
+    } else {
       *pack++ = 0xc1;
       *pack++ = *data++;
     }
@@ -436,8 +436,9 @@ void WritePCXfile(
 
   // write the palette
   *pack++ = 0x0c; // palette ID byte
-  for (i = 0; i < 768; i++)
+  for (i = 0; i < 768; i++) {
     *pack++ = *palette++;
+  }
 
   // write output file
   length = pack - (byte *)pcx;

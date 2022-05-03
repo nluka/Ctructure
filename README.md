@@ -20,7 +20,9 @@ Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-in
   - [printer.multiVariableAlwaysNewline](#printermultivariablealwaysnewline)
   - [printer.multiVariableMatchIndent](#printermultivariablematchindent)
 - [Unsupported Syntax](#unsupported-syntax)
-  - [Unsupported Syntax](#unsupported-syntax)
+  - [US1 multiline comment opening in preprocessor directive](#us1-multiline-comment-opening-in-preprocessor-directive)
+  - [US2 closingParen asterisk identifier](#us2-closingparen-asterisk-identifier)
+  - [US3 closingParen ampersand identifier](#us3-closingparen-ampersand-identifier)
 - [Limitations](#limitations)
 - [Issues](#issues)
 - [Contributing](#contributing)
@@ -155,16 +157,56 @@ int x = 1, y = 2, z;
 
 # Unsupported Syntax
 
-## Multiline comment start in preprocessor macro
+## US1 multiline comment opening in preprocessor directive
 
 ```c
-// NOT SUPPORTED:
-#define MACRO_NAME MACRO_VALUE /* <- multiline comment start
-more comment content
-comment end -> */
+// not supported:
+#define MACRO_NAME MACRO_VALUE /* multiline
+comment */
 
-// THIS IS OK:
-#define MACRO_NAME MACRO_VALUE // singleline comment
+// do this instead:
+#define MACRO_NAME MACRO_VALUE
+/* multiline comment */
+
+// or this:
+/* multiline comment */
+#define MACRO_NAME MACRO_VALUE
+```
+
+## US2 closingParen asterisk identifier
+
+```c
+void us2() {
+  // EXAMPLE 1:
+  int a = (b - c) * d / e;
+  //            ^ ^ ^
+  //            not supported
+
+  // do this instead:
+  int a = (b - c) * (d / e);
+
+  // EXAMPLE 2:
+  int *p = &a;
+  for (;;) *p++;
+  //     ^ ^^
+  //     not supported
+
+  // do this instead:
+  for (;;) { *p++ };
+}
+```
+
+## US3 closingParen ampersand identifier
+
+```c
+void us3() {
+  int a = (int)&b;
+  //          ^^^
+  //          not supported
+
+  // do this instead:
+  int a = (int)(&b);
+}
 ```
 
 # Limitations

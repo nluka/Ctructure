@@ -132,6 +132,18 @@ describe('tokenFindEndPosition', () => {
       ).toBe(expectedEndPos);
     });
   }
+  function assertThrows(
+    category: TokenCategory,
+    fileContents: string,
+  ) {
+    test(`throws when fileContents=${JSON.stringify(
+      fileContents,
+    )}`, () => {
+      expect(
+        () => tokenFindEndPosition(fileContents, 0, category),
+      ).toThrow();
+    });
+  }
 
   describe('newline', () => {
     assert(newline, 0, '\n');
@@ -167,6 +179,9 @@ describe('tokenFindEndPosition', () => {
     assert(preproDirective, 10, '#define A 1\n');
     assert(preproDirective, 26, '#define A \\\n \\\n 1 \\\n + \\\n 2');
     assert(preproDirective, 26, '#define A \\\n \\\n 1 \\\n + \\\n 2\n');
+    assertThrows(preproDirective, '#define A 1 /*\n');
+    assertThrows(preproDirective, '#define A 1 /* comment \n */');
+    assertThrows(preproDirective, '#include <stdio.h> /*\n');
   });
 
   describe('commentOrOperator', () => {

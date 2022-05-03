@@ -33,6 +33,14 @@ export default function tokenFindEndPosition(
         '\\',
         tokStartPos + 1,
       );
+      const token = fileContents.slice(tokStartPos, firstUnescapedNewlinePos);
+      if (token.includes('/*')) {
+        throw new Error(
+          `unsupported syntax (US1) on line ${
+            tokenDetermineLineAndNum(fileContents, tokStartPos + 1).lineNum
+          } - multiline comment opening in preprocessor directive (https://github.com/nluka/Ctructure#us1-multiline-comment-opening-in-preprocessor-directive)`,
+        );
+      }
       return firstUnescapedNewlinePos === -1
         ? fileContents.length - 1
         : firstUnescapedNewlinePos - 1;

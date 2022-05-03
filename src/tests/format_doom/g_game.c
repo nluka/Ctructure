@@ -1201,8 +1201,9 @@ void G_DoSaveGame(void) {
   *save_p++ = gameskill;
   *save_p++ = gameepisode;
   *save_p++ = gamemap;
-  for (i = 0; i < MAXPLAYERS; i++)
+  for (i = 0; i < MAXPLAYERS; i++) {
     *save_p++ = playeringame[i];
+  }
   *save_p++ = leveltime >> 16;
   *save_p++ = leveltime >> 8;
   *save_p++ = leveltime;
@@ -1367,10 +1368,10 @@ void G_ReadDemoTiccmd(ticcmd_t *cmd) {
     G_CheckDemoStatus();
     return;
   }
-  cmd->forwardmove = ((signed char)*demo_p++);
-  cmd->sidemove = ((signed char)*demo_p++);
-  cmd->angleturn = ((unsigned char)*demo_p++) << 8;
-  cmd->buttons = (unsigned char)*demo_p++;
+  cmd->forwardmove = ((signed char)(*demo_p++));
+  cmd->sidemove = ((signed char)(*demo_p++));
+  cmd->angleturn = ((unsigned char)(*demo_p++)) << 8;
+  cmd->buttons = (unsigned char)(*demo_p++);
 }
 
 void G_WriteDemoTiccmd(ticcmd_t *cmd) {
@@ -1425,8 +1426,9 @@ void G_BeginRecording(void) {
   *demo_p++ = nomonsters;
   *demo_p++ = consoleplayer;
 
-  for (i = 0; i < MAXPLAYERS; i++)
+  for (i = 0; i < MAXPLAYERS; i++) {
     *demo_p++ = playeringame[i];
+  }
 }
 
 //

@@ -3,6 +3,7 @@ import TokenSet from './TokenSet';
 import TokenType, {
   isTokenBinaryOperator,
   isTokenBinaryOperatorAssignment,
+  isTokenBinaryOperatorMemberSelection,
   isTokenBinaryOperatorNonAssignment,
   isTokenKeyword,
   isTokenKeywordTypeOrTypeQualifier,
@@ -94,6 +95,22 @@ export default function tokenDisambiguate(
       );
 
     case TokenType.ambiguousAsterisk:
+      if (
+        firstNonNewlineOrCommentTokBehindType ===
+          TokenType.specialParenthesisClosing &&
+        firstNonNewlineOrCommentTokAheadType === TokenType.identifier
+      ) {
+        const { lineNum, tokenNum } = tokenDetermineLineAndNum(
+          fileContents,
+          // the unsupported sequence of tokens starts from the closingParen,
+          // hence `ambigTokIndex - 1`
+          tokSet.getTokenStartPosition(ambigTokIndex - 1),
+        );
+        throw new Error(
+          `unsupported syntax (US2) starting at token ${tokenNum} on line ${lineNum} - closingParen asterisk identifier (https://github.com/nluka/Ctructure#us2-closingparen-asterisk-identifier)`,
+        );
+      }
+
       return disambiguateAsterisk(
         tokSet,
         firstNonNewlineOrCommentTokBehindType,
@@ -104,6 +121,22 @@ export default function tokenDisambiguate(
       );
 
     case TokenType.ambiguousAmpersand:
+      if (
+        firstNonNewlineOrCommentTokBehindType ===
+          TokenType.specialParenthesisClosing &&
+        firstNonNewlineOrCommentTokAheadType === TokenType.identifier
+      ) {
+        const { lineNum, tokenNum } = tokenDetermineLineAndNum(
+          fileContents,
+          // the unsupported sequence of tokens starts from the closingParen,
+          // hence `ambigTokIndex - 1`
+          tokSet.getTokenStartPosition(ambigTokIndex - 1),
+        );
+        throw new Error(
+          `unsupported syntax (US3) starting at token ${tokenNum} on line ${lineNum} - closingParen ampersand identifier (https://github.com/nluka/Ctructure#us2-closingparen-asterisk-identifier)`,
+        );
+      }
+
       return disambiguateAmpersand(
         firstNonNewlineOrCommentTokBehindType,
         firstNonNewlineOrCommentTokAheadType,
@@ -215,7 +248,8 @@ function disambiguateAsterisk(
   firstNonNewlineOrCommentTokAheadIndex: number,
   createErr: () => Error,
 ) {
-  // mult with num|char operands, offset as left operand, parenthesis on right
+  // num|char tokens on left|right,
+  // closing bracket on left,
   if (
     // left side
     [
@@ -283,12 +317,10 @@ function disambiguateAsterisk(
   if (
     // right side
     isTokenBinaryOperatorAssignment(secondNonNewlineOrCommentTokAheadType) ||
-    // isTokenPostfixIncrOrDecrOperator(secondNonNewlineOrCommentTokAheadType) ||
     [
       TokenType.ambiguousIncrement,
       TokenType.ambiguousDecrement,
       TokenType.specialParenthesisOpening,
-      TokenType.specialBracketOpening,
     ].includes(secondNonNewlineOrCommentTokAheadType)
   ) {
     return TokenType.operatorUnaryIndirectionOrDereference;
@@ -333,18 +365,27 @@ function disambiguateAsterisk(
     // left side
     isTokenUnaryOperator(secondNonNewlineOrCommentTokBehindType) ||
     isTokenBinaryOperator(secondNonNewlineOrCommentTokBehindType) ||
+    isTokenBinaryOperatorMemberSelection(
+      secondNonNewlineOrCommentTokBehindType,
+    ) ||
     // right side
     isTokenBinaryOperatorNonAssignment(secondNonNewlineOrCommentTokAheadType)
   ) {
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
-  // mult inside offset operator
+  if (
+    secondNonNewlineOrCommentTokAheadType === TokenType.specialBracketOpening
+  ) {
+    return TokenType.operatorUnaryIndirectionOrDereference;
+  }
+
   if (
     secondNonNewlineOrCommentTokBehindType ===
       TokenType.specialBracketOpening ||
     secondNonNewlineOrCommentTokAheadType === TokenType.specialBracketClosing
   ) {
+    // mult inside offset operator
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
@@ -374,7 +415,7 @@ function disambiguateAsterisk(
     firstNonNewlineOrCommentTokAheadType === TokenType.specialParenthesisOpening
   ) {
     /*
-      In this case we don't bother disambiguating because it's much easier
+      here we don't bother disambiguating because it's much easier
       for the printer to do it, since it tracks context.
     */
     return TokenType.ambiguousAsterisk;

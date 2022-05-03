@@ -202,7 +202,7 @@ void *getsfx(char *sfxname, int *len) {
 
   // Pads the sound effect out to the mixing buffer size.
   // The original realloc would interfere with zone memory.
-  paddedsize = ((size - 8 + (SAMPLECOUNT - 1)) / SAMPLECOUNT) * SAMPLECOUNT;
+  paddedsize = ((size - 8 + (SAMPLECOUNT - 1)) / SAMPLECOUNT) * (SAMPLECOUNT);
 
   // Allocate from zone memory.
   paddedsfx = (unsigned char *)Z_Malloc(paddedsize + 8, PU_STATIC, 0);
@@ -540,19 +540,19 @@ void I_UpdateSound(void) {
     // else if (dl < -128) *leftout = -128;
     // else *leftout = dl;
 
-    if (dl > 0x7fff)
+    if (dl > 0x7fff) {
       *leftout = 0x7fff;
-    else if (dl < -0x8000)
+    } else if (dl < -0x8000) {
       *leftout = -0x8000;
-    else
+    } else
       *leftout = dl;
 
     // Same for right hardware channel.
-    if (dr > 0x7fff)
+    if (dr > 0x7fff) {
       *rightout = 0x7fff;
-    else if (dr < -0x8000)
+    } else if (dr < -0x8000) {
       *rightout = -0x8000;
-    else
+    } else
       *rightout = dr;
 
     // Increment current pointers in mixbuffer.

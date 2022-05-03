@@ -385,9 +385,9 @@ void I_FinishUpdate(void) {
       tics = 20;
 
     for (i = 0; i < tics * 2; i += 2)
-      screens[0][(SCREENHEIGHT - 1) * SCREENWIDTH + i] = 0xff;
+      screens[0][(SCREENHEIGHT - 1) * (SCREENWIDTH) + i] = 0xff;
     for (; i < 20 * 2; i += 2)
-      screens[0][(SCREENHEIGHT - 1) * SCREENWIDTH + i] = 0x0;
+      screens[0][(SCREENHEIGHT - 1) * (SCREENWIDTH) + i] = 0x0;
   }
 
   // scales the screen size before blitting it
@@ -401,7 +401,7 @@ void I_FinishUpdate(void) {
 
     ilineptr = (unsigned int *)(screens[0]);
     for (i = 0; i < 2; i++)
-      olineptrs[i] = (unsigned int *) & image->data[i * X_width];
+      olineptrs[i] = (unsigned int *)(&image->data[i * X_width]);
 
     y = SCREENHEIGHT;
     while (y--) {
@@ -438,7 +438,7 @@ void I_FinishUpdate(void) {
 
     ilineptr = (unsigned int *)(screens[0]);
     for (i = 0; i < 3; i++)
-      olineptrs[i] = (unsigned int *) & image->data[i * X_width];
+      olineptrs[i] = (unsigned int *)(&image->data[i * X_width]);
 
     y = SCREENHEIGHT;
     while (y--) {
@@ -763,8 +763,9 @@ void I_InitGraphics(void) {
       d = displayname;
       while (*d && (*d != ':'))
         d++;
-      if (*d)
+      if (*d) {
         *d = 0;
+      }
       if (!(!strcasecmp(displayname, "unix") || !*displayname))
         doShm = false;
     }

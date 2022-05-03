@@ -1,4 +1,3 @@
-// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -190,7 +189,7 @@ void T_MoveFloor(floormove_t *floor) {
   );
 
   if (!(leveltime & 7))
-    S_StartSound((mobj_t *)&floor->sector->soundorg, sfx_stnmov);
+    S_StartSound((mobj_t *)(&floor->sector->soundorg), sfx_stnmov);
 
   if (res == pastdest) {
     floor->sector->specialdata = NULL;
@@ -214,7 +213,7 @@ void T_MoveFloor(floormove_t *floor) {
     }
     P_RemoveThinker(&floor->thinker);
 
-    S_StartSound((mobj_t *)&floor->sector->soundorg, sfx_pstop);
+    S_StartSound((mobj_t *)(&floor->sector->soundorg), sfx_pstop);
   }
 }
 

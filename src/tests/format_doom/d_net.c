@@ -99,7 +99,7 @@ unsigned NetbufferChecksum(void) {
 
   l = (NetbufferSize() - (int) & (((doomdata_t *)0)->retransmitfrom)) / 4;
   for (i = 0; i < l; i++)
-    c += ((unsigned *) & netbuffer->retransmitfrom)[i] * (i + 1);
+    c += ((unsigned *)(&netbuffer->retransmitfrom))[i] * (i + 1);
 
   return c & NCMD_CHECKSUM;
 }

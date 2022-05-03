@@ -77,7 +77,7 @@ int I_GetTime(void) {
   if (!basetime)
     basetime = tp.tv_sec;
   newtics =
-    (tp.tv_sec - basetime) * TICRATE + tp.tv_usec * TICRATE / 1000000;
+    (tp.tv_sec - basetime) * (TICRATE) + tp.tv_usec * TICRATE / 1000000;
   return newtics;
 }
 

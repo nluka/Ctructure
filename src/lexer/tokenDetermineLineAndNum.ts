@@ -12,7 +12,7 @@ export default function tokenDetermineLineAndNum(
   tokStartPos: number,
 ): { lineNum: number; tokenNum: number } {
   let lineNum = 1;
-  for (let i = 0; i < tokStartPos - 1; ++i) {
+  for (let i = 0; i < tokStartPos; ++i) {
     if (fileContents.charAt(i) === '\n') {
       ++lineNum;
     }
