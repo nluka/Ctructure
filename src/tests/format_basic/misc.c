@@ -393,11 +393,12 @@ CURLcode Curl_socket(
      * might have been changed and this 'new' address will actually be used
      * here to connect.
      */
-    *sockfd = data->set.fopensocket(
-      data->set.opensocket_client,
-      CURLSOCKTYPE_IPCXN,
-      (struct curl_sockaddr *)addr
-    );
+    *sockfd =
+      data->set.fopensocket(
+        data->set.opensocket_client,
+        CURLSOCKTYPE_IPCXN,
+        (struct curl_sockaddr *)addr
+      );
   } else
     /* opensocket callback not set, so simply create the socket now */
     *sockfd = socket(addr->family, addr->socktype, addr->protocol);

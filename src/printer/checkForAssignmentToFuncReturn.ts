@@ -1,31 +1,54 @@
 import TokenType from '../lexer/TokenType';
+import _nextNonNewlineTokenType from './nextNonNewlineTokenType';
 
 export default function checkForAssignmentToFuncReturn(
-  tokTypes: Uint8Array,
-  tokCount: number,
   index: number,
+  tokenCount: number,
+  tokenTypes: Uint8Array,
 ): boolean {
-  for (let i = index; i < tokCount; ++i) {
-    const tokenType = tokTypes[i];
+  let i = index + 1;
+  let pCount = 1;
+  for (; i < tokenCount; ++i) {
+    const tokenType = tokenTypes[i];
     if (tokenType === TokenType.newline) {
       continue;
     }
     if (tokenType === TokenType.identifier) {
-      index = ++i;
+      ++i;
       break;
     }
     return false;
   }
 
-  for (let i = index; i < tokCount; ++i) {
-    const tokenType = tokTypes[i];
+  for (; i < tokenCount; ++i) {
+    const tokenType = tokenTypes[i];
     if (tokenType === TokenType.newline) {
       continue;
     }
     if (tokenType === TokenType.specialParenthesisOpening) {
-      return true;
+      ++i;
+      break;
     }
     return false;
   }
+
+  for (; i < tokenCount; ++i) {
+    const tokenType = tokenTypes[i];
+    if (tokenType === TokenType.specialParenthesisClosing) {
+      --pCount;
+      if (pCount === 0) {
+        if (
+          _nextNonNewlineTokenType(tokenTypes, tokenCount, i) ===
+          TokenType.specialSemicolon
+        ) {
+          return true;
+        }
+        return false;
+      }
+    } else if (tokenType === TokenType.specialParenthesisOpening) {
+      ++pCount;
+    }
+  }
+
   return false;
 }

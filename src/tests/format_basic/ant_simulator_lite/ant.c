@@ -26,7 +26,8 @@ AntStepResult ant_take_step(
   Grid *const grid,
   Ruleset const *const ruleset
 ) {
-  size_t const currCellIndex = grid_get_cell_index(grid, ant->col, ant->row);
+  size_t const currCellIndex =
+    grid_get_cell_index(grid, ant->col, ant->row);
   color_t const currCellColor = grid->cells[currCellIndex];
   Rule const *const currCellRule = &ruleset->rules[currCellColor];
 

@@ -184,10 +184,13 @@ boolean P_CheckMissileRange(mobj_t *actor) {
     return false; // do not attack yet
 
   // OPTIMIZE: get this from a global checksight
-  dist = P_AproxDistance(
-    actor->x - actor->target->x,
-    actor->y - actor->target->y
-  ) - 64 * FRACUNIT;
+  dist =
+    P_AproxDistance(
+      actor->x - actor->target->x,
+      actor->y - actor->target->y
+    ) -
+    64 *
+    FRACUNIT;
 
   if (!actor->info->meleestate)
     dist -= 128 * FRACUNIT; // no melee attack, so fire more
@@ -459,12 +462,14 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround) {
       continue; // out of sight
 
     if (!allaround) {
-      an = R_PointToAngle2(
-        actor->x,
-        actor->y,
-        player->mo->x,
-        player->mo->y
-      ) - actor->angle;
+      an =
+        R_PointToAngle2(
+          actor->x,
+          actor->y,
+          player->mo->x,
+          player->mo->y
+        ) -
+        actor->angle;
 
       if (an > ANG90 && an < ANG270) {
         dist = P_AproxDistance(
@@ -1302,7 +1307,11 @@ void A_PainShootSkull(mobj_t *actor, angle_t angle) {
   an = angle >> ANGLETOFINESHIFT;
 
   prestep =
-    4 * FRACUNIT + 3 * (actor->info->radius + mobjinfo[MT_SKULL].radius) / 2;
+    4 *
+    FRACUNIT +
+    3 *
+    (actor->info->radius + mobjinfo[MT_SKULL].radius) /
+    2;
 
   x = actor->x + FixedMul(prestep, finecosine[an]);
   y = actor->y + FixedMul(prestep, finesine[an]);
