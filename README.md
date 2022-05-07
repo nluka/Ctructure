@@ -1,6 +1,6 @@
 # Ctructure README
 
-Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-inspired code formatter for the C programming language. Currently a work in progress.
+Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-inspired code formatter for the C programming language.
 
 - [Commands](#commands)
   - [formatCurrentDocument](#formatcurrentdocument)

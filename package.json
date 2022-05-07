@@ -2,9 +2,14 @@
   "name": "ctructure",
   "displayName": "Ctructure",
   "description": "An opinionated code formatter for the C programming language, inspired by Prettier.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.63.0"
+  },
+  "publisher": "nluka-jallard",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nluka/Ctructure.git"
   },
   "categories": [
     "Other"
