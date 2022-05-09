@@ -302,23 +302,20 @@ int EV_DoFloor(line_t *line, floor_e floortype) {
         floor->direction = 1;
         floor->sector = sec;
         floor->speed = FLOORSPEED;
-        floor->floordestheight =
-          floor->sector->floorheight + 24 * FRACUNIT;
+        floor->floordestheight = floor->sector->floorheight + 24 * FRACUNIT;
         break;
       case raiseFloor512:
         floor->direction = 1;
         floor->sector = sec;
         floor->speed = FLOORSPEED;
-        floor->floordestheight =
-          floor->sector->floorheight + 512 * FRACUNIT;
+        floor->floordestheight = floor->sector->floorheight + 512 * FRACUNIT;
         break;
 
       case raiseFloor24AndChange:
         floor->direction = 1;
         floor->sector = sec;
         floor->speed = FLOORSPEED;
-        floor->floordestheight =
-          floor->sector->floorheight + 24 * FRACUNIT;
+        floor->floordestheight = floor->sector->floorheight + 24 * FRACUNIT;
         sec->floorpic = line->frontsector->floorpic;
         sec->special = line->frontsector->special;
         break;

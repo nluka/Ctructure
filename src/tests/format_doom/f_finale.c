@@ -461,8 +461,7 @@ void F_CastTicker(void) {
       if (castonmelee)
         caststate = &states[mobjinfo[castorder[castnum].type].meleestate];
       else
-        caststate =
-          &states[mobjinfo[castorder[castnum].type].missilestate];
+        caststate = &states[mobjinfo[castorder[castnum].type].missilestate];
     }
   }
 

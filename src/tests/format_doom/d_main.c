@@ -298,8 +298,7 @@ void D_Display(void) {
       tics = nowtime - wipestart;
     } while (!tics);
     wipestart = nowtime;
-    done =
-      wipe_ScreenWipe(wipe_Melt, 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
+    done = wipe_ScreenWipe(wipe_Melt, 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
     I_UpdateNoBlit();
     M_Drawer(); // menu is drawn even on top of wipes
     I_FinishUpdate(); // page flip or blit buffer
@@ -783,9 +782,14 @@ void D_DoomMain(void) {
         break;
       */
     default:
-      sprintf(title, "                     "
-      "Public DOOM - v%i.%i"
-      "                           ", VERSION / 100, VERSION % 100);
+      sprintf(
+        title,
+        "                     "
+        "Public DOOM - v%i.%i"
+        "                           ",
+        VERSION / 100,
+        VERSION % 100
+      );
       break;
   }
 
@@ -839,7 +843,11 @@ void D_DoomMain(void) {
           myargv[p + 1][0],
           myargv[p + 2][0]
         );
-        printf("Warping to Episode %s, Map %s.\n", myargv[p + 1], myargv[p + 2]);
+        printf(
+          "Warping to Episode %s, Map %s.\n",
+          myargv[p + 1],
+          myargv[p + 2]
+        );
         break;
       case commercial:
       default:

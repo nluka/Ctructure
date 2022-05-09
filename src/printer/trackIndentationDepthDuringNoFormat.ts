@@ -123,8 +123,7 @@ export default function trackIndentationDepthDuringNoFormat(
           context = null;
         }
         if (
-          getNextNonNewlineTokenType(tokTypes, tokCount, i) ===
-          TokenType.specialParenthesisClosing
+          getNextNonNewlineTokenType(tokTypes, tokCount, i) === TokenType.specialParenthesisClosing
         ) {
           overflow = false;
         }
@@ -138,11 +137,7 @@ export default function trackIndentationDepthDuringNoFormat(
         previousContext = contextStack.pop();
         overflow = previousContext.overflow;
         indentationDepth = previousContext.indentationDepth;
-        nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokTypes,
-          tokCount,
-          i,
-        );
+        nextNonNewlineTokenType = getNextNonNewlineTokenType(tokTypes, tokCount, i);
         if (
           previousContext.context === TokenType.keywordIf ||
           (previousContext.context === TokenType.keywordFor && parenDepth === 0)
@@ -180,11 +175,7 @@ export default function trackIndentationDepthDuringNoFormat(
       case TokenType.specialBraceClosing:
         previousContext = contextStack.pop();
         indentationDepth = previousContext.indentationDepth;
-        nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokTypes,
-          tokCount,
-          i,
-        );
+        nextNonNewlineTokenType = getNextNonNewlineTokenType(tokTypes, tokCount, i);
         if (contextStack.peek().context === PrinterCategory.singleLineIf) {
           previousContext = contextStack.pop();
           indentationDepth = previousContext.indentationDepth;
@@ -244,24 +235,15 @@ export default function trackIndentationDepthDuringNoFormat(
         if (contextStack.peek().context === TokenType.keywordStruct) {
           break;
         }
-        if (
-          getNextNonNewlineTokenType(tokTypes, tokCount, i) ===
-          TokenType.specialBraceOpening
-        ) {
+        if (getNextNonNewlineTokenType(tokTypes, tokCount, i) === TokenType.specialBraceOpening) {
           decreaseBlockLevel();
         }
         break;
 
       case TokenType.ambiguousColon:
-        if (
-          context === TokenType.keywordCase ||
-          context === TokenType.keywordDefault
-        ) {
+        if (context === TokenType.keywordCase || context === TokenType.keywordDefault) {
           context = null;
-          if (
-            getNextNonNewlineTokenType(tokTypes, tokCount, i) ===
-            TokenType.specialBraceOpening
-          ) {
+          if (getNextNonNewlineTokenType(tokTypes, tokCount, i) === TokenType.specialBraceOpening) {
             decreaseBlockLevel();
           }
         }
@@ -282,11 +264,7 @@ export default function trackIndentationDepthDuringNoFormat(
 
       case TokenType.keywordElse:
         context = TokenType.keywordElse;
-        nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokTypes,
-          tokCount,
-          i,
-        );
+        nextNonNewlineTokenType = getNextNonNewlineTokenType(tokTypes, tokCount, i);
         if (nextNonNewlineTokenType !== TokenType.specialBraceOpening) {
           context = PrinterCategory.singleLineIf;
           contextStack.push({
@@ -347,11 +325,7 @@ export default function trackIndentationDepthDuringNoFormat(
         break;
 
       case TokenType.commentSingleLine:
-        nextNonNewlineTokenType = getNextNonNewlineTokenType(
-          tokTypes,
-          tokCount,
-          i,
-        );
+        nextNonNewlineTokenType = getNextNonNewlineTokenType(tokTypes, tokCount, i);
         if (
           nextNonNewlineTokenType === TokenType.specialBraceClosing ||
           nextNonNewlineTokenType === TokenType.keywordCase ||

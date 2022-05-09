@@ -663,8 +663,10 @@ void grabsharedmemory(int size) {
   } while (--pollution);
 
   if (!pollution) {
-    I_Error("Sorry, system too polluted with stale "
-    "shared memory segments.\n");
+    I_Error(
+      "Sorry, system too polluted with stale "
+      "shared memory segments.\n"
+    );
   }
 
   X_shminfo.shmid = id;

@@ -6,7 +6,7 @@
   "singleQuote": true,
   "overrides": [
     {
-      "files": "printer.ts",
+      "files": "src/printer/**/*.ts",
       "options": {
         "printWidth": 100
       }

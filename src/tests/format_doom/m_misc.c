@@ -280,10 +280,7 @@ void M_SaveDefaults(void) {
     return; // can't write the file, but don't complain
 
   for (i = 0; i < numdefaults; i++) {
-    if (
-      defaults[i].defaultvalue > -0xfff &&
-      defaults[i].defaultvalue < 0xfff
-    ) {
+    if (defaults[i].defaultvalue > -0xfff && defaults[i].defaultvalue < 0xfff) {
       v = *defaults[i].location;
       fprintf(f, "%s\t\t%i\n", defaults[i].name, v);
     } else {

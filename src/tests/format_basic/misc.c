@@ -375,8 +375,7 @@ CURLcode Curl_socket(
 
   addr->family = ai->ai_family;
   addr->socktype = conn->socktype;
-  addr->protocol =
-    conn->socktype == SOCK_DGRAM ? IPPROTO_UDP : ai->ai_protocol;
+  addr->protocol = conn->socktype == SOCK_DGRAM ? IPPROTO_UDP : ai->ai_protocol;
   addr->addrlen = ai->ai_addrlen;
 
   if (addr->addrlen > sizeof (struct Curl_sockaddr_storage))

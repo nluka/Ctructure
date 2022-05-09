@@ -7,10 +7,7 @@ export default function nextNonNewlineTokenType(
   toksAhead?: number,
 ): TokenType {
   for (let i = index + 1; i < tokCount; ++i) {
-    if (
-      tokTypes[i] === TokenType.newline ||
-      (toksAhead !== undefined && --toksAhead > 0)
-    ) {
+    if (tokTypes[i] === TokenType.newline || (toksAhead !== undefined && --toksAhead > 0)) {
       continue;
     }
     return tokTypes[i];

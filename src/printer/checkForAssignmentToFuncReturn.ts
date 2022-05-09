@@ -37,10 +37,7 @@ export default function checkForAssignmentToFuncReturn(
     if (tokenType === TokenType.specialParenthesisClosing) {
       --pCount;
       if (pCount === 0) {
-        if (
-          _nextNonNewlineTokenType(tokenTypes, tokenCount, i) ===
-          TokenType.specialSemicolon
-        ) {
+        if (_nextNonNewlineTokenType(tokenTypes, tokenCount, i) === TokenType.specialSemicolon) {
           return true;
         }
         return false;

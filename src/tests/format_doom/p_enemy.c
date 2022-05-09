@@ -97,10 +97,7 @@ void P_RecursiveSound(sector_t *sec, int soundblocks) {
   sector_t *other;
 
   // wake up all monsters in this sector
-  if (
-    sec->validcount == validcount &&
-    sec->soundtraversed <= soundblocks + 1
-  ) {
+  if (sec->validcount == validcount && sec->soundtraversed <= soundblocks + 1) {
     return; // already flooded
   }
 
@@ -185,10 +182,7 @@ boolean P_CheckMissileRange(mobj_t *actor) {
 
   // OPTIMIZE: get this from a global checksight
   dist =
-    P_AproxDistance(
-      actor->x - actor->target->x,
-      actor->y - actor->target->y
-    ) -
+    P_AproxDistance(actor->x - actor->target->x, actor->y - actor->target->y) -
     64 *
     FRACUNIT;
 
@@ -463,19 +457,12 @@ boolean P_LookForPlayers(mobj_t *actor, boolean allaround) {
 
     if (!allaround) {
       an =
-        R_PointToAngle2(
-          actor->x,
-          actor->y,
-          player->mo->x,
-          player->mo->y
-        ) -
+        R_PointToAngle2(actor->x, actor->y, player->mo->x, player->mo->y) -
         actor->angle;
 
       if (an > ANG90 && an < ANG270) {
-        dist = P_AproxDistance(
-          player->mo->x - actor->x,
-          player->mo->y - actor->y
-        );
+        dist =
+          P_AproxDistance(player->mo->x - actor->x, player->mo->y - actor->y);
         // if real close, react anyway
         if (dist > MELEERANGE)
           continue; // behind back
@@ -675,12 +662,8 @@ void A_FaceTarget(mobj_t *actor) {
 
   actor->flags &= ~MF_AMBUSH;
 
-  actor->angle = R_PointToAngle2(
-    actor->x,
-    actor->y,
-    actor->target->x,
-    actor->target->y
-  );
+  actor->angle =
+    R_PointToAngle2(actor->x, actor->y, actor->target->x, actor->target->y);
 
   if (actor->target->flags & MF_SHADOW)
     actor->angle += (P_Random() - P_Random()) << 21;
@@ -998,10 +981,7 @@ boolean PIT_VileCheck(mobj_t *thing) {
 
   maxdist = thing->info->radius + mobjinfo[MT_VILE].radius;
 
-  if (
-    abs(thing->x - viletryx) > maxdist ||
-    abs(thing->y - viletryy) > maxdist
-  )
+  if (abs(thing->x - viletryx) > maxdist || abs(thing->y - viletryy) > maxdist)
     return true; // not actually touching
 
   corpsehit = thing;
@@ -1131,12 +1111,8 @@ void A_VileTarget(mobj_t *actor) {
 
   A_FaceTarget(actor);
 
-  fog = P_SpawnMobj(
-    actor->target->x,
-    actor->target->x,
-    actor->target->z,
-    MT_FIRE
-  );
+  fog =
+    P_SpawnMobj(actor->target->x, actor->target->x, actor->target->z, MT_FIRE);
 
   actor->tracer = fog;
   fog->target = actor;
@@ -1307,11 +1283,7 @@ void A_PainShootSkull(mobj_t *actor, angle_t angle) {
   an = angle >> ANGLETOFINESHIFT;
 
   prestep =
-    4 *
-    FRACUNIT +
-    3 *
-    (actor->info->radius + mobjinfo[MT_SKULL].radius) /
-    2;
+    4 * FRACUNIT + 3 * (actor->info->radius + mobjinfo[MT_SKULL].radius) / 2;
 
   x = actor->x + FixedMul(prestep, finecosine[an]);
   y = actor->y + FixedMul(prestep, finesine[an]);

@@ -172,7 +172,12 @@ void PacketGet(void) {
   {
     static int first = 1;
     if (first)
-      printf("len=%d:p=[0x%x 0x%x] \n", c, *(int *)(&sw), *((int *)(&sw) + 1));
+      printf(
+        "len=%d:p=[0x%x 0x%x] \n",
+        c,
+        *(int *)(&sw),
+        *((int *)(&sw) + 1)
+      );
     first = 0;
   }
 

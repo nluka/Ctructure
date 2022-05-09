@@ -10,11 +10,7 @@ export default class Stack {
 
   constructor() {}
 
-  push(data: {
-    context: Context;
-    overflow: boolean;
-    indentationDepth: number;
-  }) {
+  push(data: { context: Context; overflow: boolean; indentationDepth: number }) {
     const newHead = new Node<{
       context: Context;
       overflow: boolean;

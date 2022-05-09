@@ -389,7 +389,8 @@ void G_BuildTiccmd(ticcmd_t *cmd) {
 
   if (sendsave) {
     sendsave = false;
-    cmd->buttons = BT_SPECIAL | BTS_SAVEGAME | (savegameslot << BTS_SAVESHIFT);
+    cmd->buttons =
+      BT_SPECIAL | BTS_SAVEGAME | (savegameslot << BTS_SAVESHIFT);
   }
 }
 
