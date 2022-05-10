@@ -145,7 +145,8 @@ static bool do_http_request(
   }
 
   if (
-    curl_easy_getinfo(info->curl, CURLINFO_RESPONSE_CODE, response_code) != CURLE_OK
+    curl_easy_getinfo(info->curl, CURLINFO_RESPONSE_CODE, response_code) !=
+      CURLE_OK
   )
     return false;
 

@@ -24,6 +24,12 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "jsonValidation": [
+      {
+        "fileMatch": "ctructureconf.json",
+        "url": "./src/config/configSchema.json"
+      }
+    ],
     "commands": [
       {
         "command": "Ctructure.formatCurrentDocument",

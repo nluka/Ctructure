@@ -64,6 +64,8 @@ export default function printer(
   // If true (due to line overflow), the line will split where appropriate
   let overflow = false;
 
+  let whereToWrap: number[] = [];
+
   let shouldAddNewline = false;
 
   // When true, no extra new lines are allowed
@@ -94,9 +96,10 @@ export default function printer(
 
   // Used in determining if there is line overflow
   let startLineIndex = tokenStartIndices[0];
+  let formattedStartLineIndex = 0;
 
   // Final string to be written to file
-  let formattedStr = [];
+  let formattedStr: string[] = [];
 
   let indentAmountForMultiVar = 0;
 
@@ -110,6 +113,18 @@ export default function printer(
       tokenFindEndPosition(fileContents, startPos, tokenDetermineCategory(fileContents, startPos)) +
         1,
     );
+  }
+
+  function wrap() {
+    for (let i = 0; i < whereToWrap.length; ++i) {
+      if (formattedStr.slice(formattedStartLineIndex).join('').length > lineWidth) {
+        formattedStr[whereToWrap[i]] =
+          formattedStr[whereToWrap[i]].trimEnd() +
+          lineEndings +
+          getIndentation(indentationDepth + 1);
+      }
+    }
+    whereToWrap = [];
   }
 
   function isThereLineOverflow(i: number, tokenType: TokenTypeOverflowable) {
@@ -174,6 +189,8 @@ export default function printer(
       noExtraNewline = false;
       shouldAddNewline = false;
       startLineIndex = currTokStartPos;
+      formattedStartLineIndex = i;
+      whereToWrap = [];
     }
 
     switch (currTokType) {
@@ -252,14 +269,6 @@ export default function printer(
             indentationDepth = contextStack.pop().indentationDepth;
             overflow = false;
           }
-        } else if (
-          0
-          // context === PrinterCategory.variableDecl ||
-          // context === PrinterCategory.typeDefStruct ||
-          // context === PrinterCategory.functionCall ||
-          // context === PrinterCategory.doubleTypeOrIdentifier ||
-          // context
-        ) {
         } else {
           overflow = false;
           context = null;
@@ -312,6 +321,7 @@ export default function printer(
 
       case TokenType.specialParenthesisClosing: {
         if (overflow) {
+          wrap();
           decreaseIndentationDepth();
           currString = lineEndings + getIndentation(indentationDepth) + ')';
           startLineIndex = currTokStartPos;
@@ -516,6 +526,7 @@ export default function printer(
         } else if (context === PrinterCategory.typeOrIdentifier) {
           context = null;
         }
+        whereToWrap.push(i);
         break;
       }
 
@@ -575,6 +586,8 @@ export default function printer(
           context = null;
         }
         if (overflow) {
+          wrap();
+
           shouldAddNewline = true;
           break;
         }

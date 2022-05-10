@@ -1,0 +1,73 @@
+{
+  "title": "Schema for ctructureconf.json",
+  "definitions": {
+    "optionsDefinition": {
+      "type": "object",
+      "properties": {
+        "formatAllWorkspaceFolders.showLogs": {
+          "description": "",
+          "default": true,
+          "type": "boolean"
+        },
+        "formatWorkspaceFolder.showLogs": {
+          "description": "",
+          "default": true,
+          "type": "boolean"
+        },
+        "printer.indentationSize": {
+          "description": "Number of spaces per indentation level.",
+          "default": 2,
+          "type": "integer"
+        },
+        "printer.indentationType": {
+          "description": "Desired indentation type",
+          "default": "spaces",
+          "oneOf": [
+            {
+              "enum": ["spaces"],
+              "description": ""
+            },
+            {
+              "enum": ["tabs"],
+              "description": "printer.indentationSize will not change the indentation size when tabs are used"
+            }
+          ]
+        },
+        "printer.lineEndings": {
+          "description": "Which end of line characters to apply",
+          "default": "lf",
+          "oneOf": [
+            {
+              "enum": ["lf"]
+            },
+            {
+              "enum": ["crlf"]
+            }
+          ]
+        },
+        "printer.lineWidth": {
+          "description": "The line width at which Ctructure will try to wrap",
+          "default": 80,
+          "type": "integer"
+        },
+        "printer.multiVariableAlwaysNewline": {
+          "description": "Always put variables in multi-variable declarations on seperate lines",
+          "default": false,
+          "type": "boolean"
+        },
+        "printer.multiVariableMatchIndent": {
+          "description": "Indent variables in multi-variable declarations to match the first variable's indentation",
+          "default": false,
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "allOf": [{ "$ref": "#/definitions/optionsDefinition" }]
+    },
+    { "type": "string" }
+  ]
+}
