@@ -27,7 +27,7 @@
     "jsonValidation": [
       {
         "fileMatch": "ctructureconf.json",
-        "url": "./src/config/configSchema.json"
+        "url": "./package-ctructureconf-schema.json"
       }
     ],
     "commands": [
