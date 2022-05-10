@@ -51,7 +51,7 @@
           "type": "integer"
         },
         "printer.multiVariableAlwaysNewline": {
-          "description": "Always put variables in multi-variable declarations on seperate lines",
+          "description": "Always put variables in multi-variable declarations on separate lines",
           "default": false,
           "type": "boolean"
         },
