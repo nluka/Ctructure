@@ -63,6 +63,12 @@ export function loadConfig(
   }
 
   {
+    const prop: keyof IConfig = 'formatWorkspaceFolder.showLogs';
+    const value = storedConfig[prop];
+    updateProperty(prop, value, () => typeof value === 'boolean');
+  }
+
+  {
     const prop: keyof IConfig = 'printer.indentationSize';
     const value = storedConfig[prop];
     updateProperty(prop, value, () => value >= 1 && value <= 10);
