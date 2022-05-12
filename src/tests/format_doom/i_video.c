@@ -891,8 +891,7 @@ void I_InitGraphics(void) {
       8,
       ZPixmap,
       0,
-      (char *)
-      malloc(X_width * X_height),
+      (char *)malloc(X_width * X_height),
       X_width,
       X_height,
       8,

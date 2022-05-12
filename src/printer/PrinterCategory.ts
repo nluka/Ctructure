@@ -8,9 +8,8 @@ enum PrinterCategory {
   array = -7,
   arrayWithComment = -8,
   functionDecl = -9,
-  functionCall = -10,
-  assignmentOverflow = -11,
-  typeDefStruct = -12,
+  assignmentOverflow = -10,
+  typeDefStruct = -11,
 }
 
 export default PrinterCategory;

@@ -1,4 +1,4 @@
-export default function getIndentAmountForMultiVar(formattedFileStr: string): number {
+export default function getIndentationOfFirstVar(formattedFileStr: string): number {
   let startPos = 0;
   let assignmentFound = false;
   let i = formattedFileStr.length - 1;

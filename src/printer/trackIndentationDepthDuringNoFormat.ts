@@ -115,11 +115,7 @@ export default function trackIndentationDepthDuringNoFormat(
           overflow,
           indentationDepth,
         });
-        if (context === PrinterCategory.doubleTypeOrIdentifier) {
-          context = PrinterCategory.functionDecl;
-        } else if (prevType === TokenType.identifier) {
-          context = PrinterCategory.functionCall;
-        } else if (context !== TokenType.keywordFor) {
+        if (context !== TokenType.keywordFor) {
           context = null;
         }
         if (
