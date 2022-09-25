@@ -1,9 +1,15 @@
-out
-dist
-node_modules
+# directories
+out/
+dist/
+node_modules/
 .vscode-test/
+.vscode/
+.vs/
+interm/
+bin/
+
+# files
 *.vsix
 *megs.c
 ctructureconf.json
 .ctructure*
-.vs/
