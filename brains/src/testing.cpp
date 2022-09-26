@@ -384,7 +384,7 @@ int main() {
     testCase(TokenCategory::OPER_OR_LITERAL_OR_SPECIAL, "...", TokenType::SPECIAL_ELLIPSES);
 
     testCase(TokenCategory::OPER_OR_COMMENT, "/", TokenType::OPER_DIV);
-    testCase(TokenCategory::OPER_OR_COMMENT, "/=", TokenType::OPER_DIVEQ);
+    testCase(TokenCategory::OPER_OR_COMMENT, "/=", TokenType::OPER_ASSIGN_DIV);
     testCase(TokenCategory::OPER_OR_COMMENT, "// comment", TokenType::COMMENT_SINGLELINE);
     testCase(TokenCategory::OPER_OR_COMMENT, "/*comment*/", TokenType::COMMENT_MULTILINE);
 
@@ -460,35 +460,32 @@ int main() {
 
     testCase(TokenCategory::OPERATOR, "+", TokenType::OPER_PLUS);
     testCase(TokenCategory::OPERATOR, "++", TokenType::OPER_PLUSPLUS);
-    testCase(TokenCategory::OPERATOR, "+=", TokenType::OPER_PLUSEQ);
     testCase(TokenCategory::OPERATOR, "-", TokenType::OPER_MINUS);
     testCase(TokenCategory::OPERATOR, "--", TokenType::OPER_MINUSMINUS);
-    testCase(TokenCategory::OPERATOR, "-=", TokenType::OPER_MINUSEQ);
-    testCase(TokenCategory::OPERATOR, "*=", TokenType::OPER_MULTEQ);
-    // testCase(TokenCategory::OPERATOR, "/", TokenType::OPER_DIV);
-    // testCase(TokenCategory::OPERATOR, "/=", TokenType::OPER_DIVEQ);
     testCase(TokenCategory::OPERATOR, "%", TokenType::OPER_MOD);
-    testCase(TokenCategory::OPERATOR, "%=", TokenType::OPER_MODEQ);
-    testCase(TokenCategory::OPERATOR, "==", TokenType::OPER_LOGIC_EQ);
-    testCase(TokenCategory::OPERATOR, "!=", TokenType::OPER_LOGIC_NOTEQ);
-    testCase(TokenCategory::OPERATOR, "<", TokenType::OPER_LOGIC_LESSTHAN);
-    testCase(TokenCategory::OPERATOR, "<=", TokenType::OPER_LOGIC_LESSTHANEQ);
-    testCase(TokenCategory::OPERATOR, ">", TokenType::OPER_LOGIC_GREATERTHAN);
-    testCase(TokenCategory::OPERATOR, ">=", TokenType::OPER_LOGIC_GREATERTHANEQ);
+    testCase(TokenCategory::OPERATOR, "+=", TokenType::OPER_ASSIGN_ADD);
+    testCase(TokenCategory::OPERATOR, "-=", TokenType::OPER_ASSIGN_SUB);
+    testCase(TokenCategory::OPERATOR, "*=", TokenType::OPER_ASSIGN_MULT);
+    testCase(TokenCategory::OPERATOR, "%=", TokenType::OPER_ASSIGN_MOD);
+    testCase(TokenCategory::OPERATOR, "==", TokenType::OPER_REL_EQ);
+    testCase(TokenCategory::OPERATOR, "!=", TokenType::OPER_REL_NOTEQ);
+    testCase(TokenCategory::OPERATOR, "<", TokenType::OPER_REL_LESSTHAN);
+    testCase(TokenCategory::OPERATOR, "<=", TokenType::OPER_REL_LESSTHANEQ);
+    testCase(TokenCategory::OPERATOR, ">", TokenType::OPER_REL_GREATERTHAN);
+    testCase(TokenCategory::OPERATOR, ">=", TokenType::OPER_REL_GREATERTHANEQ);
     testCase(TokenCategory::OPERATOR, "&&", TokenType::OPER_LOGIC_AND);
     testCase(TokenCategory::OPERATOR, "||", TokenType::OPER_LOGIC_OR);
     testCase(TokenCategory::OPERATOR, "!", TokenType::OPER_LOGIC_NOT);
     testCase(TokenCategory::OPERATOR, "~", TokenType::OPER_BITWISE_NOT);
-    testCase(TokenCategory::OPERATOR, "&=", TokenType::OPER_BITWISE_ANDEQ);
+    testCase(TokenCategory::OPERATOR, "&=", TokenType::OPER_ASSIGN_BITAND);
     testCase(TokenCategory::OPERATOR, "|", TokenType::OPER_BITWISE_OR);
-    testCase(TokenCategory::OPERATOR, "|=", TokenType::OPER_BITWISE_OREQ);
+    testCase(TokenCategory::OPERATOR, "|=", TokenType::OPER_ASSIGN_BITOR);
     testCase(TokenCategory::OPERATOR, "^", TokenType::OPER_BITWISE_XOR);
-    testCase(TokenCategory::OPERATOR, "^=", TokenType::OPER_BITWISE_XOREQ);
+    testCase(TokenCategory::OPERATOR, "^=", TokenType::OPER_ASSIGN_BITXOR);
     testCase(TokenCategory::OPERATOR, "<<", TokenType::OPER_BITWISE_SHIFTLEFT);
-    testCase(TokenCategory::OPERATOR, "<<=", TokenType::OPER_BITWISE_SHIFTLEFTEQ);
+    testCase(TokenCategory::OPERATOR, "<<=", TokenType::OPER_ASSIGN_BITSHIFTLEFT);
     testCase(TokenCategory::OPERATOR, ">>", TokenType::OPER_BITWISE_SHIFTRIGHT);
-    testCase(TokenCategory::OPERATOR, ">>=", TokenType::OPER_BITWISE_SHIFTRIGHTEQ);
-    // testCase(TokenCategory::OPERATOR, ".", TokenType::OPER_DOT);
+    testCase(TokenCategory::OPERATOR, ">>=", TokenType::OPER_ASSIGN_BITSHIFTRIGHT);
     testCase(TokenCategory::OPERATOR, "->", TokenType::OPER_ARROW);
     testCase(TokenCategory::OPERATOR, "&", TokenType::OPER_AMPERSAND);
     testCase(TokenCategory::OPERATOR, "*", TokenType::OPER_STAR);
@@ -512,10 +509,30 @@ int main() {
 
   {
     SETUP_SUITE_USING(lexer::lex)
+    using lexer::Token;
+
+    auto const testCase = [&s](
+      char const *const name,
+      vector<Token> const &expected
+    ) {
+      string const text = util::extract_txt_file_contents(name);
+      vector<lexer::Token> const result = lex(text.c_str(), text.length());
+
+      s.assert(
+        name,
+        result.size() == expected.size() &&
+          [&result, &expected]() {
+            for (size_t i = 0; i < result.size(); ++i) {
+              bool const same = result[i] == expected[i];
+              if (!same)
+                return false;
+            }
+            return true;
+          }()
+      );
+    };
 
     {
-      string const text = util::extract_txt_file_contents("basic/tiny_program.c");
-      vector<lexer::Token> const result = lex(text.c_str(), text.length());
       vector<lexer::Token> const expected {
         // type, pos, len
         { TokenType::KEYWORD_INT, 1-1, 3 },
@@ -537,18 +554,27 @@ int main() {
         { TokenType::SPECIAL_BRACE_CLOSE, 48-1, 1 },
         { TokenType::NEWLINE, 49-1, 1 },
       };
-      s.assert(
-        "basic/tiny_program.c",
-        result.size() == expected.size() &&
-          [&result, &expected]() {
-            for (size_t i = 0; i < result.size(); ++i) {
-              bool const same = result[i] == expected[i];
-              if (!same)
-                return false;
-            }
-            return true;
-          }()
-      );
+      testCase("basic/tiny_main.c", expected);
+    }
+
+    {
+      vector<lexer::Token> const expected {
+        // type, pos, len
+        { TokenType::PREPRO_DIR_INCLUDE, 1-1, 8 },
+        { TokenType::OPER_REL_LESSTHAN, 10-1, 1 },
+        { TokenType::IDENTIFIER, 11-1, 5 },
+        { TokenType::OPER_DOT, 16-1, 1 },
+        { TokenType::IDENTIFIER, 17-1, 1 },
+        { TokenType::OPER_REL_GREATERTHAN, 18-1, 1 },
+        { TokenType::NEWLINE, 19-1, 1 },
+        { TokenType::COMMENT_SINGLELINE, 20-1, 22 },
+        { TokenType::NEWLINE, 42-1, 1 },
+        { TokenType::PREPRO_DIR_DEFINE, 43-1, 8 },
+        { TokenType::IDENTIFIER, 52-1, 2 },
+        { TokenType::LITERAL_NUM, 55-1, 4 },
+        { TokenType::NEWLINE, 59-1, 1 },
+      };
+      testCase("basic/tiny_preprocessor.c", expected);
     }
 
   } // lexer::lex

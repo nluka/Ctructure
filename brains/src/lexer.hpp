@@ -91,39 +91,41 @@ enum class TokenType : uint8_t {
 
   // (https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B)
   // operators:
-  //  arithmetic:
   OPER_PLUS,                 // +
   OPER_PLUSPLUS,             // ++
-  OPER_PLUSEQ,               // +=
   OPER_MINUS,                // -
   OPER_MINUSMINUS,           // --
-  OPER_MINUSEQ,              // -=
-  OPER_MULTEQ,               // *=
   OPER_DIV,                  // /
-  OPER_DIVEQ,                // /=
   OPER_MOD,                  // %
-  OPER_MODEQ,                // %=
+  //  assignment:
+  OPER_ASSIGN,               // =
+  OPER_ASSIGN_ADD,           // +=
+  OPER_ASSIGN_SUB,           // -=
+  OPER_ASSIGN_MULT,          // *=
+  OPER_ASSIGN_DIV,           // /=
+  OPER_ASSIGN_MOD,           // %=
+  OPER_ASSIGN_BITSHIFTLEFT,  // <<=
+  OPER_ASSIGN_BITSHIFTRIGHT, // >>=
+  OPER_ASSIGN_BITAND,        // &=
+  OPER_ASSIGN_BITOR,         // |=
+  OPER_ASSIGN_BITXOR,        // ^=
+  //  relational:
+  OPER_REL_EQ,               // ==
+  OPER_REL_NOTEQ,            // !=
+  OPER_REL_LESSTHAN,         // >
+  OPER_REL_LESSTHANEQ,       // <=
+  OPER_REL_GREATERTHAN,      // >
+  OPER_REL_GREATERTHANEQ,    // >=
   //  logical:
-  OPER_LOGIC_EQ,             // ==
-  OPER_LOGIC_NOTEQ,          // !=
-  OPER_LOGIC_LESSTHAN,       // <
-  OPER_LOGIC_LESSTHANEQ,     // <=
-  OPER_LOGIC_GREATERTHAN,    // >
-  OPER_LOGIC_GREATERTHANEQ,  // >=
   OPER_LOGIC_AND,            // &&
   OPER_LOGIC_OR,             // ||
   OPER_LOGIC_NOT,            // !
   //  bitwise:
   OPER_BITWISE_NOT,          // ~
-  OPER_BITWISE_ANDEQ,        // &=
   OPER_BITWISE_OR,           // |
-  OPER_BITWISE_OREQ,         // |=
   OPER_BITWISE_XOR,          // ^
-  OPER_BITWISE_XOREQ,        // ^=
   OPER_BITWISE_SHIFTLEFT,    // <<
-  OPER_BITWISE_SHIFTLEFTEQ,  // <<=
   OPER_BITWISE_SHIFTRIGHT,   // >>
-  OPER_BITWISE_SHIFTRIGHTEQ, // >>=
   //  member selection:
   OPER_DOT,                  // .
   OPER_ARROW,                // ->
@@ -132,6 +134,12 @@ enum class TokenType : uint8_t {
   OPER_STAR,                 // *
 
   // special symbols:
+  /*
+    <
+    has multiple meanings:
+    - implementation defined header, i.e. <stdio.h>
+    - less than relational operator
+  */
   SPECIAL_PAREN_OPEN,    // (
   SPECIAL_PAREN_CLOSE,   // )
   SPECIAL_BRACE_OPEN,    // {
@@ -145,13 +153,20 @@ enum class TokenType : uint8_t {
   SPECIAL_SEMICOLON,     // ;
   SPECIAL_LINE_CONT,     // \
 
+  /*
+    <
+    could be:
+    - implementation defined header, i.e. <stdio.h>
+    - logical less than operator
+    - logical less than or equal operator
+  */
+  INTERNAL_LEFTCHEVRON, // <
+
   // other:
   IDENTIFIER,
   COMMENT_SINGLELINE, // //
   COMMENT_MULTILINE,  // /*
   NEWLINE,            // \n
-
-  COUNT // the total number of token types
 };
 
 // A broad categorization of token based exclusively on its first character
@@ -173,7 +188,7 @@ enum class TokenCategory {
   /*
     could be:
     - OPER_DIV
-    - OPER_DIVEQ
+    - OPER_ASSIGN_DIV
     - COMMENT_SINGLELINE
     - COMMENT_MULTILINE
   */

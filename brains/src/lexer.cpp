@@ -20,7 +20,13 @@ bool Token::operator!=(Token const &other) const noexcept {
   return !(*this == other);
 }
 
+// Breaks text into lexical tokens. Resultant vector is guaranteed to not
+// contain any INTERNAL_ token types, these are for lexer implementation only.
 vector<Token> lexer::lex(char const *const text, size_t const textLen) {
+  // TODO:
+  // - parse implementation headers (i.e. <stdio.h>) as a single token
+  // - add wide character/string literal support
+
   vector<Token> tokens{};
 
   // not very scientific, but from experimentation seems reasonable
@@ -402,35 +408,32 @@ TokenType lexer::determine_token_type(
     { "_Thread_local", TokenType::KEYWORD_THREADLOCAL },
     { "+", TokenType::OPER_PLUS },
     { "++", TokenType::OPER_PLUSPLUS },
-    { "+=", TokenType::OPER_PLUSEQ },
     { "-", TokenType::OPER_MINUS },
     { "--", TokenType::OPER_MINUSMINUS },
-    { "-=", TokenType::OPER_MINUSEQ },
-    { "*=", TokenType::OPER_MULTEQ },
-    // { "/", TokenType::OPER_DIV },
-    // { "/=", TokenType::OPER_DIVEQ },
     { "%", TokenType::OPER_MOD },
-    { "%=", TokenType::OPER_MODEQ },
-    { "==", TokenType::OPER_LOGIC_EQ },
-    { "!=", TokenType::OPER_LOGIC_NOTEQ },
-    { "<", TokenType::OPER_LOGIC_LESSTHAN },
-    { "<=", TokenType::OPER_LOGIC_LESSTHANEQ },
-    { ">", TokenType::OPER_LOGIC_GREATERTHAN },
-    { ">=", TokenType::OPER_LOGIC_GREATERTHANEQ },
+    { "+=", TokenType::OPER_ASSIGN_ADD },
+    { "-=", TokenType::OPER_ASSIGN_SUB },
+    { "*=", TokenType::OPER_ASSIGN_MULT },
+    { "%=", TokenType::OPER_ASSIGN_MOD },
+    { "==", TokenType::OPER_REL_EQ },
+    { "!=", TokenType::OPER_REL_NOTEQ },
+    { "<", TokenType::OPER_REL_LESSTHAN },
+    { "<=", TokenType::OPER_REL_LESSTHANEQ },
+    { ">", TokenType::OPER_REL_GREATERTHAN },
+    { ">=", TokenType::OPER_REL_GREATERTHANEQ },
     { "&&", TokenType::OPER_LOGIC_AND },
     { "||", TokenType::OPER_LOGIC_OR },
     { "!", TokenType::OPER_LOGIC_NOT },
     { "~", TokenType::OPER_BITWISE_NOT },
-    { "&=", TokenType::OPER_BITWISE_ANDEQ },
+    { "&=", TokenType::OPER_ASSIGN_BITAND },
     { "|", TokenType::OPER_BITWISE_OR },
-    { "|=", TokenType::OPER_BITWISE_OREQ },
+    { "|=", TokenType::OPER_ASSIGN_BITOR },
     { "^", TokenType::OPER_BITWISE_XOR },
-    { "^=", TokenType::OPER_BITWISE_XOREQ },
+    { "^=", TokenType::OPER_ASSIGN_BITXOR },
     { "<<", TokenType::OPER_BITWISE_SHIFTLEFT },
-    { "<<=", TokenType::OPER_BITWISE_SHIFTLEFTEQ },
+    { "<<=", TokenType::OPER_ASSIGN_BITSHIFTLEFT },
     { ">>", TokenType::OPER_BITWISE_SHIFTRIGHT },
-    { ">>=", TokenType::OPER_BITWISE_SHIFTRIGHTEQ },
-    // { ".", TokenType::OPER_DOT },
+    { ">>=", TokenType::OPER_ASSIGN_BITSHIFTRIGHT },
     { "->", TokenType::OPER_ARROW },
     { "&", TokenType::OPER_AMPERSAND },
     { "*", TokenType::OPER_STAR },
@@ -471,7 +474,7 @@ TokenType lexer::determine_token_type(
       char const secondChar = *(firstChar + 1);
       switch (secondChar) {
         case '=':
-          return TokenType::OPER_DIVEQ;
+          return TokenType::OPER_ASSIGN_DIV;
         case '/':
           return TokenType::COMMENT_SINGLELINE;
         case '*':
@@ -493,11 +496,27 @@ TokenType lexer::determine_token_type(
       if (len == 2)
         return TokenType::PREPRO_OPER_CONCAT;
 
+      // directives can have whitespace between the # and the letters:
+      // #   define
+      //  ^^^
+      //  we must account for this
+
       char const *firstAlphabeticChar = firstChar + 1;
       while (!util::is_alphabetic(*firstAlphabeticChar))
         ++firstAlphabeticChar;
 
-      auto const type = s_preproDirectives.find(firstAlphabeticChar);
+      // #   define
+      // ^   ^
+      // |   |
+      // |   firstAlphabeticChar
+      // firstChar
+
+      std::string const token( // content is "define"
+        firstAlphabeticChar,
+        len - (firstAlphabeticChar - firstChar)
+      );
+
+      auto const type = s_preproDirectives.find(token);
       if (type == s_preproDirectives.end())
         return TokenType::NIL;
       else
