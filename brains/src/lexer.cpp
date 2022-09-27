@@ -24,7 +24,6 @@ bool Token::operator!=(Token const &other) const noexcept {
 // contain any INTERNAL_ token types, these are for lexer implementation only.
 vector<Token> lexer::lex(char const *const text, size_t const textLen) {
   // TODO:
-  // - parse implementation headers (i.e. <stdio.h>) as a single token
   // - add wide character/string literal support
 
   vector<Token> tokens{};
@@ -32,14 +31,60 @@ vector<Token> lexer::lex(char const *const text, size_t const textLen) {
   // not very scientific, but from experimentation seems reasonable
   tokens.reserve(textLen / 3);
 
-  size_t pos = 0;
-  while (pos < textLen) {
-    Token const tok = extract_token(text, textLen, pos);
-    if (tok.m_type == TokenType::NIL)
-      break;
-    else {
-      pos += tok.m_len;
-      tokens.push_back(tok);
+  // first pass, collection phase
+  {
+    size_t pos = 0;
+    while (pos < textLen) {
+      Token const tok = extract_token(text, textLen, pos);
+      if (tok.m_type == TokenType::NIL)
+        break;
+      else {
+        pos += tok.m_len;
+        tokens.push_back(tok);
+      }
+    }
+  }
+
+  // second pass, compression phrase
+  for (size_t i = 0; i < tokens.size();) {
+    switch (tokens[i].m_type) {
+      default: {
+        ++i;
+        break;
+      }
+
+      case TokenType::PREPRO_DIR_INCLUDE: {
+        // #include  <  stdio.h >
+        // ^^^^^^^^  ^  ^^^^^   ^
+        // |         |  |       |
+        // i     lChev  i+2  rChev
+        // ------------------------
+        // we want to delete tokens [i+2, last]
+        // and set the i+1 token as an IMPLEMENTATION_DEFINED_HEADER
+
+        auto const lChev = tokens.begin() + (i+1);
+
+        auto rChev = tokens.begin() + (i+2);
+        while (
+          rChev < tokens.end() - 1 &&
+          rChev->m_type != TokenType::OPER_REL_GREATERTHAN
+        ) ++rChev;
+
+        *lChev = {
+          TokenType::IMPLEMENTATION_DEFINED_HEADER,
+          lChev->m_pos, // pos
+          rChev->m_pos - lChev->m_pos + 1, // len
+        };
+
+        tokens.erase(lChev + 1, rChev + 1);
+
+        ++i;
+      }
+
+      // case TokenType::LITERAL_CHAR:
+      // case TokenType::LITERAL_STR: {
+      //   // check for wide literal
+      // }
     }
   }
 

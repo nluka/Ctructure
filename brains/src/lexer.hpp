@@ -153,16 +153,8 @@ enum class TokenType : uint8_t {
   SPECIAL_SEMICOLON,     // ;
   SPECIAL_LINE_CONT,     // \
 
-  /*
-    <
-    could be:
-    - implementation defined header, i.e. <stdio.h>
-    - logical less than operator
-    - logical less than or equal operator
-  */
-  INTERNAL_LEFTCHEVRON, // <
-
   // other:
+  IMPLEMENTATION_DEFINED_HEADER,
   IDENTIFIER,
   COMMENT_SINGLELINE, // //
   COMMENT_MULTILINE,  // /*

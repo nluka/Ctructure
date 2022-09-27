@@ -192,6 +192,7 @@ int main() {
     testCase(TokenCategory::KEYWORD_OR_IDENTIFIER, 5, "name_");
     testCase(TokenCategory::KEYWORD_OR_IDENTIFIER, 8, "__FUNC__");
 
+    // char literals:
     testCase(TokenCategory::LITERAL, 1, "'"); // unclosed, that's ok for us
     testCase(TokenCategory::LITERAL, 2, "' "); // unclosed, that's ok for us
     testCase(TokenCategory::LITERAL, 3, "' '");
@@ -202,7 +203,7 @@ int main() {
     testCase(TokenCategory::LITERAL, 4, "'\\n' \n");
     testCase(TokenCategory::LITERAL, 4, "'\\r' +");
     testCase(TokenCategory::LITERAL, 5, "'123' a");
-
+    // string literals:
     testCase(TokenCategory::LITERAL, 1, "\""); // unclosed, that's ok for us
     testCase(TokenCategory::LITERAL, 2, "\" "); // unclosed, that's ok for us
     testCase(TokenCategory::LITERAL, 2, "\"\"");
@@ -212,7 +213,7 @@ int main() {
     testCase(TokenCategory::LITERAL, 4, "\"\\n\" \n");
     testCase(TokenCategory::LITERAL, 4, "\"\\r\" +");
     testCase(TokenCategory::LITERAL, 4, "\"a1\" a");
-
+    // numeric literals:
     testCase(TokenCategory::LITERAL, 1, "0");
     testCase(TokenCategory::LITERAL, 1, "0;");
     testCase(TokenCategory::LITERAL, 1, "0 ");
@@ -223,10 +224,8 @@ int main() {
     testCase(TokenCategory::LITERAL, 4, "0Ull;");
     testCase(TokenCategory::LITERAL, 4, "0123\t");    // octal
     testCase(TokenCategory::LITERAL, 8, "0xabc123,"); // hex
-
-    // interesting case, could be mistaken for float in exponential form
+    // interesting case, could be mistaken for float in exponential form:
     testCase(TokenCategory::LITERAL, 3, "0xE-");      // hex
-
     testCase(TokenCategory::LITERAL, 3, "0b0\t");     // binary
     testCase(TokenCategory::LITERAL, 6, "0b0101)");   // binary
     testCase(TokenCategory::LITERAL, 8, "1.23e-3f");  // float
@@ -234,7 +233,6 @@ int main() {
     testCase(TokenCategory::LITERAL, 6, ".0e-3f+");   // float
     testCase(TokenCategory::LITERAL, 5, ".0e-3-");    // double
     testCase(TokenCategory::LITERAL, 5, ".0e-3)");    // double
-
     // these are technically invalid numeric literals, but we lex them anyway:
     testCase(TokenCategory::LITERAL, 4, "0abc");
     testCase(TokenCategory::LITERAL, 8, ".0e-3.2f");
@@ -561,11 +559,7 @@ int main() {
       vector<lexer::Token> const expected {
         // type, pos, len
         { TokenType::PREPRO_DIR_INCLUDE, 1-1, 8 },
-        { TokenType::OPER_REL_LESSTHAN, 10-1, 1 },
-        { TokenType::IDENTIFIER, 11-1, 5 },
-        { TokenType::OPER_DOT, 16-1, 1 },
-        { TokenType::IDENTIFIER, 17-1, 1 },
-        { TokenType::OPER_REL_GREATERTHAN, 18-1, 1 },
+        { TokenType::IMPLEMENTATION_DEFINED_HEADER, 10-1, 9 },
         { TokenType::NEWLINE, 19-1, 1 },
         { TokenType::COMMENT_SINGLELINE, 20-1, 22 },
         { TokenType::NEWLINE, 42-1, 1 },
