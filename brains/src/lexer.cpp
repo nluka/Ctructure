@@ -20,12 +20,7 @@ bool Token::operator!=(Token const &other) const noexcept {
   return !(*this == other);
 }
 
-// Breaks text into lexical tokens. Resultant vector is guaranteed to not
-// contain any INTERNAL_ token types, these are for lexer implementation only.
 vector<Token> lexer::lex(char const *const text, size_t const textLen) {
-  // TODO:
-  // - add wide character/string literal support
-
   vector<Token> tokens{};
 
   // not very scientific, but from experimentation seems reasonable
@@ -59,8 +54,8 @@ vector<Token> lexer::lex(char const *const text, size_t const textLen) {
         // |         |  |       |
         // i     lChev  i+2  rChev
         // ------------------------
-        // we want to delete tokens [i+2, last]
-        // and set the i+1 token as an IMPLEMENTATION_DEFINED_HEADER
+        // we need to replace tokens [lChev, rChev] as
+        // a single IMPLEMENTATION_DEFINED_HEADER token
 
         auto const lChev = tokens.begin() + (i+1);
 
@@ -81,10 +76,31 @@ vector<Token> lexer::lex(char const *const text, size_t const textLen) {
         ++i;
       }
 
-      // case TokenType::LITERAL_CHAR:
-      // case TokenType::LITERAL_STR: {
-      //   // check for wide literal
-      // }
+      case TokenType::LITERAL_CHAR:
+      case TokenType::LITERAL_STR: {
+        auto const prevToken = tokens.begin() + (i-1);
+        bool const isPrefixed =
+          prevToken->m_type == TokenType::IDENTIFIER &&
+          prevToken->m_len == 1 &&
+          std::strchr("LuU", text[prevToken->m_pos]);
+
+        if (isPrefixed) {
+          //   L  'c'
+          //   ^  ^
+          //   |  |
+          // i-1  i
+          // ------
+          // we need to replace tokens [i-1, i] as a single
+          // LITERAL_CHAR
+
+          auto &currToken = tokens[i];
+          --currToken.m_pos;
+          ++currToken.m_len;
+          tokens.erase(prevToken);
+        }
+
+        ++i;
+      }
     }
   }
 

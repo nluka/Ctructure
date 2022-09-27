@@ -555,21 +555,90 @@ int main() {
       };
       testCase("basic/tiny_main.c", expected);
     }
-
     {
       vector<lexer::Token> const expected {
         // type, pos, len
         { TokenType::PREPRO_DIR_INCLUDE, 1-1, 8 },
         { TokenType::IMPLEMENTATION_DEFINED_HEADER, 10-1, 9 },
         { TokenType::NEWLINE, 19-1, 1 },
+
         { TokenType::COMMENT_SINGLELINE, 20-1, 22 },
         { TokenType::NEWLINE, 42-1, 1 },
+
         { TokenType::PREPRO_DIR_DEFINE, 43-1, 8 },
         { TokenType::IDENTIFIER, 52-1, 2 },
         { TokenType::LITERAL_NUM, 55-1, 4 },
         { TokenType::NEWLINE, 59-1, 1 },
       };
       testCase("basic/tiny_preprocessor.c", expected);
+    }
+    {
+      vector<lexer::Token> const expected {
+        // type,                         pos, len
+        { TokenType::KEYWORD_CHAR,       1-1, 4 },
+        { TokenType::IDENTIFIER,         6-1, 1 },
+        { TokenType::OPER_ASSIGN,        7-1, 1 },
+        { TokenType::LITERAL_CHAR,       8-1, 3 },
+        { TokenType::SPECIAL_SEMICOLON, 11-1, 1 },
+
+        { TokenType::KEYWORD_CHAR,      12-1, 4 },
+        { TokenType::IDENTIFIER,        17-1, 1 },
+        { TokenType::OPER_ASSIGN,       18-1, 1 },
+        { TokenType::LITERAL_CHAR,      19-1, 4 },
+        { TokenType::SPECIAL_SEMICOLON, 23-1, 1 },
+
+        { TokenType::KEYWORD_CHAR,      24-1, 4 },
+        { TokenType::IDENTIFIER,        29-1, 1 },
+        { TokenType::OPER_ASSIGN,       30-1, 1 },
+        { TokenType::LITERAL_CHAR,      31-1, 4 },
+        { TokenType::SPECIAL_SEMICOLON, 35-1, 1 },
+
+        { TokenType::KEYWORD_CHAR,      36-1, 4 },
+        { TokenType::IDENTIFIER,        41-1, 1 },
+        { TokenType::OPER_ASSIGN,       42-1, 1 },
+        { TokenType::LITERAL_CHAR,      43-1, 4 },
+        { TokenType::SPECIAL_SEMICOLON, 47-1, 1 },
+
+        { TokenType::NEWLINE, 48-1, 1 },
+      };
+      testCase("basic/tiny_charliterals.c", expected);
+    }
+    {
+      vector<lexer::Token> const expected {
+        // type,                         pos, len
+        { TokenType::KEYWORD_CHAR,       1-1, 4 },
+        { TokenType::OPER_STAR,          6-1, 1 },
+        { TokenType::IDENTIFIER,         7-1, 1 },
+        { TokenType::OPER_ASSIGN,        8-1, 1 },
+        { TokenType::LITERAL_STR,        9-1, 2 },
+        { TokenType::SPECIAL_SEMICOLON, 11-1, 1 },
+        { TokenType::NEWLINE,           12-1, 1 },
+
+        { TokenType::KEYWORD_CHAR,      13-1, 4 },
+        { TokenType::OPER_STAR,         18-1, 1 },
+        { TokenType::IDENTIFIER,        19-1, 1 },
+        { TokenType::OPER_ASSIGN,       20-1, 1 },
+        { TokenType::LITERAL_STR,       21-1, 4 },
+        { TokenType::SPECIAL_SEMICOLON, 25-1, 1 },
+        { TokenType::NEWLINE,           26-1, 1 },
+
+        { TokenType::KEYWORD_CHAR,      27-1, 4 },
+        { TokenType::OPER_STAR,         32-1, 1 },
+        { TokenType::IDENTIFIER,        33-1, 1 },
+        { TokenType::OPER_ASSIGN,       34-1, 1 },
+        { TokenType::LITERAL_STR,       35-1, 5 },
+        { TokenType::SPECIAL_SEMICOLON, 40-1, 1 },
+        { TokenType::NEWLINE,           41-1, 1 },
+
+        { TokenType::KEYWORD_CHAR,      42-1, 4 },
+        { TokenType::OPER_STAR,         47-1, 1 },
+        { TokenType::IDENTIFIER,        48-1, 1 },
+        { TokenType::OPER_ASSIGN,       49-1, 1 },
+        { TokenType::LITERAL_STR,       50-1, 6 },
+        { TokenType::SPECIAL_SEMICOLON, 56-1, 1 },
+        { TokenType::NEWLINE,           57-1, 1 },
+      };
+      testCase("basic/tiny_stringliterals.c", expected);
     }
 
   } // lexer::lex
