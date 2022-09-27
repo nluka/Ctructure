@@ -461,6 +461,7 @@ int main() {
     testCase(TokenCategory::OPERATOR, "-", TokenType::OPER_MINUS);
     testCase(TokenCategory::OPERATOR, "--", TokenType::OPER_MINUSMINUS);
     testCase(TokenCategory::OPERATOR, "%", TokenType::OPER_MOD);
+    testCase(TokenCategory::OPERATOR, "=", TokenType::OPER_ASSIGN);
     testCase(TokenCategory::OPERATOR, "+=", TokenType::OPER_ASSIGN_ADD);
     testCase(TokenCategory::OPERATOR, "-=", TokenType::OPER_ASSIGN_SUB);
     testCase(TokenCategory::OPERATOR, "*=", TokenType::OPER_ASSIGN_MULT);

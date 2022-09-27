@@ -456,6 +456,7 @@ TokenType lexer::determine_token_type(
     { "-", TokenType::OPER_MINUS },
     { "--", TokenType::OPER_MINUSMINUS },
     { "%", TokenType::OPER_MOD },
+    { "=", TokenType::OPER_ASSIGN },
     { "+=", TokenType::OPER_ASSIGN_ADD },
     { "-=", TokenType::OPER_ASSIGN_SUB },
     { "*=", TokenType::OPER_ASSIGN_MULT },
