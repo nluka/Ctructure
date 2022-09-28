@@ -23,25 +23,28 @@ The 3 stages are described below.
 
 Ctructure's lexing stage takes the input text and breaks it into tokens.
 
-Most important things to know about Ctructure's lexing:
-- Only a single pass is done on the input text
-- The result is a `std::vector<Token>`. A `Token` is a structure detailing the **type**, **position**, and **length** of a token.
+Lexing consists of two stages:
+1. __Collection__: a single pass is made through the text and tokens are extracted into a vector. Each token extraction has 3 distinct steps, each suceeding step uses the insight gathered from the previous step(s) to inform itself:
+  - A categorization is made based solely on the first character
+  - The **length** of the token is determined
+  - The specific **type** of token is determined
+2. __Compression__: a single pass is made through the tokens vector where specific sequences of tokens are condensed into a single token.
 
-_Development of this component has begun, but is not yet finished._
+The result is a `std::vector<Token>`. A `Token` is a structure detailing the **type**, **position**, and **length** of a token.
 
 ### Parsing
 
 Ctructure's parsing stage takes the tokens generated from [lexing](#lexing) stage and transforms them into an Abstract Syntax Tree (AST).
 
 Ctructure's AST is not your typical C AST because:
-- It **integrates preprocessor directives**. When translating a C program into machine code, preprocessing preceeds parsing, thus the parser doesn't see preprocessing directives. A formatter cannot discard preprocessor directives - what good would it be if it did?
+- It **integrates preprocessor directives**. When translating a C program into machine code, preprocessing preceeds parsing, thus the parser doesn't see preprocessing directives. Our parser doesn't have this luxury because preprocessor directives must be preserved.
 - It **integrates comments**. This is necessary because a formatter cannot discard comments like a compiler does.
 
 _Development of this component has not yet begun._
 
 ### Printing
 
-Ctructure's printing stage traverses the parsed AST from the [parsing](#parsing) stage and prints formatted source code.
+Ctructure's printing stage traverses the AST resulting from the [parsing](#parsing) stage and prints formatted source code.
 
 _Development of this component has not yet begun._
 

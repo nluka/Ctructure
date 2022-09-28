@@ -331,6 +331,7 @@ int main() {
     testCase(TokenCategory::SPECIAL, 1, ",");
     testCase(TokenCategory::SPECIAL, 1, ";");
     testCase(TokenCategory::SPECIAL, 1, "\\");
+
   } // lexer::token_determine_len
 
   exitIfAnyAssertionsFailedThusFar();

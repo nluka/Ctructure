@@ -27,13 +27,6 @@ enum class TokenType : uint8_t {
 
   PREPRO_OPER_CONCAT, // ##
 
-  // builtin preprocessor macros:
-  // PREPRO_MACRO_FILE,
-  // PREPRO_MACRO_LINE,
-  // PREPRO_MACRO_DATE,
-  // PREPRO_MACRO_TIME,
-  // PREPRO_MACRO_TIMESTAMP,
-
   // (https://en.cppreference.com/w/c/keyword)
   // keywords:
   //  types:
@@ -112,7 +105,7 @@ enum class TokenType : uint8_t {
   //  relational:
   OPER_REL_EQ,               // ==
   OPER_REL_NOTEQ,            // !=
-  OPER_REL_LESSTHAN,         // >
+  OPER_REL_LESSTHAN,         // <
   OPER_REL_LESSTHANEQ,       // <=
   OPER_REL_GREATERTHAN,      // >
   OPER_REL_GREATERTHANEQ,    // >=
@@ -134,12 +127,6 @@ enum class TokenType : uint8_t {
   OPER_STAR,                 // *
 
   // special symbols:
-  /*
-    <
-    has multiple meanings:
-    - implementation defined header, i.e. <stdio.h>
-    - less than relational operator
-  */
   SPECIAL_PAREN_OPEN,    // (
   SPECIAL_PAREN_CLOSE,   // )
   SPECIAL_BRACE_OPEN,    // {
@@ -154,7 +141,7 @@ enum class TokenType : uint8_t {
   SPECIAL_LINE_CONT,     // \
 
   // other:
-  IMPLEMENTATION_DEFINED_HEADER,
+  IMPLEMENTATION_DEFINED_HEADER, // <stdio.h>
   IDENTIFIER,
   COMMENT_SINGLELINE, // //
   COMMENT_MULTILINE,  // /*
