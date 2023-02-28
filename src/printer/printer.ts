@@ -400,6 +400,9 @@ export default function printer(
           }
           break;
         }
+        if (previousTokenType === TokenType.specialBraceOpening) {
+          currString = '}';
+        }
         if (
           previousContext.context === PrinterCategory.array &&
           context !== PrinterCategory.arrayWithComment
@@ -471,14 +474,12 @@ export default function printer(
       case TokenType.ambiguousAsterisk: {
         if (currString.charAt(0) !== '\n') {
           currString = ' * ';
-          if (context === PrinterCategory.assignmentOverflow && parenDepth === 0 && overflow) {
-            currString = currString.trimEnd();
-            shouldAddNewline = true;
-            noExtraNewline = true;
-          } else if (context === PrinterCategory.typeOrIdentifier) {
-            context = null;
-          }
         }
+        break;
+      }
+
+      case TokenType.ambiguousAmpersand: {
+        currString = ' & ';
         break;
       }
 

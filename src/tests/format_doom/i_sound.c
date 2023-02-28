@@ -718,10 +718,8 @@ void I_InitSound() {
 // Still no music done.
 // Remains. Dummies.
 //
-void I_InitMusic(void) {
-}
-void I_ShutdownMusic(void) {
-}
+void I_InitMusic(void) {}
+void I_ShutdownMusic(void) {}
 
 static int looping = 0;
 static int musicdies = -1;

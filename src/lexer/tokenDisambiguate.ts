@@ -10,7 +10,7 @@ import TokenType, {
   isTokenKeywordTypeQualifier,
   isTokenSpecialNonClosing,
   isTokenTernaryOperatorComponent,
-  isTokenUnaryOperator
+  isTokenUnaryOperator,
 } from './TokenType';
 import tokenTypeToNameMap from './tokenTypeToNameMap';
 
@@ -95,22 +95,6 @@ export default function tokenDisambiguate(
       );
 
     case TokenType.ambiguousAsterisk:
-      if (
-        firstNonNewlineOrCommentTokBehindType ===
-          TokenType.specialParenthesisClosing &&
-        firstNonNewlineOrCommentTokAheadType === TokenType.identifier
-      ) {
-        const { lineNum, tokenNum } = tokenDetermineLineAndNum(
-          fileContents,
-          // the unsupported sequence of tokens starts from the closingParen,
-          // hence `ambigTokIndex - 1`
-          tokSet.getTokenStartPosition(ambigTokIndex - 1),
-        );
-        throw new Error(
-          `unsupported syntax (US2) starting at token ${tokenNum} on line ${lineNum} - closingParen asterisk identifier (https://github.com/nluka/Ctructure#us2-closingparen-asterisk-identifier)`,
-        );
-      }
-
       return disambiguateAsterisk(
         tokSet,
         firstNonNewlineOrCommentTokBehindType,
@@ -121,26 +105,9 @@ export default function tokenDisambiguate(
       );
 
     case TokenType.ambiguousAmpersand:
-      if (
-        firstNonNewlineOrCommentTokBehindType ===
-          TokenType.specialParenthesisClosing &&
-        firstNonNewlineOrCommentTokAheadType === TokenType.identifier
-      ) {
-        const { lineNum, tokenNum } = tokenDetermineLineAndNum(
-          fileContents,
-          // the unsupported sequence of tokens starts from the closingParen,
-          // hence `ambigTokIndex - 1`
-          tokSet.getTokenStartPosition(ambigTokIndex - 1),
-        );
-        throw new Error(
-          `unsupported syntax (US3) starting at token ${tokenNum} on line ${lineNum} - closingParen ampersand identifier (https://github.com/nluka/Ctructure#us2-closingparen-asterisk-identifier)`,
-        );
-      }
-
       return disambiguateAmpersand(
         firstNonNewlineOrCommentTokBehindType,
         firstNonNewlineOrCommentTokAheadType,
-        createErr,
       );
 
     default:
@@ -505,14 +472,12 @@ function disambiguateAsterisk(
 function disambiguateAmpersand(
   firstNonNewlineOrCommentTokTypeBehind: TokenType,
   firstNonNewlineOrCommentTokTypeAfter: TokenType,
-  createErr: () => Error,
 ) {
   if (
     [
       TokenType.constantNumber,
       TokenType.constantCharacter,
       TokenType.identifier,
-      TokenType.specialParenthesisClosing,
       TokenType.specialBracketClosing,
     ].includes(firstNonNewlineOrCommentTokTypeBehind) ||
     [TokenType.constantNumber, TokenType.constantCharacter].includes(
@@ -523,14 +488,15 @@ function disambiguateAmpersand(
   }
 
   if (
-    [
-      TokenType.identifier,
-      TokenType.constantString,
-      TokenType.specialParenthesisOpening,
-    ].includes(firstNonNewlineOrCommentTokTypeAfter)
+    [TokenType.operatorBinaryAssignmentDirect].includes(
+      firstNonNewlineOrCommentTokTypeBehind,
+    ) ||
+    [TokenType.identifier, TokenType.constantString].includes(
+      firstNonNewlineOrCommentTokTypeAfter,
+    )
   ) {
     return TokenType.operatorUnaryAddressOf;
   }
 
-  throw createErr();
+  return TokenType.ambiguousAmpersand;
 }

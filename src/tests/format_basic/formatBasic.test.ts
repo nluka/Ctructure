@@ -35,6 +35,7 @@ describe('formatBasic', () => {
   _assert('__attribute__.c');
   _assert('asterisk.c');
   _assert('comment.c');
+  _assert('c.c');
   _assert('empty_header.h');
   _assert('for.c');
   _assert('if_else.c');

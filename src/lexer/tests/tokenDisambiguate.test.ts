@@ -23,24 +23,6 @@ describe('tokenDisambiguate', () => {
       expect(tokenDisambiguate(ambiguousTokIndex, tokSet, fileContents)).toBe(expectedTokenType);
     });
   }
-  function assertThrows(
-    tokTypes: TokenType[],
-    fileContents: string,
-  ) {
-    test(`throws <- ${JSON.stringify(fileContents)}`, () => {
-      const tokSet = new TokenSet(tokTypes.length);
-      for (const tokType of tokTypes) {
-        tokSet.pushPacked([0, tokType]);
-      }
-      let ambiguousTokIndex = 0;
-      for (; ambiguousTokIndex < tokTypes.length; ++ambiguousTokIndex) {
-        if (isTokenAmbiguous(tokTypes[ambiguousTokIndex])) {
-          break;
-        }
-      }
-      expect(() => tokenDisambiguate(ambiguousTokIndex, tokSet, fileContents)).toThrow();
-    });
-  }
 
   // also encompasses ambiguousMinus - they share the same logic
   describe('ambiguousPlus', () => {
@@ -683,13 +665,6 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier],
         TokenType.ambiguousAsterisk, 'a) *(ptr');
     });
-    describe('Unsupported Syntax', () => {
-      assertThrows(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousAsterisk,
-          TokenType.identifier],
-        ') * A');
-    });
   });
 
   describe('ambiguousAmpersand', () => {
@@ -726,7 +701,7 @@ describe('tokenDisambiguate', () => {
         [ TokenType.specialParenthesisClosing,
           TokenType.ambiguousAmpersand,
           TokenType.specialParenthesisOpening ],
-        TokenType.operatorBinaryBitwiseAnd, ') & (');
+        TokenType.ambiguousAmpersand, ') & (');
       assert(
         [ TokenType.specialBracketClosing,
           TokenType.ambiguousAmpersand,
@@ -764,13 +739,6 @@ describe('tokenDisambiguate', () => {
           TokenType.ambiguousAmpersand,
           TokenType.specialParenthesisOpening ],
         TokenType.operatorUnaryAddressOf, '= &(');
-    });
-    describe('Unsupported Syntax', () => {
-      assertThrows(
-        [ TokenType.specialParenthesisClosing,
-          TokenType.ambiguousAmpersand,
-          TokenType.identifier],
-        ') & A');
     });
   });
 
