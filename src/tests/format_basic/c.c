@@ -27,4 +27,10 @@ void us3() {
 
   // do this instead:
   int a = (int)(&b);
+
+  int a = (t)*b;
+  int a = (t *)*b;
+  int a = (t *const)*b;
+  int a = (t **const)*b;
+  int a = (const t *const *const)*b;
 }

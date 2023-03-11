@@ -218,6 +218,12 @@ function disambiguateAsterisk(
   // num|char tokens on left|right,
   // closing bracket on left,
   if (
+    firstNonNewlineOrCommentTokBehindType ===
+    TokenType.specialParenthesisClosing
+  ) {
+    return TokenType.ambiguousAsterisk;
+  }
+  if (
     // left side
     [
       TokenType.constantNumber,
@@ -374,18 +380,6 @@ function disambiguateAsterisk(
       ))
   ) {
     return TokenType.operatorUnaryIndirectionOrDereference;
-  }
-
-  if (
-    firstNonNewlineOrCommentTokBehindType ===
-      TokenType.specialParenthesisClosing &&
-    firstNonNewlineOrCommentTokAheadType === TokenType.specialParenthesisOpening
-  ) {
-    /*
-      here we don't bother disambiguating because it's much easier
-      for the printer to do it, since it tracks context.
-    */
-    return TokenType.ambiguousAsterisk;
   }
 
   /*

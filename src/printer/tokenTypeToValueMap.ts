@@ -128,7 +128,7 @@ const tokenTypeToValueMap = new Map<TokenType, string>([
     [TokenType.specialComma, ','],
     [TokenType.specialSemicolon, ';'],
     [TokenType.specialColonSwitchOrLabelOrBitField, ':'],
-    [TokenType.speicalLineContinuation, ' \\'],
+    [TokenType.specialLineContinuation, ' \\'],
     // Opening
       [TokenType.specialParenthesisOpening, '('],
       [TokenType.specialBraceOpening, '{'],

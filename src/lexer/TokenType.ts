@@ -129,7 +129,7 @@ enum TokenType {
     specialComma,
     specialSemicolon,
     specialColonSwitchOrLabelOrBitField,
-    speicalLineContinuation,
+    specialLineContinuation,
     // Opening
       specialParenthesisOpening,  // (
       specialBraceOpening,        // {

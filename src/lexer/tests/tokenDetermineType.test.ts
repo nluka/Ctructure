@@ -270,7 +270,7 @@ describe('tokenDetermineType', () => {
   describe('Special', () => {
     assert(special, TokenType.specialComma,             ',');
     assert(special, TokenType.specialSemicolon,         ';');
-    assert(special, TokenType.speicalLineContinuation,  '\\');
+    assert(special, TokenType.specialLineContinuation,  '\\');
     {
       // Opening
       assert(special, TokenType.specialParenthesisOpening,  '(');

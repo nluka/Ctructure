@@ -109,7 +109,7 @@ const tokenValueToTypeMap = new Map<string, TokenType>([
   //#region Special
     [',', TokenType.specialComma],
     [';', TokenType.specialSemicolon],
-    ['\\', TokenType.speicalLineContinuation],
+    ['\\', TokenType.specialLineContinuation],
     // Opening
       ['(', TokenType.specialParenthesisOpening],
       ['{', TokenType.specialBraceOpening],

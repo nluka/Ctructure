@@ -4,26 +4,30 @@
   "description": "An opinionated code formatter for the C programming language, inspired by Prettier.",
   "version": "1.0.0",
   "engines": {
-    "vscode": "^1.63.0"
+    "vscode": "^1.75.0"
   },
   "publisher": "nluka-jallard",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nluka/Ctructure.git"
   },
+  "keywords": [
+    "C"
+  ],
   "categories": [
-    "Other"
+    "Formatters"
   ],
-  "activationEvents": [
-    "onCommand:Ctructure.formatCurrentDocument",
-    "onCommand:Ctructure.formatWorkspaceFolder",
-    "onCommand:Ctructure.formatAllWorkspaceFolders",
-    "onCommand:Ctructure.createConfigFile",
-    "onCommand:Ctructure.createConfigFileInEveryWorkspaceFolder",
-    "onCommand:Ctructure.convertWorkspaceFolderLineEndings"
-  ],
+  "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "C",
+        "extensions": [
+          "c"
+        ]
+      }
+    ],
     "jsonValidation": [
       {
         "fileMatch": "ctructureconf.json",

@@ -19,6 +19,7 @@ import whichOccursFirst from './whichOccursFirst';
 import _isThereLineOverflow from './isThereLineOverflow';
 import _checkForAssignmentToFuncReturn from './checkForAssignmentToFuncReturn';
 import _checkForMultiVar from './checkForMultiVar';
+import checkForTypeInParen from './checkForTypeInParen';
 
 export type Context =
   | TokenType.keywordFor
@@ -168,6 +169,7 @@ export default function printer(
     const typeAsValue = tokenTypeToValueMap.get(currTokType);
 
     currString += typeAsValue;
+
     if (
       shouldAddNewline &&
       currTokType !== TokenType.commentSingleLine &&
@@ -472,7 +474,12 @@ export default function printer(
       }
 
       case TokenType.ambiguousAsterisk: {
-        if (currString.charAt(0) !== '\n') {
+        if (
+          previousTokenType === TokenType.specialParenthesisClosing &&
+          checkForTypeInParen(i, tokenTypes)
+        ) {
+          currString = '*';
+        } else if (currString.charAt(0) !== '\n') {
           currString = ' * ';
         }
         break;
@@ -632,7 +639,7 @@ export default function printer(
         break;
       }
 
-      case TokenType.speicalLineContinuation: {
+      case TokenType.specialLineContinuation: {
         shouldAddNewline = true;
         noExtraNewline = true;
         break;
