@@ -1,4 +1,4 @@
-import tokenDisambiguate from '../tokenDisambiguate';
+import attemptTokenDisambiguate from '../tokenDisambiguate';
 import TokenSet from '../TokenSet';
 import TokenType, { isTokenAmbiguous } from '../TokenType';
 import tokenTypeToNameMap from '../tokenTypeToNameMap';
@@ -20,7 +20,7 @@ describe('tokenDisambiguate', () => {
           break;
         }
       }
-      expect(tokenDisambiguate(ambiguousTokIndex, tokSet, fileContents)).toBe(expectedTokenType);
+      expect(attemptTokenDisambiguate(ambiguousTokIndex, tokSet, fileContents)).toBe(expectedTokenType);
     });
   }
 
@@ -524,7 +524,7 @@ describe('tokenDisambiguate', () => {
           TokenType.specialParenthesisClosing ],
         TokenType.operatorBinaryArithmeticMultiplication, '+A * B)');
       assert(
-        [ TokenType.operatorUnaryPlus,
+        [ TokenType.operatorBinaryAssignmentDirect,
           TokenType.identifier,
           TokenType.ambiguousAsterisk,
           TokenType.identifier,
@@ -558,6 +558,15 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier,
           TokenType.specialBracketOpening ],
         TokenType.operatorBinaryArithmeticMultiplication, '->A * B[');
+      assert(
+        [ TokenType.operatorBinaryAssignmentDirect,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAsterisk ],
+        TokenType.operatorBinaryArithmeticMultiplication, '= (A * B) *');
       assert(
         [ TokenType.operatorBinaryAssignmentDirect,
           TokenType.identifier,
@@ -651,6 +660,19 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier,
           TokenType.specialComma ],
         TokenType.operatorBinaryArithmeticMultiplication, '[func(--a, b * c,');
+      assert(
+        [ TokenType.keywordInt,
+          TokenType.identifier,
+          TokenType.operatorBinaryAssignmentDirect,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialParenthesisClosing,
+          TokenType.ambiguousAsterisk,
+          TokenType.identifier,
+          TokenType.specialSemicolon ],
+        TokenType.operatorBinaryArithmeticMultiplication, 'int a = (b * c) * d;');
     });
     describe('Keep Ambiguous', () => {
       /*

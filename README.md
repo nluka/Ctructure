@@ -19,17 +19,8 @@ Ctructure is an opinionated, [prettier](https://github.com/prettier/prettier)-in
   - [printer.lineWidth](#printerlinewidth)
   - [printer.multiVariableAlwaysNewline](#printermultivariablealwaysnewline)
   - [printer.multiVariableMatchIndent](#printermultivariablematchindent)
-- [Unsupported Syntax](#unsupported-syntax)
-  - [US1 multiline comment opening in preprocessor directive](#us1-multiline-comment-opening-in-preprocessor-directive)
-  - [US2 closingParen asterisk identifier](#us2-closingparen-asterisk-identifier)
-  - [US3 closingParen ampersand identifier](#us3-closingparen-ampersand-identifier)
 - [Limitations](#limitations)
 - [Issues](#issues)
-- [Contributing](#contributing)
-- [Inner Workings](#inner-workings)
-  - [Lexing](#lexing)
-  - [Printing](#printing)
-  - [File-writing](#file-writing)
 
 # Commands
 
@@ -153,24 +144,6 @@ int var1 = 1,
 // has no effect on one-liners
 // (i.e. when printer.multiVariableAlwaysNewline is false)
 int x = 1, y = 2, z;
-```
-
-# Unsupported Syntax
-
-## US1 multiline comment opening in preprocessor directive
-
-```c
-// not supported:
-#define MACRO_NAME MACRO_VALUE /* multiline
-comment */
-
-// do this instead:
-#define MACRO_NAME MACRO_VALUE
-/* multiline comment */
-
-// or this:
-/* multiline comment */
-#define MACRO_NAME MACRO_VALUE
 ```
 
 # Limitations

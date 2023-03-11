@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import removeCarriageReturns from '../utility/removeCarriageReturns';
 import cleanTokenSet from './cleanTokenSet';
-import tokenDisambiguate from './tokenDisambiguate';
+import attemptTokenDisambiguate from './tokenDisambiguate';
 import Tokenizer from './Tokenizer';
 import TokenSet from './TokenSet';
 import * as vscode from 'vscode';
@@ -29,7 +29,7 @@ export default function tokenizeFile(filePathname: string): [string, TokenSet] {
   }
 
   for (const ambigTokIndex of tokenizer.getAmbiguousTokenIndices()) {
-    const disambiguatedTokenType = tokenDisambiguate(
+    const disambiguatedTokenType = attemptTokenDisambiguate(
       ambigTokIndex,
       tokSet,
       fileContents,
@@ -59,7 +59,7 @@ export function tokenizeFileOnSave(
   }
 
   for (const ambigTokIndex of tokenizer.getAmbiguousTokenIndices()) {
-    const disambiguatedTokenType = tokenDisambiguate(
+    const disambiguatedTokenType = attemptTokenDisambiguate(
       ambigTokIndex,
       tokSet,
       fileContents,

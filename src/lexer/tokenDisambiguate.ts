@@ -21,13 +21,15 @@ const tokTypesNewlineAndComments: TokenType[] = [
 ];
 
 /**
+ * Tries to disambiguate a token using it's surroundings, if practical.
  * @param ambigTokIndex The index of the ambiguous token in `tokens`.
  * @param tokSet The set of tokens extracted from `fileContents`.
  * @param fileContents The contents of the file.
- * @returns The disambiguated type of the ambiguous token. Throws an error if
- * disambiguation is not possible (when syntax/semantics are wrong).
+ * @returns The disambiguated type of the ambiguous token,
+ * or the TokenType as it was if disambiguation is not practical.
+ * Throws an Error for incorrect syntax.
  */
-export default function tokenDisambiguate(
+export default function attemptTokenDisambiguate(
   ambigTokIndex: number,
   tokSet: TokenSet,
   fileContents: string,
@@ -380,6 +382,28 @@ function disambiguateAsterisk(
       ))
   ) {
     return TokenType.operatorUnaryIndirectionOrDereference;
+  }
+
+  // third layer left side
+  const [thirdNonNewlineOrCommentTokBehindType] =
+    tokSet.findFirstTypeMatchBehind(
+      secondNonNewlineOrCommentTokBehindIndex - 1,
+      tokTypesNewlineAndComments,
+      false,
+    );
+  if (thirdNonNewlineOrCommentTokBehindType === -1) {
+    throw createErr();
+  }
+
+  if (
+    // = (a * b)
+    isTokenBinaryOperatorAssignment(thirdNonNewlineOrCommentTokBehindType) &&
+    secondNonNewlineOrCommentTokBehindType === TokenType.specialParenthesisOpening &&
+    firstNonNewlineOrCommentTokBehindType === TokenType.identifier &&
+    firstNonNewlineOrCommentTokAheadType === TokenType.identifier &&
+    secondNonNewlineOrCommentTokAheadType === TokenType.specialParenthesisClosing
+  ) {
+    return TokenType.operatorBinaryArithmeticMultiplication;
   }
 
   /*

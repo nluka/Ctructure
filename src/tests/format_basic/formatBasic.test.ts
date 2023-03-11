@@ -35,11 +35,12 @@ describe('formatBasic', () => {
   _assert('__attribute__.c');
   _assert('asterisk.c');
   _assert('comment.c');
-  _assert('c.c');
   _assert('empty_header.h');
   _assert('for.c');
+  _assert('hellish.c');
   _assert('if_else.c');
   _assert('label.c');
+  _assert('linux_macro_comment.c');
   _assert('misc.c');
   _assert('multivar_decl.c');
   _assert('no_format.c');
