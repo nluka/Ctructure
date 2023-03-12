@@ -26,3 +26,8 @@ void f() {
   int a = (const t *const *const)*p;
   int a = (t const *const *const)*p;
 }
+
+int func() {
+  int a, b;
+  return a * b;
+}

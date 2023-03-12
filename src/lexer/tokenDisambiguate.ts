@@ -319,7 +319,7 @@ function disambiguateAsterisk(
     throw createErr();
   }
 
-  // ptr to struct|union or type with qualifier|modifier
+  // (ptr to struct|union) or (type with qualifier|modifier)
   if (
     isTokenKeywordTypeOrTypeQualifier(secondNonNewlineOrCommentTokBehindType) ||
     [
@@ -335,7 +335,8 @@ function disambiguateAsterisk(
 
   // assignment to mult expression,
   // mult inside compound expression,
-  // comparison with mult expression
+  // comparison with mult expression,
+  // return result of mult
   if (
     // left side
     isTokenUnaryOperator(secondNonNewlineOrCommentTokBehindType) ||
@@ -343,6 +344,7 @@ function disambiguateAsterisk(
     isTokenBinaryOperatorMemberSelection(
       secondNonNewlineOrCommentTokBehindType,
     ) ||
+    secondNonNewlineOrCommentTokBehindType === TokenType.keywordReturn ||
     // right side
     isTokenBinaryOperatorNonAssignment(secondNonNewlineOrCommentTokAheadType)
   ) {
@@ -398,10 +400,12 @@ function disambiguateAsterisk(
   if (
     // = (a * b)
     isTokenBinaryOperatorAssignment(thirdNonNewlineOrCommentTokBehindType) &&
-    secondNonNewlineOrCommentTokBehindType === TokenType.specialParenthesisOpening &&
+    secondNonNewlineOrCommentTokBehindType ===
+      TokenType.specialParenthesisOpening &&
     firstNonNewlineOrCommentTokBehindType === TokenType.identifier &&
     firstNonNewlineOrCommentTokAheadType === TokenType.identifier &&
-    secondNonNewlineOrCommentTokAheadType === TokenType.specialParenthesisClosing
+    secondNonNewlineOrCommentTokAheadType ===
+      TokenType.specialParenthesisClosing
   ) {
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
