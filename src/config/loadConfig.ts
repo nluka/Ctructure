@@ -24,14 +24,14 @@ export function loadConfig(
   try {
     var storedConfig = JSON.parse(readFileSync(filePathname).toString());
   } catch (err: any) {
-    reportWarn(
-      cmdName,
-      `unable to load config for workspace "${workspaceFolder.name}"${
-        err.message.match(/^ENOENT/)
-          ? ' -> ctructureconf.json not found'
-          : `: ${err.message}`
-      }`,
-    );
+    // reportWarn(
+    //   cmdName,
+    //   `unable to load config for workspace "${workspaceFolder.name}"${
+    //     err.message.match(/^ENOENT/)
+    //       ? ' -> ctructureconf.json not found'
+    //       : `: ${err.message}`
+    //   }`,
+    // );
     return false;
   }
 

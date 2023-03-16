@@ -127,14 +127,7 @@ async function formatFolder(
     };
   }
 
-  // Load config
-  {
-    const wasSuccessful = loadConfig(cmdName, workspaceFolder);
-    if (!wasSuccessful) {
-      // to ensure notification from `loadConfig` has time to appear
-      await sleep(10);
-    }
-  }
+  loadConfig(cmdName, workspaceFolder);
 
   const tasks: Promise<IFormatResult>[] = [];
   let filesFailedCount = 0;
