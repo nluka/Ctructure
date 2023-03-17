@@ -74,6 +74,9 @@ export default function printer(
 
   let indentationDepth = 0;
 
+  // used to match variable indentation accurately
+  let indentationRemainder = 0;
+
   let parenDepth = 0;
 
   let currString = '';
@@ -182,7 +185,19 @@ export default function printer(
       ) {
         currString = lineEndings + lineEndings + getIndentation(indentationDepth) + typeAsValue;
       } else {
-        currString = lineEndings + getIndentation(indentationDepth) + typeAsValue;
+        if (
+          context === PrinterCategory.multiVariableDecl &&
+          multiVarMatchIndent &&
+          (overflow || multiVarAlwaysNewline)
+        ) {
+          currString =
+            lineEndings +
+            getIndentation(indentationDepth) +
+            ' '.repeat(indentationRemainder) +
+            typeAsValue;
+        } else {
+          currString = lineEndings + getIndentation(indentationDepth) + typeAsValue;
+        }
       }
       noExtraNewline = false;
       shouldAddNewline = false;
@@ -192,6 +207,7 @@ export default function printer(
     }
 
     switch (currTokType) {
+      // @ts-ignore
       case TokenType.newline: {
         continue;
       }
@@ -214,9 +230,12 @@ export default function printer(
               : getIndentation(1 + indentationDepth).length;
             indentationDepth =
               indentationChar === '\t'
-                ? Math.ceil(indentAmountForMultiVar / 4)
-                : Math.ceil(indentAmountForMultiVar / indentationSize);
+                ? Math.floor(indentAmountForMultiVar / 4)
+                : Math.floor(indentAmountForMultiVar / indentationSize);
+            indentationRemainder =
+              indentAmountForMultiVar % (indentationChar === '\t' ? 4 : indentationSize);
             shouldAddNewline = true;
+            noExtraNewline = true;
           } else {
             currString = ', ';
           }
