@@ -31,3 +31,11 @@ int func() {
   int a, b;
   return a * b;
 }
+
+void huh() {
+  processes = (Process *)malloc(sizeOfBuffer * sizeof (Process)); // allocate memory for processes
+  if (numProcesses >= sizeOfBuffer) {
+    sizeOfBuffer *= 2;
+    processes = realloc(processes, sizeOfBuffer * sizeof (Process));
+  }
+}
