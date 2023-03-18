@@ -673,6 +673,16 @@ describe('tokenDisambiguate', () => {
           TokenType.identifier,
           TokenType.specialSemicolon ],
         TokenType.operatorBinaryArithmeticMultiplication, 'int a = (b * c) * d;');
+      assert(
+        [ TokenType.specialComma,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.keywordSizeof,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.specialParenthesisClosing,
+          TokenType.specialParenthesisClosing ],
+        TokenType.operatorBinaryArithmeticMultiplication, ', n * sizeof(buffer)');
     });
     describe('Keep Ambiguous', () => {
       /*

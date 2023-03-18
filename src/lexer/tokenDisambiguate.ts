@@ -225,6 +225,7 @@ function disambiguateAsterisk(
   ) {
     return TokenType.ambiguousAsterisk;
   }
+
   if (
     // left side
     [
@@ -233,9 +234,11 @@ function disambiguateAsterisk(
       TokenType.specialBracketClosing,
     ].includes(firstNonNewlineOrCommentTokBehindType) ||
     // right side
-    [TokenType.constantNumber, TokenType.constantCharacter].includes(
-      firstNonNewlineOrCommentTokAheadType,
-    )
+    [
+      TokenType.constantNumber,
+      TokenType.constantCharacter,
+      TokenType.keywordSizeof,
+    ].includes(firstNonNewlineOrCommentTokAheadType)
   ) {
     return TokenType.operatorBinaryArithmeticMultiplication;
   }
