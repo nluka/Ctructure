@@ -416,3 +416,11 @@ CURLcode Curl_socket(
 
   return CURLE_OK;
 }
+
+extern NCURSES_EXPORT(int) setcchar(
+  cchar_t *,
+  const wchar_t *,
+  const attr_t,
+  NCURSES_PAIRS_T,
+  const void *
+);

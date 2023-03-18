@@ -270,9 +270,11 @@ function disambiguateAsterisk(
     ].includes(firstNonNewlineOrCommentTokBehindType) ||
     // right side
     isTokenKeywordTypeQualifier(firstNonNewlineOrCommentTokAheadType) ||
-    [TokenType.ambiguousAsterisk, TokenType.specialParenthesisClosing].includes(
-      firstNonNewlineOrCommentTokAheadType,
-    )
+    [
+      TokenType.ambiguousAsterisk,
+      TokenType.specialParenthesisClosing,
+      TokenType.specialComma,
+    ].includes(firstNonNewlineOrCommentTokAheadType)
   ) {
     return TokenType.operatorUnaryIndirectionOrDereference;
   }

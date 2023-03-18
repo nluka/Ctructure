@@ -683,6 +683,13 @@ describe('tokenDisambiguate', () => {
           TokenType.specialParenthesisClosing,
           TokenType.specialParenthesisClosing ],
         TokenType.operatorBinaryArithmeticMultiplication, ', n * sizeof(buffer)');
+      assert(
+        [ TokenType.identifier,
+          TokenType.specialParenthesisOpening,
+          TokenType.identifier,
+          TokenType.ambiguousAsterisk,
+          TokenType.specialComma ],
+        TokenType.operatorUnaryIndirectionOrDereference, 'func(type *,');
     });
     describe('Keep Ambiguous', () => {
       /*
