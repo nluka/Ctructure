@@ -424,3 +424,32 @@ extern NCURSES_EXPORT(int) setcchar(
   NCURSES_PAIRS_T,
   const void *
 );
+
+extern void __assert_perror_fail(
+  int __errnum,
+  const char *__file,
+  unsigned int __line,
+  const char *__function
+) __THROW __attribute__((__noreturn__));
+
+extern char *crypt_gensalt_rn(
+  const char *__prefix,
+  unsigned long __count,
+  const char *__rbytes,
+  int __nrbytes,
+  char *__output,
+  int __output_size
+) __THROW;
+
+extern void vwarnx(const char *__format, __gnuc_va_list) __attribute__(
+  (__format__(__printf__, 1, 0))
+);
+
+extern void error_at_line(
+  int __status,
+  int __errnum,
+  const char *__fname,
+  unsigned int __lineno,
+  const char *__format,
+  ...
+) __attribute__((__format__(__printf__, 5, 6)));
