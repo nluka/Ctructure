@@ -876,6 +876,27 @@ export default function printer(
       }
 
       case TokenType.identifier: {
+        if (
+          previousTokenType === TokenType.specialParenthesisClosing &&
+          currString.charAt(0) !== '\n'
+        ) {
+          let index = i;
+          for (; index >= 0; --index) {
+            if (tokenTypes[index] === TokenType.specialParenthesisOpening) {
+              --index;
+              break;
+            }
+          }
+          for (; index >= 0; --index) {
+            if (tokenTypes[index] === TokenType.newline) {
+              continue;
+            }
+            if (tokenTypes[index] === TokenType.identifier) {
+              currString += ' ';
+            }
+            break;
+          }
+        }
         currString += extractStringFromFile(currTokStartPos);
         const nextNonNewlineTokenType = getNextNonNewlineTokenType(i);
         if (
