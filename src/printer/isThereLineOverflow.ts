@@ -87,6 +87,7 @@ export default function isThereLineOverflow(
       | TokenType.specialBracketClosing,
     tokenIndex: number,
   ): boolean {
+    let prevTokenType: TokenType | null = null;
     let overflowMarker = 0;
     for (let i = tokenIndex; i < tokenCount && i < tokenLimit; ++i) {
       const currTokenType = tokenTypes[i];
@@ -105,6 +106,12 @@ export default function isThereLineOverflow(
         }
       } else {
         whiteSpace += whiteSpaceForFormatting(fileContents, currTokenType, tokenStartIndices[i]);
+        if (prevTokenType === TokenType.constantString && currTokenType === TokenType.constantString){
+          return true;
+        }
+      }
+      if (currTokenType !== TokenType.newline) {
+        prevTokenType = currTokenType;
       }
     }
     return true;

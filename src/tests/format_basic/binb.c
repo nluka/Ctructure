@@ -132,7 +132,6 @@ int main(int argc, char const *argv[]) {
       (void)fprintf(stderr, "failed to write byte\n");
       return 1;
     }
-
   } else {
     (void)fprintf(stderr, "unknown <data_type>\n");
     return 1;
