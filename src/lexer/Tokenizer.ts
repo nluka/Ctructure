@@ -24,6 +24,7 @@ export default class Tokenizer {
     const tokCategory = tokenDetermineCategory(
       this.fileContents,
       this.cursorPosition,
+      "Tokenizer.extractNextToken"
     );
 
     const tokEndPos = tokenFindEndPosition(

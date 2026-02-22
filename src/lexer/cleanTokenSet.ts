@@ -19,6 +19,7 @@ export default function cleanTokenSet(tokSet: TokenSet) {
       false,
     );
     if (
+      firstNonNewlineTokBehindType === -1 ||
       ![
         TokenType.specialParenthesisClosing,
         TokenType.operatorBinaryAssignmentDirect,

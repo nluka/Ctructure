@@ -11,10 +11,11 @@ import { loadConfig } from '../../config/loadConfig';
 import removeCarriageReturns from '../../utility/removeCarriageReturns';
 import sleep from '../../utility/sleep';
 import { reportInfo, reportWarn } from '../report';
-import tryToFormatFile, {
+import {
+  tryToFormatFile,
   createLogFormatResult as createLogFormatResult,
   IFormatResult,
-} from '../tryToFormatFile';
+} from '../tryToFormat';
 import path = require('path');
 
 export default async function formatWorkspaceFolders(

@@ -21,7 +21,7 @@ function pairingClosingEnclosure(
 function charsOfWhiteSpaceInConstantString(fileContents: string, startPos: number): number {
   const constantString = fileContents.slice(
     startPos,
-    tokenFindEndPosition(fileContents, startPos, tokenDetermineCategory(fileContents, startPos)) +
+    tokenFindEndPosition(fileContents, startPos, tokenDetermineCategory(fileContents, startPos, "charsOfWhiteSpaceInConstantString")) +
       1,
   );
   return constantString.split(' ').length - 1;

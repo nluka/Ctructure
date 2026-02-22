@@ -110,7 +110,7 @@ export default function printer(
   function extractStringFromFile(startPos: number): string {
     return fileContents.slice(
       startPos,
-      tokenFindEndPosition(fileContents, startPos, tokenDetermineCategory(fileContents, startPos)) +
+      tokenFindEndPosition(fileContents, startPos, tokenDetermineCategory(fileContents, startPos, "printer.extractStringFromFile")) +
         1,
     );
   }

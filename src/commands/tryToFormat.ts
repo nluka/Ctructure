@@ -1,7 +1,8 @@
 import { statSync, writeFileSync } from 'fs';
-import tokenizeFile from '../lexer/tokenizeFile';
+import { tokenizeFile, tokenizeString } from '../lexer/tokenizeFile';
 import TokenSet from '../lexer/TokenSet';
 import printer from '../printer/printer';
+import * as vscode from "vscode";
 
 const BYTES_IN_512_MEGABYTES = 536_870_912;
 
@@ -18,7 +19,7 @@ export interface IFormatResultInfo {
   writeTime: number;
 }
 
-export default async function tryToFormatFile(filePathname: string): Promise<
+export async function tryToFormatFile(filePathname: string): Promise<
   | {
       filePathname: string;
       wasSuccessful: true;
@@ -84,6 +85,85 @@ export default async function tryToFormatFile(filePathname: string): Promise<
       wasSuccessful: false,
       err,
     };
+  }
+
+  return {
+    filePathname,
+    wasSuccessful: true,
+    info: { lexTime, printTime, writeTime },
+  };
+}
+
+export async function tryToFormatDocument(
+  editor: vscode.TextEditor,
+): Promise<
+  | {
+      filePathname: string;
+      wasSuccessful: true;
+      info: IFormatResultInfo;
+    }
+  | {
+      filePathname: string;
+      wasSuccessful: false;
+      err: Error;
+    }
+> {
+  const document = editor.document;
+  const filePathname = document.uri.fsPath;
+
+  const fileContentsRaw = document.getText();
+
+  const byteSize = Buffer.byteLength(fileContentsRaw, "utf8");
+  if (byteSize > BYTES_IN_512_MEGABYTES) {
+    return {
+      filePathname,
+      wasSuccessful: false,
+      err: new Error(
+        `files larger than 512 MB (is ${(byteSize / (1024 * 1024)).toFixed(
+          6,
+        )} MB) are not supported`,
+      ),
+    };
+  }
+
+  let tokSet: TokenSet | null;
+  let fileContentsClean: string;
+  let formattedStr: string;
+
+  let lexTime: number;
+  try {
+    const startTime = Date.now();
+    [fileContentsClean, tokSet] = tokenizeString(fileContentsRaw);
+    lexTime = Date.now() - startTime;
+  } catch (err: any) {
+    return { filePathname, wasSuccessful: false, err };
+  }
+
+  let printTime: number;
+  try {
+    const startTime = Date.now();
+    formattedStr = printer(fileContentsClean, tokSet);
+    printTime = Date.now() - startTime;
+  } catch (err: any) {
+    return { filePathname, wasSuccessful: false, err };
+  }
+
+  let writeTime: number;
+  try {
+    const startTime = Date.now();
+
+    const fullRange = new vscode.Range(
+      document.positionAt(0),
+      document.positionAt(fileContentsRaw.length),
+    );
+
+    await editor.edit((editBuilder) => {
+      editBuilder.replace(fullRange, formattedStr);
+    });
+
+    writeTime = Date.now() - startTime;
+  } catch (err: any) {
+    return { filePathname, wasSuccessful: false, err };
   }
 
   return {

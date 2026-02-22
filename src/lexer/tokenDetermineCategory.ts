@@ -15,6 +15,7 @@ const commentOrOperatorRegex = /^\/$/,
 export default function tokenDetermineCategory(
   fileContents: string,
   tokStartPos: number,
+  callingFuncName: string,
 ): TokenCategory {
   const tokFirstChar = fileContents.charAt(tokStartPos);
 
@@ -50,6 +51,6 @@ export default function tokenDetermineCategory(
   throw new Error(
     `cannot determine category of token ${tokenNum} on line ${lineNum} (firstChar=${JSON.stringify(
       tokFirstChar,
-    )})`,
+    )}) in function ${callingFuncName}`,
   );
 }

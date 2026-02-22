@@ -6,6 +6,8 @@ import cmdCreateConfigFileInEveryWorkspaceFolder from './commands/createConfigFi
 import cmdFormatAllWorkspaceFolders from './commands/formatWorkspace/cmdFormatAllWorkspaceFolders';
 import cmdFormatWorkspaceFolder from './commands/formatWorkspace/cmdFormatWorkspaceFolder';
 
+export const outputChannel = vscode.window.createOutputChannel("Ctructure");
+
 export function activate(context: vscode.ExtensionContext) {
   console.log('[Ctructure] extension activated');
 

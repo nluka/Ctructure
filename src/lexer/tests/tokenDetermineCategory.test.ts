@@ -28,7 +28,7 @@ describe('tokenDetermineCategory', () => {
     tokStartPos = 0,
   ) {
     test(`${tokenCategoryToStringMap.get(expectedCategory)} when firstChar=${JSON.stringify(fileContents.charAt(tokStartPos))}`, () => {
-      expect(tokenDetermineCategory(fileContents, tokStartPos)).toBe(
+      expect(tokenDetermineCategory(fileContents, tokStartPos, "tokenDetermineCategory.test.ts")).toBe(
         expectedCategory,
       );
     });

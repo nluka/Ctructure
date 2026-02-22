@@ -1,5 +1,5 @@
 import { readFileSync } from "fs";
-import tokenizeFile from "../lexer/tokenizeFile";
+import { tokenizeFile } from "../lexer/tokenizeFile";
 import printer from "../printer/printer";
 import removeCarriageReturns from "../utility/removeCarriageReturns";
 import path = require("path");
